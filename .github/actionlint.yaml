@@ -1,0 +1,11 @@
+self-hosted-runner:
+  labels:
+    - linux
+    - arm64
+    - vulcan-dev
+    - vulcan-stg
+    - vulcan-prod
+    - sdk-build
+    - cheaper
+    - cheap
+    - default

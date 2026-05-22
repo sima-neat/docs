@@ -1,0 +1,145 @@
+.pageShell {
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  background:
+    radial-gradient(circle at 16% 18%, rgba(229, 78, 46, 0.12), transparent 30rem),
+    radial-gradient(circle at 84% 72%, rgba(0, 91, 122, 0.12), transparent 28rem),
+    linear-gradient(135deg, #f7f3ed 0%, #eef2f0 48%, #f9f6f1 100%);
+}
+
+.hero {
+  min-height: calc(100vh - var(--ifm-navbar-height));
+  display: grid;
+  place-items: center;
+  padding: clamp(3rem, 9vw, 7rem) 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 10% auto auto 50%;
+  width: min(74vw, 54rem);
+  height: min(74vw, 54rem);
+  transform: translateX(-50%) rotate(18deg);
+  border: 1px solid rgba(28, 47, 58, 0.14);
+  border-radius: 48% 52% 44% 56%;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 8% 10% auto;
+  width: 22rem;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(28, 47, 58, 0.35), transparent);
+}
+
+.brandPanel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 56rem);
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  padding: clamp(1rem, 4vw, 2rem);
+}
+
+.logo {
+  width: clamp(10rem, 24vw, 16rem);
+  height: auto;
+  margin-bottom: clamp(2.5rem, 6vw, 4.25rem);
+  filter: drop-shadow(0 1.2rem 1.6rem rgba(27, 36, 42, 0.12));
+}
+
+.kicker {
+  margin: 0 0 0.85rem;
+  color: #8f3f2c;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.brandPanel h1 {
+  margin: 0;
+  max-width: 12ch;
+  color: #18272f;
+  font-family: var(--ifm-font-family-base);
+  font-size: clamp(3.25rem, 8vw, 7rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+.summary {
+  margin: clamp(1.3rem, 3vw, 1.8rem) 0 0;
+  max-width: 38rem;
+  color: #41535b;
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-top: clamp(2rem, 5vw, 3.4rem);
+}
+
+.portalButton {
+  min-width: 12.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3.45rem;
+  padding: 0.9rem 1.35rem;
+  border: 1px solid rgba(24, 39, 47, 0.18);
+  color: #18272f;
+  background: rgba(255, 252, 246, 0.72);
+  box-shadow: 0 1rem 2.2rem rgba(28, 47, 58, 0.08);
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.portalButton:hover {
+  color: #18272f;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 1.35rem 2.5rem rgba(28, 47, 58, 0.13);
+}
+
+.graphite:hover {
+  border-color: rgba(24, 39, 47, 0.48);
+  background: #fdf9f1;
+}
+
+.signal {
+  color: #fdf9f1;
+  border-color: #1d5f73;
+  background: #1d5f73;
+}
+
+.signal:hover {
+  color: #fdf9f1;
+  background: #174d5d;
+}
+
+.ember:hover {
+  border-color: rgba(196, 74, 39, 0.55);
+  background: #fff3ea;
+}
+
+@media (max-width: 620px) {
+  .actions {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .portalButton {
+    width: 100%;
+  }
+}
