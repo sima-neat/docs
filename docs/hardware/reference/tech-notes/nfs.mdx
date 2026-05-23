@@ -1,0 +1,135 @@
+---
+title: Setup NFS
+description: Share large datasets and model files between an Ubuntu host and the Modalix DevKit over NFS.
+sidebar_position: 2
+---
+
+# Setup NFS
+
+When working with large datasets or model files, fast and efficient file access is essential for a smooth demo and development experience.
+
+Using NFS (Network File System) enables seamless file sharing between an Ubuntu machine (server) and the Modalix DevKit (client), providing direct access to large storage without requiring local copies.
+
+:::note
+NFS is particularly useful when the DevKit lacks high-speed, large-capacity storage such as NVMe. This applies to platforms like the MLSoC and the Modalix Early Access Kit (EA), where relying solely on SD cards can lead to slower load times.
+:::
+
+NFS can be especially helpful when:
+
+- Large models or datasets need to be shared across multiple devices.
+- Local storage on the client is limited or unavailable.
+- Centralized storage management is preferred for simplified updates.
+
+<details open>
+<summary><strong>Step 1. Setting Up the NFS Server</strong></summary>
+
+1. **Install the NFS Kernel Server**:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo apt update
+   sima-user@sima-user-machine:~$ sudo apt install -y nfs-kernel-server
+   ```
+
+2. **Create a Shared Directory**:
+
+   Choose a directory to share with the Modalix DevKit:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo mkdir -p /mnt/nfs_share
+   sima-user@sima-user-machine:~$ sudo chmod 777 /mnt/nfs_share
+   ```
+
+3. **Edit the NFS Exports File**:
+
+   Open the exports file:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo nano /etc/exports
+   ```
+
+   Add the following line at the end, replacing `<modalix_ip>` with the Modalix DevKit's IP address:
+
+   ```
+   /mnt/nfs_share <modalix_ip>(rw,sync,no_subtree_check)
+   ```
+
+   If you want to allow access from any IP in your network (for testing), use:
+
+   ```
+   /mnt/nfs_share *(rw,sync,no_subtree_check)
+   ```
+
+4. **Apply the Changes and Restart NFS Service**:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo exportfs -a
+   sima-user@sima-user-machine:~$ sudo systemctl restart nfs-kernel-server
+   ```
+
+</details>
+
+<details open>
+<summary><strong>Step 2. Setting Up the NFS Client</strong></summary>
+
+1. **Create a Mount Point**:
+
+   ```bash
+   modalix:~$ sudo mkdir -p /mnt/
+   ```
+
+2. **Mount the NFS Share**:
+
+   Replace `<server_ip>` with the Ubuntu machine's IP address:
+
+   ```bash
+   modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
+   ```
+
+3. **Verify the Mount**:
+
+   Check if the NFS share is mounted correctly:
+
+   ```bash
+   modalix:~$ df -h | grep mnt
+   ```
+
+</details>
+
+<details open>
+<summary><strong>Step 3. Making the Mount Persistent</strong></summary>
+
+To automatically mount the NFS share at boot, perform the following steps on Modalix:
+
+1. **Create the mnt.mount file**:
+
+   ```bash
+   modalix:~$ sudo vi /etc/systemd/system/mnt.mount
+   ```
+
+2. **Add this content to the file, be sure to replace the server_IP to the Ubuntu machine:**
+
+   ```
+   [Unit]
+   Description=NFS Mount
+   After=network-online.target
+   Requires=network-online.target
+
+   [Mount]
+   What=<server_IP>:/mnt/nfs_share
+   Where=/mnt/
+   Type=nfs
+   Options=defaults,_netdev
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. **Save and exit. Then, test the configuration:**
+
+   ```bash
+   modalix:~$ sudo systemctl daemon-reload
+   modalix:~$ sudo systemctl enable mnt.mount
+   modalix:~$ sudo systemctl start mnt.mount
+   ```
+
+</details>

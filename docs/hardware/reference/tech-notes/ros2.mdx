@@ -1,0 +1,89 @@
+---
+title: Install ROS2 on the Modalix SOM Devkit
+description: Install Robot Operating System 2 (ROS 2) on the Modalix SOM DevKit.
+sidebar_position: 5
+---
+
+# Install ROS2 on the Modalix SOM Devkit
+
+This tech note describes how to install the [Robot Operating System 2 (ROS 2)](https://docs.ros.org/) on the Modalix SOM DevKit and why ROS 2 is a valuable companion to SiMa.ai silicon for physical AI workloads.
+
+## What is ROS 2?
+
+ROS 2 is the second-generation Robot Operating System, an open-source set of software libraries and tools for building robot and physical AI applications. Rather than a monolithic operating system, ROS 2 is a middleware layer that runs on top of Linux and provides a standard way for the many independent processes inside a robot — sensors, actuators, perception models, planners, controllers — to discover one another and exchange data.
+
+Key features include:
+
+- **Node-based architecture.** Each capability (a camera driver, a detector, a motor controller, a SLAM stack) runs as an independent *node*. Nodes are composed at runtime, so the same perception node can be reused across very different robots.
+- **DDS-based communication.** ROS 2 builds on the Data Distribution Service (DDS) standard for real-time, peer-to-peer pub/sub messaging with configurable Quality-of-Service (reliability, durability, deadline, liveliness) — a hard requirement for safety-critical and time-sensitive robotics.
+- **Standard message types.** A large catalog of common message definitions (`sensor_msgs`, `geometry_msgs`, `nav_msgs`, `vision_msgs`, etc.) lets perception, planning, and control components from different vendors interoperate without custom glue code.
+- **Cross-platform and real-time friendly.** ROS 2 runs on Linux, supports ARM64 and x86_64, and is designed to coexist with real-time kernels and microcontroller stacks (micro-ROS).
+- **Rich tooling ecosystem.** `rviz2` for 3D visualization, `rqt` for introspection, `rosbag2` for recording and replaying sensor streams, and `ros2 launch` for declarative system bring-up.
+
+## Why run ROS 2 on the Modalix SOM?
+
+Physical AI — autonomous mobile robots, drones, robotic arms, AMRs, smart cameras with actuation — needs both **high-throughput neural inference** *and* a **deterministic, well-understood software fabric** for sensors, control, and safety. The Modalix SOM was built for exactly that combination:
+
+- **Offload perception to the MLA, keep ROS 2 on the Arm cores.** Perception nodes (object detection, segmentation, depth, pose, BEV fusion) can call into the MLSoC's MLA, while ROS 2 publishers forward the results as standard `vision_msgs` or `sensor_msgs` — no proprietary IPC required.
+- **Single board, full stack.** Camera ingest, ML inference, ROS 2 middleware, planning, and motor control can all run on the same Modalix SOM, removing the latency and BOM cost of a separate companion compute board.
+- **Power-efficient edge deployment.** Modalix's performance-per-watt envelope lets battery-powered platforms (drones, AMRs, handheld inspection units) run modern detection and tracking models in real time without thermal throttling.
+- **eLxr Debian base.** The Modalix SOM runs an eLxr Debian-derived runtime, so standard ROS 2 `apt` packages install cleanly — no cross-compilation or custom Yocto layers needed for the common case.
+
+## Prerequisites
+
+:::info
+ROS 2 installation on the Modalix SOM requires SDK release **2.1.0** or higher running on the eLxr runtime. To check or convert the runtime, see [Convert to eLxr](./elxr-conversion).
+:::
+
+You will also need:
+
+- A Modalix SOM DevKit powered on and reachable over the network or serial console.
+- `sima-cli` installed on the DevKit.
+- An active internet connection on the DevKit for package download.
+
+## Install ROS 2
+
+`sima-cli` provides a one-shot installer that pulls the correct ROS 2 distribution for the Modalix SOM, configures the apt sources, and installs the base packages and standard tooling.
+
+<details open>
+<summary><strong>Step 1. Install ROS 2 via sima-cli</strong></summary>
+
+From the Modalix shell, run:
+
+```console
+sima@modalix:~$ sima-cli install tools/ros2
+```
+
+The installer will:
+
+- Add the required Debian `bookworm` and ROS 2 apt sources, along with the ROS signing key.
+- Install build dependencies (`cmake`, `colcon`, `vcstool`), Qt and OpenCV development packages, the GStreamer plugin set, and the other libraries required to build and run ROS 2 nodes on the SOM.
+- Install the `ros2` and `colcon` packages.
+- Append `source /usr/local/ros2/local_setup.bash` to `/home/sima/.bash_profile` so the ROS 2 environment is loaded automatically on every login, and source it for the current shell.
+
+</details>
+
+<details open>
+<summary><strong>Step 2. Verify the Installation</strong></summary>
+
+Once `sima-cli install tools/ros2` finishes, the ROS 2 environment is already sourced in the current shell. Confirm the `ros2` CLI is on the path:
+
+```console
+sima@modalix:~$ ros2
+```
+
+Then run the standard talker/listener demo across two shells to confirm the DDS middleware is working end-to-end:
+
+```console
+sima@modalix:~$ ros2 run demo_nodes_cpp talker
+```
+
+In a second shell on the same device:
+
+```console
+sima@modalix:~$ ros2 run demo_nodes_py listener
+```
+
+The listener should print `I heard: [Hello World: N]` messages as the talker publishes them. ROS 2 is now ready to host perception, planning, and control nodes alongside SiMa.ai ML pipelines on the Modalix SOM.
+
+</details>

@@ -1,0 +1,47 @@
+---
+title: Modalix Early Access DevKit
+description: Pre-release high-performance Modalix development platform for evaluation, prototyping, and edge AI deployment.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix Early Access DevKit
+
+The **Modalix Early Access DevKit** is a pre-release, high-performance development platform designed for evaluating, prototyping, and deploying AI applications at the edge. As an early access unit, it provides select developers with advanced hardware acceleration and an optimized software stack tailored for a broad spectrum of inference workloads—including computer vision, large language models (LLMs), and real-time multimodal processing.
+
+<Tabs>
+<TabItem value="interfaces" label="Interfaces" default>
+
+<img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="SiMa.ai Modalix Early Access Kit Interfaces" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+| Interface | Description |
+| --- | --- |
+| Ethernet Ports (eth0, eth1, eth2, eth3) | RJ45, 10GigE network interfaces for remote connectivity. |
+| 12V Power (J8) | Requires a 12V power adapter, use the included power adapter to connect to this port. |
+| Power On/Off Switch | Next to the power supply connector, if needed, use a pen to reach the switch and power on/off the device. |
+| COM Port to Host | Facilitates debugging by connecting to the host system. Ensure the arrow sign on the included cable connects to the left-most pin for proper alignment. |
+| Reset Button | Available in standalone mode only. Allows resetting the device for a fresh boot or to recover from errors. |
+| MIPI Interfaces (X4) | For connecting cameras. |
+| Micro SD Card Slot | For additional storage. |
+
+For more product information, visit the official website: [SiMa.ai](https://sima.ai/mlsoc/).
+
+</TabItem>
+<TabItem value="features" label="Key Features">
+
+| Feature | Details |
+| --- | --- |
+| MLA AI Performance | 50 Tera Operations per Second for INT8 neural network computation. Also supports bf16 precision. |
+| Power Consumption | 8W to 12W depending on workload |
+| Application Processing Unit (APU) | A cluster of eight [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) dual threaded processors operating up to 1.5 GHz to deliver up to 32K Dhrystone MIPs Eight-core at 1.5GHz. |
+| Video Encoder | Supports the H.264 (AVC), H.265 (HEVC) and MJPEG compression standards. It has support for AVC main/high profiles, HEVC main profile, and MJPEG baseline profile. The encoder supports H.264/H.265 at rates up to 4KP60. |
+| Video Decoder | supports the H.264 (AVC), H.265 (HEVC), AV1, and MJPEG compression standards. It has support for AVC main/high profiles, HEVC main profile, AV1 main profile, and MJPEG Baseline profile. It supports 4:2:0 pixels and 8-bit precision. The decoder supports H.264/H.265 at rates up to 4KP60. |
+| Computer Vision Unit (CVU) | Four-core Synopsys [ARC EV74 Vision Processor](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors) supporting up to **750 16-bit GOPS**. |
+| Memory | 64GB LPDDR5 RAM, of which 10GB allocated to the ARM cores, 40GB allocated to the MLA, the rest are allocated by system use. |
+| Storage | 10GB internal eMMC with microSD card slot for additional storage |
+| Networking | 4X 10GigE ports. |
+
+</TabItem>
+</Tabs>

@@ -1,0 +1,80 @@
+---
+title: Update with sima-cli
+description: Update DevKit firmware over the network using the sima-cli tool.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Update with sima-cli
+
+This method allows developers to update the firmware on a SiMa.ai DevKit using the `sima-cli` tool. This approach downloads the firmware image to the host machine and transfers it to the DevKit for update.
+
+:::note
+Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+:::
+
+:::warning
+Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/docs/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
+:::
+
+Before proceeding, ensure the host machine can reach the DevKit over the network. Refer to:
+
+- [Standalone Mode Network Setup](/docs/hardware/getting-started/standalone-mode/network)
+- [PCIe Mode Virtual Network Setup](/docs/hardware/getting-started/pcie-mode#virtual-network)
+
+<Tabs>
+<TabItem value="from-devkit" label="From DevKit" default>
+
+Developers can run `sima-cli` directly on the standalone DevKit to update the device. Ensure the DevKit has an active Internet connection, then execute:
+
+```console
+modalix:~$ sima-cli update
+```
+
+On MLSoC running Yocto Linux, developers may also specify a full URL instead of a version string if they have previously downloaded and hosted the image themselves.
+
+```console
+davinci:~$ sima-cli update http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="from-host" label="From Host Machine">
+
+:::note
+This method is only supported on the MLSoC platform running Yocto. For Modalix devices running eLxr Linux, perform the update directly on the DevKit.
+:::
+
+Use this command from the host machine:
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
+```
+
+This command also installs the appropriate Linux driver version on the host, if applicable.
+
+If you have downloaded the firmware and hosted somewhere on your network, you can provide the URL to avoid repeatedly downloading from the Internet.
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="download" label="Download only">
+
+If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
+
+</TabItem>
+</Tabs>
+
+:::note
+**For PCIe system update:**
+
+- Starting with firmware version `1.5`, a virtual Ethernet interface can be used in PCIe mode, eliminating the need for physical cabling to the DevKit. This enables seamless updates over an existing PCIe connection.
+- For firmware version `1.4` or earlier, a direct network connection must be established with the DevKit. In this case, connect the DevKit in standalone mode.
+:::
+
+:::note
+To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use the [Net Boot procedure](./netboot) instead — it boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
+:::

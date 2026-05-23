@@ -1,0 +1,89 @@
+---
+title: Configure Serial Connection
+description: Connect a development host to a Modalix DevKit via the serial console.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Configure Serial Connection
+
+During early development, it is strongly recommended to establish a connection to the DevKit via the serial interface, whether the system is used in a standalone configuration or as a PCIe device in a host system.
+
+In a standalone setup, the serial connection provides reliable access to the DevKit regardless of how it acquires an IP address. This ensures that developers retain control of the system for configuration, monitoring, and recovery tasks even if network connectivity is unavailable or misconfigured.
+
+In a PCIe setup, the serial interface offers direct access to the PCIe card's shell and debug consoles during bring-up. This is particularly useful for low-level control and troubleshooting when the host system or PCIe link is not yet fully operational.
+
+The serial interface is intended primarily for development and bring-up. Once the system has been fully configured and deployed, ongoing operation generally does not require a serial connection.
+
+Depending on the operating system of the developer's computer, different methods are available for connecting to the DevKit through the serial interface.
+
+<Tabs>
+<TabItem value="hardware" label="Hardware Setup" default>
+
+<div className="card-grid">
+  <div>
+    <img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="Modalix Early Access Kit" style={{width: '100%', borderRadius: 10}} />
+    <div style={{textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix Early Access Kit Connectors</div>
+  </div>
+  <div>
+    <img src="/img/devkit/modalix-devkit.png" alt="Modalix DevKit" style={{width: '100%', borderRadius: 10}} />
+    <div style={{textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit Connectors</div>
+  </div>
+  <div>
+    <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix EA PCIe Card" style={{width: '100%', borderRadius: 10}} />
+    <div style={{textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix EA PCIe Card Connectors</div>
+  </div>
+</div>
+
+Use the included serial cable to connect the DevKit to your computer:
+
+- One end connects to the DevKit's serial port.
+  - On the Modalix Early Access Kit, ensure the triangle mark on the flat connector aligns with the rightmost pin on the DevKit.
+  - On the Modalix DevKit, use the provided USB-A to USB-C cable to connect to the DevKit's **UART** port, as labeled on the enclosure.
+  - On the Modalix EA PCIe card, use the provided USB-A to UART cable to connect to the DevKit's ARM UART port, as described in the image above.
+- The other end connects to the computer's **USB Type-A** port, use a USB Hub if necessary.
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+To connect to the DevKit via a serial terminal on **Windows**, follow these steps:
+
+1. Identify the COM Port:
+   - Open **Device Manager** → Expand **Ports (COM & LPT)**.
+   - Look for an entry like **USB Serial Port (COMx)**.
+
+2. **Install and Open a Serial Terminal**:
+   - Use [PuTTY](https://www.putty.org/) or **Tera Term**.
+   - Set the connection type to **Serial**.
+   - Enter the correct **COM Port** (e.g., `COM3`).
+   - Set **Baud Rate** to `115200`.
+
+3. Click **Open** to start the connection.
+
+</TabItem>
+<TabItem value="mac-linux" label="MacOS & Linux Desktop">
+
+:::note
+Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+:::
+
+Use `sima-cli serial` command on Mac and Linux to connect to the serial port of the SiMa hardware.
+
+```console
+sima-cli serial
+```
+
+This command will install necessary dependencies on your computer to access serial port. To exit the serial terminal, press Ctrl + A then Ctrl + X.
+
+On some earlier firmware versions, the system may use a different baud rate for the serial console. If you see garbled output in the terminal, it's likely due to a mismatched baud rate. Try specifying a higher rate:
+
+```console
+sima-cli serial -b 921600
+```
+
+</TabItem>
+</Tabs>
+
+Once prompted to log in to the serial port console, use the default **username** `sima` and **password** `edgeai`.

@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiMa.ai Serial Console</title>
+    <link rel="icon" type="image/png" href="./media/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+
+        /* ── Fullscreen wrapper ──────────────────────────────────────────── */
+        #fullscreen-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-height: 0;
+        }
+        /* When this element is the fullscreen element it must fill the viewport
+           and supply its own background — the page body is no longer visible. */
+        #fullscreen-wrapper:fullscreen,
+        #fullscreen-wrapper:-webkit-full-screen {
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            padding: 0.75rem;
+            box-sizing: border-box;
+            overflow: hidden;
+            background: #111827; /* default dark; JS will flip for light mode */
+        }
+
+        /* ── Terminal area ───────────────────────────────────────────────── */
+        #terminal-area {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        #terminal-container {
+            flex-grow: 1;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Each terminal instance is absolutely stacked; only .active is shown */
+        .terminal-instance {
+            position: absolute;
+            inset: 0;
+            display: none;
+        }
+        .terminal-instance.active {
+            display: flex;
+        }
+        /* Make xterm fill its container */
+        .terminal-instance > .xterm,
+        .terminal-instance > div > .xterm {
+            width: 100%;
+            height: 100%;
+        }
+        .xterm .xterm-viewport { width: 100% !important; }
+        .xterm-viewport::-webkit-scrollbar { width: 6px; }
+        .xterm-viewport::-webkit-scrollbar-track { background: transparent; }
+        .xterm-viewport::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+
+        /* ── Tab strip ───────────────────────────────────────────────────── */
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: #6b7280;
+            border: 1px solid transparent;
+            border-bottom: none;
+            transition: color 0.15s, background 0.15s;
+            user-select: none;
+            white-space: nowrap;
+            max-width: 210px;
+        }
+        .tab:hover { color: #0891b2; background: rgba(8,145,178,0.07); }
+        .tab.active {
+            color: #0891b2;
+            background: #fff;
+            border-color: #d1d5db;
+            position: relative;
+            /* Cover the bottom border of the tab strip */
+            bottom: -1px;
+        }
+        .dark .tab { color: #9ca3af; }
+        .dark .tab:hover { color: #22d3ee; background: rgba(34,211,238,0.07); }
+        .dark .tab.active {
+            color: #22d3ee;
+            background: #000;
+            border-color: #374151;
+        }
+        .tab-title { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
+        .tab-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: #22c55e;
+            flex-shrink: 0;
+            box-shadow: 0 0 5px #22c55e88;
+        }
+        .tab-dot.closing { background: #f59e0b; box-shadow: 0 0 5px #f59e0b88; }
+        .tab-close {
+            flex-shrink: 0;
+            width: 1.2rem; height: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            line-height: 1;
+            transition: background 0.15s, color 0.15s;
+        }
+        .tab-close:hover { background: #fee2e2; color: #ef4444; }
+        .dark .tab-close:hover { background: rgba(239,68,68,0.2); color: #f87171; }
+
+        /* ── Toggle buttons (timestamp / auto-scroll) ────────────────────── */
+        .toggle-btn         { border-color: #d1d5db; color: #6b7280; }
+        .toggle-btn.on      { border-color: #0891b2 !important; color: #0891b2 !important; background: #ecfeff; }
+        .dark .toggle-btn   { border-color: #374151; color: #9ca3af; }
+        .dark .toggle-btn.on { border-color: #22d3ee !important; color: #22d3ee !important; background: rgba(34,211,238,0.08); }
+
+        /* ── Palette collapse animation ───────────────────────────────────── */
+        #palette-content-wrapper { overflow: hidden; }
+    </style>
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('theme') === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-200 dark:bg-gray-950 p-3 transition-colors duration-300">
+
+<!-- ═══════════════════════  MAIN CARD  ═══════════════════════ -->
+<div class="w-full max-w-[1600px] bg-gray-50 dark:bg-gray-900 rounded-2xl shadow-2xl flex flex-col h-[95vh] overflow-hidden border border-gray-200 dark:border-gray-700 transition-colors duration-300">
+
+    <!-- Not-supported banner -->
+    <div id="notSupported" class="hidden m-4 bg-red-100 dark:bg-red-900/40 border border-red-400 text-red-700 dark:text-red-300 p-4 rounded-xl" role="alert">
+        <h3 class="font-bold text-lg mb-1">Browser Not Supported</h3>
+        <p>This app requires the <strong>Web Serial API</strong>. Use <strong>Google Chrome</strong> or <strong>Microsoft Edge</strong>.</p>
+    </div>
+
+    <!-- ───────────────────────  APP  ─────────────────────────── -->
+    <div id="main-app" class="flex flex-col flex-grow min-h-0">
+
+        <!-- Header -->
+        <header class="flex items-center justify-between px-5 py-2.5 border-b border-gray-200 dark:border-gray-700 shrink-0 bg-white dark:bg-gray-900/80">
+            <div class="flex items-center gap-2.5">
+                <img src="./media/favicon.png" alt="SiMa.ai" class="h-7 w-7 rounded"
+                     onerror="this.onerror=null;this.src='https://placehold.co/28x28/0891b2/ffffff?text=S';">
+                <span class="font-bold text-base text-cyan-600 dark:text-cyan-400 tracking-tight">SiMa.ai Serial Console</span>
+            </div>
+            <!-- Status badges -->
+            <div id="status-bar" class="hidden items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
+                <span id="status-conn-count"></span>
+                <span id="status-baud"></span>
+                <span id="status-ts" class="hidden text-cyan-500 font-semibold">TS ON</span>
+            </div>
+            <!-- Header actions -->
+            <div class="flex items-center gap-1">
+                <button id="themeToggleButton" title="Toggle light/dark" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg class="w-4.5 h-4.5 block dark:hidden w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+                <button id="fullscreenButton" title="Toggle fullscreen" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg id="fs-expand"   class="w-5 h-5"        fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v4m0 0h-4m4 0l-5-5"/></svg>
+                    <svg id="fs-compress" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"/></svg>
+                </button>
+                <button id="helpButton" title="Help" class="p-1.5 rounded-lg text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- ════════  FULLSCREEN ZONE (terminal + palette)  ════════ -->
+        <div id="fullscreen-wrapper" class="flex flex-col flex-grow min-h-0 p-3 gap-3">
+
+            <!-- Exit-fullscreen button — only visible when in fullscreen -->
+            <button id="exitFullscreenButton" title="Exit fullscreen" class="hidden fixed top-3 right-3 z-50 p-1.5 rounded-lg bg-gray-800/70 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"/></svg>
+            </button>
+
+            <!-- Terminal card -->
+            <div id="terminal-area" class="bg-white dark:bg-black rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col min-h-0">
+
+                <!-- Tab strip -->
+                <div id="tabs-container" class="flex items-end gap-0 pl-2 pt-1 min-h-[2.25rem] border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 overflow-x-auto shrink-0">
+                    <!-- tabs injected here -->
+                    <button id="new-tab-btn" title="New connection"
+                            class="self-center ml-1 mb-0.5 p-1.5 rounded-md text-gray-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    </button>
+                </div>
+
+                <!-- Terminals stacked -->
+                <div id="terminal-container" class="flex-grow min-h-0 relative bg-white dark:bg-black">
+                    <div id="initial-message" class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-gray-300 dark:text-gray-700 select-none pointer-events-none">
+                        <svg class="w-14 h-14 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        <p class="text-sm font-medium">Press <span class="text-cyan-500 font-semibold">+ New Connection</span> to connect a device</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ──────────────  Command palette  ───────────────── -->
+            <div id="commandPalette" class="shrink-0 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                <!-- Palette header -->
+                <div class="flex items-center justify-between px-3 py-1.5 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
+                    <span class="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">Command Palette</span>
+                    <button id="togglePaletteButton" class="text-xs text-cyan-600 dark:text-cyan-400 hover:underline">Hide</button>
+                </div>
+
+                <div id="palette-content-wrapper" class="px-3 py-2.5 space-y-2">
+
+                    <!-- Row 1: connections + quick-send -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button id="newConnectionButton"
+                                class="inline-flex items-center gap-1.5 bg-cyan-600 hover:bg-cyan-700 active:bg-cyan-800 text-white text-sm font-semibold py-1.5 px-3 rounded-lg transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                            New Connection
+                        </button>
+                        <button id="settingsButton"
+                                class="inline-flex items-center gap-1.5 bg-gray-500 hover:bg-gray-600 text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                            Settings
+                        </button>
+
+                        <div class="h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
+
+                        <!-- Quick-send bar -->
+                        <div class="flex flex-grow min-w-[260px]">
+                            <input id="quickSendInput" type="text" placeholder="Quick send…"
+                                   class="flex-grow min-w-0 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-l-lg px-3 py-1.5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-500 font-mono" />
+                            <select id="lineEndingSelect" title="Line ending"
+                                    class="bg-white dark:bg-gray-900 border-t border-b border-gray-300 dark:border-gray-600 px-1.5 py-1.5 text-xs text-gray-500 dark:text-gray-400 focus:outline-none focus:ring-1 focus:ring-cyan-500 cursor-pointer">
+                                <option value="crlf">CR+LF</option>
+                                <option value="lf">LF</option>
+                                <option value="cr">CR</option>
+                                <option value="none">None</option>
+                            </select>
+                            <button id="quickSendButton"
+                                    class="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-semibold py-1.5 px-3 rounded-r-lg transition-colors">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: device commands + utilities -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-medium text-gray-400 dark:text-gray-500 uppercase tracking-wide hidden sm:block">Device:</span>
+                        <button id="loginButton"     class="bg-teal-600   hover:bg-teal-700   text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">Login</button>
+                        <button id="networkingButton" class="bg-sky-600   hover:bg-sky-700    text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">ifconfig</button>
+                        <button id="diskSpaceButton" class="bg-purple-600  hover:bg-purple-700 text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">df -h</button>
+                        <button id="buildButton"     class="bg-slate-600   hover:bg-slate-700  text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">Build Info</button>
+                        <button id="logoutButton"    class="bg-amber-600   hover:bg-amber-700  text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">Logout</button>
+                        <button id="resetDtrButton" title="Pulse DTR low→high to reset device"
+                                class="inline-flex items-center gap-1.5 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            Reset DTR
+                        </button>
+
+                        <div class="h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
+
+                        <button id="clearLogButton"
+                                class="inline-flex items-center gap-1.5 bg-red-700 hover:bg-red-800 text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                            Clear
+                        </button>
+                        <button id="copyLogButton"
+                                class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                            Copy
+                        </button>
+                        <button id="exportLogButton"
+                                class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-1.5 px-3 rounded-lg transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Export Log
+                        </button>
+                        <button id="timestampButton" title="Toggle timestamps on received lines"
+                                class="toggle-btn inline-flex items-center gap-1.5 text-sm font-medium py-1.5 px-3 rounded-lg transition-colors border">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            Timestamps
+                        </button>
+                        <button id="autoScrollButton" title="Toggle auto-scroll to bottom"
+                                class="toggle-btn on inline-flex items-center gap-1.5 text-sm font-medium py-1.5 px-3 rounded-lg transition-colors border">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                            Auto-scroll
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /fullscreen-wrapper -->
+    </div><!-- /main-app -->
+</div><!-- /main card -->
+
+<!-- ═══════════════════  SETTINGS MODAL  ═══════════════════ -->
+<div id="settingsModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 space-y-4 w-full max-w-sm border border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold text-cyan-600 dark:text-cyan-400">Connection Settings</h2>
+        <div>
+            <label for="baudRate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Baud Rate</label>
+            <select id="baudRate" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option>9600</option><option>38400</option><option>57600</option>
+                <option selected>115200</option><option>230400</option><option>460800</option><option>921600</option>
+            </select>
+        </div>
+        <div>
+            <label for="flowControl" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Flow Control</label>
+            <select id="flowControl" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="none" selected>None</option><option value="hardware">Hardware</option>
+            </select>
+        </div>
+        <div>
+            <label for="fontSizeSelect" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Terminal Font Size</label>
+            <select id="fontSizeSelect" class="w-full bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                <option value="11">11 px</option><option value="12">12 px</option><option value="13">13 px</option>
+                <option value="14" selected>14 px</option><option value="15">15 px</option>
+                <option value="16">16 px</option><option value="18">18 px</option>
+            </select>
+        </div>
+        <button id="closeSettingsButton" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Done</button>
+    </div>
+</div>
+
+<!-- ═══════════════════  HELP MODAL  ═══════════════════ -->
+<div id="helpModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 hidden z-50">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 space-y-4 w-full max-w-2xl max-h-[88vh] overflow-y-auto border border-gray-200 dark:border-gray-700">
+        <h2 class="text-2xl font-bold text-cyan-600 dark:text-cyan-400">How to Use</h2>
+        <div class="space-y-4 text-sm text-gray-700 dark:text-gray-300">
+            <section>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-base mb-1">Getting Started</h3>
+                <ol class="list-decimal list-inside pl-2 space-y-1">
+                    <li>Use <strong>Chrome</strong> or <strong>Edge</strong> — Web Serial API is required.</li>
+                    <li>Connect your SiMa.ai Devkit via USB.</li>
+                </ol>
+            </section>
+            <section>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-base mb-1">Connecting</h3>
+                <ol class="list-decimal list-inside pl-2 space-y-1">
+                    <li>Click <strong>+ New Connection</strong> or the <strong>+</strong> in the tab strip.</li>
+                    <li>Select the serial port from the browser popup.</li>
+                    <li>Auto-login runs if a <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">login:</code> prompt is detected.</li>
+                    <li>Repeat for additional devices — each gets its own tab.</li>
+                </ol>
+            </section>
+            <section>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-base mb-1">Features</h3>
+                <ul class="list-disc list-inside pl-2 space-y-1">
+                    <li><strong>Quick Send:</strong> Type a command + press Enter or Send. Choose line ending (CR+LF, LF, CR, None).</li>
+                    <li><strong>Timestamps:</strong> Prefix each received line with the current time.</li>
+                    <li><strong>Auto-scroll:</strong> Toggle to pin or unlock scroll position.</li>
+                    <li><strong>Reset DTR:</strong> Pulses the DTR line low then high — triggers a reset on most embedded boards.</li>
+                    <li><strong>Font Size:</strong> Configurable in Settings (takes effect on new connections).</li>
+                    <li><strong>Fullscreen:</strong> Header button — terminal fills the entire screen.</li>
+                </ul>
+            </section>
+            <section>
+                <h3 class="font-semibold text-gray-900 dark:text-white text-base mb-1">Disconnecting</h3>
+                <p>Click <strong>×</strong> on a tab — sends <code class="bg-gray-100 dark:bg-gray-700 px-1 rounded">logout</code> then closes the port.</p>
+            </section>
+        </div>
+        <button id="closeHelpButton" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Got it!</button>
+    </div>
+</div>
+
+<!-- ═══════════════════════  SCRIPT  ═══════════════════════ -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Browser check ──────────────────────────────────────────────────
+    const mainApp     = document.getElementById('main-app');
+    const notSupported = document.getElementById('notSupported');
+    if (!('serial' in navigator)) {
+        mainApp.classList.add('hidden');
+        notSupported.classList.remove('hidden');
+        return;
+    }
+
+    // ── Element references ─────────────────────────────────────────────
+    const newConnectionButton  = document.getElementById('newConnectionButton');
+    const newTabBtn            = document.getElementById('new-tab-btn');
+    const fullscreenButton     = document.getElementById('fullscreenButton');
+    const exitFullscreenButton = document.getElementById('exitFullscreenButton');
+    const fsExpand             = document.getElementById('fs-expand');
+    const fsCompress           = document.getElementById('fs-compress');
+    const themeToggleButton    = document.getElementById('themeToggleButton');
+    const fullscreenWrapper    = document.getElementById('fullscreen-wrapper');
+    const tabsContainer        = document.getElementById('tabs-container');
+    const terminalsContainer   = document.getElementById('terminal-container');
+    const initialMessage       = document.getElementById('initial-message');
+    const settingsButton       = document.getElementById('settingsButton');
+    const settingsModal        = document.getElementById('settingsModal');
+    const closeSettingsButton  = document.getElementById('closeSettingsButton');
+    const baudRateSelect       = document.getElementById('baudRate');
+    const flowControlSelect    = document.getElementById('flowControl');
+    const fontSizeSelect       = document.getElementById('fontSizeSelect');
+    const helpButton           = document.getElementById('helpButton');
+    const helpModal            = document.getElementById('helpModal');
+    const closeHelpButton      = document.getElementById('closeHelpButton');
+    const clearLogButton       = document.getElementById('clearLogButton');
+    const copyLogButton        = document.getElementById('copyLogButton');
+    const exportLogButton      = document.getElementById('exportLogButton');
+    const loginButton          = document.getElementById('loginButton');
+    const networkingButton     = document.getElementById('networkingButton');
+    const diskSpaceButton      = document.getElementById('diskSpaceButton');
+    const buildButton          = document.getElementById('buildButton');
+    const logoutButton         = document.getElementById('logoutButton');
+    const togglePaletteButton  = document.getElementById('togglePaletteButton');
+    const paletteContentWrapper= document.getElementById('palette-content-wrapper');
+    const quickSendInput       = document.getElementById('quickSendInput');
+    const lineEndingSelect     = document.getElementById('lineEndingSelect');
+    const quickSendButton      = document.getElementById('quickSendButton');
+    const timestampButton      = document.getElementById('timestampButton');
+    const autoScrollButton     = document.getElementById('autoScrollButton');
+    const resetDtrButton       = document.getElementById('resetDtrButton');
+    const statusBar            = document.getElementById('status-bar');
+    const statusConnCount      = document.getElementById('status-conn-count');
+    const statusBaud           = document.getElementById('status-baud');
+    const statusTs             = document.getElementById('status-ts');
+
+    // ── Terminal themes ─────────────────────────────────────────────────
+    const darkTheme = {
+        background: '#000000', foreground: '#cccccc',
+        cursor: '#cccccc', cursorAccent: '#000000',
+        selectionBackground: '#3b5368',
+    };
+    const lightTheme = {
+        background: '#ffffff', foreground: '#1f2937',
+        cursor: '#374151', cursorAccent: '#ffffff',
+        selectionBackground: '#bfdbfe',
+    };
+
+    // ── App state ───────────────────────────────────────────────────────
+    let connections       = [];
+    let activeConnectionId = null;
+    let timestampsEnabled  = false;
+    let autoScrollEnabled  = true;
+
+    function isDark() { return document.documentElement.classList.contains('dark'); }
+    function currentTheme() { return isDark() ? darkTheme : lightTheme; }
+    function getActiveConnection() { return connections.find(c => c.id === activeConnectionId); }
+
+    // ── Status bar ──────────────────────────────────────────────────────
+    function updateStatusBar() {
+        if (connections.length === 0) { statusBar.classList.add('hidden'); return; }
+        statusBar.classList.remove('hidden');
+        statusConnCount.textContent = `${connections.length} device${connections.length !== 1 ? 's' : ''}`;
+        const a = getActiveConnection();
+        statusBaud.textContent = a ? `${a.baudRate} baud` : '';
+        statusTs.classList.toggle('hidden', !timestampsEnabled);
+    }
+
+    // ── Tab switching ───────────────────────────────────────────────────
+    // Uses CSS class 'active' + position:absolute stacking — no inline
+    // display juggling that causes xterm measurement bugs.
+    function switchTab(id) {
+        activeConnectionId = id;
+        connections.forEach(conn => {
+            const isActive = conn.id === id;
+            conn.tabElement.classList.toggle('active', isActive);
+            conn.terminalContainer.classList.toggle('active', isActive);
+        });
+        const active = getActiveConnection();
+        if (active) {
+            // rAF ensures the element is visible before xterm measures it
+            requestAnimationFrame(() => {
+                active.fitAddon.fit();
+                active.term.focus();
+            });
+        }
+        updateStatusBar();
+    }
+
+    // ── Create connection ───────────────────────────────────────────────
+    async function createNewConnection() {
+        try {
+            const port = await navigator.serial.requestPort();
+            const portInfo = port.getInfo();
+            const baud = parseInt(baudRateSelect.value);
+            await port.open({ baudRate: baud, flowControl: flowControlSelect.value });
+
+            const id = Date.now();
+            const connection = {
+                id, port, baud,
+                baudRate: baud,
+                writer: port.writable.getWriter(),
+                reader: null,
+                readLoopPromise: null,
+                isCheckingLogin: true,
+                loginCheckBuffer: '',
+                loginCheckTimeout: null,
+                atLineStart: true,   // used by timestamp injection
+            };
+
+            // Hide empty-state message
+            initialMessage.style.display = 'none';
+
+            // ── Build tab element ──
+            const tabElement = document.createElement('div');
+            tabElement.className = 'tab';
+            tabElement.dataset.id = id;
+
+            const dot = document.createElement('span');
+            dot.className = 'tab-dot';
+
+            const title = document.createElement('span');
+            title.className = 'tab-title';
+            const vid = portInfo.usbVendorId  ? portInfo.usbVendorId.toString(16).padStart(4, '0')  : '????';
+            const pid = portInfo.usbProductId ? portInfo.usbProductId.toString(16).padStart(4, '0') : '????';
+            title.textContent = `${vid}:${pid}  ${baud}`;
+
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'tab-close';
+            closeBtn.innerHTML = '&times;';
+            closeBtn.title = 'Disconnect';
+
+            tabElement.append(dot, title, closeBtn);
+            // Insert before the + button
+            tabsContainer.insertBefore(tabElement, newTabBtn);
+
+            // ── Build terminal container ──
+            const terminalContainer = document.createElement('div');
+            terminalContainer.className = 'terminal-instance';
+            terminalsContainer.appendChild(terminalContainer);
+
+            const term = new Terminal({
+                cursorBlink:  true,
+                convertEol:   true,
+                fontFamily:   '"Fira Code", "Cascadia Code", Consolas, monospace',
+                fontSize:     parseInt(fontSizeSelect.value) || 14,
+                scrollback:   100000,
+                theme:        currentTheme(),
+            });
+            const fitAddon = new FitAddon.FitAddon();
+            term.loadAddon(fitAddon);
+            term.open(terminalContainer);
+
+            Object.assign(connection, { term, fitAddon, tabElement, terminalContainer, dot });
+            connections.push(connection);
+            switchTab(id);
+
+            term.write(`\r\n\x1b[36m[SYSTEM]\x1b[0m Connected at ${baud} baud  (${vid}:${pid})\r\n`);
+
+            // Forward keystrokes to device
+            term.onData(async data => {
+                if (!connection.writer) return;
+                try { await connection.writer.write(new TextEncoder().encode(data)); }
+                catch (e) { term.write(`\r\n\x1b[31m[SYSTEM]\x1b[0m Write error: ${e.message}\r\n`); }
+            });
+
+            tabElement.addEventListener('click', () => switchTab(id));
+            closeBtn.addEventListener('click', e => { e.stopPropagation(); disconnect(id); });
+
+            // Auto-login
+            term.write('\x1b[36m[SYSTEM]\x1b[0m Checking login status…\r\n');
+            await connection.writer.write(new TextEncoder().encode('\r'));
+            connection.loginCheckTimeout = setTimeout(() => {
+                if (connection.isCheckingLogin) {
+                    term.write('\x1b[36m[SYSTEM]\x1b[0m No login prompt — assuming logged in.\r\n');
+                    connection.isCheckingLogin = false;
+                }
+            }, 1500);
+
+            connection.readLoopPromise = listenForData(connection);
+            updateStatusBar();
+
+        } catch (err) {
+            if (err.name !== 'NotFoundError') console.error('Failed to connect:', err);
+        }
+    }
+
+    // ── Disconnect ──────────────────────────────────────────────────────
+    async function disconnect(id) {
+        const idx = connections.findIndex(c => c.id === id);
+        if (idx === -1) return;
+        const conn = connections[idx];
+
+        conn.dot.classList.add('closing');
+        conn.term.write('\r\n\x1b[36m[SYSTEM]\x1b[0m Logging out and disconnecting…\r\n');
+        await sendCommand('logout', conn);
+        await sleep(500);
+
+        clearTimeout(conn.loginCheckTimeout);
+        try { await conn.reader?.cancel(); }  catch {}
+        try { await conn.writer?.close(); }   catch {}
+        await conn.readLoopPromise;
+        try { await conn.port.close(); }       catch {}
+
+        conn.tabElement.remove();
+        conn.terminalContainer.remove();
+        connections.splice(idx, 1);
+
+        if (activeConnectionId === id) {
+            if (connections.length > 0) {
+                switchTab(connections[Math.max(0, idx - 1)].id);
+            } else {
+                activeConnectionId = null;
+                initialMessage.style.display = '';   // reveal empty-state
+            }
+        }
+        updateStatusBar();
+    }
+
+    // ── Read loop ───────────────────────────────────────────────────────
+    async function listenForData(connection) {
+        connection.reader = connection.port.readable.getReader();
+        try {
+            while (true) {
+                const { value, done } = await connection.reader.read();
+                if (done) break;
+                let text = new TextDecoder().decode(value, { stream: true });
+
+                // Auto-login detection
+                if (connection.isCheckingLogin) {
+                    connection.loginCheckBuffer += text;
+                    if (connection.loginCheckBuffer.includes('login:')) {
+                        connection.term.write('\r\n\x1b[36m[SYSTEM]\x1b[0m Login prompt detected — auto-logging in…\r\n');
+                        connection.isCheckingLogin = false;
+                        clearTimeout(connection.loginCheckTimeout);
+                        (async () => {
+                            await sendCommand('sima', connection);
+                            await sleep(500);
+                            await sendCommand('edgeai', connection);
+                        })();
+                    }
+                }
+
+                // Optional timestamp injection
+                if (timestampsEnabled) {
+                    text = injectTimestamps(text, connection);
+                }
+
+                connection.term.write(text);
+
+                if (autoScrollEnabled) connection.term.scrollToBottom();
+            }
+        } catch (err) {
+            console.log('Read loop ended:', err?.message ?? err);
+        } finally {
+            connection.reader?.releaseLock();
+        }
+    }
+
+    // Inject timestamps at start of each new line in the stream.
+    // Tracks `atLineStart` across chunks to avoid double-stamping.
+    function injectTimestamps(text, conn) {
+        const stamp = () => `\x1b[2m[${new Date().toLocaleTimeString()}]\x1b[0m `;
+        let out = '';
+        for (const ch of text) {
+            if (conn.atLineStart && ch !== '\r' && ch !== '\n') {
+                out += stamp();
+                conn.atLineStart = false;
+            }
+            out += ch;
+            if (ch === '\n') conn.atLineStart = true;
+        }
+        return out;
+    }
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function getLineEnding() {
+        return { crlf: '\r\n', lf: '\n', cr: '\r', none: '' }[lineEndingSelect.value] ?? '\r\n';
+    }
+
+    async function sendCommand(command, conn = getActiveConnection()) {
+        if (!conn?.writer) {
+            getActiveConnection()?.term.write('\r\n\x1b[31m[SYSTEM]\x1b[0m Not connected.\r\n');
+            return;
+        }
+        try { await conn.writer.write(new TextEncoder().encode(command + '\r')); }
+        catch (e) { conn.term.write(`\r\n\x1b[31m[SYSTEM]\x1b[0m Send error: ${e.message}\r\n`); }
+    }
+
+    async function quickSend() {
+        const text = quickSendInput.value;
+        if (!text) return;
+        const conn = getActiveConnection();
+        if (!conn?.writer) {
+            conn?.term.write('\r\n\x1b[31m[SYSTEM]\x1b[0m Not connected.\r\n');
+            return;
+        }
+        try {
+            await conn.writer.write(new TextEncoder().encode(text + getLineEnding()));
+            quickSendInput.value = '';
+        } catch (e) {
+            conn.term.write(`\r\n\x1b[31m[SYSTEM]\x1b[0m Send error: ${e.message}\r\n`);
+        }
+    }
+
+    // ── ResizeObserver — refit active terminal whenever the container
+    //    changes size (palette collapse, window resize, fullscreen, etc.)
+    const resizeObserver = new ResizeObserver(() => {
+        const active = getActiveConnection();
+        if (active) active.fitAddon.fit();
+    });
+    resizeObserver.observe(terminalsContainer);
+
+    // ── Event wiring ────────────────────────────────────────────────────
+
+    // New connection
+    newConnectionButton.addEventListener('click', createNewConnection);
+    newTabBtn.addEventListener('click', createNewConnection);
+
+    // Settings modal
+    settingsButton.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+    closeSettingsButton.addEventListener('click', () => settingsModal.classList.add('hidden'));
+    settingsModal.addEventListener('click', e => { if (e.target === settingsModal) settingsModal.classList.add('hidden'); });
+
+    // Help modal
+    helpButton.addEventListener('click', () => helpModal.classList.remove('hidden'));
+    closeHelpButton.addEventListener('click', () => helpModal.classList.add('hidden'));
+    helpModal.addEventListener('click', e => { if (e.target === helpModal) helpModal.classList.add('hidden'); });
+
+    // Fullscreen
+    fullscreenButton.addEventListener('click', () => {
+        if (document.fullscreenElement) document.exitFullscreen();
+        else fullscreenWrapper.requestFullscreen();
+    });
+    exitFullscreenButton.addEventListener('click', () => document.exitFullscreen());
+
+    document.addEventListener('fullscreenchange', () => {
+        const fs = !!document.fullscreenElement;
+        fsExpand.classList.toggle('hidden', fs);
+        fsCompress.classList.toggle('hidden', !fs);
+        exitFullscreenButton.classList.toggle('hidden', !fs);
+        // Apply background to fullscreen element based on current theme
+        if (fs) {
+            fullscreenWrapper.style.background = isDark() ? '#111827' : '#f3f4f6';
+        } else {
+            fullscreenWrapper.style.background = '';
+        }
+        // Give the browser a full frame to relayout, then fit all terminals
+        setTimeout(() => connections.forEach(c => c.fitAddon.fit()), 150);
+    });
+
+    // Theme toggle
+    themeToggleButton.addEventListener('click', () => {
+        const dark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        const theme = dark ? darkTheme : lightTheme;
+        connections.forEach(c => { c.term.options.theme = theme; });
+        // Update fullscreen background if currently fullscreen
+        if (document.fullscreenElement) {
+            fullscreenWrapper.style.background = dark ? '#111827' : '#f3f4f6';
+        }
+    });
+
+    // ── Terminal buffer helpers ─────────────────────────────────────────
+    function getTerminalText(conn) {
+        const buf = conn.term.buffer.active;
+        const lines = [];
+        for (let i = 0; i < buf.length; i++) {
+            lines.push(buf.getLine(i)?.translateToString(true) ?? '');
+        }
+        // Trim trailing blank lines
+        while (lines.length && lines[lines.length - 1] === '') lines.pop();
+        return lines.join('\n');
+    }
+
+    // Device commands
+    clearLogButton.addEventListener('click', () => getActiveConnection()?.term.clear());
+
+    copyLogButton.addEventListener('click', async () => {
+        const conn = getActiveConnection();
+        if (!conn) return;
+        const text = getTerminalText(conn);
+        await navigator.clipboard.writeText(text);
+        const orig = copyLogButton.innerHTML;
+        copyLogButton.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg> Copied!';
+        setTimeout(() => { copyLogButton.innerHTML = orig; }, 1500);
+    });
+
+    exportLogButton.addEventListener('click', () => {
+        const conn = getActiveConnection();
+        if (!conn) return;
+        const text = getTerminalText(conn);
+        const ts = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+        const filename = `serial-log-${ts}.log`;
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+    loginButton.addEventListener('click', async () => { await sendCommand('sima'); await sleep(500); await sendCommand('edgeai'); });
+    networkingButton.addEventListener('click', () => sendCommand('ifconfig'));
+    diskSpaceButton.addEventListener('click', () => sendCommand('df -h'));
+    buildButton.addEventListener('click', () => sendCommand('cat /etc/buildinfo'));
+    logoutButton.addEventListener('click', () => sendCommand('logout'));
+
+    // DTR reset — pulse low then high to trigger board reset on most MCUs
+    resetDtrButton.addEventListener('click', async () => {
+        const conn = getActiveConnection();
+        if (!conn?.port) { return; }
+        try {
+            await conn.port.setSignals({ dataTerminalReady: false });
+            await sleep(150);
+            await conn.port.setSignals({ dataTerminalReady: true });
+            conn.term.write('\r\n\x1b[36m[SYSTEM]\x1b[0m DTR pulsed — reset signal sent.\r\n');
+        } catch (e) {
+            conn.term.write(`\r\n\x1b[31m[SYSTEM]\x1b[0m DTR error: ${e.message}\r\n`);
+        }
+    });
+
+    // Quick send
+    quickSendButton.addEventListener('click', quickSend);
+    quickSendInput.addEventListener('keydown', e => { if (e.key === 'Enter') quickSend(); });
+
+    // Timestamps toggle
+    timestampButton.addEventListener('click', () => {
+        timestampsEnabled = !timestampsEnabled;
+        timestampButton.classList.toggle('on', timestampsEnabled);
+        // Reset line-start tracker on all connections to avoid stale state
+        connections.forEach(c => { c.atLineStart = true; });
+        updateStatusBar();
+    });
+
+    // Auto-scroll toggle (default: ON — button already has class 'on' in HTML)
+    autoScrollButton.addEventListener('click', () => {
+        autoScrollEnabled = !autoScrollEnabled;
+        autoScrollButton.classList.toggle('on', autoScrollEnabled);
+    });
+
+    // Palette show/hide
+    togglePaletteButton.addEventListener('click', () => {
+        const hidden = paletteContentWrapper.classList.toggle('hidden');
+        togglePaletteButton.textContent = hidden ? 'Show' : 'Hide';
+        // Refit after transition
+        setTimeout(() => connections.forEach(c => c.fitAddon.fit()), 120);
+    });
+
+    // Live font-size change — applies to all open terminals
+    fontSizeSelect.addEventListener('change', () => {
+        const sz = parseInt(fontSizeSelect.value);
+        connections.forEach(c => { c.term.options.fontSize = sz; c.fitAddon.fit(); });
+    });
+
+});
+</script>
+</body>
+</html>
