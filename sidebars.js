@@ -3,48 +3,30 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   systemDocs: [
+    'hardware/index',
     {
       type: 'category',
       label: 'Getting Started',
       collapsible: true,
-      collapsed: false,
+      collapsed: true,
       items: [
-        'hardware/index',
+        {
+          type: 'link',
+          label: 'Quick Start Guide',
+          href: 'pathname:///tools/qsg/index.html',
+        },
         'hardware/getting-started/setup-devkit',
         'hardware/getting-started/setup-serial',
-        {
-          type: 'category',
-          label: 'Standalone Mode',
-          collapsible: true,
-          collapsed: false,
-          items: [
-            'hardware/getting-started/standalone-mode/index',
-            'hardware/getting-started/standalone-mode/network',
-            'hardware/getting-started/standalone-mode/nvme',
-            'hardware/getting-started/standalone-mode/mipi',
-          ],
-        },
+        'hardware/getting-started/standalone-mode/index',
         'hardware/getting-started/pcie-mode',
-        {
-          type: 'category',
-          label: 'Firmware Update',
-          collapsible: true,
-          collapsed: false,
-          items: [
-            'hardware/getting-started/firmware-update/index',
-            'hardware/getting-started/firmware-update/netboot',
-            'hardware/getting-started/firmware-update/sima-cli',
-            'hardware/getting-started/firmware-update/bootimage',
-            'hardware/getting-started/firmware-update/os',
-          ],
-        },
+        'hardware/getting-started/firmware-update/index',
       ],
     },
     {
       type: 'category',
       label: 'DevKit Variants',
       collapsible: true,
-      collapsed: false,
+      collapsed: true,
       items: [
         'hardware/devkit/modalix-devkit',
         'hardware/devkit/modalix-ea-kit',
@@ -55,7 +37,7 @@ const sidebars = {
       type: 'category',
       label: 'Tools',
       collapsible: true,
-      collapsed: false,
+      collapsed: true,
       items: [
         'hardware/tools/web-serial-console',
       ],
@@ -64,14 +46,14 @@ const sidebars = {
       type: 'category',
       label: 'References',
       collapsible: true,
-      collapsed: false,
+      collapsed: true,
       items: [
         'hardware/reference/bsp',
         {
           type: 'category',
           label: 'Tech Notes',
           collapsible: true,
-          collapsed: false,
+          collapsed: true,
           items: [
             'hardware/reference/tech-notes/index',
             'hardware/reference/tech-notes/nfs',

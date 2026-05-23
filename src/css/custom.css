@@ -29,6 +29,97 @@ html[data-theme='dark'] {
   border-top: 1px solid rgba(28, 47, 58, 0.1);
 }
 
+.markdown table {
+  border-collapse: collapse;
+  border: 0;
+  width: 100%;
+  margin: 1.25rem 0;
+}
+
+.markdown table:first-child {
+  margin-top: 0;
+}
+
+.markdown table:last-child {
+  margin-bottom: 0;
+}
+
+.markdown table th,
+.markdown table td {
+  border: 0;
+  padding: 10px 14px;
+}
+
+.markdown table thead {
+  background: transparent;
+}
+
+.markdown table thead th {
+  border-bottom: 2px solid rgba(28, 47, 58, 0.55);
+  font-weight: 600;
+  text-align: left;
+}
+
+.markdown table tbody tr {
+  border-bottom: 1px solid rgba(28, 47, 58, 0.12);
+}
+
+.markdown table tbody tr:last-child {
+  border-bottom: 0;
+}
+
+html[data-theme='dark'] .markdown table thead th {
+  border-bottom-color: rgba(255, 255, 255, 0.45);
+}
+
+html[data-theme='dark'] .markdown table tbody tr {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.tabs-container {
+  border: 1px solid rgba(28, 47, 58, 0.18);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 2rem 0;
+  background: var(--ifm-background-surface-color, #fff);
+}
+
+.tabs-container > ul.tabs {
+  margin: 0;
+  padding: 0 0.5rem;
+  border-bottom: 1px solid rgba(28, 47, 58, 0.18);
+  background: rgba(28, 47, 58, 0.04);
+}
+
+.tabs-container > [role='tabpanel'] {
+  padding: 2rem 2.75rem 2.5rem !important;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
+}
+
+.tabs-container > [role='tabpanel'] table {
+  table-layout: auto;
+  word-break: break-word;
+}
+
+.tabs-container > [role='tabpanel'] > *:first-child {
+  margin-top: 0;
+}
+
+.tabs-container > [role='tabpanel'] > *:last-child {
+  margin-bottom: 0;
+}
+
+html[data-theme='dark'] .tabs-container {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+html[data-theme='dark'] .tabs-container > ul.tabs {
+  border-bottom-color: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .docs-button {
   display: inline-block;
   padding: 0.55rem 1.1rem;

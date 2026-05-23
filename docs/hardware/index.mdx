@@ -7,6 +7,7 @@ slug: /hardware/
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # SiMa.ai Hardware Documentation
 
@@ -50,7 +51,7 @@ SiMa.ai offers a portfolio of MLSoC Modalix-based development kits and products 
 | --- | --- | --- | --- |
 | **Documentation & OS** | | | |
 | Product Brief | [view](https://sima.ai/wp-content/uploads/2025/05/SoM-Product-Brief.pdf) | [view](https://sima.ai/wp-content/uploads/2025/05/Modalix-SoC-Product-Brief_May-20-2025.pdf) | — |
-| Preloaded Operating System | [eLxr Linux](/docs/hardware/getting-started/firmware-update/os) | [eLxr Linux](/docs/hardware/getting-started/firmware-update/os) | [eLxr Linux](/docs/hardware/getting-started/firmware-update/os) |
+| Preloaded Operating System | [eLxr Linux](/docs/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/docs/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/docs/hardware/getting-started/firmware-update/#os) |
 | **Compute** | | | |
 | ARM Cores | 8x ARM Cortex-A65 @ 1.4GHz | 8x ARM Cortex-A65 @ 1.4GHz | 8x ARM Cortex-A65 @ 1.4GHz |
 | ISP (Image Signal Processor) | ARM C-71 @ 1.2 GHz | ARM C-71 @ 1.2 GHz | ARM C-71 @ 1.2 GHz |
@@ -143,7 +144,7 @@ In this architecture, the MLSoC Modalix functions as a PCIe card that integrates
 Pick the path that matches your setup. Each guide covers serial-console access, network bring-up, and firmware management for that mode.
 
 <div className="card-grid">
-  <a className="card" href="pathname:///tools/qsg/index.html" target="_blank" rel="noreferrer">
+  <a className="card" href={useBaseUrl('/tools/qsg/index.html')} target="_blank" rel="noreferrer">
     <h4>Quick Start Guide</h4>
     <p>Step-by-step interactive walkthrough for first-time DevKit bring-up.</p>
   </a>
