@@ -74,7 +74,7 @@ export function initializeCloudFrontRouteNavigation() {
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      const pathname = shellConfig.normalizePath(url.pathname) + '/';
+      const pathname = shellConfig.normalizePath(url.pathname);
       window.location.assign(`${pathname}${url.search}${url.hash}`);
     },
     true,

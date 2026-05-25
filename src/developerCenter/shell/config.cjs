@@ -1,8 +1,8 @@
 const SECTION_ROUTES = {
   home: '/',
   hardware: '/hardware',
-  software: '/software/',
-  examples: '/examples/',
+  software: '/software',
+  examples: '/examples',
 };
 
 const EXTERNAL_ROUTES = {

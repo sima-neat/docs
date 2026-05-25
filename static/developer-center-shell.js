@@ -2,8 +2,8 @@
   const DEFAULT_MANIFEST = {
     navItems: [
       {key: 'hardware', label: 'Hardware', href: '/hardware', external: false},
-      {key: 'software', label: 'Software', href: '/software/', external: false},
-      {key: 'examples', label: 'Examples', href: '/examples/', external: false},
+      {key: 'software', label: 'Software', href: '/software', external: false},
+      {key: 'examples', label: 'Examples', href: '/examples', external: false},
       {key: 'models', label: 'Models', href: 'https://huggingface.co/simaai', external: true},
       {key: 'community', label: 'Community', href: 'https://developer.sima.ai', external: true},
     ],

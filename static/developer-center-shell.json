@@ -7,8 +7,8 @@
   "routes": {
     "home": "/",
     "hardware": "/hardware",
-    "software": "/software/",
-    "examples": "/examples/"
+    "software": "/software",
+    "examples": "/examples"
   },
   "navItems": [
     {
@@ -20,13 +20,13 @@
     {
       "key": "software",
       "label": "Software",
-      "href": "/software/",
+      "href": "/software",
       "external": false
     },
     {
       "key": "examples",
       "label": "Examples",
-      "href": "/examples/",
+      "href": "/examples",
       "external": false
     },
     {
