@@ -11,12 +11,12 @@ const actions = [
   },
   {
     label: 'Software',
-    to: '/software/',
+    href: '/software/',
     tone: 'blue',
   },
   {
     label: 'Examples',
-    to: '/examples/',
+    href: '/examples/',
     tone: 'green',
   },
   {

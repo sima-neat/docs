@@ -57,8 +57,8 @@ const config = {
         },
         items: [
           {type: 'doc', docId: 'hardware/index', label: 'Hardware', position: 'left'},
-          {to: '/software/', label: 'Software', position: 'left'},
-          {to: '/examples/', label: 'Examples', position: 'left'},
+          {href: '/software/', label: 'Software', position: 'left'},
+          {href: '/examples/', label: 'Examples', position: 'left'},
           {href: 'https://huggingface.co/simaai', label: 'Models', position: 'left'},
           {href: 'https://developer.sima.ai', label: 'Community', position: 'left'},
         ],
