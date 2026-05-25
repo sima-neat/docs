@@ -25,13 +25,13 @@ function PortalButton({action}) {
 export default function Home() {
   return (
     <Layout
-      title="Developer Documentation"
-      description="SiMa.ai Developer Documentation Portal">
+      title="Developer Center"
+      description="SiMa.ai Developer Center">
       <main className={styles.pageShell}>
         <section className={styles.hero}>
           <div className={styles.brandPanel}>
             <img className={styles.logo} src="/img/sima-logo.png" alt="SiMa.ai" />
-            <p className={styles.kicker}>Developer Documentation</p>
+            <p className={styles.kicker}>Developer Center</p>
             <h1>Open, Simple, Performant, Neat!</h1>
             <p className={styles.summary}>
               Learn how to build physical AI with SiMa.ai technology. Explore hardware interfaces, software tools, and best practices for building high-performance AI applications.

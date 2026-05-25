@@ -14,15 +14,6 @@
   position: relative;
 }
 
-.hero::after {
-  content: '';
-  position: absolute;
-  inset: auto 8% 10% auto;
-  width: 22rem;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(28, 47, 58, 0.35), transparent);
-}
-
 .brandPanel {
   position: relative;
   z-index: 1;
@@ -165,13 +156,56 @@
 }
 
 @media (max-width: 620px) {
+  .hero {
+    min-height: auto;
+    align-items: start;
+    padding: 2.25rem 1rem 3rem;
+  }
+
+  .brandPanel {
+    justify-items: stretch;
+    text-align: left;
+    padding: 0;
+  }
+
+  .logo {
+    justify-self: start;
+    width: min(48vw, 9rem);
+    margin-bottom: 2rem;
+  }
+
+  .kicker {
+    margin-bottom: 0.65rem;
+    font-size: 0.72rem;
+  }
+
+  .brandPanel h1 {
+    max-width: 11ch;
+    font-size: clamp(2.5rem, 13.5vw, 3.8rem);
+    line-height: 0.98;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .summary {
+    max-width: none;
+    margin-top: 1.1rem;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
   .actions {
-    gap: 0.45rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+    width: 100%;
+    margin-top: 1.65rem;
   }
 
   .portalButton {
-    min-height: 2.35rem;
-    padding: 0.5rem 0.55rem;
-    font-size: clamp(0.72rem, 3vw, 0.84rem);
+    min-height: 3rem;
+    justify-content: flex-start;
+    padding: 0.75rem 0.95rem;
+    font-size: 0.98rem;
   }
 }
