@@ -1,4 +1,4 @@
-const cloudFrontRoutes = new Set(['/software', '/examples']);
+const cloudFrontRoutes = new Set(['/hardware', '/software', '/examples']);
 
 function normalizePath(pathname) {
   return pathname.length > 1 && pathname.endsWith('/')

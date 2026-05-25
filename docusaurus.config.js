@@ -60,7 +60,7 @@ const config = {
           src: 'img/sima-logo.png',
         },
         items: [
-          {type: 'doc', docId: 'hardware/index', label: 'Hardware', position: 'left'},
+          {href: '/hardware', label: 'Hardware', position: 'left'},
           {href: '/software/', label: 'Software', position: 'left'},
           {href: '/examples/', label: 'Examples', position: 'left'},
           {href: 'https://huggingface.co/simaai', label: 'Models', position: 'left'},

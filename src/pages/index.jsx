@@ -6,7 +6,7 @@ import styles from './index.module.css';
 const actions = [
   {
     label: 'Hardware',
-    to: '/docs/hardware',
+    to: '/hardware',
     tone: 'orange',
   },
   {
