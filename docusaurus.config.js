@@ -16,6 +16,7 @@ const config = {
   organizationName: 'sima-neat',
   projectName: 'docs',
   trailingSlash: false,
+  clientModules: [require.resolve('./src/clientModules/cloudfrontRoutes.js')],
   onBrokenLinks: process.env.SYSDOC_STRICT_LINKS === '1' ? 'throw' : 'warn',
   markdown: {
     hooks: {
