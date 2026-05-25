@@ -7,17 +7,27 @@ const actions = [
   {
     label: 'Hardware',
     to: '/docs/hardware',
-    tone: 'graphite',
+    tone: 'orange',
   },
   {
     label: 'Software',
-    href: 'https://docs.sima-neat.com',
-    tone: 'signal',
+    to: '/software/',
+    tone: 'blue',
   },
   {
-    label: 'Developer Community',
+    label: 'Examples',
+    to: '/examples/',
+    tone: 'green',
+  },
+  {
+    label: 'Models',
+    href: 'https://huggingface.co/simaai',
+    tone: 'black',
+  },
+  {
+    label: 'Community',
     href: 'https://developer.sima.ai',
-    tone: 'ember',
+    tone: 'lime',
   },
 ];
 
