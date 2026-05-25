@@ -1,39 +1,14 @@
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
+import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
-const actions = [
-  {
-    label: 'Hardware',
-    to: '/hardware',
-    tone: 'orange',
-  },
-  {
-    label: 'Software',
-    href: '/software/',
-    tone: 'blue',
-  },
-  {
-    label: 'Examples',
-    href: '/examples/',
-    tone: 'green',
-  },
-  {
-    label: 'Models',
-    href: 'https://huggingface.co/simaai',
-    tone: 'black',
-  },
-  {
-    label: 'Community',
-    href: 'https://developer.sima.ai',
-    tone: 'lime',
-  },
-];
+const actions = developerCenterShell.navbarItems();
 
 function PortalButton({action}) {
   const className = clsx(styles.portalButton, styles[action.tone]);
-  if (action.href) {
+  if (action.external) {
     return (
       <a className={className} href={action.href}>
         {action.label}
@@ -41,7 +16,7 @@ function PortalButton({action}) {
     );
   }
   return (
-    <Link className={className} to={action.to}>
+    <Link className={className} to={action.href}>
       {action.label}
     </Link>
   );

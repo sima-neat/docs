@@ -2,6 +2,7 @@
 
 const lightCodeTheme = require('prism-react-renderer').themes.github;
 const darkCodeTheme = require('prism-react-renderer').themes.dracula;
+const developerCenterShell = require('./src/developerCenter/shell/config.cjs');
 
 const url = process.env.SYSDOC_URL || 'https://sysdoc.neat.sima.ai';
 const baseUrl = process.env.SYSDOC_BASE_URL || '/';
@@ -18,6 +19,7 @@ const config = {
   trailingSlash: false,
   clientModules: [
     require.resolve('./src/clientModules/cloudfrontRoutes.js'),
+    require.resolve('./src/clientModules/developerCenterNav.js'),
     require.resolve('./src/clientModules/globalTheme.js'),
   ],
   onBrokenLinks: process.env.SYSDOC_STRICT_LINKS === '1' ? 'throw' : 'warn',
@@ -39,7 +41,7 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          routeBasePath: 'docs',
+          routeBasePath: 'hardware',
         },
         blog: false,
         theme: {
@@ -60,11 +62,7 @@ const config = {
           src: 'img/sima-logo.png',
         },
         items: [
-          {href: '/hardware', label: 'Hardware', position: 'left'},
-          {href: '/software/', label: 'Software', position: 'left'},
-          {href: '/examples/', label: 'Examples', position: 'left'},
-          {href: 'https://huggingface.co/simaai', label: 'Models', position: 'left'},
-          {href: 'https://developer.sima.ai', label: 'Community', position: 'left'},
+          ...developerCenterShell.docusaurusNavbarItems(),
         ],
       },
       footer: {

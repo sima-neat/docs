@@ -28,3 +28,11 @@ html[data-theme='dark'] {
 .footer {
   border-top: 1px solid rgba(28, 47, 58, 0.1);
 }
+
+@media (max-width: 996px) {
+  .navbar__toggle,
+  .navbar-sidebar,
+  .navbar-sidebar__backdrop {
+    display: none !important;
+  }
+}
