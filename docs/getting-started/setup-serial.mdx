@@ -6,6 +6,7 @@ sidebar_position: 2
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Configure Serial Connection
 
@@ -22,28 +23,49 @@ Depending on the operating system of the developer's computer, different methods
 <Tabs>
 <TabItem value="hardware" label="Hardware Setup" default>
 
-<div className="card-grid">
-  <div>
-    <img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="Modalix Early Access Kit" style={{width: '100%', borderRadius: 10}} />
-    <div style={{textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix Early Access Kit Connectors</div>
-  </div>
-  <div>
-    <img src="/img/devkit/modalix-devkit.png" alt="Modalix DevKit" style={{width: '100%', borderRadius: 10}} />
-    <div style={{textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit Connectors</div>
-  </div>
-  <div>
-    <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix EA PCIe Card" style={{width: '100%', borderRadius: 10}} />
-    <div style={{textAlign: 'center', fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix EA PCIe Card Connectors</div>
-  </div>
-</div>
+Pick your board to see the serial cable connections.
+
+<Tabs groupId="board">
+<TabItem value="modalix-devkit" label="Modalix DevKit" default>
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src="/img/devkit/modalix-devkit.png" alt="Modalix DevKit connectors" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit Connectors</figcaption>
+</figure>
 
 Use the included serial cable to connect the DevKit to your computer:
 
-- One end connects to the DevKit's serial port.
-  - On the Modalix Early Access Kit, ensure the triangle mark on the flat connector aligns with the rightmost pin on the DevKit.
-  - On the Modalix DevKit, use the provided USB-A to USB-C cable to connect to the DevKit's **UART** port, as labeled on the enclosure.
-  - On the Modalix EA PCIe card, use the provided USB-A to UART cable to connect to the DevKit's ARM UART port, as described in the image above.
-- The other end connects to the computer's **USB Type-A** port, use a USB Hub if necessary.
+- **DevKit end:** use the provided USB-A to USB-C cable to connect to the DevKit's **UART** port, as labeled on the enclosure.
+- **Computer end:** connect to a **USB Type-A** port. Use a USB hub if necessary.
+
+</TabItem>
+<TabItem value="modalix-ea-kit" label="Modalix EA Kit">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="Modalix Early Access Kit connectors" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix Early Access Kit Connectors</figcaption>
+</figure>
+
+Use the included serial cable to connect the DevKit to your computer:
+
+- **DevKit end:** ensure the triangle mark on the flat connector aligns with the rightmost pin on the DevKit.
+- **Computer end:** connect to a **USB Type-A** port. Use a USB hub if necessary.
+
+</TabItem>
+<TabItem value="modalix-ea-pcie" label="Modalix EA PCIe Card">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix EA PCIe Card connectors" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix EA PCIe Card Connectors</figcaption>
+</figure>
+
+Use the included serial cable to connect the card to your host:
+
+- **Card end:** use the provided USB-A to UART cable to connect to the card's **ARM UART** port, as shown in the image above.
+- **Host end:** connect to a **USB Type-A** port. Use a USB hub if necessary.
+
+</TabItem>
+</Tabs>
 
 </TabItem>
 <TabItem value="windows" label="Windows">
@@ -82,6 +104,15 @@ On some earlier firmware versions, the system may use a different baud rate for 
 ```console
 sima-cli serial -b 921600
 ```
+
+</TabItem>
+<TabItem value="web-serial" label="Web Serial Console">
+
+The **Web Serial Console** is a browser-based alternative that requires no local install — open it in a Chromium browser (Chrome or Edge), connect the DevKit via USB, and you're in. Useful when you can't or don't want to install PuTTY or `sima-cli`.
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Launch Web Serial Console</a>
+
+<p style={{marginTop: '1.75rem'}}>See the full <a href="/hardware/tools/web-serial-console">Web Serial Console</a> page for the command-palette reference, multi-device support, and troubleshooting.</p>
 
 </TabItem>
 </Tabs>

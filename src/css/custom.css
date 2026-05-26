@@ -99,23 +99,23 @@ html[data-theme='dark'] .markdown table tbody tr {
   background: rgba(28, 47, 58, 0.04);
 }
 
-.tabs-container > [role='tabpanel'] {
+.tabs-container [role='tabpanel'] {
   padding: 2rem 2.75rem 2.5rem !important;
   overflow-wrap: break-word;
   word-wrap: break-word;
   min-width: 0;
 }
 
-.tabs-container > [role='tabpanel'] table {
+.tabs-container [role='tabpanel'] table {
   table-layout: auto;
   word-break: break-word;
 }
 
-.tabs-container > [role='tabpanel'] > *:first-child {
+.tabs-container [role='tabpanel'] > *:first-child {
   margin-top: 0;
 }
 
-.tabs-container > [role='tabpanel'] > *:last-child {
+.tabs-container [role='tabpanel'] > *:last-child {
   margin-bottom: 0;
 }
 
