@@ -8,7 +8,7 @@
     "home": "/",
     "hardware": "/hardware",
     "software": "/software",
-    "examples": "/examples"
+    "examples": "/examples/"
   },
   "navItems": [
     {
@@ -26,7 +26,7 @@
     {
       "key": "examples",
       "label": "Examples",
-      "href": "/examples",
+      "href": "/examples/",
       "external": false
     },
     {

@@ -1,6 +1,17 @@
 const SHELL_ROOT_ID = 'developer-center-shell-root';
 const SHELL_SCRIPT_ID = 'developer-center-shell-script';
 const SHELL_STYLESHEET_ID = 'developer-center-shell-stylesheet';
+const DESKTOP_NAV_QUERY = '(min-width: 997px)';
+
+let navbarMediaQuery;
+
+function desktopNavMediaQuery() {
+  if (!navbarMediaQuery && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
+    navbarMediaQuery = window.matchMedia(DESKTOP_NAV_QUERY);
+  }
+
+  return navbarMediaQuery;
+}
 
 function loadStylesheet() {
   if (document.getElementById(SHELL_STYLESHEET_ID)) {
@@ -50,6 +61,32 @@ function nativeNavbar() {
   return document.querySelector('nav.navbar');
 }
 
+function syncNativeNavbarVisibility() {
+  const navbar = nativeNavbar();
+  if (!navbar) {
+    return;
+  }
+
+  const shouldHideNativeNavbar = Boolean(desktopNavMediaQuery()?.matches);
+  navbar.hidden = shouldHideNativeNavbar;
+  navbar.style.display = shouldHideNativeNavbar ? 'none' : '';
+}
+
+function watchNativeNavbarVisibility() {
+  const mediaQuery = desktopNavMediaQuery();
+  if (!mediaQuery || mediaQuery.__developerCenterShellBound) {
+    return;
+  }
+
+  const listener = () => syncNativeNavbarVisibility();
+  if (typeof mediaQuery.addEventListener === 'function') {
+    mediaQuery.addEventListener('change', listener);
+  } else if (typeof mediaQuery.addListener === 'function') {
+    mediaQuery.addListener(listener);
+  }
+  mediaQuery.__developerCenterShellBound = true;
+}
+
 function ensureRoot() {
   const existingRoot = document.getElementById(SHELL_ROOT_ID);
   if (existingRoot) {
@@ -76,12 +113,8 @@ async function mountShell() {
   const root = ensureRoot();
   await window.DeveloperCenterShell?.mount(root, {active: activeSection()});
   document.documentElement.classList.add('developer-center-shell-active');
-
-  const navbar = nativeNavbar();
-  if (navbar) {
-    navbar.hidden = true;
-    navbar.style.display = 'none';
-  }
+  syncNativeNavbarVisibility();
+  watchNativeNavbarVisibility();
 }
 
 function scheduleMount() {
@@ -89,20 +122,18 @@ function scheduleMount() {
     return;
   }
 
-  window.requestAnimationFrame(() => {
-    window.requestAnimationFrame(() => {
-      mountShell().catch((error) => {
-        console.warn('Unable to mount Developer Center shell.', error);
-      });
+  window.setTimeout(() => {
+    mountShell().catch((error) => {
+      console.warn('Unable to mount Developer Center shell.', error);
     });
-  });
+  }, 0);
 }
 
 if (typeof window !== 'undefined') {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', scheduleMount, {once: true});
-  } else {
+  if (document.readyState === 'complete') {
     scheduleMount();
+  } else {
+    window.addEventListener('load', scheduleMount, {once: true});
   }
 }
 
