@@ -1,5 +1,6 @@
 .pageShell {
   min-height: calc(100vh - var(--ifm-navbar-height));
+  min-height: calc(100svh - var(--ifm-navbar-height));
   background:
     radial-gradient(circle at 16% 18%, rgba(229, 78, 46, 0.12), transparent 30rem),
     radial-gradient(circle at 84% 72%, rgba(0, 91, 122, 0.12), transparent 28rem),
@@ -7,7 +8,9 @@
 }
 
 .hero {
+  box-sizing: border-box;
   min-height: calc(100vh - var(--ifm-navbar-height));
+  min-height: calc(100svh - var(--ifm-navbar-height));
   display: grid;
   place-items: center;
   padding: clamp(3rem, 9vw, 7rem) 1.5rem;
@@ -25,9 +28,9 @@
 }
 
 .logo {
-  width: clamp(10rem, 24vw, 16rem);
+  width: clamp(8rem, 18vw, 12rem);
   height: auto;
-  margin-bottom: clamp(2.5rem, 6vw, 4.25rem);
+  margin-bottom: clamp(2rem, 4.5vw, 3rem);
   filter: drop-shadow(0 1.2rem 1.6rem rgba(27, 36, 42, 0.12));
 }
 
@@ -47,7 +50,7 @@
   font-family: var(--ifm-font-family-base);
   font-size: clamp(3.25rem, 8vw, 7rem);
   font-weight: 800;
-  line-height: 0.92;
+  line-height: 1;
   letter-spacing: 0;
 }
 
@@ -155,6 +158,158 @@
   background: #0b211e;
 }
 
+@media (min-width: 621px) and (min-height: 761px) and (max-height: 940px) {
+  .hero {
+    padding: 2rem 1.5rem 1.5rem;
+  }
+
+  .logo {
+    width: 9.5rem;
+    margin-bottom: 1.45rem;
+  }
+
+  .brandPanel h1 {
+    max-width: 14ch;
+    font-size: 5.6rem;
+    line-height: 1.04;
+  }
+
+  .summary {
+    margin-top: 1rem;
+    font-size: 1.05rem;
+    line-height: 1.45;
+  }
+
+  .actions {
+    margin-top: 1.2rem;
+  }
+}
+
+@media (min-width: 621px) and (min-height: 641px) and (max-height: 760px) {
+  .hero {
+    place-items: start center;
+    padding: 1.75rem 1.5rem 1.25rem;
+  }
+
+  .brandPanel {
+    padding: 0.75rem 1rem;
+  }
+
+  .logo {
+    width: 7.5rem;
+    margin-bottom: 1.05rem;
+  }
+
+  .kicker {
+    margin-bottom: 0.45rem;
+    font-size: 0.72rem;
+  }
+
+  .brandPanel h1 {
+    max-width: 14ch;
+    font-size: 4.25rem;
+    line-height: 1.04;
+  }
+
+  .summary {
+    margin-top: 0.9rem;
+    max-width: 42rem;
+    font-size: 1rem;
+    line-height: 1.42;
+  }
+
+  .actions {
+    width: min(100%, 50rem);
+    gap: 0.45rem;
+    margin-top: 1.05rem;
+  }
+
+  .portalButton {
+    min-height: 2.2rem;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (min-width: 621px) and (min-height: 541px) and (max-height: 640px) {
+  .hero {
+    padding-top: 1rem;
+    padding-bottom: 0.9rem;
+  }
+
+  .brandPanel {
+    padding-block: 0.35rem;
+  }
+
+  .logo {
+    width: 6rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .brandPanel h1 {
+    font-size: 3.25rem;
+  }
+
+  .summary {
+    margin-top: 0.65rem;
+    font-size: 0.92rem;
+    line-height: 1.36;
+  }
+
+  .actions {
+    margin-top: 0.75rem;
+  }
+
+  .portalButton {
+    min-height: 2rem;
+    padding: 0.36rem 0.5rem;
+    font-size: 0.74rem;
+  }
+}
+
+@media (min-width: 621px) and (max-height: 540px) {
+  .hero {
+    padding-top: 0.55rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .brandPanel {
+    padding-block: 0.15rem;
+  }
+
+  .logo {
+    width: 5rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .kicker {
+    margin-bottom: 0.35rem;
+    font-size: 0.66rem;
+  }
+
+  .brandPanel h1 {
+    font-size: 2.65rem;
+  }
+
+  .summary {
+    margin-top: 0.5rem;
+    max-width: 46rem;
+    font-size: 0.84rem;
+    line-height: 1.3;
+  }
+
+  .actions {
+    gap: 0.35rem;
+    margin-top: 0.55rem;
+  }
+
+  .portalButton {
+    min-height: 1.8rem;
+    padding: 0.3rem 0.45rem;
+    font-size: 0.68rem;
+  }
+}
+
 @media (max-width: 620px) {
   .hero {
     min-height: auto;
@@ -170,8 +325,8 @@
 
   .logo {
     justify-self: start;
-    width: min(48vw, 9rem);
-    margin-bottom: 2rem;
+    width: min(40vw, 7.5rem);
+    margin-bottom: 1.55rem;
   }
 
   .kicker {
@@ -182,7 +337,7 @@
   .brandPanel h1 {
     max-width: 11ch;
     font-size: clamp(2.5rem, 13.5vw, 3.8rem);
-    line-height: 0.98;
+    line-height: 1.08;
     overflow-wrap: normal;
     word-break: normal;
   }
@@ -207,5 +362,77 @@
     justify-content: flex-start;
     padding: 0.75rem 0.95rem;
     font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 620px) and (min-height: 641px) and (max-height: 760px) {
+  .pageShell .hero {
+    padding-top: 1.25rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .brandPanel .logo {
+    width: 6.25rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .brandPanel .kicker {
+    margin-bottom: 0.45rem;
+    font-size: 0.68rem;
+  }
+
+  .pageShell .brandPanel h1 {
+    font-size: 2.35rem;
+  }
+
+  .brandPanel .summary {
+    margin-top: 0.75rem;
+    font-size: 0.92rem;
+    line-height: 1.42;
+  }
+
+  .brandPanel .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .actions .portalButton {
+    min-height: 2.4rem;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.82rem;
+  }
+}
+
+@media (max-width: 620px) and (max-height: 640px) {
+  .pageShell .hero {
+    padding-top: 0.9rem;
+  }
+
+  .brandPanel .logo {
+    width: 4.9rem;
+    margin-bottom: 0.55rem;
+  }
+
+  .pageShell .brandPanel h1 {
+    font-size: 2rem;
+  }
+
+  .brandPanel .summary {
+    margin-top: 0.55rem;
+    font-size: 0.84rem;
+    line-height: 1.32;
+  }
+
+  .brandPanel .actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem;
+    margin-top: 0.6rem;
+  }
+
+  .actions .portalButton {
+    min-height: 1.95rem;
+    padding: 0.35rem 0.5rem;
+    font-size: 0.72rem;
   }
 }

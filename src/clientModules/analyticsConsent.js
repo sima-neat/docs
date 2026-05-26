@@ -8,6 +8,7 @@ const DOWNLOAD_EXTENSIONS = new Set(['deb', 'gz', 'tgz', 'whl', 'zip', 'pdf']);
 
 let gtagLoaded = false;
 let lastTrackedLocation = '';
+let preferenceLinksBound = false;
 
 const deniedConsent = {
   ad_personalization: 'denied',
@@ -340,16 +341,22 @@ function renderBanner() {
 }
 
 function bindPreferenceLinks() {
-  document.querySelectorAll('[data-cookie-preferences]').forEach((button) => {
-    if (button.dataset.cookieBound === '1') {
-      return;
-    }
-    button.dataset.cookieBound = '1';
-    button.addEventListener('click', (event) => {
+  if (preferenceLinksBound) {
+    return;
+  }
+  preferenceLinksBound = true;
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      if (!event.target?.closest?.('[data-cookie-preferences]')) {
+        return;
+      }
       event.preventDefault();
       renderPreferences();
-    });
-  });
+    },
+    true,
+  );
 }
 
 function initConsent() {

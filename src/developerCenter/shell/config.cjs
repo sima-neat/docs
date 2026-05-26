@@ -2,7 +2,7 @@ const SECTION_ROUTES = {
   home: '/',
   hardware: '/hardware',
   software: '/software',
-  examples: '/examples',
+  examples: '/examples/',
 };
 
 const EXTERNAL_ROUTES = {

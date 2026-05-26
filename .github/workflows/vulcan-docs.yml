@@ -128,10 +128,25 @@ jobs:
           algolia = config.get("algolia") or {}
           search = None
           if algolia.get("app_id") and algolia.get("search_api_key") and algolia.get("index_name"):
+              apps_index_name = algolia.get("apps_index_name") or f'{algolia["index_name"]}-apps'
               search = {
                   "appId": algolia["app_id"],
                   "apiKey": algolia["search_api_key"],
                   "indexName": algolia["index_name"],
+                  "indexes": [
+                      {
+                          "key": "developer-center",
+                          "appId": algolia["app_id"],
+                          "apiKey": algolia["search_api_key"],
+                          "indexName": algolia["index_name"],
+                      },
+                      {
+                          "key": "apps",
+                          "appId": algolia["app_id"],
+                          "apiKey": algolia["search_api_key"],
+                          "indexName": apps_index_name,
+                      },
+                  ],
                   "placeholder": "Search Developer Center",
               }
 

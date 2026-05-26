@@ -33,6 +33,7 @@ const config = {
     require.resolve('./src/clientModules/developerCenterShell.js'),
     require.resolve('./src/clientModules/developerCenterNav.js'),
     require.resolve('./src/clientModules/globalTheme.js'),
+    require.resolve('./src/clientModules/collapseSidebarOnHome.js'),
   ],
   onBrokenLinks: process.env.SYSDOC_STRICT_LINKS === '1' ? 'throw' : 'warn',
   markdown: {
@@ -45,8 +46,6 @@ const config = {
     defaultLocale: 'en',
     locales: ['en'],
   },
-
-  clientModules: [require.resolve('./src/clientModules/collapseSidebarOnHome.js')],
 
   presets: [
     [
