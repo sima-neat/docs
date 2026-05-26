@@ -16,7 +16,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-SERIAL_REPO_URL="${SERIAL_REPO_URL:-git@bitbucket.org:sima-ai/apps-web-serial.git}"
+SERIAL_REPO_URL="${SERIAL_REPO_URL:-https://github.com/sima-neat/serial.git}"
 DEST_DIR="$REPO_ROOT/static/tools/serial"
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
