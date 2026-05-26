@@ -21,6 +21,14 @@ html[data-theme='dark'] {
   box-shadow: none;
 }
 
+html.developer-center-shell-active nav.theme-layout-navbar {
+  display: none !important;
+}
+
+html.developer-center-shell-active #__docusaurus {
+  padding-top: var(--ifm-navbar-height);
+}
+
 .navbar__logo img {
   object-fit: contain;
 }

@@ -11,8 +11,17 @@
       cookie: 'sima-neat-theme',
       keys: ['theme', 'portal-theme'],
     },
+    runtimeConfig: '/developer-center-runtime.json',
+    search: null,
   };
   const VALID_THEMES = new Set(['light', 'dark']);
+  const SEARCH_SOURCES = [
+    {key: 'all', label: 'All'},
+    {key: 'hardware', label: 'Hardware'},
+    {key: 'software', label: 'Software'},
+    {key: 'examples', label: 'Examples'},
+  ];
+  const MAX_SEARCH_RESULTS = 24;
 
   function normalizeTheme(value) {
     return VALID_THEMES.has(value) ? value : null;
@@ -111,12 +120,354 @@
       .replace(/"/g, '&quot;');
   }
 
+  function sanitizeHighlighted(value) {
+    return escapeHtml(value || '')
+      .replace(/&lt;em&gt;/g, '<mark>')
+      .replace(/&lt;\/em&gt;/g, '</mark>');
+  }
+
+  function normalizeSource(value, url) {
+    const source = String(value || '').toLowerCase();
+    if (['hardware', 'software', 'examples'].includes(source)) return source;
+    const path = normalizePath(url || window.location.pathname);
+    if (path.startsWith('/software')) return 'software';
+    if (path.startsWith('/examples')) return 'examples';
+    if (path.startsWith('/hardware')) return 'hardware';
+    return 'hardware';
+  }
+
+  function sourceLabel(source) {
+    return SEARCH_SOURCES.find((item) => item.key === source)?.label || 'Hardware';
+  }
+
+  function hitSection(hit, source) {
+    return hit.section || hit.category || hit.hierarchy?.lvl1 || sourceLabel(source);
+  }
+
+  function displaySectionLabel(section, source) {
+    return section === sourceLabel(source) ? 'Overview' : section;
+  }
+
+  function filterKey(source, section) {
+    return section ? `${source}:${section}` : source;
+  }
+
+  function hitTitle(hit) {
+    return (
+      hit._highlightResult?.title?.value ||
+      hit._highlightResult?.hierarchy?.lvl2?.value ||
+      hit._highlightResult?.hierarchy?.lvl1?.value ||
+      hit._highlightResult?.hierarchy?.lvl0?.value ||
+      hit.title ||
+      hit.hierarchy?.lvl2 ||
+      hit.hierarchy?.lvl1 ||
+      hit.hierarchy?.lvl0 ||
+      'Untitled'
+    );
+  }
+
+  function hitSnippet(hit) {
+    return (
+      hit._snippetResult?.content?.value ||
+      hit._highlightResult?.content?.value ||
+      hit.content ||
+      ''
+    );
+  }
+
+  function hitRoute(hit) {
+    const candidate = hit.route || hit.url || '/';
+    if (candidate.startsWith('/')) return candidate;
+    try {
+      const url = new URL(candidate);
+      return `${url.pathname}${url.search}${url.hash}`;
+    } catch (_) {
+      return '/';
+    }
+  }
+
+  function isSearchConfigured(search) {
+    return Boolean(
+      search &&
+        search.appId &&
+        search.apiKey &&
+        search.indexName &&
+        search.appId !== 'REPLACE_ME' &&
+        search.apiKey !== 'REPLACE_ME' &&
+        search.indexName !== 'REPLACE_ME',
+    );
+  }
+
+  function renderSearchResults(root, state) {
+    const panel = root.querySelector('[data-developer-center-search-panel]');
+    if (!panel) return;
+
+    const sourceCounts = new Map(SEARCH_SOURCES.map((source) => [source.key, 0]));
+    const categoryCounts = new Map();
+    state.hits.forEach((hit) => {
+      const source = normalizeSource(hit.source, hit.url || hit.route);
+      const section = hitSection(hit, source);
+      sourceCounts.set(source, (sourceCounts.get(source) || 0) + 1);
+      sourceCounts.set('all', (sourceCounts.get('all') || 0) + 1);
+      const key = filterKey(source, section);
+      categoryCounts.set(key, (categoryCounts.get(key) || 0) + 1);
+    });
+
+    const sourceKeys = new Set(SEARCH_SOURCES.map((source) => source.key));
+    const activeFilter =
+      state.activeFilter === 'all' || sourceKeys.has(state.activeFilter) || categoryCounts.get(state.activeFilter)
+        ? state.activeFilter
+        : 'all';
+    state.activeFilter = activeFilter;
+    const visibleHits = state.hits.filter((hit) => {
+      if (activeFilter === 'all') return true;
+      const source = normalizeSource(hit.source, hit.url || hit.route);
+      if (activeFilter === source) return true;
+      return activeFilter === filterKey(source, hitSection(hit, source));
+    });
+
+    const filterButton = ({key, label, count, className = ''}) => {
+      const activeClass = key === activeFilter ? ' developer-center-search-filter-active' : '';
+      return `
+        <button class="developer-center-search-filter${className}${activeClass}" type="button" data-search-filter="${escapeHtml(key)}">
+          <span>${escapeHtml(label)}</span>
+          <span class="developer-center-search-count">${count}</span>
+        </button>`;
+    };
+    const sourceTree = SEARCH_SOURCES.map((source) => {
+      if (source.key === 'all') {
+        return filterButton({key: 'all', label: 'All', count: sourceCounts.get('all') || 0});
+      }
+
+      const sourceCount = sourceCounts.get(source.key) || 0;
+      const categories = Array.from(categoryCounts)
+        .filter(([key]) => key.startsWith(`${source.key}:`))
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, count]) =>
+          filterButton({
+            key,
+            label: displaySectionLabel(key.slice(source.key.length + 1), source.key),
+            count,
+            className: ' developer-center-search-filter-sub',
+          }),
+        )
+        .join('');
+
+      return `
+        <div class="developer-center-search-filter-group">
+          ${filterButton({
+            key: source.key,
+            label: source.label,
+            count: sourceCount,
+            className: ' developer-center-search-filter-source',
+          })}
+          ${categories ? `<div class="developer-center-search-filter-children">${categories}</div>` : ''}
+        </div>`;
+    }).join('');
+
+    let content = '';
+    if (state.loading) {
+      content = '<div class="developer-center-search-status">Searching...</div>';
+    } else if (state.error) {
+      content = `<div class="developer-center-search-status developer-center-search-error">${escapeHtml(state.error)}</div>`;
+    } else if (!state.query.trim()) {
+      content = '<div class="developer-center-search-status">Search hardware, software, APIs, and examples.</div>';
+    } else if (state.hits.length === 0) {
+      content = '<div class="developer-center-search-status">No matches found.</div>';
+    } else {
+      content = `
+        <div class="developer-center-search-layout">
+          <aside class="developer-center-search-filters" aria-label="Search result filters">${sourceTree}</aside>
+          <section class="developer-center-search-results" aria-label="Search results">
+            ${
+              visibleHits.length
+                ? visibleHits
+                    .map((hit) => {
+                      const source = normalizeSource(hit.source, hit.url || hit.route);
+                      const section = hitSection(hit, source);
+                      return `
+                        <a class="developer-center-search-result" href="${escapeHtml(hitRoute(hit))}">
+                          <span class="developer-center-search-title">${sanitizeHighlighted(hitTitle(hit))}</span>
+                          <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source))}</span>
+                          <span class="developer-center-search-snippet">${sanitizeHighlighted(hitSnippet(hit))}</span>
+                        </a>`;
+                    })
+                    .join('')
+                : '<div class="developer-center-search-status">No matches in this section.</div>'
+            }
+          </section>
+        </div>`;
+    }
+
+    panel.innerHTML = content;
+    panel.querySelectorAll('[data-search-filter]').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.activeFilter = button.getAttribute('data-search-filter') || 'all';
+        renderSearchResults(root, state);
+      });
+    });
+  }
+
+  async function runSearch(manifest, state, root) {
+    const search = manifest.search || DEFAULT_MANIFEST.search;
+    if (!isSearchConfigured(search)) return;
+    const query = state.query.trim();
+    if (!query) {
+      state.hits = [];
+      state.loading = false;
+      state.error = '';
+      renderSearchResults(root, state);
+      return;
+    }
+
+    const requestId = ++state.requestId;
+    state.loading = true;
+    state.error = '';
+    renderSearchResults(root, state);
+
+    try {
+      const host = `https://${search.appId}-dsn.algolia.net`;
+      const response = await fetch(`${host}/1/indexes/${encodeURIComponent(search.indexName)}/query`, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'X-Algolia-Application-Id': search.appId,
+          'X-Algolia-API-Key': search.apiKey,
+        },
+        body: JSON.stringify({
+          query,
+          hitsPerPage: MAX_SEARCH_RESULTS,
+          attributesToHighlight: ['title', 'content', 'hierarchy.lvl0', 'hierarchy.lvl1', 'hierarchy.lvl2'],
+          attributesToSnippet: ['content:24'],
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Search returned ${response.status}`);
+      }
+      const payload = await response.json();
+      if (requestId !== state.requestId) return;
+      state.hits = Array.isArray(payload.hits) ? payload.hits : [];
+      state.loading = false;
+      state.error = '';
+      state.activeFilter = 'all';
+      renderSearchResults(root, state);
+    } catch (err) {
+      if (requestId !== state.requestId) return;
+      state.hits = [];
+      state.loading = false;
+      state.error = err?.message || 'Search request failed.';
+      renderSearchResults(root, state);
+    }
+  }
+
+  function closeSearch(root, state) {
+    state.open = false;
+    root.querySelector('.developer-center-search')?.classList.remove('developer-center-search-open');
+  }
+
+  function openSearch(root, state) {
+    state.open = true;
+    root.querySelector('.developer-center-search')?.classList.add('developer-center-search-open');
+    root.querySelector('[data-developer-center-search-input]')?.focus();
+  }
+
+  function mountSearch(root, manifest) {
+    const search = manifest.search || DEFAULT_MANIFEST.search;
+    if (!isSearchConfigured(search)) return () => {};
+
+    const state = {
+      activeFilter: 'all',
+      error: '',
+      hits: [],
+      loading: false,
+      open: false,
+      query: '',
+      requestId: 0,
+      timer: 0,
+    };
+    const input = root.querySelector('[data-developer-center-search-input]');
+    const clearButton = root.querySelector('[data-developer-center-search-clear]');
+    const searchRoot = root.querySelector('.developer-center-search');
+    if (!input || !searchRoot) return () => {};
+
+    const scheduleSearch = () => {
+      window.clearTimeout(state.timer);
+      state.timer = window.setTimeout(() => runSearch(manifest, state, root), 150);
+    };
+
+    const onInput = () => {
+      state.query = input.value;
+      if (state.query.trim()) {
+        openSearch(root, state);
+      }
+      scheduleSearch();
+    };
+    const onFocus = () => {
+      openSearch(root, state);
+      renderSearchResults(root, state);
+    };
+    const onClear = () => {
+      input.value = '';
+      state.query = '';
+      state.hits = [];
+      state.error = '';
+      state.loading = false;
+      openSearch(root, state);
+      renderSearchResults(root, state);
+    };
+    const onDocumentMouseDown = (event) => {
+      if (!searchRoot.contains(event.target)) {
+        closeSearch(root, state);
+      }
+    };
+    const onKeyDown = (event) => {
+      const key = event.key.toLowerCase();
+      const findShortcut = key === 'k' && (event.metaKey || event.ctrlKey) && !event.altKey;
+      if (findShortcut) {
+        event.preventDefault();
+        openSearch(root, state);
+      } else if (event.key === 'Escape') {
+        closeSearch(root, state);
+      }
+    };
+
+    input.addEventListener('input', onInput);
+    input.addEventListener('focus', onFocus);
+    clearButton?.addEventListener('click', onClear);
+    document.addEventListener('mousedown', onDocumentMouseDown);
+    window.addEventListener('keydown', onKeyDown);
+    renderSearchResults(root, state);
+
+    return () => {
+      window.clearTimeout(state.timer);
+      input.removeEventListener('input', onInput);
+      input.removeEventListener('focus', onFocus);
+      clearButton?.removeEventListener('click', onClear);
+      document.removeEventListener('mousedown', onDocumentMouseDown);
+      window.removeEventListener('keydown', onKeyDown);
+    };
+  }
+
   function render(target, manifest, options) {
     target.__developerCenterShellCleanup?.();
 
     const theme = normalizeTheme(document.documentElement.getAttribute('data-theme')) || initialTheme(manifest);
     const active = activeKey(manifest, options.active);
     const navItems = manifest.navItems || DEFAULT_MANIFEST.navItems;
+    const search = manifest.search || DEFAULT_MANIFEST.search;
+    const searchMarkup = isSearchConfigured(search)
+      ? `
+        <div class="developer-center-search" role="search">
+          <label class="developer-center-search-label" for="developer-center-search-input">Search</label>
+          <div class="developer-center-search-control">
+            <svg class="developer-center-search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 0 1 5.18 10.43l4.45 4.44-1.42 1.42-4.44-4.45A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"></path></svg>
+            <input id="developer-center-search-input" data-developer-center-search-input class="developer-center-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(search.placeholder || 'Search Developer Center')}" aria-label="Search Developer Center" />
+            <button class="developer-center-search-clear" data-developer-center-search-clear type="button" aria-label="Clear search">×</button>
+          </div>
+          <div class="developer-center-search-panel" data-developer-center-search-panel></div>
+        </div>`
+      : '';
     const linkForItem = (item) => {
       const activeClass = item.key === active ? ' navbar__link--active' : '';
       const targetAttr = item.external ? ' target="_blank" rel="noreferrer"' : '';
@@ -144,6 +495,7 @@
               <div class="navbar__items navbar__items--desktop">${desktopItems}</div>
             </div>
             <div class="navbar__items navbar__items--right">
+              ${searchMarkup}
               <div class="color-mode-toggle">
                 <button class="color-mode-toggle-button" type="button" aria-label="Switch between dark and light mode" title="Switch between dark and light mode">
                   <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="color-mode-toggle-icon color-mode-toggle-icon-light"><path fill="currentColor" d="M12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5ZM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1Zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1ZM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1Zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1ZM5.99 4.58a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41L5.99 4.58Zm12.37 12.37a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41l-1.06-1.06ZM19.42 5.99a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06ZM7.05 18.36a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06Z"></path></svg>
@@ -160,21 +512,48 @@
       applyTheme(current === 'light' ? 'dark' : 'light', manifest);
       render(target, manifest, options);
     });
+    const cleanupSearch = mountSearch(target, manifest);
+    target.__developerCenterShellCleanup = cleanupSearch;
   }
 
-  async function loadManifest() {
+  async function fetchJson(path, {warn = true} = {}) {
     try {
-      const response = await fetch('/developer-center-shell.json', {
+      const response = await fetch(path, {
         headers: {Accept: 'application/json'},
       });
       if (!response.ok) {
-        throw new Error(`Developer Center shell manifest returned ${response.status}`);
+        throw new Error(`${path} returned ${response.status}`);
       }
       return await response.json();
     } catch (err) {
-      console.warn('Using local Developer Center shell fallback.', err);
-      return DEFAULT_MANIFEST;
+      if (warn) {
+        console.warn('Unable to load Developer Center JSON.', err);
+      }
+      return null;
     }
+  }
+
+  function mergeManifest(manifest, runtimeConfig) {
+    const base = {
+      ...DEFAULT_MANIFEST,
+      ...(manifest || {}),
+    };
+
+    if (!runtimeConfig) {
+      return base;
+    }
+
+    return {
+      ...base,
+      search: runtimeConfig.search || base.search || null,
+    };
+  }
+
+  async function loadManifest() {
+    const manifest = await fetchJson('/developer-center-shell.json');
+    const runtimePath = manifest?.runtimeConfig || DEFAULT_MANIFEST.runtimeConfig;
+    const runtimeConfig = runtimePath ? await fetchJson(runtimePath, {warn: false}) : null;
+    return mergeManifest(manifest, runtimeConfig);
   }
 
   async function mount(targetOrSelector, options = {}) {
