@@ -1,10 +1,11 @@
 name: Vulcan SysDoc
 
-run-name: ${{ github.event.head_commit.message || github.event.pull_request.title || github.ref_name || 'Vulcan SysDoc' }} (${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || 'stg' }})
+run-name: ${{ github.event.head_commit.message || github.event.pull_request.title || github.ref_name || 'Vulcan SysDoc' }} (${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || vars.VULCAN_ENV || 'dev' }})
 
 on:
   push:
     branches:
+      - vulcan-dev-sysdoc
       - develop
       - main
   workflow_dispatch:
@@ -25,7 +26,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || 'stg' }}
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || vars.VULCAN_ENV || 'dev' }}
   cancel-in-progress: false
 
 jobs:
@@ -43,14 +44,21 @@ jobs:
 
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             deploy_environment="${{ inputs.deploy_environment }}"
+            if [[ -z "${deploy_environment}" ]]; then
+              deploy_environment="${{ vars.VULCAN_ENV || 'dev' }}"
+            fi
           else
-            deploy_environment="stg"
+            deploy_environment="${{ vars.VULCAN_ENV || 'dev' }}"
           fi
 
           case "${deploy_environment}" in
-            dev|stg)
+            dev)
               ;;
-            prod)
+            stg|staging)
+              deploy_environment="stg"
+              ;;
+            prod|production)
+              deploy_environment="prod"
               if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
                 echo "Production sysdoc deploy is only allowed from refs/heads/main. Current ref: ${GITHUB_REF}" >&2
                 exit 1

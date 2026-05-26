@@ -2,7 +2,7 @@
 title: SiMa.ai Hardware
 description: Overview of SiMa.ai hardware platforms and DevKit bring-up entry points.
 sidebar_position: 1
-slug: /hardware/
+slug: /
 ---
 
 # SiMa.ai Hardware
@@ -39,5 +39,4 @@ Common development tasks include:
 
 Start with serial access, then establish network connectivity, verify the board image, and install the software stack needed for your project. Serial access should remain available during development because it is the most reliable path for recovering a board with unknown network state.
 
-For first-time board setup, continue with [Set up your DevKit](./setup-devkit.md).
-
+For first-time board setup, continue with [Set up your DevKit](/hardware/setup-devkit).

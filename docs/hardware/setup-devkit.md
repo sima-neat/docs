@@ -2,6 +2,7 @@
 title: Set up your DevKit
 description: Bring up a SiMa.ai Modalix DevKit from first serial access through network validation.
 sidebar_position: 2
+slug: /setup-devkit
 ---
 
 # Set Up Your DevKit
@@ -72,4 +73,3 @@ Keep the serial console open during early setup. It is useful for observing serv
 ## Next Steps
 
 After the board is reachable over the network, install the software stack required for your project and run the validation or tutorial workflow for that release.
-
