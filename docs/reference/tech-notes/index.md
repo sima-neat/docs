@@ -2,7 +2,6 @@
 title: Technical Notes
 description: Platform-specific instructions, advanced topics, and known limitations.
 sidebar_position: 1
-slug: /hardware/reference/tech-notes/
 ---
 
 # Technical Notes

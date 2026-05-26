@@ -2,7 +2,7 @@
 title: SiMa.ai Hardware Documentation
 description: Hardware setup, firmware, and low-level interfaces for SiMa.ai MLSoC Modalix DevKit products.
 sidebar_position: 1
-slug: /hardware/
+slug: /
 ---
 
 import Tabs from '@theme/Tabs';
@@ -28,17 +28,17 @@ This integration lets developers deploy multimodal, generative, and vision AI pi
 SiMa.ai offers a portfolio of MLSoC Modalix-based development kits and products designed to support a broad spectrum of edge AI applications — from efficient vision inference to advanced multimodal and generative AI workloads. Click a kit below to jump to its detailed page, or compare features in the table.
 
 <div className="card-grid">
-  <a className="card devkit-card" href="/docs/hardware/devkit/modalix-devkit">
+  <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
     <img src="/img/media/modalix-devkit-no-label.png" alt="Modalix DevKit" />
     <h4>Modalix DevKit</h4>
     <p>A compact, power-efficient module for embedding Modalix AI capabilities into custom hardware designs.</p>
   </a>
-  <a className="card devkit-card" href="/docs/hardware/devkit/modalix-ea-kit">
+  <a className="card devkit-card" href="/hardware/devkit/modalix-ea-kit">
     <img src="/img/media/modalix-ea-kit.png" alt="Modalix Early Access Kit" />
     <h4>Modalix Early Access DevKit</h4>
     <p>Designed for modern AI at the edge with support for LLMs, multimodal inputs, and generative AI workloads.</p>
   </a>
-  <a className="card devkit-card" href="/docs/hardware/devkit/modalix-ea-pcie">
+  <a className="card devkit-card" href="/hardware/devkit/modalix-ea-pcie">
     <img src="/img/media/modalix-ea-pcie.jpg" alt="Modalix Early Access PCIe Card" />
     <h4>Modalix Early Access PCIe Card</h4>
     <p>Half-Height/Half-Length (HHHL) card designed for extensible edge compute systems.</p>
@@ -51,7 +51,7 @@ SiMa.ai offers a portfolio of MLSoC Modalix-based development kits and products 
 | --- | --- | --- | --- |
 | **Documentation & OS** | | | |
 | Product Brief | [view](https://sima.ai/wp-content/uploads/2025/05/SoM-Product-Brief.pdf) | [view](https://sima.ai/wp-content/uploads/2025/05/Modalix-SoC-Product-Brief_May-20-2025.pdf) | — |
-| Preloaded Operating System | [eLxr Linux](/docs/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/docs/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/docs/hardware/getting-started/firmware-update/#os) |
+| Preloaded Operating System | [eLxr Linux](/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/hardware/getting-started/firmware-update/#os) |
 | **Compute** | | | |
 | ARM Cores | 8x ARM Cortex-A65 @ 1.4GHz | 8x ARM Cortex-A65 @ 1.4GHz | 8x ARM Cortex-A65 @ 1.4GHz |
 | ISP (Image Signal Processor) | ARM C-71 @ 1.2 GHz | ARM C-71 @ 1.2 GHz | ARM C-71 @ 1.2 GHz |
@@ -110,7 +110,7 @@ In this architecture, the MLSoC Modalix operates independently as a self-contain
 3. The MLSoC Modalix performs inferencing and processes the data locally.
 4. Results are sent to other devices or systems via network connections for further action or visualization.
 
-<a className="docs-button" href="/docs/hardware/getting-started/standalone-mode/">Set up Standalone Mode System Using DevKit</a>
+<a className="docs-button" href="/hardware/getting-started/standalone-mode/">Set up Standalone Mode System Using DevKit</a>
 
 </TabItem>
 <TabItem value="pcie" label="MLSoC Modalix as PCIe Card">
@@ -134,7 +134,7 @@ In this architecture, the MLSoC Modalix functions as a PCIe card that integrates
 3. Data is sent to the MLSoC Modalix via the PCIe interface for inferencing.
 4. Results are processed by the host system or forwarded to downstream systems for further action.
 
-<a className="docs-button" href="/docs/hardware/getting-started/pcie-mode">Set up a PCIe Mode System Using DevKit</a>
+<a className="docs-button" href="/hardware/getting-started/pcie-mode">Set up a PCIe Mode System Using DevKit</a>
 
 </TabItem>
 </Tabs>
@@ -148,11 +148,11 @@ Pick the path that matches your setup. Each guide covers serial-console access, 
     <h4>Quick Start Guide</h4>
     <p>Step-by-step interactive walkthrough for first-time DevKit bring-up.</p>
   </a>
-  <a className="card" href="/docs/hardware/getting-started/standalone-mode/">
+  <a className="card" href="/hardware/getting-started/standalone-mode/">
     <h4>Standalone Mode</h4>
     <p>Run the MLSoC Modalix as a self-contained edge device — no host required.</p>
   </a>
-  <a className="card" href="/docs/hardware/getting-started/pcie-mode">
+  <a className="card" href="/hardware/getting-started/pcie-mode">
     <h4>PCIe Mode</h4>
     <p>Install the Modalix PCIe card into a host system for offloaded inference.</p>
   </a>

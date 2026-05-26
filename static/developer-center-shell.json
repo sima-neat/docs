@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "assets": {
+    "script": "/developer-center-shell.js",
+    "stylesheet": "/developer-center-shell.css"
+  },
+  "routes": {
+    "home": "/",
+    "hardware": "/hardware",
+    "software": "/software",
+    "examples": "/examples"
+  },
+  "navItems": [
+    {
+      "key": "hardware",
+      "label": "Hardware",
+      "href": "/hardware",
+      "external": false
+    },
+    {
+      "key": "software",
+      "label": "Software",
+      "href": "/software",
+      "external": false
+    },
+    {
+      "key": "examples",
+      "label": "Examples",
+      "href": "/examples",
+      "external": false
+    },
+    {
+      "key": "models",
+      "label": "Models",
+      "href": "https://huggingface.co/simaai",
+      "external": true
+    },
+    {
+      "key": "community",
+      "label": "Community",
+      "href": "https://developer.sima.ai",
+      "external": true
+    }
+  ],
+  "theme": {
+    "cookie": "sima-neat-theme",
+    "keys": ["theme", "portal-theme"]
+  },
+  "runtimeConfig": "/developer-center-runtime.json"
+}

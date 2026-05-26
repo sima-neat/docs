@@ -31,7 +31,7 @@ The repository above is useful when you need to:
 - **Replace or extend the rootfs** — bake in your own application, library, or system service.
 - **Reproduce a release locally** — rebuild the exact image that ships on a DevKit for auditing or modification.
 
-Once a custom image is built, flash it onto a DevKit using one of the methods in [Firmware Update](/docs/hardware/getting-started/firmware-update/).
+Once a custom image is built, flash it onto a DevKit using one of the methods in [Firmware Update](/hardware/getting-started/firmware-update/).
 
 ## Repository
 

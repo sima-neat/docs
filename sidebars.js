@@ -3,7 +3,7 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   systemDocs: [
-    'hardware/index',
+    'index',
     {
       type: 'category',
       label: 'Getting Started',
@@ -15,11 +15,11 @@ const sidebars = {
           label: 'Quick Start Guide',
           href: 'pathname:///tools/qsg/index.html',
         },
-        'hardware/getting-started/setup-devkit',
-        'hardware/getting-started/setup-serial',
-        'hardware/getting-started/standalone-mode/index',
-        'hardware/getting-started/pcie-mode',
-        'hardware/getting-started/firmware-update/index',
+        'getting-started/setup-devkit',
+        'getting-started/setup-serial',
+        'getting-started/standalone-mode/index',
+        'getting-started/pcie-mode',
+        'getting-started/firmware-update/index',
       ],
     },
     {
@@ -28,9 +28,9 @@ const sidebars = {
       collapsible: true,
       collapsed: true,
       items: [
-        'hardware/devkit/modalix-devkit',
-        'hardware/devkit/modalix-ea-kit',
-        'hardware/devkit/modalix-ea-pcie',
+        'devkit/modalix-devkit',
+        'devkit/modalix-ea-kit',
+        'devkit/modalix-ea-pcie',
       ],
     },
     {
@@ -39,7 +39,7 @@ const sidebars = {
       collapsible: true,
       collapsed: true,
       items: [
-        'hardware/tools/web-serial-console',
+        'tools/web-serial-console',
       ],
     },
     {
@@ -48,22 +48,22 @@ const sidebars = {
       collapsible: true,
       collapsed: true,
       items: [
-        'hardware/reference/bsp',
+        'reference/bsp',
         {
           type: 'category',
           label: 'Tech Notes',
           collapsible: true,
           collapsed: true,
           items: [
-            'hardware/reference/tech-notes/index',
-            'hardware/reference/tech-notes/nfs',
-            'hardware/reference/tech-notes/elxr-conversion',
-            'hardware/reference/tech-notes/bluetooth',
-            'hardware/reference/tech-notes/ros2',
+            'reference/tech-notes/index',
+            'reference/tech-notes/nfs',
+            'reference/tech-notes/elxr-conversion',
+            'reference/tech-notes/bluetooth',
+            'reference/tech-notes/ros2',
           ],
         },
-        'hardware/reference/glossary',
-        'hardware/reference/extra-docs',
+        'reference/glossary',
+        'reference/extra-docs',
       ],
     },
   ],

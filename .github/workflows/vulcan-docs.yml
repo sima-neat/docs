@@ -1,10 +1,11 @@
 name: Vulcan SysDoc
 
-run-name: ${{ github.event.head_commit.message || github.event.pull_request.title || github.ref_name || 'Vulcan SysDoc' }} (${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || 'stg' }})
+run-name: ${{ github.event.head_commit.message || github.event.pull_request.title || github.ref_name || 'Vulcan SysDoc' }} (${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || vars.VULCAN_ENV || 'dev' }})
 
 on:
   push:
     branches:
+      - vulcan-dev-sysdoc
       - develop
       - main
   workflow_dispatch:
@@ -25,7 +26,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || 'stg' }}
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || vars.VULCAN_ENV || 'dev' }}
   cancel-in-progress: false
 
 jobs:
@@ -43,14 +44,21 @@ jobs:
 
           if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
             deploy_environment="${{ inputs.deploy_environment }}"
+            if [[ -z "${deploy_environment}" ]]; then
+              deploy_environment="${{ vars.VULCAN_ENV || 'dev' }}"
+            fi
           else
-            deploy_environment="stg"
+            deploy_environment="${{ vars.VULCAN_ENV || 'dev' }}"
           fi
 
           case "${deploy_environment}" in
-            dev|stg)
+            dev)
               ;;
-            prod)
+            stg|staging)
+              deploy_environment="stg"
+              ;;
+            prod|production)
+              deploy_environment="prod"
               if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
                 echo "Production sysdoc deploy is only allowed from refs/heads/main. Current ref: ${GITHUB_REF}" >&2
                 exit 1
@@ -90,6 +98,69 @@ jobs:
           node-version: "20"
           cache: npm
 
+      - name: Configure AWS credentials for Vulcan config
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-region: ${{ needs.resolve-vulcan-config.outputs.aws_region }}
+          role-to-assume: ${{ needs.resolve-vulcan-config.outputs.config_reader_role_arn }}
+          role-session-name: vulcan-sysdoc-config-${{ github.run_id }}
+
+      - name: Generate Developer Center runtime config
+        env:
+          VULCAN_CONFIG_S3_URI: ${{ needs.resolve-vulcan-config.outputs.config_s3_uri }}
+          VULCAN_ENV: ${{ needs.resolve-vulcan-config.outputs.vulcan_env }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          config_file="${RUNNER_TEMP}/vulcan-environment.json"
+          aws s3 cp "${VULCAN_CONFIG_S3_URI}" "${config_file}" --only-show-errors
+          mkdir -p _algolia
+
+          CONFIG_FILE="${config_file}" python3 - <<'PY'
+          import json
+          import os
+
+          config_file = os.environ["CONFIG_FILE"]
+          with open(config_file, encoding="utf-8") as handle:
+              config = json.load(handle)
+
+          algolia = config.get("algolia") or {}
+          search = None
+          if algolia.get("app_id") and algolia.get("search_api_key") and algolia.get("index_name"):
+              search = {
+                  "appId": algolia["app_id"],
+                  "apiKey": algolia["search_api_key"],
+                  "indexName": algolia["index_name"],
+                  "placeholder": "Search Developer Center",
+              }
+
+          runtime_config = {
+              "schemaVersion": 1,
+              "environment": config.get("environment") or os.environ.get("VULCAN_ENV", ""),
+              "search": search,
+          }
+
+          with open("static/developer-center-runtime.json", "w", encoding="utf-8") as handle:
+              json.dump(runtime_config, handle, indent=2)
+              handle.write("\n")
+
+          algolia_publish = {
+              "schemaVersion": 1,
+              "source": "hardware",
+              "app_id": algolia.get("app_id"),
+              "index_name": algolia.get("index_name"),
+              "write_api_key_secret_arn": algolia.get("write_api_key_secret_arn"),
+          }
+
+          with open("_algolia/publish.json", "w", encoding="utf-8") as handle:
+              json.dump(algolia_publish, handle, indent=2)
+              handle.write("\n")
+          PY
+
+          python3 -m json.tool static/developer-center-runtime.json >/dev/null
+          python3 -m json.tool _algolia/publish.json >/dev/null
+
       - name: Install dependencies
         shell: bash
         run: |
@@ -111,11 +182,34 @@ jobs:
           npm run build
           test -f build/index.html
 
+      - name: Generate Algolia hardware records
+        env:
+          SYSDOC_URL: ${{ needs.resolve-vulcan-config.outputs.sysdoc_base_url }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/ci/sync_algolia_developer_center_index.py \
+            --docs-dir docs \
+            --site-base-url "${SYSDOC_URL}" \
+            --records-json _algolia/records.json \
+            --summary-json _algolia/summary.json \
+            --generate-only
+          python3 -m json.tool _algolia/records.json >/dev/null
+          python3 -m json.tool _algolia/summary.json >/dev/null
+
       - name: Upload site artifact
         uses: actions/upload-artifact@v6
         with:
           name: vulcan-sysdoc-site
           path: build/
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Upload Algolia records artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: vulcan-sysdoc-algolia-hardware
+          path: _algolia/
           if-no-files-found: error
           retention-days: 1
 
@@ -132,7 +226,13 @@ jobs:
       SYSDOC_BUCKET: ${{ needs.resolve-vulcan-config.outputs.sysdoc_bucket }}
       SYSDOC_KMS_KEY_ID: ${{ needs.resolve-vulcan-config.outputs.sysdoc_kms_key_id }}
       SYSDOC_CLOUDFRONT_DISTRIBUTION_ID: ${{ needs.resolve-vulcan-config.outputs.sysdoc_cloudfront_distribution_id }}
+      SYSDOC_URL: ${{ needs.resolve-vulcan-config.outputs.sysdoc_base_url }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v6
         with:
@@ -145,6 +245,12 @@ jobs:
         with:
           name: vulcan-sysdoc-site
           path: _site
+
+      - name: Download Algolia records artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: vulcan-sysdoc-algolia-hardware
+          path: _algolia
 
       - name: Publish site to S3
         shell: bash
@@ -162,10 +268,68 @@ jobs:
             s3_args+=(--sse aws:kms --sse-kms-key-id "${SYSDOC_KMS_KEY_ID}")
           fi
 
-          aws s3 sync _site/ "s3://${bucket}/" --delete "${s3_args[@]}"
+          aws s3 sync _site/ "s3://${bucket}/" \
+            --delete \
+            --exclude "software/*" \
+            --exclude "examples/*" \
+            "${s3_args[@]}"
 
           if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then
             aws cloudfront create-invalidation \
               --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
               --paths "/*"
           fi
+
+      - name: Publish Algolia hardware records
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          publish_config="_algolia/publish.json"
+          records_json="_algolia/records.json"
+          if [[ ! -f "${publish_config}" || ! -f "${records_json}" ]]; then
+            echo "Missing Algolia publish artifacts; skipping search index sync."
+            exit 0
+          fi
+
+          readarray -t algolia_values < <(python3 - <<'PY'
+          import json
+
+          with open("_algolia/publish.json", encoding="utf-8") as handle:
+              config = json.load(handle)
+
+          values = [
+              config.get("app_id") or "",
+              config.get("index_name") or "",
+              config.get("write_api_key_secret_arn") or "",
+          ]
+          print("\n".join(values))
+          PY
+          )
+
+          app_id="${algolia_values[0]:-}"
+          index_name="${algolia_values[1]:-}"
+          write_key_secret_arn="${algolia_values[2]:-}"
+
+          if [[ -z "${app_id}" && -z "${index_name}" && -z "${write_key_secret_arn}" ]]; then
+            echo "No Algolia config for this Vulcan environment; skipping search index sync."
+            exit 0
+          fi
+
+          if [[ -z "${app_id}" || -z "${index_name}" || -z "${write_key_secret_arn}" ]]; then
+            echo "Incomplete Algolia config; app_id, index_name, and write_api_key_secret_arn are required." >&2
+            exit 1
+          fi
+
+          write_api_key="$(aws secretsmanager get-secret-value \
+            --secret-id "${write_key_secret_arn}" \
+            --query SecretString \
+            --output text)"
+
+          python3 scripts/ci/sync_algolia_developer_center_index.py \
+            --site-base-url "${SYSDOC_URL}" \
+            --input-records-json "${records_json}" \
+            --app-id "${app_id}" \
+            --api-key "${write_api_key}" \
+            --index-name "${index_name}" \
+            --sync

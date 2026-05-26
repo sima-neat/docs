@@ -37,7 +37,7 @@ Before you begin:
 6. It is recommended to connect the card's serial/UART connector to the host for bring-up and debugging.
 7. The PCIe card also has a physical Ethernet port for direct network access.
 
-For a detailed view of the DevKit interfaces, switches and connectors, refer to the [SiMa.ai DevKit Interface](/docs/hardware/).
+For a detailed view of the DevKit interfaces, switches and connectors, refer to the [SiMa.ai DevKit Interface](/hardware/).
 
 :::note
 In rare cases, if you do not need the driver to be automatically loaded when the host machine reboots, create (or edit if already exists) `/etc/modprobe.d/blacklist.conf` and add the line blacklist `sima_mla_drv`. Once done, run `update-initramfs` and reboot the host machine. After reboot the drivers can be loaded manually using `insmod` or `modeprobe`.
@@ -124,7 +124,7 @@ If setup is correct, the command output will list connected SiMa PCIe device(s).
 ## Virtual Network {#virtual-network}
 
 :::note
-The Virtual Network feature is available in firmware version `1.5` and later on the Linux host. To use this feature, make sure your DevKit is [updated](/docs/hardware/getting-started/firmware-update/) to the latest firmware version.
+The Virtual Network feature is available in firmware version `1.5` and later on the Linux host. To use this feature, make sure your DevKit is [updated](/hardware/getting-started/firmware-update/) to the latest firmware version.
 
 This feature is only available for the Linux host system.
 :::

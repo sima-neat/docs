@@ -2,7 +2,6 @@
 title: Firmware Update
 description: Methods for keeping the Modalix DevKit firmware up to date.
 sidebar_position: 5
-slug: /hardware/getting-started/firmware-update/
 ---
 
 import Tabs from '@theme/Tabs';
@@ -14,7 +13,7 @@ Firmware is the foundational software that runs on the DevKit. Keeping firmware 
 
 ## Operating Systems {#os}
 
-SiMa.ai Modalix DevKits run **eLxr Linux**, a Debian-derived distribution. Units shipped **after mid-December 2025** come with eLxr preloaded. Earlier Modalix units (shipped before mid-December 2025) are preloaded with Yocto and can be converted to eLxr following the [Convert to eLxr](/docs/hardware/reference/tech-notes/elxr-conversion) article.
+SiMa.ai Modalix DevKits run **eLxr Linux**, a Debian-derived distribution. Units shipped **after mid-December 2025** come with eLxr preloaded. Earlier Modalix units (shipped before mid-December 2025) are preloaded with Yocto and can be converted to eLxr following the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) article.
 
 ### eLxr Linux
 
@@ -46,7 +45,7 @@ Please install or upgrade `sima-cli` before continuing. This guide is intended f
 :::
 
 :::warning
-Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/docs/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
+Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
 :::
 
 <Tabs>
@@ -60,7 +59,7 @@ In some development or recovery scenarios, it may be preferable — or even nece
 - You need to install a build that is **not the latest release** (for example, a pre-release `develop` build or an internal engineering image).
 - You need to recover a board with a corrupted bootloader or filesystem and there's no SD card available.
 - You're bringing up a new board and want to avoid wear on internal storage devices.
-- You're converting a Modalix DevKit from Yocto Linux to eLxr, or from eLxr back to Yocto Linux. See [Convert to eLxr](/docs/hardware/reference/tech-notes/elxr-conversion) for the conversion-specific prerequisites.
+- You're converting a Modalix DevKit from Yocto Linux to eLxr, or from eLxr back to Yocto Linux. See [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) for the conversion-specific prerequisites.
 
 In these situations, use the `--netboot` option with `sima-cli bootimg`. It downloads the appropriate boot image for the target board, then serves it over a built-in TFTP server on the host machine. The DevKit is then configured in U-Boot to boot from that TFTP server, and the new image is flashed to eMMC from the host.
 
@@ -86,7 +85,7 @@ Two terminal sessions are required:
    sima-user@sima-user-machine:~$ sima-cli serial
    ```
 
-3. On the DevKit, configure the network interface to the default static IP **192.168.1.20** by following the instructions [here](/docs/hardware/getting-started/standalone-mode/#network).
+3. On the DevKit, configure the network interface to the default static IP **192.168.1.20** by following the instructions [here](/hardware/getting-started/standalone-mode/#network).
 
 </details>
 
@@ -241,8 +240,8 @@ This method allows developers to update the firmware on a SiMa.ai DevKit using t
 
 Before proceeding, ensure the host machine can reach the DevKit over the network. Refer to:
 
-- [Standalone Mode Network Setup](/docs/hardware/getting-started/standalone-mode/#network)
-- [PCIe Mode Virtual Network Setup](/docs/hardware/getting-started/pcie-mode#virtual-network)
+- [Standalone Mode Network Setup](/hardware/getting-started/standalone-mode/#network)
+- [PCIe Mode Virtual Network Setup](/hardware/getting-started/pcie-mode#virtual-network)
 
 <Tabs groupId="sima-cli-source">
 <TabItem value="from-devkit" label="From DevKit" default>

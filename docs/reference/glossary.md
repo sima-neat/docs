@@ -87,7 +87,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Deployment
 
 **PCIe mode**
-: A deployment architecture in which the MLSoC Modalix lives on a PCIe card plugged into a host system. The host handles I/O and orchestration; the card handles inference. See [PCIe Mode](/docs/hardware/getting-started/pcie-mode).
+: A deployment architecture in which the MLSoC Modalix lives on a PCIe card plugged into a host system. The host handles I/O and orchestration; the card handles inference. See [PCIe Mode](/hardware/getting-started/pcie-mode).
 
 **Standalone mode**
-: A deployment architecture in which the MLSoC Modalix runs as a self-contained device, with no host system, processing sensor data locally and emitting results over the network. See [Standalone Mode](/docs/hardware/getting-started/standalone-mode/).
+: A deployment architecture in which the MLSoC Modalix runs as a self-contained device, with no host system, processing sensor data locally and emitting results over the network. See [Standalone Mode](/hardware/getting-started/standalone-mode/).
