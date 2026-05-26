@@ -1,6 +1,6 @@
 .developer-center-shell {
   --developer-center-shell-text: #1c1e21;
-  --developer-center-shell-accent: #1d5f73;
+  --developer-center-shell-accent: #5998dd;
   --developer-center-shell-line: rgba(28, 47, 58, 0.1);
   --developer-center-shell-bg: #ffffff;
   --developer-center-shell-hover: #ebedf0;
@@ -22,7 +22,7 @@
   top: 0;
   right: 0;
   left: 0;
-  z-index: var(--ifm-z-index-fixed, 200);
+  z-index: 1000;
   text-rendering: optimizelegibility;
 }
 
@@ -33,7 +33,7 @@
 
 :root[data-theme="dark"] .developer-center-shell {
   --developer-center-shell-text: #f5f6f7;
-  --developer-center-shell-accent: #71c1d4;
+  --developer-center-shell-accent: #8fc0f0;
   --developer-center-shell-line: rgba(240, 246, 252, 0.14);
   --developer-center-shell-bg: #18191a;
   --developer-center-shell-hover: #3a3b3c;
@@ -276,6 +276,7 @@
 .developer-center-shell .developer-center-search-panel {
   display: none;
   position: absolute;
+  z-index: 1;
   top: calc(100% + 0.75rem);
   right: 0;
   width: min(72rem, calc(100vw - 2rem));
