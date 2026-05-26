@@ -1,0 +1,342 @@
+---
+title: Standalone Mode
+description: Configure the Modalix DevKit to run as a self-contained edge device.
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Standalone Mode
+
+Setting up the DevKit in standalone mode requires configuring both its serial connection and network settings to ensure stable and reliable access. The serial interface serves as a critical communication link, allowing continuous interaction with the DevKit regardless of network availability.
+
+The DevKit's IP address can be assigned using one of the following methods:
+
+- Automatic configuration through a network.
+- Automatic configuration via the developer's computer.
+- Manual static IP setup.
+
+Selecting the appropriate method depends on the specific network environment and connectivity requirements.
+
+<Tabs>
+<TabItem value="network" label="Configure DevKit Network" default>
+
+## Configure DevKit Network {#network}
+
+By default, the DevKit network interfaces use DHCP.
+
+- If you want to connect the DevKit directly to your computer, configure your computer's network interface with a static IP and connect it directly to the DevKit.
+- If you want the DevKit to obtain its IP address automatically from a network, you will need to configure the interface to use DHCP.
+
+**Checking the current IP address**
+
+From the serial console, run:
+
+```console
+sima@modalix:~$ ip a | grep inet
+   inet 127.0.0.1/8 scope host lo
+   inet6 ::1/128 scope host noprefixroute
+   inet 192.168.91.181/22 brd 192.168.91.255 scope global dynamic noprefixroute end0
+   inet6 fe80::ab34:b995:9f6e:160e/64 scope link noprefixroute
+```
+
+<Tabs groupId="network-method">
+<TabItem value="linux-shell" label="Network Setup In The Linux Shell" default>
+
+:::note
+If you want to toggle between static and DHCP without rebooting the device, follow these instructions.
+:::
+
+If you have `sima-cli` installed on the DevKit and want to switch between DHCP and static configuration dynamically without rebooting, run:
+
+```console
+davinci:~$ sima-cli network
+```
+
+You will be prompted with an interactive menu to switch between static and DHCP network configurations.
+
+If `sima-cli` is not available, use `nmcli` to switch between the preconfigured connection profiles: `end0-static` and `end0-dhcp`.
+
+:::note
+The following instructions use `NetworkManager` profiles to configure the network interface and apply to DevKit systems running eLxr 2.1 or later. If your system is running an earlier release, refer to the [v2.0.0 documentation](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell).
+:::
+
+**Switching to Static IP**
+
+To change the network interface from DHCP to static, run:
+
+```console
+davinci:~$ sudo nmcli connection up end0-static
+davinci:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+davinci:~$ networkctl status
+```
+
+**Switching to DHCP**
+
+To change the network interface from static to DHCP, run:
+
+```console
+davinci:~$ sudo nmcli connection up end0-dhcp
+davinci:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+davinci:~$ networkctl status
+```
+
+</TabItem>
+<TabItem value="auto-config" label="Auto Config Through Dev Computer">
+
+:::note
+- Suitable when the developer network is not available for an Ethernet connection from the DevKit.
+- Plug the DevKit into the Ethernet port of the developer computer. Use a USB-to-Ethernet dongle if the developer computer does not have an Ethernet port available.
+- The computer can share Internet with the DevKit, enabling Python package installation using `pip`.
+- Requires enabling internet connection sharing on the host computer.
+:::
+
+1. Follow the instructions below for an Ubuntu machine. On other platforms, the instructions may vary; please look for related instructions online on how to share network connections.
+
+   - In the upper-right corner, open `Settings`, then go to the `Network` section.
+   - Under `Wired`, click the plus sign to create a new settings profile if you do not have an existing profile for the board, or modify the existing one if you do.
+   - If you are creating a new profile, name it "Shared" or any name you prefer.
+   - In the `IPv4` tab, choose `Shared to other computers`. Click Apply.
+   - If you had an existing connection, turn it off and on for the changes to take effect.
+   - Your computer should now be networked with the AP. `10.42.0.0/24` is the default subnet used by Ubuntu for this setup, but your computer may use a different subnet.
+   - If the next step returns no results, run `ifconfig` and look for the IP of your Ethernet interface (usually `eth0`) there.
+
+2. Open a terminal on the Ubuntu machine. Type the following to scan the devices in that IP range:
+
+   ```console
+   sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24 | grep report
+      Nmap scan report for sima-user-machine (10.42.0.1)
+      Nmap scan report for 10.42.0.241
+   ```
+
+   This lists the IP addresses used in this subnet. The one ending in `.1` is your host machine. The one that does not end in `.1` is the IP address of the SiMa DevKit. In the example above, the board is `10.42.0.241` and the host is `10.42.0.1`.
+
+3. Test the connection by running:
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.42.0.241
+   ...
+   Last login: Mon Nov 27 19:58:33 2023
+   davinci:~$
+   ```
+
+4. To test that you can connect to your host from the board, ping `10.42.0.1` from the board. If you have an SSH server running on your host, you can also SSH:
+
+   ```console
+   davinci:~$ ping 10.42.0.1
+      PING 10.42.0.1 (10.42.0.1): 56 data bytes
+      64 bytes from 10.42.0.1: seq=0 ttl=64 time=0.598 ms
+      64 bytes from 10.42.0.1: seq=1 ttl=64 time=0.703 ms
+      64 bytes from 10.42.0.1: seq=2 ttl=64 time=0.639 ms
+      ^C
+      --- 10.42.0.1 ping statistics ---
+      3 packets transmitted, 3 packets received, 0% packet loss
+      round-trip min/avg/max = 0.598/0.646/0.703 ms
+   ```
+
+5. If you are unable to ping or SSH to the board, use the static IP configuration method.
+
+</TabItem>
+<TabItem value="uboot" label="Network Setup In The U-Boot Shell">
+
+:::note
+This procedure applies only to DevKit firmware release 2.0 or earlier. On release 2.1 and later, users can rely on Linux-side configuration. Configuring the network in U-Boot ensures the network settings persist across firmware upgrades.
+:::
+
+1. Connect to the DevKit via UART and [serial terminal](/hardware/getting-started/setup-serial).
+2. Reboot the DevKit.
+3. Press any key to enter U-Boot when prompted with the message, `Hit any key to stop autoboot`.
+
+4. To switch to a static IP, enter the following commands:
+
+   ```console
+   sima:~$ env set forcenetcfg static; saveenv
+   sima:~$ boot
+   ```
+
+5. The board will reboot and use `192.168.1.20` and `192.168.2.20` for the first and second Ethernet ports.
+6. To modify the board's static IP address, edit the network file with `vi` after the device boots.
+
+   ```console
+   davinci:~$ sudo vi /etc/systemd/network/20-end0-static.network
+   ```
+
+7. In the **Network** section, update the IP address as needed.
+8. To configure DHCP mode, enter the commands below and boot the board.
+
+   ```console
+   sima:~$ env set forcenetcfg dhcp; saveenv
+   sima:~$ boot
+   ```
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="nvme" label="Configure NVMe Storage">
+
+## Configure NVMe Storage {#nvme}
+
+The **Modalix DevKit** includes a 500 GB NVMe (Non-Volatile Memory Express) drive.
+Developers who require additional capacity can replace the pre-installed drive with a compatible M.2 NVMe module installed directly on the carrier board.
+
+:::note
+Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+:::
+
+:::note
+This command must be run directly on the Modalix DevKit.
+:::
+
+Once `sima-cli` is installed, you can format the NVMe drive using the following command:
+
+```console
+modalix:~$ sima-cli nvme format
+```
+
+After formatting, the NVMe drive will be automatically mounted at `/media/nvme`.
+
+To verify the mount and view storage usage, run:
+
+```console
+modalix:~$ df -h
+```
+
+This command displays the available disk space on all mounted file systems, including the NVMe drive.
+
+In case the NVMe drive needs to be remounted, run:
+
+```console
+modalix:~$ sima-cli nvme remount
+```
+
+Both `format` and `remount` commands automatically add an entry into the `/etc/fstab` file, so the NVMe drive is always auto mounted.
+
+</TabItem>
+<TabItem value="mipi" label="Configure MIPI Interfaces">
+
+## Configure MIPI Interfaces {#mipi}
+
+:::note
+Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+:::
+
+:::note
+This procedure requires a host machine with the latest sima-cli version installed. It also requires the firmware version of the **Modalix Devkit** to be `1.7.0_master_B1965` or above. This is because this build has the necessary `.dtbo` files to support MIPI.
+:::
+
+The **Modalix DevKit** includes two MIPI Interfaces for connecting MIPI cameras as inputs to the device. The MIPI ports are located directly on the carrier board, and developers would need to follow the procedure below to enable them.
+
+Before starting, make sure to attach a MIPI camera to one of the MIPI ports while the **Modalix Devkit** is off.
+
+Once connected, connect a serial cable from a host machine to the **Modalix Devkit**. Afterwards, turn the **Modalix Devkit** on.
+
+Then, establish a serial terminal with `sima-cli` and immediately enter `uboot` by pressing the any key during the 3 second countdown:
+
+```console
+sima-cli serial -b 115200
+...
+Hit any key to stop autoboot:  0
+sima$
+```
+
+Once in uboot, set the `dtbos` variable to the appropriate **Device Tree Blob Overlay** (`.dtbo`) file. The correct file depends on the **carrier board**, **camera manufacturer**, **sensor type**, and **camera port**. Afterwards, save the environment and boot into the operating system.
+
+The filename follows this pattern:
+
+```text
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+```
+
+Select each component based on your hardware:
+
+| Component | Values | Description |
+| --- | --- | --- |
+| Carrier Board | `connectech`, `seeedstudio`, `waveshare` | The carrier board model |
+| Camera Manufacturer | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems, or Leopard Imaging |
+| Sensor Type | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | The camera sensor model |
+| Port | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | The MIPI port number the camera is connected to |
+
+For example, a Connectech carrier board with a Leopard Imaging IMX477 sensor connected to port 0:
+
+```console
+sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+```
+
+The full list of available `.dtbo` files is:
+
+```text
+modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
+modalix-som-connectech-ECON-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-IMX678-0CAM.dtbo
+modalix-som-connectech-ECON-IMX678-1CAM.dtbo
+modalix-som-connectech-ECON-IMX678-2CAM.dtbo
+modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-LI-AR0234-0CAM.dtbo
+modalix-som-connectech-LI-AR0234-1CAM.dtbo
+modalix-som-connectech-LI-AR0234-2CAM.dtbo
+modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-OG05C10-0CAM.dtbo
+modalix-som-connectech-LI-OG05C10-1CAM.dtbo
+modalix-som-connectech-LI-OG05C10-2CAM.dtbo
+modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-LI-AR0234-1CAM.dtbo
+modalix-som-waveshare-LI-AR0234-2CAM.dtbo
+modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+```
+
+To validate the interfaces, connect the Modalix SOM to a display and login. Then, use libcamera to verify the connectivity with the camera with the Modalix.
+
+1. List available cameras:
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. Show different camera formats for camera 1:
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. Capture an image from camera 1:
+
+   ```console
+   sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```
+
+</TabItem>
+</Tabs>

@@ -46,6 +46,8 @@ const config = {
     locales: ['en'],
   },
 
+  clientModules: [require.resolve('./src/clientModules/collapseSidebarOnHome.js')],
+
   presets: [
     [
       'classic',
@@ -67,6 +69,11 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       image: 'img/sima-logo.png',
+      docs: {
+        sidebar: {
+          autoCollapseCategories: true,
+        },
+      },
       navbar: {
         title: 'Developer Center',
         logo: {

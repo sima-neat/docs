@@ -1,0 +1,247 @@
+html, body {
+  scroll-behavior: smooth;
+}
+
+/* Landing page cards */
+.landing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.landing-card {
+  text-align: left;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+  padding: 0;
+}
+.landing-card:hover {
+  transform: translateY(-6px);
+  border-color: #bfdbfe;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+.landing-card-media {
+  background: radial-gradient(circle at top, #eff6ff 0%, #ffffff 70%);
+  padding: 18px 18px 8px 18px;
+}
+.landing-card-media img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  display: block;
+}
+.landing-card-body {
+  padding: 0 18px 12px 18px;
+}
+.landing-card-body h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 6px;
+}
+.landing-card-body p {
+  color: #475569;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+.landing-card-cta {
+  padding: 12px 18px 18px 18px;
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* HHHL host support cards */
+.host-os-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 620px;
+}
+
+.host-os-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+
+.host-os-icon {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+  object-fit: contain;
+  display: block;
+  flex: 0 0 32px;
+}
+
+.ubuntu-color {
+  filter: invert(38%) sepia(82%) saturate(2055%) hue-rotate(350deg) brightness(96%) contrast(96%);
+}
+
+.windows-color {
+  filter: invert(34%) sepia(98%) saturate(2384%) hue-rotate(190deg) brightness(98%) contrast(101%);
+}
+
+.host-os-text {
+  text-align: left;
+}
+
+.host-os-text h3,
+.host-os-text p {
+  margin: 0;
+}
+
+.host-os-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.host-os-card p {
+  margin-top: 2px;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.host-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.host-label-icon {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: inline-block;
+}
+
+/* Active navigation */
+.nav-btn.active {
+  font-weight: 600;
+  color: #1d4ed8;
+  background-color: #dbeafe;
+}
+
+/* Section fade-in animation */
+.content-section {
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Hotspots */
+.hotspot {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 10;
+}
+.hotspot:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(37,99,235,0.4);
+}
+
+/* Tooltip styling */
+.hotspot-tooltip {
+  position: absolute;
+  min-width: 200px;
+  background: white;
+  border-radius: 8px;
+  padding: 10px 14px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  font-size: 14px;
+  z-index: 1000;
+  opacity: 0;
+  transform: translateY(5px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.hotspot-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hotspot-tooltip h4 {
+  font-weight: 600;
+  color: #1e3a8a;
+  margin-bottom: 4px;
+}
+.hotspot-desc {
+  color: #374151;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Accordion styling */
+.accordion-item + .accordion-item {
+  margin-top: 8px;
+}
+.accordion-header .accordion-icon {
+  transition: transform 0.3s ease;
+}
+.accordion-header.active .accordion-icon {
+  transform: rotate(45deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  body {
+    padding-top: 3.5rem; /* space for the menu button */
+  }
+
+  main {
+    padding: 1.5rem;
+  }
+
+  .landing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing-card-media img {
+    height: 180px;
+  }
+
+  .host-os-grid {
+    max-width: 100%;
+  }
+
+  .hotspot {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+  }
+
+  .content-section h1 {
+    font-size: 1.75rem;
+  }
+
+  .content-section p {
+    font-size: 0.95rem;
+  }
+
+  .next-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}

@@ -1,0 +1,62 @@
+---
+title: Modalix DevKit
+description: Compact, high-performance Modalix development platform for rapid prototyping of embedded edge AI.
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix DevKit
+
+The **Modalix DevKit** is a compact, high-performance development platform designed for rapid prototyping and evaluation of embedded edge AI applications. Built on the powerful Modalix platform, the DevKit combines advanced hardware acceleration with an optimized software stack to enable efficient, flexible, and scalable AI inference across workloads such as computer vision, large language models (LLMs), and real-time multimodal processing.
+
+<Tabs>
+<TabItem value="interfaces" label="Interfaces" default>
+
+<img src="/img/devkit/modalix-devkit.png" alt="SiMa.ai Modalix SoM Interfaces" style={{width: '60%', display: 'block', margin: '0 auto'}} />
+
+| Interface | Description |
+| --- | --- |
+| Ethernet Port (end0) | RJ45, 1GigE network interfaces for remote connectivity. |
+| COM Port to Host (USB-C) | Facilitates debugging by connecting to the host system. |
+| MIPI Interfaces (X2) | For connecting MIPI cameras. [Setup](/hardware/getting-started/standalone-mode/#mipi) |
+| USB Interfaces (X4) | USB 3.0 interfaces, supporting microphone, speaker and USB Video Camera. |
+| HDMI Interface (X1) | HDMI 1.4 to connect the external display (max 4K at 30 Hz, 1080p @ 60 Hz). |
+| Onboard storage (eMMC) | 16GB |
+| NVMe | M.2 512GB |
+| USB | 4x USB 3.0 ports |
+
+For more product information, visit the official website: [SiMa.ai](https://sima.ai/mlsoc/).
+
+</TabItem>
+<TabItem value="features" label="Key Features">
+
+| Feature | Details |
+| --- | --- |
+| MLA AI Performance | 50 Tera Operations per Second for INT8 neural network computation. Also supports bf16 precision. |
+| Power Consumption | 8W to 12W depending on workload |
+| Application Processing Unit (APU) | A cluster of eight [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) dual threaded processors operating up to 1.4 GHz to deliver up to 32K Dhrystone MIPs Eight-core at 1.4GHz. |
+| Video Encoder | Supports the H.264 (AVC), H.265 (HEVC) and MJPEG compression standards. It has support for AVC main/high profiles, HEVC main profile, and MJPEG baseline profile. The encoder supports H.264/H.265 at rates up to 4KP60. |
+| Video Decoder | supports the H.264 (AVC), H.265 (HEVC), AV1, and MJPEG compression standards. It has support for AVC main/high profiles, HEVC main profile, AV1 main profile, and MJPEG Baseline profile. It supports 4:2:0 pixels and 8-bit precision. The decoder supports H.264/H.265 at rates up to 4KP60. |
+| Computer Vision Unit (CVU) | Four-core Synopsys [ARC EV74 Vision Processor](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors) supporting up to **750 16-bit GOPS**. |
+| Memory | 32GB LPDDR5 RAM, of which 6GB allocated to the ARM cores and 16GB allocated to the MLA. Rest is allocated to other parts of the system. |
+| Storage | 16GB internal eMMC with microSD card slot for additional storage |
+| Networking | 1X 10GigE ports available through carrier board |
+
+</TabItem>
+<TabItem value="revisions" label="Revisions">
+
+| Rev | 1 | 2 | 3 |
+| --- | --- | --- | --- |
+| **Image** | <img src="/img/media/modalix-devkit-blue.png" alt="Rev 1" width="80%" /> | <img src="/img/media/modalix-devkit-white.png" alt="Rev 2" width="80%" /> | <img src="/img/media/modalix-devkit-blue.png" alt="Rev 3" width="80%" /> |
+| **Case Color** | Blue | White | Blue |
+| **Carrier Board** | Waveshare | Seeed Studio | Waveshare |
+| **MIPI Connector Type** | 22 Pin | 30 Pin | 22 Pin |
+| **Camera Serial Interfaces** | CSI1/CSI2 | CSI0/CSI2 | CSI1/CSI2 |
+| **Serial Number Format** | SNXXX | SNXXX-S | SNXXX |
+| **SoM Revision** | 1 (No Sticker, Devkit Carrier Board Only) | 1 (No Sticker, DevKit Carrier Board Only) | [2](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) (Sticker, Works with 3rd Party Carrier Boards) |
+| **Availability** | GA | Engineering Samples | Engineering Samples |
+
+</TabItem>
+</Tabs>

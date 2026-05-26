@@ -1,0 +1,163 @@
+---
+title: Setup Bluetooth on the Modalix SOM DevKit
+description: Connect a Bluetooth USB adapter to the Modalix SOM DevKit and bring up the bluez stack.
+sidebar_position: 4
+---
+
+# Setup Bluetooth on the Modalix SOM DevKit
+
+This tech note describes how to connect a Bluetooth USB adapter to the Modalix SOM DevKit and bring up the Bluetooth stack with `bluez`.
+
+:::info
+Bluetooth support requires SDK release **2.1.0** or higher running on the eLxr runtime. To check the runtime, see [Convert to eLxr](./elxr-conversion).
+:::
+
+<details open>
+<summary><strong>Step 1. Connect a Bluetooth USB Adapter</strong></summary>
+
+Plug a Bluetooth USB adapter into one of the DevKit's USB ports, then confirm the kernel enumerates it with `lsusb`:
+
+```console
+sima@modalix:~$ lsusb
+Bus 002 Device 002: ID 0bda:0489 Realtek Semiconductor Corp. 4-Port USB 3.0 Hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 003: ID 7392:c611 Edimax Technology Co., Ltd Edimax Bluetooth Adapter
+Bus 001 Device 002: ID 0bda:5489 Realtek Semiconductor Corp. 4-Port USB 2.0 Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+```
+
+The Bluetooth adapter should appear in the list (in this example, the `Edimax Bluetooth Adapter` on Bus 001 Device 003). If your adapter is not listed, unplug and reseat it, or try a different USB port.
+
+</details>
+
+<details open>
+<summary><strong>Step 2. Install BlueZ</strong></summary>
+
+Install the `bluez` stack and the `bluetooth` service:
+
+```console
+sima@modalix:~$ sudo apt update && sudo apt-get install bluez bluetooth -y
+```
+
+</details>
+
+<details open>
+<summary><strong>Step 3. Verify the Bluetooth Kernel Module</strong></summary>
+
+Confirm the in-tree `bluetooth` kernel module is available:
+
+```console
+sima@modalix:~$ modinfo bluetooth
+filename:       /lib/modules/6.18.3-modalix/kernel/net/bluetooth/bluetooth.ko
+alias:          net-pf-31
+license:        GPL
+version:        2.22
+description:    Bluetooth Core ver 2.22
+author:         Marcel Holtmann <marcel@holtmann.org>
+srcversion:     5D3CDB34E67B8B16F66F6AC
+depends:        ecdh_generic,rfkill
+intree:         Y
+name:           bluetooth
+vermagic:       6.18.3-modalix SMP preempt mod_unload aarch64
+parm:           disable_esco:Disable eSCO connection creation (bool)
+parm:           disable_ertm:Disable enhanced retransmission mode (bool)
+parm:           enable_ecred:Enable enhanced credit flow control mode (bool)
+```
+
+</details>
+
+<details open>
+<summary><strong>Step 4. Launch bluetoothctl</strong></summary>
+
+Start the interactive Bluetooth controller:
+
+```console
+sima@modalix:~$ bluetoothctl
+Agent registered
+[bluetooth]#
+```
+
+`bluetoothctl` is BlueZ's interactive shell for managing the local adapter and remote devices. From the `[bluetooth]#` prompt, the following commands cover the typical pair-and-connect flow:
+
+| Command | Purpose |
+| --- | --- |
+| `power on` | Power on the local Bluetooth controller. Required before any scanning or pairing. |
+| `agent on` / `default-agent` | Register and activate the default pairing agent so PIN and confirmation prompts are handled in this shell. |
+| `scan on` | Begin discovery. Nearby devices appear as `[NEW] Device <MAC> <Name>` lines. Run `scan off` once your target device is listed. |
+| `devices` | List devices the controller has seen. |
+| `pair <MAC>` | Pair with a device by MAC address. You may be prompted to confirm a passkey on both ends. |
+| `trust <MAC>` | Mark the device as trusted so it auto-reconnects on future boots without re-pairing. |
+| `connect <MAC>` | Establish an active connection. For audio devices this is what exposes the A2DP sink used in Step 6. |
+| `info <MAC>` | Show device details (paired, trusted, connected, supported profiles). |
+| `disconnect <MAC>` / `remove <MAC>` | Disconnect a session, or fully remove the pairing record. |
+| `help` | List every available command and its arguments. |
+| `quit` / `exit` | Leave the `bluetoothctl` shell. |
+
+A minimal pairing session looks like:
+
+```console
+[bluetooth]# power on
+[bluetooth]# agent on
+[bluetooth]# scan on
+...
+[NEW] Device AA:BB:CC:DD:EE:FF My Speaker
+[bluetooth]# scan off
+[bluetooth]# pair AA:BB:CC:DD:EE:FF
+[bluetooth]# trust AA:BB:CC:DD:EE:FF
+[bluetooth]# connect AA:BB:CC:DD:EE:FF
+```
+
+Once `connect` reports `Connection successful`, the device is ready for the audio routing steps below.
+
+</details>
+
+:::note
+Steps 5 through 7 are only required for Bluetooth **audio** devices (speakers, headsets, etc.). For non-audio peripherals — keyboards, mice, gamepads, sensors, file-transfer devices — pairing in Step 4 is sufficient and you can skip the rest of this guide.
+:::
+
+<details open>
+<summary><strong>Step 5. Install Audio Libraries and Player</strong></summary>
+
+To stream audio from the DevKit to a paired Bluetooth speaker or headset, install PipeWire, the BlueZ SPA plugin, and a console audio player:
+
+```console
+sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
+```
+
+</details>
+
+<details open>
+<summary><strong>Step 6. Route Audio to the Bluetooth Sink</strong></summary>
+
+With a Bluetooth audio device paired and connected from Step 4, list the available PipeWire/PulseAudio sinks:
+
+```console
+sima@modalix:~$ pactl list short sinks
+```
+
+Locate the `bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink` entry corresponding to your paired device, then set it as the default sink (replace the placeholder MAC with the value from the previous command):
+
+```console
+sima@modalix:~$ pactl set-default-sink bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink
+```
+
+Restart the Bluetooth and audio services so the new routing takes effect:
+
+```console
+sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-pulse
+```
+
+</details>
+
+<details open>
+<summary><strong>Step 7. Play Audio with cmus</strong></summary>
+
+Launch `cmus` and queue an audio file or directory to verify playback over the Bluetooth sink:
+
+```console
+sima@modalix:~$ cmus
+```
+
+In the `cmus` interface, press `5` to switch to the file browser, navigate to a media file, and press `Enter` to play. Audio should now stream to the paired Bluetooth device.
+
+</details>
