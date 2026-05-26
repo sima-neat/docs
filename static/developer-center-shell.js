@@ -3,7 +3,7 @@
     navItems: [
       {key: 'hardware', label: 'Hardware', href: '/hardware', external: false},
       {key: 'software', label: 'Software', href: '/software', external: false},
-      {key: 'examples', label: 'Examples', href: '/examples', external: false},
+      {key: 'examples', label: 'Examples', href: '/examples/', external: false},
       {key: 'models', label: 'Models', href: 'https://huggingface.co/simaai', external: true},
       {key: 'community', label: 'Community', href: 'https://developer.sima.ai', external: true},
     ],
@@ -187,15 +187,41 @@
   }
 
   function isSearchConfigured(search) {
+    return searchIndices(search).length > 0;
+  }
+
+  function isConfiguredIndex(index) {
     return Boolean(
-      search &&
-        search.appId &&
-        search.apiKey &&
-        search.indexName &&
-        search.appId !== 'REPLACE_ME' &&
-        search.apiKey !== 'REPLACE_ME' &&
-        search.indexName !== 'REPLACE_ME',
+      index &&
+        index.appId &&
+        index.apiKey &&
+        index.indexName &&
+        index.appId !== 'REPLACE_ME' &&
+        index.apiKey !== 'REPLACE_ME' &&
+        index.indexName !== 'REPLACE_ME',
     );
+  }
+
+  function searchIndices(search) {
+    if (!search) return [];
+    const indexes = Array.isArray(search.indexes) ? search.indexes : [search];
+    return indexes.filter(isConfiguredIndex);
+  }
+
+  function mergeRankedHits(responses) {
+    const hitGroups = responses.map((payload) => (Array.isArray(payload.hits) ? payload.hits : []));
+    const hits = [];
+    for (let index = 0; hits.length < MAX_SEARCH_RESULTS; index += 1) {
+      let added = false;
+      hitGroups.forEach((group) => {
+        if (hits.length < MAX_SEARCH_RESULTS && group[index]) {
+          hits.push(group[index]);
+          added = true;
+        }
+      });
+      if (!added) break;
+    }
+    return hits;
   }
 
   function renderSearchResults(root, state) {
@@ -270,6 +296,8 @@
       content = '<div class="developer-center-search-status">Searching...</div>';
     } else if (state.error) {
       content = `<div class="developer-center-search-status developer-center-search-error">${escapeHtml(state.error)}</div>`;
+    } else if (state.searchConfigured === false) {
+      content = '<div class="developer-center-search-status">Search is unavailable in this local build.</div>';
     } else if (!state.query.trim()) {
       content = '<div class="developer-center-search-status">Search hardware, software, APIs, and examples.</div>';
     } else if (state.hits.length === 0) {
@@ -310,7 +338,14 @@
 
   async function runSearch(manifest, state, root) {
     const search = manifest.search || DEFAULT_MANIFEST.search;
-    if (!isSearchConfigured(search)) return;
+    if (!isSearchConfigured(search)) {
+      state.searchConfigured = false;
+      state.hits = [];
+      state.loading = false;
+      state.error = '';
+      renderSearchResults(root, state);
+      return;
+    }
     const query = state.query.trim();
     if (!query) {
       state.hits = [];
@@ -326,28 +361,37 @@
     renderSearchResults(root, state);
 
     try {
-      const host = `https://${search.appId}-dsn.algolia.net`;
-      const response = await fetch(`${host}/1/indexes/${encodeURIComponent(search.indexName)}/query`, {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          'X-Algolia-Application-Id': search.appId,
-          'X-Algolia-API-Key': search.apiKey,
-        },
-        body: JSON.stringify({
+      const indexes = searchIndices(search);
+      const requests = indexes.map((index) => ({
+        index,
+        payload: {
           query,
           hitsPerPage: MAX_SEARCH_RESULTS,
           attributesToHighlight: ['title', 'content', 'hierarchy.lvl0', 'hierarchy.lvl1', 'hierarchy.lvl2'],
           attributesToSnippet: ['content:24'],
+        },
+      }));
+      const responses = await Promise.all(
+        requests.map(async ({index, payload}) => {
+          const host = `https://${index.appId}-dsn.algolia.net`;
+          const response = await fetch(`${host}/1/indexes/${encodeURIComponent(index.indexName)}/query`, {
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+              'X-Algolia-Application-Id': index.appId,
+              'X-Algolia-API-Key': index.apiKey,
+            },
+            body: JSON.stringify(payload),
+          });
+          if (!response.ok) {
+            throw new Error(`Search returned ${response.status}`);
+          }
+          return response.json();
         }),
-      });
-      if (!response.ok) {
-        throw new Error(`Search returned ${response.status}`);
-      }
-      const payload = await response.json();
+      );
       if (requestId !== state.requestId) return;
-      state.hits = Array.isArray(payload.hits) ? payload.hits : [];
+      state.hits = mergeRankedHits(responses);
       state.loading = false;
       state.error = '';
       state.activeFilter = 'all';
@@ -374,7 +418,6 @@
 
   function mountSearch(root, manifest) {
     const search = manifest.search || DEFAULT_MANIFEST.search;
-    if (!isSearchConfigured(search)) return () => {};
 
     const state = {
       activeFilter: 'all',
@@ -384,6 +427,7 @@
       open: false,
       query: '',
       requestId: 0,
+      searchConfigured: isSearchConfigured(search),
       timer: 0,
     };
     const input = root.querySelector('[data-developer-center-search-input]');
@@ -456,18 +500,17 @@
     const active = activeKey(manifest, options.active);
     const navItems = manifest.navItems || DEFAULT_MANIFEST.navItems;
     const search = manifest.search || DEFAULT_MANIFEST.search;
-    const searchMarkup = isSearchConfigured(search)
-      ? `
+    const searchOptions = search || {};
+    const searchMarkup = `
         <div class="developer-center-search" role="search">
           <label class="developer-center-search-label" for="developer-center-search-input">Search</label>
           <div class="developer-center-search-control">
             <svg class="developer-center-search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 0 1 5.18 10.43l4.45 4.44-1.42 1.42-4.44-4.45A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"></path></svg>
-            <input id="developer-center-search-input" data-developer-center-search-input class="developer-center-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(search.placeholder || 'Search Developer Center')}" aria-label="Search Developer Center" />
+            <input id="developer-center-search-input" data-developer-center-search-input class="developer-center-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(searchOptions.placeholder || 'Search Developer Center')}" aria-label="Search Developer Center" />
             <button class="developer-center-search-clear" data-developer-center-search-clear type="button" aria-label="Clear search">×</button>
           </div>
           <div class="developer-center-search-panel" data-developer-center-search-panel></div>
-        </div>`
-      : '';
+        </div>`;
     const linkForItem = (item) => {
       const activeClass = item.key === active ? ' navbar__link--active' : '';
       const targetAttr = item.external ? ' target="_blank" rel="noreferrer"' : '';
@@ -520,6 +563,7 @@
     try {
       const response = await fetch(path, {
         headers: {Accept: 'application/json'},
+        cache: 'no-store',
       });
       if (!response.ok) {
         throw new Error(`${path} returned ${response.status}`);

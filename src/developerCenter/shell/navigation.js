@@ -19,6 +19,18 @@ function markActiveNavItem() {
   });
 }
 
+function normalizeHardwareBreadcrumbHome() {
+  if (!window.location.pathname.startsWith('/hardware')) {
+    return;
+  }
+
+  document
+    .querySelectorAll('.theme-doc-breadcrumbs a[aria-label="Home page"]')
+    .forEach((link) => {
+      link.setAttribute('href', shellConfig.SECTION_ROUTES.hardware);
+    });
+}
+
 export function initializeDeveloperCenterNav() {
   if (typeof window === 'undefined' || typeof document === 'undefined') {
     return;
@@ -27,6 +39,7 @@ export function initializeDeveloperCenterNav() {
   const update = () => {
     normalizeDeveloperCenterBrand();
     markActiveNavItem();
+    normalizeHardwareBreadcrumbHome();
   };
 
   update();
@@ -62,8 +75,17 @@ export function initializeCloudFrontRouteNavigation() {
         return;
       }
 
+      const href = anchor.getAttribute('href') || '';
+      if (href.startsWith('#')) {
+        return;
+      }
+
       const url = new URL(anchor.href, window.location.href);
       if (url.origin !== window.location.origin) {
+        return;
+      }
+
+      if (url.hash && shellConfig.normalizePath(url.pathname) === shellConfig.normalizePath(window.location.pathname)) {
         return;
       }
 
