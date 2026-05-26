@@ -30,6 +30,7 @@ const config = {
   clientModules: [
     require.resolve('./src/clientModules/analyticsConsent.js'),
     require.resolve('./src/clientModules/cloudfrontRoutes.js'),
+    require.resolve('./src/clientModules/developerCenterShell.js'),
     require.resolve('./src/clientModules/developerCenterNav.js'),
     require.resolve('./src/clientModules/globalTheme.js'),
   ],

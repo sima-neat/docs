@@ -45,5 +45,6 @@
   "theme": {
     "cookie": "sima-neat-theme",
     "keys": ["theme", "portal-theme"]
-  }
+  },
+  "runtimeConfig": "/developer-center-runtime.json"
 }
