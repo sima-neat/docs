@@ -4,6 +4,9 @@
   "private": true,
   "description": "SiMa.ai system documentation portal.",
   "scripts": {
+    "fetch:serial-tool": "bash scripts/fetch-serial-tool.sh",
+    "prestart": "npm run fetch:serial-tool",
+    "prebuild": "npm run fetch:serial-tool",
     "start": "docusaurus start --host 0.0.0.0",
     "build": "docusaurus build",
     "serve": "docusaurus serve --host 0.0.0.0",
