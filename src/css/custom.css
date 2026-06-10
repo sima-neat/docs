@@ -17,9 +17,16 @@ html[data-theme='dark'] {
 }
 
 .navbar {
-  backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(28, 47, 58, 0.1);
   box-shadow: none;
+}
+
+/* Apply the frosted blur to the inner bar rather than the .navbar container.
+   backdrop-filter on .navbar would make it the containing block for the
+   position:fixed mobile sidebar drawer, clamping the drawer to the navbar
+   height and hiding the doc navigation on mobile. */
+.navbar__inner {
+  backdrop-filter: blur(18px);
 }
 
 @media (min-width: 997px) {
@@ -44,6 +51,12 @@ html[data-theme='dark'] {
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
     top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
     max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
+  }
+
+  /* Offset the right-side "On this page" table of contents below the bar. */
+  html.developer-center-shell-active .theme-doc-toc-desktop {
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem);
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem);
   }
 }
 
@@ -125,14 +138,166 @@ html[data-theme='dark'] {
 }
 
 @media (max-width: 996px) {
+  /* On mobile the native navbar is the single top bar (with a search box
+     added below), so the Developer Center shell bar is hidden here. The shell
+     still powers search — it is revealed as an overlay when the box is tapped. */
+  #developer-center-shell-root {
+    display: none;
+  }
+
+  /* Give the search box room by hiding the navbar title text on mobile. */
+  nav.theme-layout-navbar .navbar__title {
+    display: none;
+  }
+
+  /* Section sub-bar sits just below the single navbar; scrolls horizontally. */
   .docs-subnav {
+    top: var(--ifm-navbar-height);
+    z-index: 150;
+  }
+
+  .docs-subnav__inner {
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding: 0 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .docs-subnav__inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .docs-subnav__links,
+  .docs-subnav__controls {
+    flex: 0 0 auto;
+  }
+
+  .docs-subnav__controls {
+    margin-left: 0;
+    gap: 0.5rem;
+  }
+
+  .docs-subnav__link {
+    padding: 0 0.4rem;
+    font-size: 0.92rem;
+  }
+
+  .docs-subnav__button {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* Push content below the fixed sub-bar. The sub-bar is a direct child of
+     #__docusaurus only on hardware pages, so :has scopes this correctly. */
+  #__docusaurus:has(> .docs-subnav) .main-wrapper {
+    margin-top: var(--docs-subnav-height);
+  }
+}
+
+/* Always-visible search box in the (single) native navbar on mobile. Tapping
+   it reveals the Developer Center shell search as an overlay (Algolia-style). */
+.dc-mobile-search-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 58vw;
+  height: 2.2rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.85rem;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.dc-mobile-search-box__icon {
+  flex: 0 0 auto;
+}
+
+.dc-mobile-search-box__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* On desktop the native navbar is hidden and the shell shows its own search. */
+@media (min-width: 997px) {
+  .dc-mobile-search-box {
     display: none;
   }
 }
 
 @media (max-width: 996px) {
-  #developer-center-shell-root {
-    display: none;
+  .dc-mobile-search-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .dc-mobile-search-close {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 320;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: var(--ifm-navbar-height);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ifm-navbar-link-color);
+    cursor: pointer;
+  }
+
+  html.dc-mobile-search-open .dc-mobile-search-box {
+    visibility: hidden;
+  }
+
+  /* Reveal the shell as a top overlay showing only its search control. */
+  html.dc-mobile-search-open #developer-center-shell-root {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 310;
+    background: var(--ifm-background-surface-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .developer-center-shell,
+  html.dc-mobile-search-open #developer-center-shell-root .dev-center-navbar,
+  html.dc-mobile-search-open #developer-center-shell-root .navbar__inner {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: transparent;
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .navbar__items:not(.navbar__items--right),
+  html.dc-mobile-search-open #developer-center-shell-root .color-mode-toggle {
+    display: none !important;
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .navbar__items--right {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 3.25rem 0.6rem 1rem;
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .developer-center-search {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
   }
 }
 
@@ -493,5 +658,24 @@ html[data-theme='dark'] .cookie-consent__toggle {
 
   .cookie-consent__actions .button {
     flex-basis: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tighter padding so content isn't cramped on narrow screens. */
+  .tabs-container [role='tabpanel'] {
+    padding: 1.25rem 1rem 1.5rem !important;
+  }
+
+  /* Let wide tables scroll horizontally instead of overflowing the page. */
+  .markdown table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Avoid awkward squashing of large/centered DevKit card images. */
+  .devkit-card img {
+    width: 80%;
   }
 }
