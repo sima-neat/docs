@@ -36,9 +36,9 @@ Modalix users gain a more developer-friendly environment, including:
 
 There are three supported methods for updating the DevKit firmware:
 
-- **[Update with sima-cli](#sima-cli)** — Transfer the firmware image over the network and automatically trigger the update on the DevKit. This method is ideal for field updates.
-- **[Update with Boot Image](#bootimage)** — Create or recover bootable media for the DevKit. Useful for restoring faulty devices or provisioning multiple boot devices.
-- **[Update with Net Boot](#netboot)** — Start a local TFTP server and boot the DevKit directly over the network without flashing media. Ideal for recovery, factory bring-up, or rapid kernel/rootfs development.
+- **[Update with sima-cli](?method=sima-cli#sima-cli)** — Transfer the firmware image over the network and automatically trigger the update on the DevKit. This method is ideal for field updates.
+- **[Update with Boot Image](?method=bootimage#bootimage)** — Create or recover bootable media for the DevKit. Useful for restoring faulty devices or provisioning multiple boot devices.
+- **[Update with Net Boot](?method=netboot#netboot)** — Start a local TFTP server and boot the DevKit directly over the network without flashing media. Ideal for recovery, factory bring-up, or rapid kernel/rootfs development.
 
 :::note
 Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
@@ -48,8 +48,130 @@ Please install or upgrade `sima-cli` before continuing. This guide is intended f
 Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
 :::
 
-<Tabs>
-<TabItem value="netboot" label="Update with Net Boot" default>
+<Tabs groupId="firmware-update-method" queryString="method">
+<TabItem value="sima-cli" label="Update with sima-cli" default>
+
+## Update with sima-cli {#sima-cli}
+
+This method allows developers to update the firmware on a SiMa.ai DevKit using the `sima-cli` tool. This approach downloads the firmware image to the host machine and transfers it to the DevKit for update.
+
+Before proceeding, ensure the host machine can reach the DevKit over the network. Refer to:
+
+- [Standalone Mode Network Setup](/hardware/getting-started/standalone-mode/#network)
+- [PCIe Mode Virtual Network Setup](/hardware/getting-started/pcie-mode#virtual-network)
+
+<Tabs groupId="sima-cli-source">
+<TabItem value="from-devkit" label="From DevKit" default>
+
+Developers can run `sima-cli` directly on the standalone DevKit to update the device. Ensure the DevKit has an active Internet connection, then execute:
+
+```console
+modalix:~$ sima-cli update
+```
+
+On MLSoC running Yocto Linux, developers may also specify a full URL instead of a version string if they have previously downloaded and hosted the image themselves.
+
+```console
+davinci:~$ sima-cli update http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="from-host" label="From Host Machine">
+
+:::note
+This method is only supported on the MLSoC platform running Yocto. For Modalix devices running eLxr Linux, perform the update directly on the DevKit.
+:::
+
+Use this command from the host machine:
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
+```
+
+This command also installs the appropriate Linux driver version on the host, if applicable.
+
+If you have downloaded the firmware and hosted somewhere on your network, you can provide the URL to avoid repeatedly downloading from the Internet.
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="download" label="Download only">
+
+If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
+
+</TabItem>
+</Tabs>
+
+:::note
+**For PCIe system update:**
+
+- Starting with firmware version `1.5`, a virtual Ethernet interface can be used in PCIe mode, eliminating the need for physical cabling to the DevKit. This enables seamless updates over an existing PCIe connection.
+- For firmware version `1.4` or earlier, a direct network connection must be established with the DevKit. In this case, connect the DevKit in standalone mode.
+:::
+
+:::note
+To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use the [Net Boot procedure](?method=netboot#netboot) instead — it boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
+:::
+
+</TabItem>
+<TabItem value="bootimage" label="Update with Boot Image">
+
+## Update with Boot Image {#bootimage}
+
+In some cases, updating the DevKit firmware using standard methods may not be possible or sufficient. This includes scenarios such as:
+
+- The DevKit's internal storage is corrupted or fails to boot.
+- You need to prepare multiple bootable SD cards or removable drives for deployment.
+
+In these situations, you can use the `sima-cli bootimg` command to download and write a complete bootable image to a removable device (e.g., SD card or NVMe drive). Alternatively, you may use third-party tools like [BalenaEtcher](https://etcher.balena.io/).
+
+<Tabs groupId="bootimage-method">
+<TabItem value="sima-cli" label="Using sima-cli" default>
+
+```console
+sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
+```
+
+This command performs the following steps:
+
+1. Downloads the bootable image for the specified board type (`modalix` or `mlsoc`) and SDK version.
+2. Scans your host system for removable storage devices.
+3. Prompts you to confirm which device to write to.
+4. Writes the boot image directly to the selected device.
+
+After the process completes, you can safely eject the SD card and insert it into the DevKit. On next boot, the DevKit will start from the new image.
+
+**Important Notes:**
+
+- This command must be run on a Linux or macOS host.
+- An internet connection is required to download the image.
+
+</TabItem>
+<TabItem value="third-party" label="Using Third-Party Tools">
+
+You can also use a third-party image writing tool such as BalenaEtcher.
+
+1. First, download the image using `sima-cli`:
+
+   If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
+
+2. Extract the contents of the downloaded archive:
+
+   ```console
+   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
+   ```
+
+3. Use BalenaEtcher to select the resulting `.wic.gz` file and flash it to your SD card or USB drive.
+
+Once written, insert the device into the DevKit and power it on to boot from the image.
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="netboot" label="Update with Net Boot">
 
 ## Update with Net Boot {#netboot}
 
@@ -232,126 +354,5 @@ netboot> f <new-ip>
 </details>
 
 </TabItem>
-<TabItem value="sima-cli" label="Update with sima-cli">
 
-## Update with sima-cli {#sima-cli}
-
-This method allows developers to update the firmware on a SiMa.ai DevKit using the `sima-cli` tool. This approach downloads the firmware image to the host machine and transfers it to the DevKit for update.
-
-Before proceeding, ensure the host machine can reach the DevKit over the network. Refer to:
-
-- [Standalone Mode Network Setup](/hardware/getting-started/standalone-mode/#network)
-- [PCIe Mode Virtual Network Setup](/hardware/getting-started/pcie-mode#virtual-network)
-
-<Tabs groupId="sima-cli-source">
-<TabItem value="from-devkit" label="From DevKit" default>
-
-Developers can run `sima-cli` directly on the standalone DevKit to update the device. Ensure the DevKit has an active Internet connection, then execute:
-
-```console
-modalix:~$ sima-cli update
-```
-
-On MLSoC running Yocto Linux, developers may also specify a full URL instead of a version string if they have previously downloaded and hosted the image themselves.
-
-```console
-davinci:~$ sima-cli update http://your-server/image.tar.gz
-```
-
-</TabItem>
-<TabItem value="from-host" label="From Host Machine">
-
-:::note
-This method is only supported on the MLSoC platform running Yocto. For Modalix devices running eLxr Linux, perform the update directly on the DevKit.
-:::
-
-Use this command from the host machine:
-
-```console
-sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
-```
-
-This command also installs the appropriate Linux driver version on the host, if applicable.
-
-If you have downloaded the firmware and hosted somewhere on your network, you can provide the URL to avoid repeatedly downloading from the Internet.
-
-```console
-sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
-```
-
-</TabItem>
-<TabItem value="download" label="Download only">
-
-If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
-
-</TabItem>
-</Tabs>
-
-:::note
-**For PCIe system update:**
-
-- Starting with firmware version `1.5`, a virtual Ethernet interface can be used in PCIe mode, eliminating the need for physical cabling to the DevKit. This enables seamless updates over an existing PCIe connection.
-- For firmware version `1.4` or earlier, a direct network connection must be established with the DevKit. In this case, connect the DevKit in standalone mode.
-:::
-
-:::note
-To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use the [Net Boot procedure](#netboot) instead — it boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
-:::
-
-</TabItem>
-<TabItem value="bootimage" label="Update with Boot Image">
-
-## Update with Boot Image {#bootimage}
-
-In some cases, updating the DevKit firmware using standard methods may not be possible or sufficient. This includes scenarios such as:
-
-- The DevKit's internal storage is corrupted or fails to boot.
-- You need to prepare multiple bootable SD cards or removable drives for deployment.
-
-In these situations, you can use the `sima-cli bootimg` command to download and write a complete bootable image to a removable device (e.g., SD card or NVMe drive). Alternatively, you may use third-party tools like [BalenaEtcher](https://etcher.balena.io/).
-
-<Tabs groupId="bootimage-method">
-<TabItem value="sima-cli" label="Using sima-cli" default>
-
-```console
-sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
-```
-
-This command performs the following steps:
-
-1. Downloads the bootable image for the specified board type (`modalix` or `mlsoc`) and SDK version.
-2. Scans your host system for removable storage devices.
-3. Prompts you to confirm which device to write to.
-4. Writes the boot image directly to the selected device.
-
-After the process completes, you can safely eject the SD card and insert it into the DevKit. On next boot, the DevKit will start from the new image.
-
-**Important Notes:**
-
-- This command must be run on a Linux or macOS host.
-- An internet connection is required to download the image.
-
-</TabItem>
-<TabItem value="third-party" label="Using Third-Party Tools">
-
-You can also use a third-party image writing tool such as BalenaEtcher.
-
-1. First, download the image using `sima-cli`:
-
-   If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
-
-2. Extract the contents of the downloaded archive:
-
-   ```console
-   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
-   ```
-
-3. Use BalenaEtcher to select the resulting `.wic.gz` file and flash it to your SD card or USB drive.
-
-Once written, insert the device into the DevKit and power it on to boot from the image.
-
-</TabItem>
-</Tabs>
-
-</TabItem>
 </Tabs>

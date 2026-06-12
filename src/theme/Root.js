@@ -79,7 +79,7 @@ function HardwareSubnav() {
             target="_blank"
             rel="noreferrer"
           >
-            Buy Your Devkit
+            Buy Your DevKit
           </a>
         </div>
       </div>
