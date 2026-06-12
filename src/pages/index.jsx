@@ -1,4 +1,3 @@
-import {useEffect, useRef, useState} from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
@@ -6,46 +5,6 @@ import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
 const actions = developerCenterShell.navbarItems();
-
-// 11:59:59 PM Pacific (PDT, UTC-7) on Jun 15, 2026. The WIP banner auto-hides
-// once the viewer's clock passes this instant.
-const WIP_DEADLINE = Date.parse('2026-06-15T23:59:59-07:00');
-
-function WipBanner() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    // Hide once the viewer's clock passes the deadline.
-    if (Date.now() >= WIP_DEADLINE) {
-      setVisible(false);
-      return undefined;
-    }
-    // Publish the banner's height so the fixed bars and content below it are
-    // pushed down by exactly the right amount (--wip-offset, default 0).
-    const root = document.documentElement;
-    const syncOffset = () => {
-      if (ref.current) {
-        root.style.setProperty('--wip-offset', `${ref.current.offsetHeight}px`);
-      }
-    };
-    syncOffset();
-    window.addEventListener('resize', syncOffset);
-    return () => {
-      window.removeEventListener('resize', syncOffset);
-      root.style.removeProperty('--wip-offset');
-    };
-  }, []);
-
-  if (!visible) {
-    return null;
-  }
-  return (
-    <div ref={ref} className="wip-banner" role="status">
-      🚧 This documentation site is a work in progress — content is incomplete and may change.
-    </div>
-  );
-}
 
 function PortalButton({action}) {
   const className = clsx(styles.portalButton, styles[action.tone]);
@@ -68,7 +27,6 @@ export default function Home() {
     <Layout
       title="Developer Center"
       description="SiMa.ai Developer Center">
-      <WipBanner />
       <main className={styles.pageShell}>
         <section className={styles.hero}>
           <div className={styles.brandPanel}>
