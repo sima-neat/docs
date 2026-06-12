@@ -32,6 +32,7 @@ const config = {
     require.resolve('./src/clientModules/cloudfrontRoutes.js'),
     require.resolve('./src/clientModules/developerCenterShell.js'),
     require.resolve('./src/clientModules/developerCenterNav.js'),
+    require.resolve('./src/clientModules/firmwareUpdateTabs.js'),
     require.resolve('./src/clientModules/globalTheme.js'),
     require.resolve('./src/clientModules/collapseSidebarOnHome.js'),
   ],
