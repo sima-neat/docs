@@ -49,20 +49,20 @@ html[data-theme='dark'] {
 
   html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + var(--wip-offset)) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - var(--wip-offset)) !important;
   }
 
   /* Offset the right-side "On this page" table of contents below the bar. */
   html.developer-center-shell-active .theme-doc-toc-desktop {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem);
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem);
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem + var(--wip-offset));
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem - var(--wip-offset));
   }
 }
 
 .docs-subnav {
   position: fixed;
-  top: var(--ifm-navbar-height);
+  top: calc(var(--ifm-navbar-height) + var(--wip-offset));
   right: 0;
   left: 0;
   z-index: 850;
@@ -152,7 +152,7 @@ html[data-theme='dark'] {
 
   /* Section sub-bar sits just below the single navbar; scrolls horizontally. */
   .docs-subnav {
-    top: var(--ifm-navbar-height);
+    top: calc(var(--ifm-navbar-height) + var(--wip-offset));
     z-index: 150;
   }
 
@@ -193,7 +193,7 @@ html[data-theme='dark'] {
   /* Push content below the fixed sub-bar. The sub-bar is a direct child of
      #__docusaurus only on hardware pages, so :has scopes this correctly. */
   #__docusaurus:has(> .docs-subnav) .main-wrapper {
-    margin-top: var(--docs-subnav-height);
+    margin-top: calc(var(--docs-subnav-height) + var(--wip-offset));
   }
 }
 
