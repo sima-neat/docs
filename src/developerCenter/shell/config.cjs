@@ -7,7 +7,7 @@ const SECTION_ROUTES = {
 
 const EXTERNAL_ROUTES = {
   models: 'https://huggingface.co/simaai',
-  community: 'https://developer.sima.ai',
+  community: 'https://community.sima.ai',
 };
 
 const THEME_COOKIE = 'sima-neat-theme';
