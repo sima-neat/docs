@@ -36,9 +36,9 @@ Modalix users gain a more developer-friendly environment, including:
 
 There are three supported methods for updating the DevKit firmware:
 
-- **[Update with sima-cli](?method=sima-cli#sima-cli)** — Transfer the firmware image over the network and automatically trigger the update on the DevKit. This method is ideal for field updates.
-- **[Update with Boot Image](?method=bootimage#bootimage)** — Create or recover bootable media for the DevKit. Useful for restoring faulty devices or provisioning multiple boot devices.
-- **[Update with Net Boot](?method=netboot#netboot)** — Start a local TFTP server and boot the DevKit directly over the network without flashing media. Ideal for recovery, factory bring-up, or rapid kernel/rootfs development.
+- **[Update with sima-cli](#sima-cli)** — Transfer the firmware image over the network and automatically trigger the update on the DevKit. This method is ideal for field updates.
+- **[Update with Boot Image](#bootimage)** — Create or recover bootable media for the DevKit. Useful for restoring faulty devices or provisioning multiple boot devices.
+- **[Update with Net Boot](#netboot)** — Start a local TFTP server and boot the DevKit directly over the network without flashing media. Ideal for recovery, factory bring-up, or rapid kernel/rootfs development.
 
 :::note
 Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
@@ -48,7 +48,7 @@ Please install or upgrade `sima-cli` before continuing. This guide is intended f
 Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
 :::
 
-<Tabs groupId="firmware-update-method" queryString="method">
+<Tabs groupId="firmware-update-method">
 <TabItem value="sima-cli" label="Update with sima-cli" default>
 
 ## Update with sima-cli {#sima-cli}
@@ -112,7 +112,7 @@ If the developer prefers to download only the firmware image and perform the upd
 :::
 
 :::note
-To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use the [Net Boot procedure](?method=netboot#netboot) instead — it boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
+To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use the [Net Boot procedure](#netboot) instead — it boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
 :::
 
 </TabItem>
