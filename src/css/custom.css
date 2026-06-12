@@ -311,6 +311,47 @@ html[data-theme='dark'] {
   object-fit: contain;
 }
 
+/* Work-in-progress notice pinned above the Developer Center bar on the landing
+   page (auto-hides by date). The banner is fixed above everything; --wip-offset
+   (set to the banner's measured height by JS, with a sane CSS fallback) pushes
+   the fixed bars and the page content down to make room. */
+:root {
+  --wip-offset: 0rem;
+}
+
+.wip-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(90deg, #dc6821, #c25718);
+  color: #fffaf4;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(28, 47, 58, 0.18);
+}
+
+/* Push the fixed Developer Center shell bar, the native navbar, and the page
+   content down by the banner height. --wip-offset is 0 when no banner is mounted
+   (so these are no-ops elsewhere) and is set to the banner's height by JS on the
+   landing page. The `html` prefix raises specificity above the shell/infima
+   `top: 0` defaults so the offset actually applies. */
+html .developer-center-shell,
+html .navbar--fixed-top {
+  top: var(--wip-offset);
+}
+
+html .main-wrapper {
+  margin-top: var(--wip-offset);
+}
+
 .footer {
   border-top: 1px solid rgba(28, 47, 58, 0.1);
 }
