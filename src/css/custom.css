@@ -9,6 +9,7 @@
   --ifm-font-family-base: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ifm-font-family-monospace: "IBM Plex Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --ifm-heading-font-family: var(--ifm-font-family-base);
+  --docs-subnav-height: 3.25rem;
 }
 
 html[data-theme='dark'] {
@@ -16,9 +17,16 @@ html[data-theme='dark'] {
 }
 
 .navbar {
-  backdrop-filter: blur(18px);
   border-bottom: 1px solid rgba(28, 47, 58, 0.1);
   box-shadow: none;
+}
+
+/* Apply the frosted blur to the inner bar rather than the .navbar container.
+   backdrop-filter on .navbar would make it the containing block for the
+   position:fixed mobile sidebar drawer, clamping the drawer to the navbar
+   height and hiding the doc navigation on mobile. */
+.navbar__inner {
+  backdrop-filter: blur(18px);
 }
 
 @media (min-width: 997px) {
@@ -27,13 +35,269 @@ html[data-theme='dark'] {
   }
 
   html.developer-center-shell-active #__docusaurus {
-    padding-top: var(--ifm-navbar-height);
+    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height));
+  }
+
+  html.developer-center-shell-active .theme-doc-sidebar-container {
+    margin-top: 0 !important;
+  }
+
+  html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebar_"],
+  html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebar_"] {
+    padding-top: 0 !important;
+  }
+
+  html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
+  html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
+  }
+
+  /* Offset the right-side "On this page" table of contents below the bar. */
+  html.developer-center-shell-active .theme-doc-toc-desktop {
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem);
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem);
+  }
+}
+
+.docs-subnav {
+  position: fixed;
+  top: var(--ifm-navbar-height);
+  right: 0;
+  left: 0;
+  z-index: 850;
+  height: var(--docs-subnav-height);
+  border-bottom: 1px solid rgba(28, 47, 58, 0.1);
+  background: var(--ifm-navbar-background-color);
+  backdrop-filter: blur(18px);
+}
+
+.docs-subnav__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 0 var(--ifm-navbar-padding-horizontal);
+}
+
+.docs-subnav__links,
+.docs-subnav__controls {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.docs-subnav__controls {
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.docs-subnav__link {
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 var(--ifm-navbar-item-padding-horizontal);
+  color: var(--ifm-navbar-link-color);
+  font-weight: var(--ifm-font-weight-bold);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.docs-subnav__link:hover,
+.docs-subnav__link--active {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.docs-subnav__button {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1.1rem;
+  background: var(--ifm-color-primary);
+  color: #fff !important;
+  border-radius: 6px;
+  font-weight: 600;
+  text-decoration: none !important;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.docs-subnav__button:hover {
+  background: var(--ifm-color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.docs-subnav__button--buy {
+  background: #dc6821;
+}
+
+.docs-subnav__button--buy:hover {
+  background: #c25718;
+}
+
+@media (max-width: 996px) {
+  /* On mobile the native navbar is the single top bar (with a search box
+     added below), so the Developer Center shell bar is hidden here. The shell
+     still powers search — it is revealed as an overlay when the box is tapped. */
+  #developer-center-shell-root {
+    display: none;
+  }
+
+  /* Give the search box room by hiding the navbar title text on mobile. */
+  nav.theme-layout-navbar .navbar__title {
+    display: none;
+  }
+
+  /* Section sub-bar sits just below the single navbar; scrolls horizontally. */
+  .docs-subnav {
+    top: var(--ifm-navbar-height);
+    z-index: 150;
+  }
+
+  .docs-subnav__inner {
+    justify-content: flex-start;
+    gap: 0.75rem;
+    padding: 0 1rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .docs-subnav__inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .docs-subnav__links,
+  .docs-subnav__controls {
+    flex: 0 0 auto;
+  }
+
+  .docs-subnav__controls {
+    margin-left: 0;
+    gap: 0.5rem;
+  }
+
+  .docs-subnav__link {
+    padding: 0 0.4rem;
+    font-size: 0.92rem;
+  }
+
+  .docs-subnav__button {
+    padding: 0.3rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  /* Push content below the fixed sub-bar. The sub-bar is a direct child of
+     #__docusaurus only on hardware pages, so :has scopes this correctly. */
+  #__docusaurus:has(> .docs-subnav) .main-wrapper {
+    margin-top: var(--docs-subnav-height);
+  }
+}
+
+/* Always-visible search box in the (single) native navbar on mobile. Tapping
+   it reveals the Developer Center shell search as an overlay (Algolia-style). */
+.dc-mobile-search-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 58vw;
+  height: 2.2rem;
+  padding: 0 0.8rem;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 999px;
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.85rem;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.dc-mobile-search-box__icon {
+  flex: 0 0 auto;
+}
+
+.dc-mobile-search-box__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* On desktop the native navbar is hidden and the shell shows its own search. */
+@media (min-width: 997px) {
+  .dc-mobile-search-box {
+    display: none;
   }
 }
 
 @media (max-width: 996px) {
-  #developer-center-shell-root {
-    display: none;
+  .dc-mobile-search-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .dc-mobile-search-close {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 320;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: var(--ifm-navbar-height);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--ifm-navbar-link-color);
+    cursor: pointer;
+  }
+
+  html.dc-mobile-search-open .dc-mobile-search-box {
+    visibility: hidden;
+  }
+
+  /* Reveal the shell as a top overlay showing only its search control. */
+  html.dc-mobile-search-open #developer-center-shell-root {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 310;
+    background: var(--ifm-background-surface-color);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .developer-center-shell,
+  html.dc-mobile-search-open #developer-center-shell-root .dev-center-navbar,
+  html.dc-mobile-search-open #developer-center-shell-root .navbar__inner {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: transparent;
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .navbar__items:not(.navbar__items--right),
+  html.dc-mobile-search-open #developer-center-shell-root .color-mode-toggle {
+    display: none !important;
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .navbar__items--right {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 3.25rem 0.6rem 1rem;
+  }
+
+  html.dc-mobile-search-open #developer-center-shell-root .developer-center-search {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
   }
 }
 
@@ -45,6 +309,47 @@ html[data-theme='dark'] {
 
 .navbar__logo img {
   object-fit: contain;
+}
+
+/* Work-in-progress notice pinned above the Developer Center bar on the landing
+   page (auto-hides by date). The banner is fixed above everything; --wip-offset
+   (set to the banner's measured height by JS, with a sane CSS fallback) pushes
+   the fixed bars and the page content down to make room. */
+:root {
+  --wip-offset: 0rem;
+}
+
+.wip-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(90deg, #dc6821, #c25718);
+  color: #fffaf4;
+  font-weight: 700;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(28, 47, 58, 0.18);
+}
+
+/* Push the fixed Developer Center shell bar, the native navbar, and the page
+   content down by the banner height. --wip-offset is 0 when no banner is mounted
+   (so these are no-ops elsewhere) and is set to the banner's height by JS on the
+   landing page. The `html` prefix raises specificity above the shell/infima
+   `top: 0` defaults so the offset actually applies. */
+html .developer-center-shell,
+html .navbar--fixed-top {
+  top: var(--wip-offset);
+}
+
+html .main-wrapper {
+  margin-top: var(--wip-offset);
 }
 
 .footer {
@@ -394,5 +699,24 @@ html[data-theme='dark'] .cookie-consent__toggle {
 
   .cookie-consent__actions .button {
     flex-basis: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Tighter padding so content isn't cramped on narrow screens. */
+  .tabs-container [role='tabpanel'] {
+    padding: 1.25rem 1rem 1.5rem !important;
+  }
+
+  /* Let wide tables scroll horizontally instead of overflowing the page. */
+  .markdown table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Avoid awkward squashing of large/centered DevKit card images. */
+  .devkit-card img {
+    width: 80%;
   }
 }

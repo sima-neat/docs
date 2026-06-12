@@ -5,7 +5,7 @@
       {key: 'software', label: 'Software', href: '/software', external: false},
       {key: 'examples', label: 'Examples', href: '/examples/', external: false},
       {key: 'models', label: 'Models', href: 'https://huggingface.co/simaai', external: true},
-      {key: 'community', label: 'Community', href: 'https://developer.sima.ai', external: true},
+      {key: 'community', label: 'Community', href: 'https://community.sima.ai', external: true},
     ],
     theme: {
       cookie: 'sima-neat-theme',
