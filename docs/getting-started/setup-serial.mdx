@@ -10,11 +10,11 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Configure Serial Connection
 
-During early development, it is strongly recommended to establish a connection to the DevKit via the serial interface, whether the system is used in a standalone configuration or as a PCIe device in a host system.
+During early development, it is strongly recommended to establish a connection to the DevKit via the serial interface, whether the system is used in standalone mode or PCIe mode.
 
 In a standalone setup, the serial connection provides reliable access to the DevKit regardless of how it acquires an IP address. This ensures that developers retain control of the system for configuration, monitoring, and recovery tasks even if network connectivity is unavailable or misconfigured.
 
-In a PCIe setup, the serial interface offers direct access to the PCIe card's shell and debug consoles during bring-up. This is particularly useful for low-level control and troubleshooting when the host system or PCIe link is not yet fully operational.
+In PCIe mode, the serial interface offers direct access to the PCIe card's shell and debug consoles during bring-up. This is particularly useful for low-level control and troubleshooting when the host machine or PCIe link is not yet fully operational.
 
 The serial interface is intended primarily for development and bring-up. Once the system has been fully configured and deployed, ongoing operation generally does not require a serial connection.
 
@@ -52,11 +52,11 @@ Use the included serial cable to connect the DevKit to your computer:
 - **Computer end:** connect to a **USB Type-A** port. Use a USB hub if necessary.
 
 </TabItem>
-<TabItem value="modalix-ea-pcie" label="Modalix EA PCIe Card">
+<TabItem value="modalix-pcie-card" label="Modalix PCIe Card">
 
 <figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
-  <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix EA PCIe Card connectors" style={{width: '100%', borderRadius: 10}} />
-  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix EA PCIe Card Connectors</figcaption>
+  <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix PCIe Card connectors" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix PCIe Card Connectors</figcaption>
 </figure>
 
 Use the included serial cable to connect the card to your host:

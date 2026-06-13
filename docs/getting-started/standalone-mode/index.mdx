@@ -87,22 +87,22 @@ modalix:~$ networkctl status
 
 :::note
 - Suitable when the developer network is not available for an Ethernet connection from the DevKit.
-- Plug the DevKit into the Ethernet port of the developer computer. Use a USB-to-Ethernet dongle if the developer computer does not have an Ethernet port available.
+- Plug the DevKit into the Ethernet port of the host machine. Use a USB-to-Ethernet dongle if the host machine does not have an Ethernet port available.
 - The computer can share Internet with the DevKit, enabling Python package installation using `pip`.
 - Requires enabling internet connection sharing on the host computer.
 :::
 
-1. Follow the instructions below for an Ubuntu machine. On other platforms, the instructions may vary; please look for related instructions online on how to share network connections.
+1. Follow the instructions below for an Ubuntu host machine. On other platforms, the instructions may vary; please look for related instructions online on how to share network connections.
 
    - In the upper-right corner, open `Settings`, then go to the `Network` section.
    - Under `Wired`, click the plus sign to create a new settings profile if you do not have an existing profile for the board, or modify the existing one if you do.
    - If you are creating a new profile, name it "Shared" or any name you prefer.
    - In the `IPv4` tab, choose `Shared to other computers`. Click Apply.
    - If you had an existing connection, turn it off and on for the changes to take effect.
-   - Your computer should now be networked with the AP. `10.42.0.0/24` is the default subnet used by Ubuntu for this setup, but your computer may use a different subnet.
+   - Your host machine should now be networked with the DevKit. `10.42.0.0/24` is the default subnet used by Ubuntu for this setup, but your host machine may use a different subnet.
    - If the next step returns no results, run `ifconfig` and look for the IP of your Ethernet interface (usually `eth0`) there.
 
-2. Open a terminal on the Ubuntu machine. Type the following to scan the devices in that IP range:
+2. Open a terminal on the Ubuntu host machine. Type the following to scan the devices in that IP range:
 
    ```console
    sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24 | grep report
@@ -223,14 +223,14 @@ Please install or upgrade `sima-cli` before continuing. This guide is intended f
 :::
 
 :::note
-This procedure requires a host machine with the latest sima-cli version installed. It also requires the firmware version of the **Modalix Devkit** to be `1.7.0_master_B1965` or above. This is because this build has the necessary `.dtbo` files to support MIPI.
+This procedure requires a host machine with the latest `sima-cli` version installed. It also requires a **Modalix DevKit** firmware version that includes the required `.dtbo` files for MIPI support.
 :::
 
 The **Modalix DevKit** includes two MIPI Interfaces for connecting MIPI cameras as inputs to the device. The MIPI ports are located directly on the carrier board, and developers would need to follow the procedure below to enable them.
 
-Before starting, make sure to attach a MIPI camera to one of the MIPI ports while the **Modalix Devkit** is off.
+Before starting, make sure to attach a MIPI camera to one of the MIPI ports while the **Modalix DevKit** is off.
 
-Once connected, connect a serial cable from a host machine to the **Modalix Devkit**. Afterwards, turn the **Modalix Devkit** on.
+Once connected, connect a serial cable from a host machine to the **Modalix DevKit**. Afterwards, turn the **Modalix DevKit** on.
 
 Then, establish a serial terminal with `sima-cli` and immediately enter `uboot` by pressing the any key during the 3 second countdown:
 
@@ -318,7 +318,7 @@ modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
 ```
 
-To validate the interfaces, connect the Modalix SOM to a display and login. Then, use libcamera to verify the connectivity with the camera with the Modalix.
+To validate the interfaces, connect the Modalix DevKit to a display and log in. Then, use libcamera to verify camera connectivity.
 
 1. List available cameras:
 

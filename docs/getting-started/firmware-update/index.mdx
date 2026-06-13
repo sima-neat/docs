@@ -137,7 +137,7 @@ sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
 This command performs the following steps:
 
 1. Downloads the bootable image for the specified board type (`modalix` or `mlsoc`) and SDK version.
-2. Scans your host system for removable storage devices.
+2. Scans your host machine for removable storage devices.
 3. Prompts you to confirm which device to write to.
 4. Writes the boot image directly to the selected device.
 
@@ -199,7 +199,7 @@ Two terminal sessions are required:
 2. A host shell session used to start the TFTP server and initiate the eMMC flash.
 :::
 
-1. Connect the **DevKit's Ethernet port** directly to the host PC and set the host's network interface to static IP **192.168.1.10**. On the Modalix Early Access board, use Ethernet port 0.
+1. Connect the **DevKit's Ethernet port** directly to the host machine and set the host's network interface to static IP **192.168.1.10**. On the Modalix Early Access DevKit, use Ethernet port 0.
 
 2. Connect the **UART port** of the DevKit to the host for console access. With `sima-cli` installed on the host, open a serial terminal:
 

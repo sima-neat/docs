@@ -1,6 +1,6 @@
 ---
 title: PCIe Mode
-description: Install the Modalix PCIe card into a host system and bring up driver, network, and discovery.
+description: Install the Modalix PCIe Card into a host machine and bring up driver, network, and discovery.
 sidebar_position: 4
 ---
 
@@ -27,17 +27,17 @@ Before you begin:
 </TabItem>
 <TabItem value="hardware" label="Hardware Preparation">
 
-![SiMa.ai MLSoC PCIe card PCIe Dipswitch](/img/devkit/pcie-dip-switch.png)
+![Modalix PCIe Card DIP switch](/img/devkit/pcie-dip-switch.png)
 
-1. On the MLSoC PCIe card, there are four dip switches as shown above. Make sure switch #1 is in `OFF` position.
+1. On the Modalix PCIe Card, there are four DIP switches as shown above. Make sure switch #1 is in the `OFF` position.
 2. Make sure the Run/Program switch is ON.
-3. Power off the host machine, insert the DevKit into the PCIe slot, and power on the host machine.
-4. On the Modalix Early Access PCIe card, keep the DIP switch in its factory-default position.
-5. If the host motherboard provides both a primary (blue) and a non-primary (black) PCIe slot, install the SiMa PCIe card in the secondary (black) slot.
+3. Power off the host machine, insert the Modalix PCIe Card into the PCIe slot, and power on the host machine.
+4. Keep the DIP switches in their factory-default positions unless instructed otherwise.
+5. If the host motherboard provides both a primary (blue) and a non-primary (black) PCIe slot, install the Modalix PCIe Card in the secondary (black) slot.
 6. It is recommended to connect the card's serial/UART connector to the host for bring-up and debugging.
 7. The PCIe card also has a physical Ethernet port for direct network access.
 
-For a detailed view of the DevKit interfaces, switches and connectors, refer to the [SiMa.ai DevKit Interface](/hardware/devkit/modalix-ea-pcie).
+For a detailed view of the PCIe card interfaces, switches, and connectors, refer to the [Modalix PCIe Card](/hardware/devkit/modalix-pcie-card).
 
 :::note
 In rare cases, if you do not need the driver to be automatically loaded when the host machine reboots, create (or edit if already exists) `/etc/modprobe.d/blacklist.conf` and add the line blacklist `sima_mla_drv`. Once done, run `update-initramfs` and reboot the host machine. After reboot the drivers can be loaded manually using `insmod` or `modeprobe`.
@@ -73,7 +73,7 @@ After driver installation, power cycle the host machine before validation.
 :::
 
 :::warning
-PCIe driver support for the **MLSoC PCIe card** ended with SDK 2.0.0. The driver installed by the command above supports **Modalix only**. If you are using an MLSoC PCIe card, install the 2.0.0 driver using `sima-cli install drivers/linux -v 2.0.0`.
+PCIe driver support for legacy **MLSoC PCIe cards** ended with SDK 2.0.0. The driver installed by the command above supports **Modalix**. If you are using a legacy MLSoC PCIe card, install the 2.0.0 driver using `sima-cli install drivers/linux -v 2.0.0`.
 :::
 
 </TabItem>
@@ -126,10 +126,10 @@ If setup is correct, the command output will list connected SiMa PCIe device(s).
 :::note
 The Virtual Network feature is available in firmware version `1.5` and later on the Linux host. To use this feature, make sure your DevKit is [updated](/hardware/getting-started/firmware-update/) to the latest firmware version.
 
-This feature is only available for the Linux host system.
+This feature is only available for a Linux host machine.
 :::
 
-When connected to a host system via PCI Express (PCIe), the SiMa.ai DevKit establishes a virtual ethernet interface. This interface enables direct network communication between the host and the DevKit over high-speed PCIe bus.
+When connected to a host machine via PCI Express (PCIe), the Modalix PCIe Card establishes a virtual Ethernet interface. This interface enables direct network communication between the host machine and the PCIe card over the high-speed PCIe bus.
 
 The Virtual Network feature is primarily designed for debugging purposes, allowing users to:
 
@@ -139,9 +139,9 @@ The Virtual Network feature is primarily designed for debugging purposes, allowi
 This feature also allows users to:
 
 - **Update firmware**: Manually update firmware using the `scp` and `ssh` utilities, when following the File Copy Method.
-- **Assign static IP Address (Ethernet over PCIe)**: Manually configure static IP address for your host machine/MLSoC device.
+- **Assign static IP Address (Ethernet over PCIe)**: Manually configure static IP addresses for your host machine and Modalix PCIe Card.
 
-By default, `10.0.cardnum.1` address is assigned to the host machine and `10.0.cardnum.2` is assigned to the MLSoC device. However, for stable and consistent networking, you must disable the default IP address being assigned to the host interface by passing the module parameter `default_ip=false` when loading the module.
+By default, the `10.0.cardnum.1` address is assigned to the host machine and `10.0.cardnum.2` is assigned to the Modalix PCIe Card. However, for stable and consistent networking, you must disable the default IP address being assigned to the host interface by passing the module parameter `default_ip=false` when loading the module.
 
 If the module is already loaded, remove and then reload it with the `default_ip=false` parameter, as shown below:
 
@@ -180,7 +180,7 @@ To ensure the `default_ip=false` setting persists across system reboots, follow 
 
 **Manual IP Assignment**
 
-When loading the module manually (using `insmod`), use the command below. This allows you to manually assign a static IP address to the host machine interface and in turn to the MLSoC device.
+When loading the module manually (using `insmod`), use the command below. This allows you to manually assign a static IP address to the host machine interface and, in turn, to the Modalix PCIe Card.
 
 ```console
 sudo insmod sima_mla_drv.ko default_ip=false

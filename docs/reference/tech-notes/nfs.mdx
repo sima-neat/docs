@@ -8,7 +8,7 @@ sidebar_position: 2
 
 When working with large datasets or model files, fast and efficient file access is essential for a smooth demo and development experience.
 
-Using NFS (Network File System) enables seamless file sharing between an Ubuntu machine (server) and the Modalix DevKit (client), providing direct access to large storage without requiring local copies.
+Using NFS (Network File System) enables seamless file sharing between an Ubuntu host machine (server) and the Modalix DevKit (client), providing direct access to large storage without requiring local copies.
 
 :::note
 NFS is particularly useful when the DevKit lacks high-speed, large-capacity storage such as NVMe. This applies to platforms like the MLSoC and the Modalix Early Access Kit (EA), where relying solely on SD cards can lead to slower load times.
@@ -79,7 +79,7 @@ NFS can be especially helpful when:
 
 2. **Mount the NFS Share**:
 
-   Replace `<server_ip>` with the Ubuntu machine's IP address:
+   Replace `<server_ip>` with the Ubuntu host machine's IP address:
 
    ```bash
    modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
@@ -106,7 +106,7 @@ To automatically mount the NFS share at boot, perform the following steps on Mod
    modalix:~$ sudo vi /etc/systemd/system/mnt.mount
    ```
 
-2. **Add this content to the file, be sure to replace the server_IP to the Ubuntu machine:**
+2. **Add this content to the file, replacing `server_IP` with the Ubuntu host machine's IP address:**
 
    ```
    [Unit]

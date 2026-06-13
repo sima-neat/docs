@@ -1,27 +1,27 @@
 ---
-title: Modalix Early Access PCIe Card
-description: HHHL PCIe Early Access card delivering high-performance ML inference for embedded edge systems.
+title: Modalix PCIe Card
+description: HHHL PCIe card built around MLSoC Modalix for host-attached inference systems.
 sidebar_position: 3
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Modalix Early Access PCIe Card
+# Modalix PCIe Card
 
-The Modalix PCIe HHHL (Half-Height/Half-Length) Early Access board integrates the Modalix device that delivers high-performance and effortless machine learning inference for embedded edge applications.
+The **Modalix PCIe Card** is a Half-Height/Half-Length (HHHL) PCIe card built around **MLSoC Modalix**. It installs into a host machine and provides dedicated Modalix inference acceleration over PCIe.
 
 <Tabs>
 <TabItem value="interfaces" label="Interfaces" default>
 
-<img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="SiMa.ai Modalix EA PCIe Card Interfaces" style={{width: '100%', display: 'block', margin: '0 auto'}} />
+<img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix PCIe Card interfaces" style={{width: '100%', display: 'block', margin: '0 auto'}} />
 
 | Interface | Description |
 | --- | --- |
 | Ethernet Ports (eth0, eth1) | RJ45, GigE network interfaces for remote connectivity. |
-| PCI-Express 5.0 x4 Interface | High-speed PCIe interface used for integration into a host system. Adapters may be required depending on the host configuration. |
-| COM Port to Host | Facilitates debugging by connecting to the host system. Ensure the arrow sign on the included cable connects to the left-most pin for proper alignment. |
-| SD Card Slot | The SD Card slot is located at the back of the Modalix EA PCIe card. |
+| PCI-Express 5.0 x4 Interface | High-speed PCIe interface used for integration into a host machine. Adapters may be required depending on the host configuration. |
+| COM Port to Host | Facilitates debugging by connecting to the host machine. Ensure the arrow sign on the included cable connects to the left-most pin for proper alignment. |
+| SD Card Slot | The SD Card slot is located at the back of the Modalix PCIe Card. |
 | GMSL2 FAKRA Port for Camera | Gigabit Multimedia Serial Link ensures stable high-bandwidth video transmission. |
 
 </TabItem>
@@ -36,10 +36,11 @@ The Modalix PCIe HHHL (Half-Height/Half-Length) Early Access board integrates th
 | Ethernet | One 10Gbps Ethernet interface via RJ45 connector. |
 | JTAG Interface | One optional JTAG interface for hardware debug and bring-up. |
 | Micro SD Interface | One Micro SD card interface for removable storage and system recovery. |
-| Debug UART (Troot) | One dedicated debug UART interface for Troot diagnostics and debugging. |
+| Debug UART (tRoot) | One dedicated debug UART interface for tRoot diagnostics and debugging. |
 | Debug UART (Linux) | One dedicated debug UART interface for Linux console access and debugging. |
 | Camera Interfaces | Two GMSL2 FAKRA ports for connecting remote cameras over serialized links. |
 | Status Indicator | One power LED for system power status indication. |
 
 </TabItem>
 </Tabs>
+

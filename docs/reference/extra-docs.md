@@ -12,7 +12,7 @@ This section provides access to comprehensive product documentation including qu
 
 | Document | Download Link |
 | --- | --- |
-| Modalix SoM Devkit 3.0 Quick Start Guide | [Launch Interactive Guide](pathname:///tools/qsg/index.html) |
+| Modalix SoM DevKit 3.0 Quick Start Guide | [Launch Interactive Guide](pathname:///tools/qsg/index.html) |
 
 ## Product Briefs
 
@@ -20,7 +20,7 @@ This section provides access to comprehensive product documentation including qu
 | --- | --- |
 | Modalix SoC Product Brief | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
 | Modalix SoM Product Brief | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoM-Product-Brief_05.3.pdf) |
-| Modalix SoM Devkit 3.0 Product Brief | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) |
+| Modalix SoM DevKit 3.0 Product Brief | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) |
 
 ## Datasheets
 
@@ -49,5 +49,5 @@ This section provides access to comprehensive product documentation including qu
 | --- | --- |
 | Modalix PCB Routing Guidelines | Contact Your SiMa.ai Representative |
 | Modalix DDR Tuning Guide | Contact Your SiMa.ai Representative |
-| Modalix Early Access Devkit Design Package | Contact Your SiMa.ai Representative |
+| Modalix Early Access DevKit Design Package | Contact Your SiMa.ai Representative |
 | Modalix PCIe HHHL Design Package | Contact Your SiMa.ai Representative |

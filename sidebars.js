@@ -29,8 +29,8 @@ const sidebars = {
       collapsed: true,
       items: [
         'devkit/modalix-devkit',
+        'devkit/modalix-pcie-card',
         'devkit/modalix-ea-kit',
-        'devkit/modalix-ea-pcie',
       ],
     },
     {

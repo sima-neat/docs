@@ -10,5 +10,5 @@ Additional technical details, platform-specific instructions, and known limitati
 
 - [Setup NFS](./nfs.mdx)
 - [Convert to eLxr](./elxr-conversion.mdx)
-- [Setup Bluetooth on the Modalix SOM DevKit](./bluetooth.mdx)
-- [Install ROS2 on the Modalix SOM Devkit](./ros2.mdx)
+- [Setup Bluetooth on the Modalix SoM DevKit](./bluetooth.mdx)
+- [Install ROS2 on the Modalix SoM DevKit](./ros2.mdx)
