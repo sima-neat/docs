@@ -1,12 +1,12 @@
 ---
-title: Setup Bluetooth on the Modalix SoM DevKit
+title: Set Up Bluetooth on the Modalix SoM DevKit
 description: Connect a Bluetooth USB adapter to the Modalix SoM DevKit and bring up the bluez stack.
 sidebar_position: 4
 ---
 
-# Setup Bluetooth on the Modalix SoM DevKit
+# Set Up Bluetooth on the Modalix SoM DevKit
 
-This tech note describes how to connect a Bluetooth USB adapter to the Modalix SoM DevKit and bring up the Bluetooth stack with `bluez`.
+Use this guide to connect a Bluetooth USB adapter to the Modalix SoM DevKit and bring up the Bluetooth stack with `bluez`.
 
 :::info
 Bluetooth support requires SDK release **2.1.0** or higher running on the eLxr runtime. To check the runtime, see [Convert to eLxr](./elxr-conversion).
@@ -26,7 +26,7 @@ Bus 001 Device 002: ID 0bda:5489 Realtek Semiconductor Corp. 4-Port USB 2.0 Hub
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
 
-The Bluetooth adapter should appear in the list (in this example, the `Edimax Bluetooth Adapter` on Bus 001 Device 003). If your adapter is not listed, unplug and reseat it, or try a different USB port.
+The Bluetooth adapter should appear in the list. In this example, the adapter is `Edimax Bluetooth Adapter` on Bus 001 Device 003. If your adapter is not listed, unplug and reseat it, or try a different USB port.
 
 </details>
 
@@ -77,7 +77,7 @@ Agent registered
 [bluetooth]#
 ```
 
-`bluetoothctl` is BlueZ's interactive shell for managing the local adapter and remote devices. From the `[bluetooth]#` prompt, the following commands cover the typical pair-and-connect flow:
+`bluetoothctl` is BlueZ's interactive shell for managing the local adapter and remote devices. From the `[bluetooth]#` prompt, use these commands for a typical pair-and-connect flow:
 
 | Command | Purpose |
 | --- | --- |
@@ -107,12 +107,12 @@ A minimal pairing session looks like:
 [bluetooth]# connect AA:BB:CC:DD:EE:FF
 ```
 
-Once `connect` reports `Connection successful`, the device is ready for the audio routing steps below.
+After `connect` reports `Connection successful`, the device is ready for the audio routing steps below.
 
 </details>
 
 :::note
-Steps 5 through 7 are only required for Bluetooth **audio** devices (speakers, headsets, etc.). For non-audio peripherals — keyboards, mice, gamepads, sensors, file-transfer devices — pairing in Step 4 is sufficient and you can skip the rest of this guide.
+Steps 5 through 7 are required only for Bluetooth **audio** devices, such as speakers and headsets. For non-audio peripherals, such as keyboards, mice, gamepads, sensors, and file-transfer devices, pairing in Step 4 is sufficient.
 :::
 
 <details open>

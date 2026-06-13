@@ -10,18 +10,17 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Configure Serial Connection
 
-During early development, it is strongly recommended to establish a connection to the DevKit via the serial interface, whether the system is used in standalone mode or PCIe mode.
+Connect to the DevKit serial interface during bring-up, whether you use standalone mode or PCIe mode.
 
-In a standalone setup, the serial connection provides reliable access to the DevKit regardless of how it acquires an IP address. This ensures that developers retain control of the system for configuration, monitoring, and recovery tasks even if network connectivity is unavailable or misconfigured.
+In standalone mode, serial access lets you configure, monitor, and recover the DevKit even when network access is unavailable or misconfigured.
 
-In PCIe mode, the serial interface offers direct access to the PCIe card's shell and debug consoles during bring-up. This is particularly useful for low-level control and troubleshooting when the host machine or PCIe link is not yet fully operational.
+In PCIe mode, the serial interface gives you direct access to the PCIe card shell and debug consoles during bring-up. Use it for low-level control and troubleshooting before the host driver or PCIe link is fully working.
 
-The serial interface is intended primarily for development and bring-up. Once the system has been fully configured and deployed, ongoing operation generally does not require a serial connection.
+Serial access is mainly for development and bring-up. After deployment, normal operation usually does not require a serial connection.
 
-Depending on the operating system of the developer's computer, different methods are available for connecting to the DevKit through the serial interface.
+Choose the cable setup for your hardware, then choose the serial terminal method for your computer.
 
-<Tabs>
-<TabItem value="hardware" label="Hardware Setup" default>
+## Hardware Setup
 
 Pick your board to see the serial cable connections.
 
@@ -67,37 +66,22 @@ Use the included serial cable to connect the card to your host:
 </TabItem>
 </Tabs>
 
-</TabItem>
-<TabItem value="windows" label="Windows">
+## Open a Serial Terminal
 
-To connect to the DevKit via a serial terminal on **Windows**, follow these steps:
-
-1. Identify the COM Port:
-   - Open **Device Manager** → Expand **Ports (COM & LPT)**.
-   - Look for an entry like **USB Serial Port (COMx)**.
-
-2. **Install and Open a Serial Terminal**:
-   - Use [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) or **Tera Term**.
-   - Set the connection type to **Serial**.
-   - Enter the correct **COM Port** (e.g., `COM3`).
-   - Set **Baud Rate** to `115200`.
-
-3. Click **Open** to start the connection.
-
-</TabItem>
-<TabItem value="mac-linux" label="MacOS & Linux Desktop">
+<Tabs>
+<TabItem value="mac-linux" label="macOS & Linux" default>
 
 :::note
 Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
 :::
 
-Use `sima-cli serial` command on Mac and Linux to connect to the serial port of the SiMa hardware.
+Use `sima-cli serial` on macOS or Linux to connect to the serial port.
 
 ```console
 sima-cli serial
 ```
 
-This command will install necessary dependencies on your computer to access serial port. To exit the serial terminal, press Ctrl + A then Ctrl + X.
+This command installs the dependencies needed to access the serial port. To exit the serial terminal, press Ctrl + A, then Ctrl + X.
 
 On some earlier firmware versions, the system may use a different baud rate for the serial console. If you see garbled output in the terminal, it's likely due to a mismatched baud rate. Try specifying a higher rate:
 
@@ -106,9 +90,26 @@ sima-cli serial -b 921600
 ```
 
 </TabItem>
+<TabItem value="windows" label="Windows">
+
+To connect to the DevKit from **Windows**, follow these steps:
+
+1. Identify the COM port:
+   - Open **Device Manager** → Expand **Ports (COM & LPT)**.
+   - Look for an entry like **USB Serial Port (COMx)**.
+
+2. Install and open a serial terminal:
+   - Use [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) or **Tera Term**.
+   - Set the connection type to **Serial**.
+   - Enter the correct **COM Port** (e.g., `COM3`).
+   - Set **Baud Rate** to `115200`.
+
+3. Click **Open** to start the connection.
+
+</TabItem>
 <TabItem value="web-serial" label="Web Serial Console">
 
-The **Web Serial Console** is a browser-based alternative that requires no local install — open it in a Chromium browser (Chrome or Edge), connect the DevKit via USB, and you're in. Useful when you can't or don't want to install PuTTY or `sima-cli`.
+The **Web Serial Console** is a browser-based alternative that requires no local install. Open it in a Chromium browser, connect the DevKit via USB, and connect to the serial console.
 
 <a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Launch Web Serial Console</a>
 
@@ -117,4 +118,4 @@ The **Web Serial Console** is a browser-based alternative that requires no local
 </TabItem>
 </Tabs>
 
-Once prompted to log in to the serial port console, use the default **username** `sima` and **password** `edgeai`.
+When the serial console prompts you to log in, use the default **username** `sima` and **password** `edgeai`.

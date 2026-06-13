@@ -11,13 +11,13 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # SiMa.ai Hardware Documentation
 
-This guide covers hardware setup, firmware, and low-level interfaces for SiMa.ai's MLSoC Modalix products. It is the dedicated hardware reference — software, ML, and pipeline tooling are documented separately.
+Use this site for hardware setup, firmware workflows, and low-level interfaces for SiMa.ai MLSoC Modalix products. Software, ML, and pipeline tooling are documented separately.
 
 ## About the MLSoC Modalix
 
 The **MLSoC Modalix** is SiMa.ai's second-generation machine-learning system-on-chip. It combines an Arm Cortex-A65 application complex, a high-throughput **Machine Learning Accelerator (MLA)**, an **Image Signal Processor (ISP)** for camera ingest, and a **Computer Vision Unit (CVU)** for classical vision workloads — all on a single die.
 
-This integration lets developers deploy multimodal, generative, and vision AI pipelines at the edge without stitching together discrete accelerators, host CPUs, and camera bridges. The Modalix SoM packages MLSoC Modalix for carrier-board and product integration, and every DevKit documented here is built around the same silicon.
+This integration lets you run multimodal, generative, and vision AI pipelines at the edge without combining separate accelerators, host CPUs, and camera bridges. The Modalix SoM packages MLSoC Modalix for carrier-board and product integration, and every DevKit documented here uses the same silicon.
 
 <img
   src="/img/media/modalix-arch.png"
@@ -27,7 +27,7 @@ This integration lets developers deploy multimodal, generative, and vision AI pi
 
 ## DevKit Portfolio
 
-SiMa.ai offers MLSoC Modalix-based development kits and PCIe products for a broad spectrum of edge AI applications. Click a kit below to jump to its detailed page, or compare features in the table.
+SiMa.ai offers MLSoC Modalix-based development kits and PCIe products for edge AI applications. Select a product below, or compare features in the table.
 
 <div className="card-grid">
   <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
@@ -84,29 +84,29 @@ SiMa.ai offers MLSoC Modalix-based development kits and PCIe products for a broa
 
 ## Deployment Architectures
 
-Modern machine learning and inferencing applications demand flexible architectures to address a variety of deployment scenarios. SiMa.ai's solutions are designed to adapt to these needs, offering configurations that optimize performance, efficiency, and scalability. Whether integrated into a larger system or utilized as a standalone device, the MLSoC Modalix ensures seamless adaptability for diverse use cases.
+MLSoC Modalix supports two common development architectures: standalone mode and PCIe mode. Choose the architecture that matches how your hardware is connected and where your application runs.
 
 <Tabs>
 <TabItem value="standalone" label="Standalone Mode" default>
 
-In this architecture, a Modalix DevKit or a custom system built around the Modalix SoM operates independently as a self-contained device. It is particularly well-suited for applications where compactness, efficiency, and minimal power consumption are critical.
+In standalone mode, a Modalix DevKit or a custom Modalix SoM-based system runs as a self-contained device. Use this mode when the device receives data directly from sensors, cameras, storage, or network interfaces.
 
 **Key Use Cases**
 
-- **Edge AI Applications**: Deployed at the edge to perform inferencing without relying on a central server or cloud infrastructure. Ideal for applications like smart cameras, industrial IoT devices, or autonomous robots.
-- **Cost-Sensitive Deployments**: Reduces the need for additional hardware, making it a cost-effective solution for standalone operations.
-- **Power-Constrained Environments**: Optimized for scenarios where energy efficiency is paramount, such as remote monitoring systems powered by batteries or solar panels.
+- **Edge AI applications**: Run inference without relying on a central server or cloud infrastructure.
+- **Compact deployments**: Reduce the need for additional host hardware.
+- **Power-constrained systems**: Support remote monitoring systems powered by batteries or solar panels.
 
 **Advantages**
 
-- **Self-Contained**: Does not require a host machine, simplifying deployment and reducing system complexity.
-- **Energy Efficient**: Designed for low power consumption, making it suitable for power-sensitive environments.
-- **Compact and Portable**: The small form factor allows it to be easily deployed in space-constrained scenarios.
+- **Self-contained**: Runs without a host machine.
+- **Power efficient**: Supports power-sensitive environments.
+- **Compact**: Fits space-constrained deployments.
 
 **Typical Data Flow**
 
-1. Data is received directly from network interfaces or sensors.
-2. The DevKit is loaded with a [NEAT application](https://developer.sima.ai/software) that defines the on-device inference pipeline.
+1. The DevKit receives data directly from network interfaces or sensors.
+2. The DevKit loads a [NEAT application](https://developer.sima.ai/software) that defines the on-device inference pipeline.
 3. MLSoC Modalix performs inferencing and processes the data locally.
 4. Results are sent to other devices or systems via network connections for further action or visualization.
 
@@ -115,24 +115,24 @@ In this architecture, a Modalix DevKit or a custom system built around the Modal
 </TabItem>
 <TabItem value="pcie" label="PCIe Mode">
 
-In this architecture, the Modalix PCIe Card integrates into a host machine. This setup is ideal when the host machine, such as a server, desktop, or workstation, handles system orchestration while the PCIe card provides dedicated inference acceleration.
+In PCIe mode, the Modalix PCIe Card is installed in a host machine. Use this mode when a server, desktop, or workstation handles orchestration, storage, and I/O while the card provides Modalix inference acceleration.
 
 **Key Use Cases**
 
-- **High-Performance Systems:** Suitable for data centers or high-end workstations where large-scale data processing and storage are critical. The host machine handles CPU-intensive tasks, while the Modalix PCIe Card performs dedicated inferencing operations.
-- **Extended I/O Solutions:** Target systems may require I/O capabilities from the host machine, such as storage, networking, or sensor ingest. This architecture enables applications like video analytics or AI model inference at scale.
+- **High-performance systems:** Use a data-center server or workstation for data processing and storage while the Modalix PCIe Card runs inference.
+- **Host-managed I/O:** Use host storage, networking, or sensor ingest while offloading inference to the card.
 
 **Advantages**
 
-- **Enhanced Computational Resources:** Augments the host machine's capabilities by offloading inferencing tasks to the dedicated hardware.
-- **Flexibility:** Ideal for environments where additional inferencing cards can be added as demand grows.
+- **Dedicated acceleration:** Offload inference from the host CPU to Modalix hardware.
+- **Expandable capacity:** Add inference cards as demand grows.
 
 **Typical Data Processing Flow**
 
 1. The host machine captures data from sensors, peripherals, storage, or network interfaces.
-2. The Modalix PCIe Card is loaded with a [NEAT application](https://developer.sima.ai/software) packaging the inference pipeline and the adapted AI model.
-3. Data is sent to the Modalix PCIe Card via the PCIe interface for inferencing.
-4. Results are processed by the host machine or forwarded to downstream systems for further action.
+2. The Modalix PCIe Card loads a [NEAT application](https://developer.sima.ai/software) that packages the inference pipeline and adapted AI model.
+3. The host sends data to the Modalix PCIe Card over PCIe.
+4. The host processes the results or forwards them to downstream systems.
 
 <a className="docs-button" href="/hardware/getting-started/pcie-mode">Set up PCIe mode</a>
 

@@ -1,0 +1,77 @@
+---
+title: Virtual Network
+description: Configure Ethernet-over-PCIe access for the Modalix PCIe Card.
+sidebar_position: 3
+---
+
+# Virtual Network
+
+:::note
+The Virtual Network feature is available in firmware version `1.5` and later on the Linux host. To use this feature, make sure your DevKit is [updated](/hardware/getting-started/firmware-update/) to the latest firmware version.
+
+This feature is available only on Linux hosts.
+:::
+
+When the Modalix PCIe Card is connected over PCIe, it creates a virtual Ethernet interface between the host and the card.
+
+Use the virtual network for:
+
+- **Secure Shell (SSH)**: Access the DevKit command line for troubleshooting and system management.
+- **Secure Copy Protocol (SCP)**: Transfer logs, configuration files, and other files between the host and the DevKit.
+
+## Manual IP Assignment
+
+When loading the module manually with `insmod`, use the command below. This lets you assign a static IP address to the host interface and then to the Modalix PCIe Card.
+
+```console
+sudo insmod sima_mla_drv.ko default_ip=false
+```
+
+This also requires the `ifconfig` utility on the host.
+
+```console
+ifconfig <eth interface> 20.1.2.1
+```
+
+After you assign an IP address to the host interface, IP + 1 is assigned to the SoC interface automatically. For example, if the host uses `20.1.2.1`, the MLSoC IP is `20.1.2.2`.
+
+When the interfaces are created, the host interface uses a MAC address in the format `cardnum:S:I:m:A:0`, and the SoC interface uses `cardnum:S:I:m:A:1`. The IP addresses are assigned on creation as `host:10.0.cardnum.1` and `soc:10.0.cardnum.2`.
+
+1. `ifconfig` output on the host machine:
+
+   ```console
+   enp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.1  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4130  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:30  txqueuelen 1000  (Ethernet)
+       RX packets 14107  bytes 4460994 (4.4 MB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 818  bytes 74840 (74.8 KB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+2. `ifconfig` output on the SiMa.ai DevKit:
+
+   ```console
+   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
+       RX packets 818  bytes 74840 (73.0 KiB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 14109  bytes 4461636 (4.2 MiB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+3. SSH from the host to the device. Use the default username `sima` and password `edgeai`.
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+   The authenticity of host '10.0.0.2 (10.0.0.2)' can't be established.
+   ED25519 key fingerprint is SHA256:ulxwiRM+cCQNJ90R5Qn5eV+9hqvkVNo0eWQ9pY3l8E0.
+   This key is not known by any other names
+   Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+   Warning: Permanently added '10.0.0.2' (ED25519) to the list of known hosts..
+   sima@10.0.0.2's password:
+   sima@modalix:~#
+   ```

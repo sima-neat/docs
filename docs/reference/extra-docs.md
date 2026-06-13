@@ -6,7 +6,7 @@ sidebar_position: 4
 
 # Reference Documents
 
-This section provides access to comprehensive product documentation including quick start guides, product briefs, datasheets, and hardware reference manuals for SiMa.ai Modalix products.
+Use this page to find quick start guides, product briefs, datasheets, and hardware reference manuals for SiMa.ai Modalix products.
 
 ## Quick Start Guide
 

@@ -1,36 +1,36 @@
 ---
-title: Setup NFS
+title: Set Up NFS
 description: Share large datasets and model files between an Ubuntu host and the Modalix DevKit over NFS.
 sidebar_position: 2
 ---
 
-# Setup NFS
+# Set Up NFS
 
-When working with large datasets or model files, fast and efficient file access is essential for a smooth demo and development experience.
+Use NFS when you need the DevKit to access large datasets or model files stored on an Ubuntu host.
 
-Using NFS (Network File System) enables seamless file sharing between an Ubuntu host machine (server) and the Modalix DevKit (client), providing direct access to large storage without requiring local copies.
+NFS (Network File System) shares files between an Ubuntu host (server) and the Modalix DevKit (client). The DevKit can access host storage without local copies.
 
 :::note
-NFS is particularly useful when the DevKit lacks high-speed, large-capacity storage such as NVMe. This applies to platforms like the MLSoC and the Modalix Early Access Kit (EA), where relying solely on SD cards can lead to slower load times.
+NFS is useful when the DevKit lacks high-speed, large-capacity storage such as NVMe. This applies to platforms like the MLSoC and the Modalix Early Access Kit (EA), where SD-card-only storage can slow load times.
 :::
 
-NFS can be especially helpful when:
+Use NFS when:
 
 - Large models or datasets need to be shared across multiple devices.
 - Local storage on the client is limited or unavailable.
-- Centralized storage management is preferred for simplified updates.
+- You prefer centralized storage management for updates.
 
 <details open>
-<summary><strong>Step 1. Setting Up the NFS Server</strong></summary>
+<summary><strong>Step 1. Set Up the NFS Server</strong></summary>
 
-1. **Install the NFS Kernel Server**:
+1. Install the NFS kernel server:
 
    ```bash
    sima-user@sima-user-machine:~$ sudo apt update
    sima-user@sima-user-machine:~$ sudo apt install -y nfs-kernel-server
    ```
 
-2. **Create a Shared Directory**:
+2. Create a shared directory:
 
    Choose a directory to share with the Modalix DevKit:
 
@@ -39,7 +39,7 @@ NFS can be especially helpful when:
    sima-user@sima-user-machine:~$ sudo chmod 777 /mnt/nfs_share
    ```
 
-3. **Edit the NFS Exports File**:
+3. Edit the NFS exports file:
 
    Open the exports file:
 
@@ -59,7 +59,7 @@ NFS can be especially helpful when:
    /mnt/nfs_share *(rw,sync,no_subtree_check)
    ```
 
-4. **Apply the Changes and Restart NFS Service**:
+4. Apply the changes and restart the NFS service:
 
    ```bash
    sima-user@sima-user-machine:~$ sudo exportfs -a
@@ -69,15 +69,15 @@ NFS can be especially helpful when:
 </details>
 
 <details open>
-<summary><strong>Step 2. Setting Up the NFS Client</strong></summary>
+<summary><strong>Step 2. Set Up the NFS Client</strong></summary>
 
-1. **Create a Mount Point**:
+1. Create a mount point:
 
    ```bash
    modalix:~$ sudo mkdir -p /mnt/
    ```
 
-2. **Mount the NFS Share**:
+2. Mount the NFS share:
 
    Replace `<server_ip>` with the Ubuntu host machine's IP address:
 
@@ -85,7 +85,7 @@ NFS can be especially helpful when:
    modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
    ```
 
-3. **Verify the Mount**:
+3. Verify the mount:
 
    Check if the NFS share is mounted correctly:
 
@@ -98,15 +98,15 @@ NFS can be especially helpful when:
 <details open>
 <summary><strong>Step 3. Making the Mount Persistent</strong></summary>
 
-To automatically mount the NFS share at boot, perform the following steps on Modalix:
+To mount the NFS share automatically at boot, run these steps on Modalix:
 
-1. **Create the mnt.mount file**:
+1. Create the `mnt.mount` file:
 
    ```bash
    modalix:~$ sudo vi /etc/systemd/system/mnt.mount
    ```
 
-2. **Add this content to the file, replacing `server_IP` with the Ubuntu host machine's IP address:**
+2. Add this content to the file, replacing `server_IP` with the Ubuntu host IP address:
 
    ```
    [Unit]
@@ -124,7 +124,7 @@ To automatically mount the NFS share at boot, perform the following steps on Mod
    WantedBy=multi-user.target
    ```
 
-3. **Save and exit. Then, test the configuration:**
+3. Save and exit, then test the configuration:
 
    ```bash
    modalix:~$ sudo systemctl daemon-reload

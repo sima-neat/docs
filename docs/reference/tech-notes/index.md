@@ -6,9 +6,9 @@ sidebar_position: 1
 
 # Technical Notes
 
-Additional technical details, platform-specific instructions, and known limitations are documented in the following pages:
+Use these pages for platform-specific instructions, advanced setup, and known limitations:
 
-- [Setup NFS](./nfs.mdx)
+- [Set Up NFS](./nfs.mdx)
 - [Convert to eLxr](./elxr-conversion.mdx)
-- [Setup Bluetooth on the Modalix SoM DevKit](./bluetooth.mdx)
-- [Install ROS2 on the Modalix SoM DevKit](./ros2.mdx)
+- [Set Up Bluetooth on the Modalix SoM DevKit](./bluetooth.mdx)
+- [Install ROS 2 on the Modalix SoM DevKit](./ros2.mdx)

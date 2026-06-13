@@ -6,7 +6,7 @@ sidebar_position: 1
 
 # Board Support Package
 
-The Board Support Package (BSP) is the collection of low-level software that brings a SiMa.ai board up from power-on to a usable Linux userspace. It is the foundation every higher-level workload — perception pipelines, ROS 2 nodes, custom C/C++ applications — runs on top of.
+The Board Support Package (BSP) is the low-level software that brings a SiMa.ai board from power-on to a usable Linux userspace. Higher-level workloads, including perception pipelines, ROS 2 nodes, and custom C/C++ applications, run on top of it.
 
 A SiMa.ai BSP contains:
 
@@ -18,7 +18,7 @@ A SiMa.ai BSP contains:
 
 ## Modalix BSP
 
-The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. For users converting an existing Yocto DevKit to eLxr, see [Convert to eLxr](./tech-notes/elxr-conversion).
+The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](./tech-notes/elxr-conversion).
 
 Source layer: [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
 
@@ -31,7 +31,7 @@ The repository above is useful when you need to:
 - **Replace or extend the rootfs** — bake in your own application, library, or system service.
 - **Reproduce a release locally** — rebuild the exact image that ships on a DevKit for auditing or modification.
 
-Once a custom image is built, flash it onto a DevKit using one of the methods in [Firmware Update](/hardware/getting-started/firmware-update/).
+After you build a custom image, flash it onto a DevKit using one of the methods in [Firmware Update](/hardware/getting-started/firmware-update/).
 
 ## Repository
 
