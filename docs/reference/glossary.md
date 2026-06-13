@@ -90,4 +90,4 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 : A deployment architecture in which the Modalix PCIe Card is plugged into a host machine. The host machine handles I/O and orchestration; the card handles inference. See [PCIe Mode](/hardware/getting-started/pcie-mode).
 
 **Standalone mode**
-: A deployment architecture in which a Modalix DevKit or Modalix SoM-based system runs as a self-contained device, processing sensor data locally and emitting results over the network. See [Standalone Mode](/hardware/getting-started/standalone-mode/).
+: A deployment architecture in which a Modalix DevKit or Modalix SoM-based system runs as a self-contained device, processing sensor data locally and emitting results over the network. See [Standalone Mode](/hardware/getting-started/standalone-mode).
