@@ -61,12 +61,5 @@ To download only the firmware image for manual update steps, run `sima-cli downl
 </Tabs>
 
 :::note
-**For PCIe system update:**
-
-- Starting with firmware version `1.5`, PCIe mode can use a virtual Ethernet interface instead of physical network cabling to the DevKit.
-- For firmware version `1.4` or earlier, establish a direct network connection with the DevKit. In this case, connect the DevKit in standalone mode.
-:::
-
-:::note
 To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) instead. It boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
 :::
