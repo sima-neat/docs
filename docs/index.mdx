@@ -104,7 +104,7 @@ In this architecture, the MLSoC Modalix operates independently as a self-contain
 **Typical Data Flow**
 
 1. Data is received directly from network interfaces or sensors.
-2. The MLSoC Modalix is loaded with a [NEAT application](https://docs.sima-neat.com) that defines the on-device inference pipeline.
+2. The MLSoC Modalix is loaded with a [NEAT application](https://developer.sima.ai/software) that defines the on-device inference pipeline.
 3. The MLSoC Modalix performs inferencing and processes the data locally.
 4. Results are sent to other devices or systems via network connections for further action or visualization.
 
@@ -128,7 +128,7 @@ In this architecture, the MLSoC Modalix functions as a PCIe card that integrates
 **Typical Data Processing Flow**
 
 1. The host system captures data from sensors, peripherals, storage, or network interfaces.
-2. The MLSoC Modalix is loaded with a [NEAT application](https://docs.sima-neat.com) packaging the inference pipeline and the adapted AI model.
+2. The MLSoC Modalix is loaded with a [NEAT application](https://developer.sima.ai/software) packaging the inference pipeline and the adapted AI model.
 3. Data is sent to the MLSoC Modalix via the PCIe interface for inferencing.
 4. Results are processed by the host system or forwarded to downstream systems for further action.
 

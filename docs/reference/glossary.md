@@ -51,7 +51,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Applications & Frameworks
 
 **NEAT**
-: SiMa.ai's application framework for the MLSoC Modalix. NEAT replaces the older Palette/MPK toolchain. Full documentation at [docs.sima-neat.com](https://docs.sima-neat.com).
+: SiMa.ai's application framework for the MLSoC Modalix. NEAT replaces the older Palette/MPK toolchain. Full documentation is available in the [software docs](https://developer.sima.ai/software).
 
 **NEAT application**
 : A packaged on-device inference pipeline (model + pre/post-processing graph + runtime metadata) produced by the NEAT toolchain and loaded onto the MLSoC Modalix for execution.

@@ -51,7 +51,7 @@ If you want to toggle between static and DHCP without rebooting the device, foll
 If you have `sima-cli` installed on the DevKit and want to switch between DHCP and static configuration dynamically without rebooting, run:
 
 ```console
-davinci:~$ sima-cli network
+modalix:~$ sima-cli network
 ```
 
 You will be prompted with an interactive menu to switch between static and DHCP network configurations.
@@ -67,9 +67,9 @@ The following instructions use `NetworkManager` profiles to configure the networ
 To change the network interface from DHCP to static, run:
 
 ```console
-davinci:~$ sudo nmcli connection up end0-static
-davinci:~$ nmcli -f NAME,DEVICE,STATE connection show --active
-davinci:~$ networkctl status
+modalix:~$ sudo nmcli connection up end0-static
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ networkctl status
 ```
 
 **Switching to DHCP**
@@ -77,9 +77,9 @@ davinci:~$ networkctl status
 To change the network interface from static to DHCP, run:
 
 ```console
-davinci:~$ sudo nmcli connection up end0-dhcp
-davinci:~$ nmcli -f NAME,DEVICE,STATE connection show --active
-davinci:~$ networkctl status
+modalix:~$ sudo nmcli connection up end0-dhcp
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ networkctl status
 ```
 
 </TabItem>
@@ -118,13 +118,13 @@ davinci:~$ networkctl status
    sima-user@sima-user-machine:~$ ssh sima@10.42.0.241
    ...
    Last login: Mon Nov 27 19:58:33 2023
-   davinci:~$
+   modalix:~$
    ```
 
 4. To test that you can connect to your host from the board, ping `10.42.0.1` from the board. If you have an SSH server running on your host, you can also SSH:
 
    ```console
-   davinci:~$ ping 10.42.0.1
+   modalix:~$ ping 10.42.0.1
       PING 10.42.0.1 (10.42.0.1): 56 data bytes
       64 bytes from 10.42.0.1: seq=0 ttl=64 time=0.598 ms
       64 bytes from 10.42.0.1: seq=1 ttl=64 time=0.703 ms
@@ -159,7 +159,7 @@ This procedure applies only to DevKit firmware release 2.0 or earlier. On releas
 6. To modify the board's static IP address, edit the network file with `vi` after the device boots.
 
    ```console
-   davinci:~$ sudo vi /etc/systemd/network/20-end0-static.network
+   modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
    ```
 
 7. In the **Network** section, update the IP address as needed.
