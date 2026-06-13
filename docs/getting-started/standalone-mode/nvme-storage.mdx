@@ -1,0 +1,41 @@
+---
+title: NVMe Storage
+description: Configure NVMe storage on the Modalix DevKit.
+sidebar_position: 2
+---
+
+# NVMe Storage
+
+The **Modalix DevKit** includes a 500 GB NVMe drive. If you need more capacity, replace the pre-installed drive with a compatible M.2 NVMe module on the carrier board.
+
+:::note
+Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+:::
+
+:::note
+This command must be run directly on the Modalix DevKit.
+:::
+
+To format the NVMe drive, run:
+
+```console
+modalix:~$ sima-cli nvme format
+```
+
+After formatting, the NVMe drive is mounted at `/media/nvme`.
+
+To verify the mount and view storage usage, run:
+
+```console
+modalix:~$ df -h
+```
+
+This command displays the available disk space on all mounted file systems, including the NVMe drive.
+
+To remount the NVMe drive, run:
+
+```console
+modalix:~$ sima-cli nvme remount
+```
+
+The `format` and `remount` commands add an entry to `/etc/fstab` so the NVMe drive mounts automatically at boot.

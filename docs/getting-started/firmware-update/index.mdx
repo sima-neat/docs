@@ -1,358 +1,47 @@
 ---
 title: Firmware Update
-description: Methods for keeping the Modalix DevKit firmware up to date.
+description: Choose how to update, recover, or reflash Modalix DevKit firmware.
 sidebar_position: 5
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # Firmware Update
 
-Firmware is the foundational software that runs on the DevKit. Keeping firmware up to date is essential for ensuring stability, security, and access to new features and performance improvements.
-
-## Operating Systems {#os}
-
-SiMa.ai Modalix DevKits run **eLxr Linux**, a Debian-derived distribution. Units shipped **after mid-December 2025** come with eLxr preloaded. Earlier Modalix units (shipped before mid-December 2025) are preloaded with Yocto and can be converted to eLxr following the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) article.
-
-### eLxr Linux
-
-eLxr is a Debian-based OS engineered for a more flexible developer experience on the Modalix platform. It offers:
-
-- Full Debian package management (`apt`)
-- A richer user-space environment for development and debugging
-- The ability to build and install tools directly on the device
-
-### Benefits of eLxr on Modalix
-
-Modalix users gain a more developer-friendly environment, including:
-
-- Access to standard Debian packages
-- Faster iteration without cross-compilation
-- Simplified toolchain management
-- A broader ecosystem of libraries and frameworks
-
-## Update Methods
-
-There are three supported methods for updating the DevKit firmware:
-
-- **[Update with sima-cli](#sima-cli)** — Transfer the firmware image over the network and automatically trigger the update on the DevKit. This method is ideal for field updates.
-- **[Update with Boot Image](#bootimage)** — Create or recover bootable media for the DevKit. Useful for restoring faulty devices or provisioning multiple boot devices.
-- **[Update with Net Boot](#netboot)** — Start a local TFTP server and boot the DevKit directly over the network without flashing media. Ideal for recovery, factory bring-up, or rapid kernel/rootfs development.
+Keep the DevKit firmware current, recover a device that does not boot, or install a specific firmware release.
 
 :::note
-Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+Please install or upgrade `sima-cli` before continuing. These guides are intended for use with the latest `sima-cli` version.
 :::
 
 :::warning
 Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
 :::
 
-<Tabs groupId="firmware-update-method">
-<TabItem value="sima-cli" label="Update with sima-cli" default>
+## Operating Systems {#os}
 
-## Update with sima-cli {#sima-cli}
+SiMa.ai Modalix DevKits run **eLxr Linux**, a Debian-derived distribution. Units shipped **after mid-December 2025** come with eLxr preloaded. Earlier Modalix units (shipped before mid-December 2025) are preloaded with Yocto and can be converted to eLxr following the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) article.
 
-This method allows developers to update the firmware on a SiMa.ai DevKit using the `sima-cli` tool. This approach downloads the firmware image to the host machine and transfers it to the DevKit for update.
+eLxr is a Debian-based OS for development on the Modalix platform. It offers:
 
-Before proceeding, ensure the host machine can reach the DevKit over the network. Refer to:
+- Full Debian package management (`apt`)
+- A broader user-space environment for development and debugging
+- The ability to build and install tools directly on the device
+- Faster iteration without cross-compilation
+- A broader ecosystem of libraries and frameworks
 
-- [Standalone Mode Network Setup](/hardware/getting-started/standalone-mode/#network)
-- [PCIe Mode Virtual Network Setup](/hardware/getting-started/pcie-mode#virtual-network)
+Use the firmware update workflows below to update a DevKit, create bootable recovery media, or reflash firmware over the network.
 
-<Tabs groupId="sima-cli-source">
-<TabItem value="from-devkit" label="From DevKit" default>
-
-Developers can run `sima-cli` directly on the standalone DevKit to update the device. Ensure the DevKit has an active Internet connection, then execute:
-
-```console
-modalix:~$ sima-cli update
-```
-
-On MLSoC running Yocto Linux, developers may also specify a full URL instead of a version string if they have previously downloaded and hosted the image themselves.
-
-```console
-davinci:~$ sima-cli update http://your-server/image.tar.gz
-```
-
-</TabItem>
-<TabItem value="from-host" label="From Host Machine">
-
-:::note
-This method is only supported on the MLSoC platform running Yocto. For Modalix devices running eLxr Linux, perform the update directly on the DevKit.
+:::tip
+If your DevKit does not have Internet access, use a host-based workflow. Use **Net Boot Recovery** to boot from the host and flash eMMC, or **Create Boot Image** to prepare removable boot media. The host machine needs Internet access to download the firmware image unless you already have the image available locally.
 :::
 
-Use this command from the host machine:
-
-```console
-sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
-```
-
-This command also installs the appropriate Linux driver version on the host, if applicable.
-
-If you have downloaded the firmware and hosted somewhere on your network, you can provide the URL to avoid repeatedly downloading from the Internet.
-
-```console
-sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
-```
-
-</TabItem>
-<TabItem value="download" label="Download only">
-
-If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
-
-</TabItem>
-</Tabs>
-
-:::note
-**For PCIe system update:**
-
-- Starting with firmware version `1.5`, a virtual Ethernet interface can be used in PCIe mode, eliminating the need for physical cabling to the DevKit. This enables seamless updates over an existing PCIe connection.
-- For firmware version `1.4` or earlier, a direct network connection must be established with the DevKit. In this case, connect the DevKit in standalone mode.
-:::
-
-:::note
-To **downgrade** the DevKit or install a build that is **not the latest release** (e.g. a pre-release `develop` build or an internal engineering image), use the [Net Boot procedure](#netboot) instead — it boots the DevKit from a TFTP server on the host and flashes the target image directly to eMMC.
-:::
-
-</TabItem>
-<TabItem value="bootimage" label="Update with Boot Image">
-
-## Update with Boot Image {#bootimage}
-
-In some cases, updating the DevKit firmware using standard methods may not be possible or sufficient. This includes scenarios such as:
-
-- The DevKit's internal storage is corrupted or fails to boot.
-- You need to prepare multiple bootable SD cards or removable drives for deployment.
-
-In these situations, you can use the `sima-cli bootimg` command to download and write a complete bootable image to a removable device (e.g., SD card or NVMe drive). Alternatively, you may use third-party tools like [BalenaEtcher](https://etcher.balena.io/).
-
-<Tabs groupId="bootimage-method">
-<TabItem value="sima-cli" label="Using sima-cli" default>
-
-```console
-sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
-```
-
-This command performs the following steps:
-
-1. Downloads the bootable image for the specified board type (`modalix` or `mlsoc`) and SDK version.
-2. Scans your host system for removable storage devices.
-3. Prompts you to confirm which device to write to.
-4. Writes the boot image directly to the selected device.
-
-After the process completes, you can safely eject the SD card and insert it into the DevKit. On next boot, the DevKit will start from the new image.
-
-**Important Notes:**
-
-- This command must be run on a Linux or macOS host.
-- An internet connection is required to download the image.
-
-</TabItem>
-<TabItem value="third-party" label="Using Third-Party Tools">
-
-You can also use a third-party image writing tool such as BalenaEtcher.
-
-1. First, download the image using `sima-cli`:
-
-   If the developer prefers to download only the firmware image and perform the update using advanced, manual steps, they can do so by running `sima-cli download` with the URL of the appropriate Modalix firmware archive.
-
-2. Extract the contents of the downloaded archive:
-
-   ```console
-   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
-   ```
-
-3. Use BalenaEtcher to select the resulting `.wic.gz` file and flash it to your SD card or USB drive.
-
-Once written, insert the device into the DevKit and power it on to boot from the image.
-
-</TabItem>
-</Tabs>
-
-</TabItem>
-<TabItem value="netboot" label="Update with Net Boot">
-
-## Update with Net Boot {#netboot}
-
-In some development or recovery scenarios, it may be preferable — or even necessary — to boot the DevKit over the network instead of using a removable device like an SD card. This is particularly useful when:
-
-- You need to **downgrade** the DevKit to an older SDK release.
-- You need to install a build that is **not the latest release** (for example, a pre-release `develop` build or an internal engineering image).
-- You need to recover a board with a corrupted bootloader or filesystem and there's no SD card available.
-- You're bringing up a new board and want to avoid wear on internal storage devices.
-- You're converting a Modalix DevKit from Yocto Linux to eLxr, or from eLxr back to Yocto Linux. See [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) for the conversion-specific prerequisites.
-
-In these situations, use the `--netboot` option with `sima-cli bootimg`. It downloads the appropriate boot image for the target board, then serves it over a built-in TFTP server on the host machine. The DevKit is then configured in U-Boot to boot from that TFTP server, and the new image is flashed to eMMC from the host.
-
-<details open>
-<summary><strong>Step 1. Physical Setup</strong></summary>
-
-:::note
-This procedure is supported on **macOS** and **Ubuntu Linux** hosts.
-
-If you have not installed `sima-cli` on your host machine, install it before continuing.
-
-Two terminal sessions are required:
-
-1. A serial console session connected to the DevKit, used to modify U-Boot environment variables so the DevKit boots over the network.
-2. A host shell session used to start the TFTP server and initiate the eMMC flash.
-:::
-
-1. Connect the **DevKit's Ethernet port** directly to the host PC and set the host's network interface to static IP **192.168.1.10**. On the Modalix Early Access board, use Ethernet port 0.
-
-2. Connect the **UART port** of the DevKit to the host for console access. With `sima-cli` installed on the host, open a serial terminal:
-
-   ```console
-   sima-user@sima-user-machine:~$ sima-cli serial
-   ```
-
-3. On the DevKit, configure the network interface to the default static IP **192.168.1.20** by following the instructions [here](/hardware/getting-started/standalone-mode/#network).
-
-</details>
-
-<details open>
-<summary><strong>Step 2. Start the TFTP Netboot Server on the Host</strong></summary>
-
-**Requirements**
-
-- The host and DevKit must be on the same physical network or direct Ethernet link.
-- The Ethernet connection must be a Gigabit interface or faster (link greater than 1000 Mbps).
-- The host needs an Internet connection to download the firmware image.
-- UDP port **69 (TFTP)** must not be blocked by the host firewall.
-
-Replace `<version>` with the target SDK version (for example `2.0.0`), `<boardtype>` with `modalix` or `mlsoc`, and `<fwtype>` with `yocto` or `elxr`.
-
-**On macOS:**
-
-```console
-sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
-```
-
-**On Linux:**
-
-:::warning
-The TFTP server binds to port 69, which is privileged, so `sudo` is required:
-:::
-
-```console
-sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
-```
-
-This command performs the following steps:
-
-1. Downloads the bootable image for the requested SDK version and board type.
-2. Extracts the files to a temporary working directory.
-3. Starts a local TFTP server and serves the extracted boot files (`Image`, `boot.scr`, `.dtb` files, etc.).
-
-</details>
-
-<details open>
-<summary><strong>Step 3. Configure the DevKit to Netboot</strong></summary>
-
-Power-cycle the DevKit while it is connected to the host via the serial console. If the serial console disconnects during the power cycle, reconnect it. There is a brief delay of a few seconds before boot messages appear — wait until you see the message `Hit any key to stop autoboot`, then press any key to drop into the U-Boot shell:
-
-```console
-... ... ...
-
-Address in DT is		ff:ff:ff:ff:ff:ff
-Address in environment is	68:e1:54:00:05:c6
-eth0: ethernet@a800000 [PRIME]
-Hit any key to stop autoboot:  0
-sima$
-```
-
-Then run the following commands in the U-Boot shell:
-
-```console
-sima:~$ setenv boot_targets net; saveenv; boot
-```
-
-For Modalix **eLxr** targets, also set the cpio image name before booting:
-
-```console
-sima:~$ setenv cpio_name simaai-image-palette-modalix.cpio.gz; setenv boot_targets net; saveenv; boot
-```
-
-This tells the DevKit to boot from the host's TFTP server prepared in Step 2.
-
-:::note
-By default, the DevKit U-Boot is configured with:
-
-- `ipaddr=192.168.1.20` (DevKit's Ethernet interface, first port on multi-port boards).
-- `serverip=192.168.1.10` (host machine running the TFTP server).
-
-To use a different network, update `serverip` and `ipaddr` in U-Boot to match your environment, ensuring the DevKit can reach the host at the chosen IPs:
-
-```console
-sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
-```
-:::
-
-</details>
-
-<details open>
-<summary><strong>Step 4. Flash the eMMC</strong></summary>
-
-The `--netboot` shell on the host supports two commands:
-
-- `c` — Show all connected clients and the firmware version currently running on them.
-- `f` — Flash the selected client's eMMC.
-
-Wait for the DevKit to finish netbooting — this may take several minutes. Once the login prompt is shown on the serial console, the board is ready. We recommend keeping the serial console connected throughout to observe the full boot sequence.
-
-Switch back to the host terminal and press **Enter** until you see the `netboot>` prompt. Optionally type `c` to confirm the DevKit is connected and show its current firmware version, then type `f` to flash:
-
-```console
-netboot> f
-```
-
-You should see logs similar to:
-
-```text
-🔍 Checking SSH availability for 192.168.1.20...
-✅ Board is online!
-✅ SSH is available on 192.168.1.20
-netboot> f
-🔧 Initiating eMMC flash [...]
-```
-
-The image is roughly 1.6 GB and the transfer takes a few minutes. Example progress:
-
-```text
-↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
-↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
-```
-
-Once flashing completes, power-cycle the DevKit. It will now boot the target version from eMMC.
-
-:::note
-**If the DevKit's IP changed during netboot** (for example, because DHCP assigned a different address than the default `192.168.1.20`), `f` on its own will fail to reach the board. Find the new IP on the DevKit serial console — it is printed in the boot log and shown by `ip addr` at the netbooted shell — then pass it explicitly to `f`:
-
-```console
-netboot> f <new-ip>
-```
-:::
-
-</details>
-
-<details open>
-<summary><strong>Troubleshooting</strong></summary>
-
-- If the DevKit fails to netboot, verify both host and device are on the same subnet (`192.168.1.x`).
-- On the Modalix Early Access board, only Ethernet port 0 is supported for netboot.
-- On Linux, ensure the host firewall allows **UDP port 69 (TFTP)**.
-- Verify connectivity from the DevKit:
-
-  ```console
-  modalix:~$ ping 192.168.1.10
-  ```
-
-- If `f` fails to find the image, rerun the `sima-cli bootimg --netboot` command from Step 2 to refresh the TFTP paths.
-- If NFS-related error messages appear on the serial console after converting a Modalix DevKit to eLxr, they can be safely ignored.
-
-</details>
-
-</TabItem>
-
-</Tabs>
+<div class="overview-link-columns overview-link-columns-single">
+  <section class="overview-link-panel overview-link-panel-recovery">
+    <h2>Choose an Update Method</h2>
+    <p>Select the path that matches the state of your DevKit and the firmware you need to install.</p>
+    <ul class="overview-link-list">
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/sima-cli"><strong>Update with sima-cli</strong><span>Update a working DevKit over the network. This is the default path for current firmware updates.</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/net-boot"><strong>Net Boot Recovery</strong><span>Use TFTP netboot for downgrades, pre-release builds, corrupted systems, eLxr conversion, or eMMC flashing.</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/boot-image"><strong>Create Boot Image</strong><span>Write a bootable SD card, USB drive, or NVMe image for recovery or removable media setup.</span></a></li>
+    </ul>
+  </section>
+</div>

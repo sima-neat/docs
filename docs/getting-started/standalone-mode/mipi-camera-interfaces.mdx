@@ -1,0 +1,127 @@
+---
+title: MIPI Camera Interfaces
+description: Configure MIPI camera interfaces on the Modalix DevKit.
+sidebar_position: 3
+---
+
+# MIPI Camera Interfaces
+
+:::note
+Please install or upgrade `sima-cli` before continuing. This guide is intended for use with the latest `sima-cli` version.
+:::
+
+:::note
+This procedure requires a host with the latest `sima-cli` version installed. It also requires a **Modalix DevKit** firmware version that includes the `.dtbo` files for MIPI support.
+:::
+
+The **Modalix DevKit** includes two MIPI interfaces for camera input. The MIPI ports are located on the carrier board.
+
+Before you start, power off the **Modalix DevKit** and attach a MIPI camera to one of the MIPI ports.
+
+Connect a serial cable from the host to the **Modalix DevKit**, then power on the DevKit.
+
+Open a serial terminal with `sima-cli`, then press any key during the 3 second countdown to enter U-Boot:
+
+```console
+sima-cli serial -b 115200
+...
+Hit any key to stop autoboot:  0
+sima$
+```
+
+In U-Boot, set the `dtbos` variable to the appropriate **Device Tree Blob Overlay** (`.dtbo`) file. The correct file depends on the **carrier board**, **camera manufacturer**, **sensor type**, and **camera port**. Then save the environment and boot into the operating system.
+
+The filename follows this pattern:
+
+```text
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+```
+
+Select each component based on your hardware:
+
+| Component | Values | Description |
+| --- | --- | --- |
+| Carrier Board | `connectech`, `seeedstudio`, `waveshare` | The carrier board model |
+| Camera Manufacturer | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems, or Leopard Imaging |
+| Sensor Type | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | The camera sensor model |
+| Port | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | The MIPI port number connected to the camera |
+
+For example, a Connectech carrier board with a Leopard Imaging IMX477 sensor connected to port 0:
+
+```console
+sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+```
+
+The full list of available `.dtbo` files is:
+
+```text
+modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
+modalix-som-connectech-ECON-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-IMX678-0CAM.dtbo
+modalix-som-connectech-ECON-IMX678-1CAM.dtbo
+modalix-som-connectech-ECON-IMX678-2CAM.dtbo
+modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-LI-AR0234-0CAM.dtbo
+modalix-som-connectech-LI-AR0234-1CAM.dtbo
+modalix-som-connectech-LI-AR0234-2CAM.dtbo
+modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-OG05C10-0CAM.dtbo
+modalix-som-connectech-LI-OG05C10-1CAM.dtbo
+modalix-som-connectech-LI-OG05C10-2CAM.dtbo
+modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-LI-AR0234-1CAM.dtbo
+modalix-som-waveshare-LI-AR0234-2CAM.dtbo
+modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+```
+
+To validate the interfaces, connect the Modalix DevKit to a display and log in. Then, use libcamera to verify camera connectivity.
+
+1. List available cameras:
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. Show different camera formats for camera 1:
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. Capture an image from camera 1:
+
+   ```console
+   sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```
