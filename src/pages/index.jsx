@@ -2,6 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
@@ -64,6 +65,7 @@ function PortalButton({action}) {
 }
 
 export default function Home() {
+  const quickStartHref = useBaseUrl('/tools/qsg/index.html');
   return (
     <Layout
       title="Developer Center"
@@ -83,6 +85,14 @@ export default function Home() {
                 <PortalButton key={action.label} action={action} />
               ))}
             </div>
+            <a
+              className={styles.quickStart}
+              href={quickStartHref}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Quick Start Guide
+            </a>
           </div>
         </section>
       </main>
