@@ -1,6 +1,7 @@
 (function () {
   const DEFAULT_MANIFEST = {
     navItems: [
+      {key: 'quickstart', label: 'Quick Start Guide', href: '/tools/qsg/index.html', external: true},
       {key: 'hardware', label: 'Hardware', href: '/hardware', external: false},
       {key: 'software', label: 'Software', href: '/software', external: false},
       {key: 'examples', label: 'Examples', href: '/examples/', external: false},
