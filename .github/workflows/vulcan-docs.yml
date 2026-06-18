@@ -191,7 +191,7 @@ jobs:
           SYSDOC_URL: ${{ needs.resolve-vulcan-config.outputs.sysdoc_base_url }}
           SYSDOC_BASE_URL: /
           SYSDOC_STRICT_LINKS: "1"
-          SYSDOC_GA_MEASUREMENT_ID: ${{ vars.SYSDOC_GA_MEASUREMENT_ID }}
+          SYSDOC_GA_MEASUREMENT_ID: ${{ needs.resolve-target.outputs.deploy_environment == 'prod' && vars.SYSDOC_GA_MEASUREMENT_ID || '' }}
         shell: bash
         run: |
           set -euo pipefail
