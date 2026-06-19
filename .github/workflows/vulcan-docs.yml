@@ -191,9 +191,19 @@ jobs:
           SYSDOC_URL: ${{ needs.resolve-vulcan-config.outputs.sysdoc_base_url }}
           SYSDOC_BASE_URL: /
           SYSDOC_STRICT_LINKS: "1"
+          SYSDOC_GA_MEASUREMENT_ID: ${{ needs.resolve-target.outputs.deploy_environment == 'prod' && vars.SYSDOC_GA_MEASUREMENT_ID || '' }}
+          DEPLOY_ENV: ${{ needs.resolve-target.outputs.deploy_environment }}
         shell: bash
         run: |
           set -euo pipefail
+          if [[ -n "${SYSDOC_GA_MEASUREMENT_ID:-}" ]]; then
+            echo "GA4 analytics: enabled"
+          else
+            echo "GA4 analytics: disabled"
+            if [[ "${DEPLOY_ENV}" == "prod" ]]; then
+              echo "::warning::GA4 is disabled on a prod deployment. Set SYSDOC_GA_MEASUREMENT_ID as a repository variable to enable it."
+            fi
+          fi
           npm run build
           test -f build/index.html
 
