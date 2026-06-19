@@ -7,7 +7,7 @@ const developerCenterShell = require('./src/developerCenter/shell/config.cjs');
 const url = process.env.SYSDOC_URL || 'https://sysdoc.neat.sima.ai';
 const baseUrl = process.env.SYSDOC_BASE_URL || '/';
 const analyticsConfig = {
-  measurementId: process.env.SYSDOC_GA_MEASUREMENT_ID || process.env.DOCS_GA_MEASUREMENT_ID || '',
+  measurementId: process.env.SYSDOC_GA_MEASUREMENT_ID || '',
 };
 
 // Runs in <head>, before Docusaurus's (in-<body>) color-mode init script. The
