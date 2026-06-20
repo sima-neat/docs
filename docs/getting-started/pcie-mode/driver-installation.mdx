@@ -1,0 +1,89 @@
+---
+title: Driver Installation
+description: Install Modalix PCIe Card drivers and verify PCIe discovery.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Driver Installation
+
+Install the host driver for your operating system, then verify that the host can discover the Modalix PCIe Card.
+
+<Tabs groupId="pcie-driver">
+<TabItem value="linux" label="Linux" default>
+
+Run the following command on the Linux host to install the latest driver.
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux
+... ... ...
+=== Driver Installation Validation ===
+  Component            | Status     | Details
+  ----------------------------------------------------------------
+  GStreamer            | PASS       | ✅ GStreamer plugin 'pciehost' installed
+  Kernel Module        | PASS       | ✅ Kernel module 'sima_mla_drv' installed
+  PCI Devices          | PASS       | ✅ Detected SiMa PCIe device(s):
+  - 0000:04:00.0 Modalix HHHL v2              driver=sima_mla_drv
+
+✅ Installation complete.
+```
+
+To install a specific driver version, use the `-v` flag:
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux -v 2.1.0
+```
+
+:::note
+After driver installation, power cycle the host machine before validation.
+:::
+
+:::warning
+PCIe driver support for legacy **MLSoC PCIe cards** ended with SDK 2.0.0. The driver installed by the command above supports **Modalix**. If you are using a legacy MLSoC PCIe card, install the 2.0.0 driver using `sima-cli install drivers/linux -v 2.0.0`.
+:::
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+Run the following command on the Windows host to install the driver.
+
+:::warning
+This feature is currently in technical preview. Installing this driver places the system into driver test-signing mode. Confirm the prompt before any system changes are made.
+:::
+
+```console
+C:\Users\sima> sima-cli install drivers/windows
+... ... ...
+  ✅ Downloaded: pcie_develop_10082025_2.00.081025.1_B31.exe
+  🚀 Running installation script in: C:\Users\sima
+  📜 Script: pcie_develop_10082025_2.00.081025.1_B31.exe
+  ╭─ Post-Installation Instructions ─╮
+  │                                  │
+  │  Driver successfully installed   │
+  │                                  │
+  ╰──────────────────────────────────╯
+  ✅ Installation completed successfully.
+```
+
+Check the Windows device manager for the SiMa AI device.
+
+<img src="/img/devkit/windows-device.jpg" alt="Windows device manager showing SiMa AI device" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+:::note
+After driver installation, power cycle the host machine before validation.
+:::
+
+</TabItem>
+</Tabs>
+
+## Verify and Test
+
+Run the discovery command to confirm PCIe enumeration:
+
+```console
+sima-cli device discover
+```
+
+If setup is correct, the command output lists connected SiMa PCIe device(s).

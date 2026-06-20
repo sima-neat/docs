@@ -53,7 +53,7 @@ function HardwareSubnav() {
   const links = [
     {
       label: "Getting Started",
-      href: useBaseUrl("/hardware/getting-started/setup-devkit"),
+      href: useBaseUrl("/hardware/getting-started"),
       active: location.pathname.includes(gettingStartedBase),
     },
     {

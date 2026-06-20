@@ -1,0 +1,60 @@
+---
+title: Create Boot Image
+description: Create or recover bootable media for a Modalix DevKit.
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Create Boot Image
+
+Use a boot image when the standard update path is not available or when you need removable boot media. Common cases include:
+
+- The DevKit's internal storage is corrupted or fails to boot.
+- You need to prepare multiple bootable SD cards or removable drives for deployment.
+
+Use `sima-cli bootimg` to download and write a complete bootable image to a removable device, such as an SD card or NVMe drive. You can also use a third-party tool such as [BalenaEtcher](https://etcher.balena.io/).
+
+<Tabs groupId="bootimage-method">
+<TabItem value="sima-cli" label="Using sima-cli" default>
+
+```console
+sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
+```
+
+This command performs the following steps:
+
+1. Downloads the bootable image for the specified board type (`modalix` or `mlsoc`) and SDK version.
+2. Scans your host machine for removable storage devices.
+3. Prompts you to confirm which device to write to.
+4. Writes the boot image directly to the selected device.
+
+After the process completes, eject the SD card and insert it into the DevKit. On next boot, the DevKit starts from the new image.
+
+**Important Notes:**
+
+- This command must be run on a Linux or macOS host.
+- An internet connection is required to download the image.
+
+</TabItem>
+<TabItem value="third-party" label="Using Third-Party Tools">
+
+You can also write the image with a third-party image writing tool such as BalenaEtcher.
+
+1. First, download the image using `sima-cli`.
+
+   To download only the firmware image for manual update steps, run `sima-cli download` with the URL of the appropriate Modalix firmware archive.
+
+2. Extract the contents of the downloaded archive:
+
+   ```console
+   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
+   ```
+
+3. Use BalenaEtcher to select the resulting `.wic.gz` file and flash it to your SD card or USB drive.
+
+Once written, insert the device into the DevKit and power it on to boot from the image.
+
+</TabItem>
+</Tabs>
