@@ -311,38 +311,16 @@ html[data-theme='dark'] {
   object-fit: contain;
 }
 
-/* Work-in-progress notice pinned above the Developer Center bar on the landing
-   page (auto-hides by date). The banner is fixed above everything; --wip-offset
-   (set to the banner's measured height by JS, with a sane CSS fallback) pushes
-   the fixed bars and the page content down to make room. */
+/* --wip-offset is a layout shim retained as a harmless no-op (always 0) after the
+   work-in-progress banner was removed for the prod launch. The fixed bars and page
+   content below still reference it in their `top`/`margin-top` calc() expressions;
+   keeping it at 0 leaves those offsets unchanged without touching every call site. */
 :root {
   --wip-offset: 0rem;
 }
 
-.wip-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1.25rem;
-  background: linear-gradient(90deg, #dc6821, #c25718);
-  color: #fffaf4;
-  font-weight: 700;
-  font-size: 0.95rem;
-  line-height: 1.35;
-  text-align: center;
-  box-shadow: 0 1px 6px rgba(28, 47, 58, 0.18);
-}
-
-/* Push the fixed Developer Center shell bar, the native navbar, and the page
-   content down by the banner height. --wip-offset is 0 when no banner is mounted
-   (so these are no-ops elsewhere) and is set to the banner's height by JS on the
-   landing page. The `html` prefix raises specificity above the shell/infima
-   `top: 0` defaults so the offset actually applies. */
+/* `--wip-offset` is 0, so these `top`/`margin-top` offsets are no-ops; the `html`
+   prefix raises specificity above the shell/infima `top: 0` defaults. */
 html .developer-center-shell,
 html .navbar--fixed-top {
   top: var(--wip-offset);

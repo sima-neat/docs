@@ -209,20 +209,37 @@
     return indexes.filter(isConfiguredIndex);
   }
 
+  // Auto-generated API reference entries (Doxygen "File"/"Folder" pages and the generated
+  // C++/Python API subtree) dump large symbol listings, so they match many queries and would
+  // otherwise crowd out real documentation pages. We sink them below narrative docs in the
+  // ranking. Use the raw title (not the highlighted value, which may contain <mark> markup).
+  function isApiReferenceHit(hit) {
+    const title = String(hit.title || '').trim();
+    if (/\s(File|Folder|Directory)$/i.test(title)) return true;
+    return /\/reference\/[a-z0-9-]*api\//.test(hitRoute(hit).toLowerCase());
+  }
+
   function mergeRankedHits(responses) {
     const hitGroups = responses.map((payload) => (Array.isArray(payload.hits) ? payload.hits : []));
-    const hits = [];
-    for (let index = 0; hits.length < MAX_SEARCH_RESULTS; index += 1) {
+    const merged = [];
+    // Round-robin across indexes to balance sources. No cap here so the tiering below can
+    // prefer documentation pages when filling the visible slots.
+    for (let index = 0; ; index += 1) {
       let added = false;
       hitGroups.forEach((group) => {
-        if (hits.length < MAX_SEARCH_RESULTS && group[index]) {
-          hits.push(group[index]);
+        if (group[index]) {
+          merged.push(group[index]);
           added = true;
         }
       });
       if (!added) break;
     }
-    return hits;
+    // Documentation sections rank first; auto-generated API File/Folder entries sink to the
+    // bottom. A stable partition preserves Algolia's relevance order within each tier, and the
+    // cap is applied after tiering so docs fill the visible slots before any file entries.
+    const sections = merged.filter((hit) => !isApiReferenceHit(hit));
+    const files = merged.filter((hit) => isApiReferenceHit(hit));
+    return sections.concat(files).slice(0, MAX_SEARCH_RESULTS);
   }
 
   function renderSearchResults(root, state) {
