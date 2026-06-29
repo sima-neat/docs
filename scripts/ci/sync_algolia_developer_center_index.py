@@ -21,6 +21,14 @@ DEFAULT_BATCH_SIZE = 500
 SKIP_PARTS = {"build", "node_modules", ".git"}
 EXTENSIONS = {".md", ".mdx"}
 
+# A record's URL is pruned only when the live site gives a DEFINITIVE "gone" response.
+# 403 covers the S3 "AccessDenied" pages this reaper was built to remove; 404/410 are the
+# canonical missing statuses. Every other non-200 (5xx, 429, 408, 401, ...) is treated as
+# transient/ambiguous and must never trigger deletion.
+DEAD_HTTP_STATUSES = frozenset({403, 404, 410})
+# HEAD is unreliable for these statuses; confirm the real status with a follow-up GET.
+HEAD_RETRY_STATUSES = frozenset({403, 405, 501})
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -251,30 +259,35 @@ class AlgoliaClient:
 
 
 def url_is_accessible(url: str, timeout: float) -> bool | None:
-    """Return True if the URL returns HTTP 200, False if it returns a definitive non-200
-    (e.g. 403 AccessDenied, 404), or None when the result is ambiguous (timeout, DNS, connection
-    error). Callers must treat None as "do not delete" so transient failures never prune live pages.
+    """Return True if the URL returns HTTP 200, False if it returns a definitive "gone" status
+    (403 AccessDenied / 404 / 410), or None when the result is ambiguous and must NOT trigger
+    deletion: transient HTTP statuses (5xx, 429, 408, 401, ...) and network errors (timeout,
+    DNS, connection reset). Callers must treat None as "do not delete" so a temporary
+    origin/CDN/throttling blip never prunes a live page from the index.
     """
     headers = {"User-Agent": "developer-center-index-reaper/1.0"}
 
-    def probe(method: str) -> bool | None:
+    def probe(method: str) -> str:
+        # Verdict is one of: "ok" (200), "dead" (definitive gone), "retry" (HEAD rejected,
+        # confirm with GET), or "skip" (transient HTTP status or network error — do not delete).
         request = urllib.request.Request(url, headers=headers, method=method)
         try:
             with urllib.request.urlopen(request, timeout=timeout) as response:
-                return response.status == 200
+                return "ok" if response.status == 200 else "skip"
         except urllib.error.HTTPError as error:
-            # Definitive answer from the origin. 405 => retry with GET (some origins reject HEAD).
-            if method == "HEAD" and error.code in (403, 405, 501):
-                return None  # signal "retry with GET"
-            return error.code == 200
+            if method == "HEAD" and error.code in HEAD_RETRY_STATUSES:
+                return "retry"
+            if error.code in DEAD_HTTP_STATUSES:
+                return "dead"
+            return "skip"  # transient (5xx, 429, 408, ...) or otherwise non-definitive
         except (urllib.error.URLError, TimeoutError, OSError):
-            return None  # ambiguous: timeout, DNS, connection reset
+            return "skip"  # timeout, DNS, connection reset
 
-    result = probe("HEAD")
-    if result is None:
-        # HEAD was inconclusive (rejected or transient) — confirm with a GET before deciding.
-        result = probe("GET")
-    return result
+    verdict = probe("HEAD")
+    if verdict == "retry":
+        # HEAD was rejected at the method level — confirm the real status with a GET.
+        verdict = probe("GET")
+    return {"ok": True, "dead": False}.get(verdict)  # "skip"/"retry" -> None
 
 
 def prune_dead_links(args: argparse.Namespace) -> None:
