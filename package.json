@@ -10,7 +10,8 @@
     "start": "docusaurus start --host 0.0.0.0",
     "build": "docusaurus build",
     "serve": "docusaurus serve --host 0.0.0.0",
-    "clear": "docusaurus clear"
+    "clear": "docusaurus clear",
+    "clean": "docusaurus clear"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.1",
