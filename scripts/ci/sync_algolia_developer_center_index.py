@@ -38,6 +38,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-record-bytes", type=int, default=DEFAULT_MAX_RECORD_BYTES)
     parser.add_argument("--generate-only", action="store_true", help="Only generate records; do not upload.")
     parser.add_argument("--sync", action="store_true", help="Upload records and remove stale records for this source.")
+    parser.add_argument(
+        "--prune-dead-links",
+        action="store_true",
+        help="Browse every record in the shared index, HEAD-check each URL, and delete records whose URL is not reachable (HTTP 200). Runs independently of generation/sync.",
+    )
+    parser.add_argument("--prune-timeout", type=float, default=10.0, help="Per-URL timeout (seconds) for --prune-dead-links checks.")
+    parser.add_argument("--dry-run", action="store_true", help="With --prune-dead-links, report what would be deleted without deleting.")
     return parser.parse_args()
 
 
@@ -218,11 +225,100 @@ class AlgoliaClient:
                 return object_ids
             payload = {"cursor": cursor}
 
+    def browse_all_records(self) -> list[dict]:
+        """Return every record in the shared index (all sources) with its objectID, url, and source."""
+        records: list[dict] = []
+        payload = {
+            "query": "",
+            "attributesToRetrieve": ["objectID", "url", "route", "source"],
+            "hitsPerPage": 1000,
+        }
+        while True:
+            result = self.post(f"/1/indexes/{self.index}/browse", payload)
+            for hit in result.get("hits", []):
+                if hit.get("objectID"):
+                    records.append(hit)
+            cursor = result.get("cursor")
+            if not cursor:
+                return records
+            payload = {"cursor": cursor}
+
     def batch(self, requests: list[dict]) -> None:
         if not requests:
             return
         result = self.post(f"/1/indexes/{self.index}/batch", {"requests": requests})
         print(f"[algolia-index] taskID={result.get('taskID')} requests={len(requests)}")
+
+
+def url_is_accessible(url: str, timeout: float) -> bool | None:
+    """Return True if the URL returns HTTP 200, False if it returns a definitive non-200
+    (e.g. 403 AccessDenied, 404), or None when the result is ambiguous (timeout, DNS, connection
+    error). Callers must treat None as "do not delete" so transient failures never prune live pages.
+    """
+    headers = {"User-Agent": "developer-center-index-reaper/1.0"}
+
+    def probe(method: str) -> bool | None:
+        request = urllib.request.Request(url, headers=headers, method=method)
+        try:
+            with urllib.request.urlopen(request, timeout=timeout) as response:
+                return response.status == 200
+        except urllib.error.HTTPError as error:
+            # Definitive answer from the origin. 405 => retry with GET (some origins reject HEAD).
+            if method == "HEAD" and error.code in (403, 405, 501):
+                return None  # signal "retry with GET"
+            return error.code == 200
+        except (urllib.error.URLError, TimeoutError, OSError):
+            return None  # ambiguous: timeout, DNS, connection reset
+
+    result = probe("HEAD")
+    if result is None:
+        # HEAD was inconclusive (rejected or transient) — confirm with a GET before deciding.
+        result = probe("GET")
+    return result
+
+
+def prune_dead_links(args: argparse.Namespace) -> None:
+    if not args.app_id or not args.api_key or not args.index_name:
+        raise SystemExit("--app-id, --api-key, and --index-name are required for --prune-dead-links")
+
+    client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
+    records = client.browse_all_records()
+    print(f"[algolia-reaper] browsing shared index: {len(records)} records")
+
+    dead: list[dict] = []
+    skipped = 0
+    checked = 0
+    for record in records:
+        url = record.get("url")
+        if not url:
+            continue
+        checked += 1
+        accessible = url_is_accessible(url, args.prune_timeout)
+        if accessible is True:
+            continue
+        if accessible is None:
+            skipped += 1
+            print(f"[algolia-reaper] skip (ambiguous, not deleting): {url}")
+            continue
+        dead.append(record)
+        print(f"[algolia-reaper] dead ({record.get('source', '?')}): {url}")
+
+    print(f"[algolia-reaper] checked={checked} dead={len(dead)} skipped={skipped}")
+    if not dead:
+        print("[algolia-reaper] no dead links found")
+        return
+
+    if args.dry_run:
+        print(f"[algolia-reaper] dry-run: would delete {len(dead)} records:")
+        for record in dead:
+            print(f"  - {record['objectID']} {record.get('url')}")
+        return
+
+    dead_ids = [record["objectID"] for record in dead]
+    for start in range(0, len(dead_ids), args.batch_size):
+        chunk = dead_ids[start : start + args.batch_size]
+        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
+    print(f"[algolia-reaper] deleted {len(dead_ids)} dead records")
 
 
 def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
@@ -251,6 +347,11 @@ def main() -> int:
         raise SystemExit("--batch-size must be positive")
     if args.max_record_bytes < 2_000:
         raise SystemExit("--max-record-bytes must be at least 2000")
+
+    if args.prune_dead_links:
+        prune_dead_links(args)
+        return 0
+
     if not args.generate_only and not args.sync:
         args.generate_only = True
 

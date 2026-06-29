@@ -392,3 +392,13 @@ jobs:
             --api-key "${write_api_key}" \
             --index-name "${index_name}" \
             --sync
+
+          # Post-deploy: prune any record (across all sources) whose URL is no longer reachable on
+          # the live site. Runs after the S3 publish above so it checks the just-deployed site, and
+          # fails safe (skips, never deletes) on ambiguous/transient errors.
+          python3 scripts/ci/sync_algolia_developer_center_index.py \
+            --site-base-url "${SYSDOC_URL}" \
+            --app-id "${app_id}" \
+            --api-key "${write_api_key}" \
+            --index-name "${index_name}" \
+            --prune-dead-links

@@ -368,6 +368,11 @@
         payload: {
           query,
           hitsPerPage: MAX_SEARCH_RESULTS,
+          // Require every query term to match (strict AND). Without this, Algolia's default
+          // word-dropping fallback floods multi-word searches (e.g. "llima pull") with loose
+          // partial matches. When nothing matches all terms, hits are empty and the UI shows
+          // the "No matches found." empty state.
+          removeWordsIfNoResults: 'none',
           attributesToHighlight: ['title', 'content', 'hierarchy.lvl0', 'hierarchy.lvl1', 'hierarchy.lvl2'],
           attributesToSnippet: ['content:24'],
         },
