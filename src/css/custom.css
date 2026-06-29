@@ -49,20 +49,20 @@ html[data-theme='dark'] {
 
   html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + var(--wip-offset)) !important;
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - var(--wip-offset)) !important;
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
   }
 
   /* Offset the right-side "On this page" table of contents below the bar. */
   html.developer-center-shell-active .theme-doc-toc-desktop {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem + var(--wip-offset));
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem - var(--wip-offset));
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem);
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem);
   }
 }
 
 .docs-subnav {
   position: fixed;
-  top: calc(var(--ifm-navbar-height) + var(--wip-offset));
+  top: var(--ifm-navbar-height);
   right: 0;
   left: 0;
   z-index: 850;
@@ -152,7 +152,7 @@ html[data-theme='dark'] {
 
   /* Section sub-bar sits just below the single navbar; scrolls horizontally. */
   .docs-subnav {
-    top: calc(var(--ifm-navbar-height) + var(--wip-offset));
+    top: var(--ifm-navbar-height);
     z-index: 150;
   }
 
@@ -193,7 +193,7 @@ html[data-theme='dark'] {
   /* Push content below the fixed sub-bar. The sub-bar is a direct child of
      #__docusaurus only on hardware pages, so :has scopes this correctly. */
   #__docusaurus:has(> .docs-subnav) .main-wrapper {
-    margin-top: calc(var(--docs-subnav-height) + var(--wip-offset));
+    margin-top: var(--docs-subnav-height);
   }
 }
 
@@ -309,25 +309,6 @@ html[data-theme='dark'] {
 
 .navbar__logo img {
   object-fit: contain;
-}
-
-/* --wip-offset is a layout shim retained as a harmless no-op (always 0) after the
-   work-in-progress banner was removed for the prod launch. The fixed bars and page
-   content below still reference it in their `top`/`margin-top` calc() expressions;
-   keeping it at 0 leaves those offsets unchanged without touching every call site. */
-:root {
-  --wip-offset: 0rem;
-}
-
-/* `--wip-offset` is 0, so these `top`/`margin-top` offsets are no-ops; the `html`
-   prefix raises specificity above the shell/infima `top: 0` defaults. */
-html .developer-center-shell,
-html .navbar--fixed-top {
-  top: var(--wip-offset);
-}
-
-html .main-wrapper {
-  margin-top: var(--wip-offset);
 }
 
 .footer {
