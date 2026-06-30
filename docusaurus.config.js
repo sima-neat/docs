@@ -108,6 +108,10 @@ const config = {
         style: 'light',
         links: [
           {
+            label: 'Documentation feedback',
+            href: 'https://github.com/sima-neat/docs/issues/new?template=doc-feedback-report.md',
+          },
+          {
             html: '<button type="button" class="footer__link-item cookie-preferences-link" data-cookie-preferences>Cookie preferences</button>',
           },
         ],
