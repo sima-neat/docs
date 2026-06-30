@@ -12,6 +12,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 
@@ -52,6 +53,7 @@ def parse_args() -> argparse.Namespace:
         help="Browse every record in the shared index, HEAD-check each URL, and delete records whose URL is not reachable (HTTP 200). Runs independently of generation/sync.",
     )
     parser.add_argument("--prune-timeout", type=float, default=10.0, help="Per-URL timeout (seconds) for --prune-dead-links checks.")
+    parser.add_argument("--prune-concurrency", type=int, default=16, help="Number of URL checks to run in parallel for --prune-dead-links (bounded thread pool).")
     parser.add_argument("--dry-run", action="store_true", help="With --prune-dead-links, report what would be deleted without deleting.")
     return parser.parse_args()
 
@@ -296,25 +298,38 @@ def prune_dead_links(args: argparse.Namespace) -> None:
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
     records = client.browse_all_records()
-    print(f"[algolia-reaper] browsing shared index: {len(records)} records")
+    candidates = [record for record in records if record.get("url")]
+    workers = max(1, args.prune_concurrency)
+    print(
+        f"[algolia-reaper] browsing shared index: {len(records)} records "
+        f"({len(candidates)} with URLs); checking with {workers} workers"
+    )
+
+    def classify(record: dict) -> tuple[dict, bool | None, str]:
+        # Never let a single malformed URL or unexpected error abort the whole prune; an
+        # unexpected failure is treated as ambiguous (None) so it is skipped, never deleted.
+        try:
+            return record, url_is_accessible(record["url"], args.prune_timeout), "ambiguous"
+        except Exception as error:  # noqa: BLE001 - fail safe over fail loud during a destructive prune
+            return record, None, f"probe error: {error}"
 
     dead: list[dict] = []
     skipped = 0
     checked = 0
-    for record in records:
-        url = record.get("url")
-        if not url:
-            continue
-        checked += 1
-        accessible = url_is_accessible(url, args.prune_timeout)
-        if accessible is True:
-            continue
-        if accessible is None:
-            skipped += 1
-            print(f"[algolia-reaper] skip (ambiguous, not deleting): {url}")
-            continue
-        dead.append(record)
-        print(f"[algolia-reaper] dead ({record.get('source', '?')}): {url}")
+    # Bounded concurrency: URL checks are I/O-bound and independent, so a small thread pool
+    # cuts wall-clock from minutes to seconds without hammering the origin. executor.map yields
+    # results in submission order, keeping the per-URL log deterministic.
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        for record, accessible, reason in pool.map(classify, candidates):
+            checked += 1
+            if accessible is True:
+                continue
+            if accessible is None:
+                skipped += 1
+                print(f"[algolia-reaper] skip ({reason}, not deleting): {record['url']}")
+                continue
+            dead.append(record)
+            print(f"[algolia-reaper] dead ({record.get('source', '?')}): {record['url']}")
 
     print(f"[algolia-reaper] checked={checked} dead={len(dead)} skipped={skipped}")
     if not dead:
