@@ -51,7 +51,7 @@ With the host on static IP `192.168.1.10` and the DevKit reachable at `192.168.1
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
-sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 2.0.0 --troot_only
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
 ```
 
 After the update completes successfully, **power cycle the DevKit** to apply the changes.
@@ -63,7 +63,7 @@ After the update completes successfully, **power cycle the DevKit** to apply the
 
 The remainder of the conversion uses the standard TFTP netboot + flash procedure documented in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Follow that procedure with the eLxr-specific values below:
 
-- **Step 2 (Start TFTP server):** use `--boardtype modalix --fwtype elxr -v 2.0.0`.
+- **Step 2 (Start TFTP server):** use `--boardtype modalix --fwtype elxr -v %platform_version%`.
 - **Step 3 (Configure U-Boot):** set `cpio_name=simaai-image-palette-modalix.cpio.gz` in addition to `boot_targets=net` before running `boot`.
 - **Step 4 (Flash):** type `f` at the `netboot>` prompt.
 

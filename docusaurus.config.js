@@ -76,6 +76,9 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: 'hardware',
+          // Substitute %platform_version% (and any other key in src/versions.cjs) at build
+          // time, including inside fenced code blocks. See src/remark/substituteVersions.cjs.
+          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
         },
         blog: false,
         theme: {
