@@ -298,11 +298,23 @@ def prune_dead_links(args: argparse.Namespace) -> None:
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
     records = client.browse_all_records()
-    candidates = [record for record in records if record.get("url")]
+    # Skip this pipeline's OWN source. The --sync step that runs just before this reconciles
+    # every "hardware" record deterministically against the freshly-built record set (objectID
+    # set-diff, no HTTP), so re-probing them here is both redundant AND the only thing exposed to
+    # the stale-CDN race: a page we just deployed may not have propagated through CloudFront yet,
+    # and probing its still-cached 404/403 would wrongly delete it. We have no such local source
+    # of truth for cross-source records (software/examples), so those still need a live probe.
+    own_source = sum(1 for record in records if record.get("source") == SOURCE)
+    candidates = [
+        record
+        for record in records
+        if record.get("url") and record.get("source") != SOURCE
+    ]
     workers = max(1, args.prune_concurrency)
     print(
         f"[algolia-reaper] browsing shared index: {len(records)} records "
-        f"({len(candidates)} with URLs); checking with {workers} workers"
+        f"(skip {own_source} own-source '{SOURCE}', checking {len(candidates)} cross-source URLs "
+        f"with {workers} workers)"
     )
 
     def classify(record: dict) -> tuple[dict, bool | None, str]:
