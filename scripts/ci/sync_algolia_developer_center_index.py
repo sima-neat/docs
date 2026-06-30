@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import html
 import json
+import os
 import re
 import sys
 import urllib.error
@@ -55,7 +56,42 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--prune-timeout", type=float, default=10.0, help="Per-URL timeout (seconds) for --prune-dead-links checks.")
     parser.add_argument("--prune-concurrency", type=int, default=16, help="Number of URL checks to run in parallel for --prune-dead-links (bounded thread pool).")
     parser.add_argument("--dry-run", action="store_true", help="With --prune-dead-links, report what would be deleted without deleting.")
+    parser.add_argument("--versions-json", help="Path to versions.json; its %%key%% tokens are substituted into record content so the index matches the rendered site. Defaults to <repo>/src/versions.json.")
     return parser.parse_args()
+
+
+def default_versions_path() -> Path:
+    # scripts/ci/sync_algolia_developer_center_index.py -> repo root is parents[2].
+    return Path(__file__).resolve().parents[2] / "src" / "versions.json"
+
+
+def load_versions(versions_json: str | None) -> dict[str, str]:
+    """Load %key% -> value substitutions, mirroring src/versions.cjs: versions.json provides
+    the defaults and the PLATFORM_VERSION env var overrides platform_version at build time, so
+    the indexed content stays identical to what the Docusaurus remark plugin renders."""
+    path = Path(versions_json) if versions_json else default_versions_path()
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        print(f"[algolia-index] versions file not found ({path}); skipping token substitution")
+        return {}
+    if not isinstance(data, dict):
+        raise SystemExit(f"versions file must contain a JSON object: {path}")
+    versions = {str(key): str(value) for key, value in data.items()}
+    env_override = os.environ.get("PLATFORM_VERSION")
+    if env_override:
+        versions["platform_version"] = env_override
+    return versions
+
+
+def substitute_versions(text: str, versions: dict[str, str]) -> str:
+    """Replace %key% tokens (only keys defined in versions) with their values. Mirrors
+    src/remark/substituteVersions.cjs so search content/snippets never show a raw token and
+    version queries match the rendered pages."""
+    if not versions:
+        return text
+    pattern = re.compile("%(" + "|".join(re.escape(key) for key in versions) + ")%")
+    return pattern.sub(lambda match: versions[match.group(1)], text)
 
 
 def strip_frontmatter(text: str) -> str:
@@ -144,7 +180,7 @@ def fit_record(record: dict, max_record_bytes: int) -> tuple[dict, bool]:
     return record, True
 
 
-def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int) -> tuple[list[dict], dict]:
+def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int, versions: dict[str, str]) -> tuple[list[dict], dict]:
     docs_dir = docs_dir.resolve()
     records: list[dict] = []
     by_section: dict[str, int] = {}
@@ -157,7 +193,10 @@ def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int) 
         if any(part in SKIP_PARTS for part in path.relative_to(docs_dir).parts):
             continue
 
-        raw = strip_frontmatter(path.read_text(encoding="utf-8"))
+        # Substitute %platform_version% (and any other versions.json key) up front so both the
+        # title and the cleaned body carry real values — matching the rendered, remark-processed
+        # page instead of indexing the literal token.
+        raw = substitute_versions(strip_frontmatter(path.read_text(encoding="utf-8")), versions)
         body = clean_markdown(raw)
         if not body:
             continue
@@ -406,7 +445,8 @@ def main() -> int:
         }
         print("[algolia-index] loaded records:")
     else:
-        records, summary = generate_records(Path(args.docs_dir), args.site_base_url, args.max_record_bytes)
+        versions = load_versions(args.versions_json)
+        records, summary = generate_records(Path(args.docs_dir), args.site_base_url, args.max_record_bytes, versions)
         print("[algolia-index] generated records:")
     print(json.dumps(summary, indent=2))
 
