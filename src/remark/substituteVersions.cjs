@@ -8,21 +8,11 @@
 // Why `%key%` and not `{{key}}`: brace tokens are parsed as JSX expressions in MDX prose
 // and break the build; `%key%` is inert in both prose and code.
 //
-// Only keys defined in versions.cjs are substituted, so incidental `%s` / `%d` printf-style
-// tokens in code samples are left untouched.
-const versions = require('../versions.cjs');
+// The token regex and substitution live in src/versions.cjs, shared with the raw agent
+// endpoint generator (scripts/build-agent-raw.cjs) so the two cannot drift.
+const { versions, substitute } = require('../versions.cjs');
 
-function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-const keys = Object.keys(versions);
-const TOKEN = new RegExp('%(' + keys.map(escapeRegExp).join('|') + ')%', 'g');
 const SUBSTITUTABLE = new Set(['text', 'inlineCode', 'code']);
-
-function substitute(value) {
-  return value.replace(TOKEN, (_match, key) => versions[key]);
-}
 
 function walk(node) {
   if (!node || typeof node !== 'object') {
@@ -38,7 +28,7 @@ function walk(node) {
 
 module.exports = function substituteVersions() {
   return (tree) => {
-    if (keys.length > 0) {
+    if (Object.keys(versions).length > 0) {
       walk(tree);
     }
   };

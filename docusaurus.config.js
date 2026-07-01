@@ -80,6 +80,10 @@ const config = {
           // time, including inside fenced code blocks. See src/remark/substituteVersions.cjs.
           remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
         },
+        pages: {
+          // src/pages/agents.md (served at /agents) uses the same %key% tokens.
+          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
+        },
         blog: false,
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

@@ -1,0 +1,9 @@
+id: sima-environment-setup
+name: SiMa Environment Setup
+version: 0.1.0
+agents: [codex, claude]
+description: Set up a SiMa.ai development environment end to end — sima-cli, Palette Neat SDK, Model Compiler, Modalix DevKit pairing, model compilation, and NEAT/GenAI application build and run.
+compatibility:
+  env_types: [sdk]
+  env_subtypes: [linux, palette]
+  min_cli_version: 2.1.1

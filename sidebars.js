@@ -5,6 +5,13 @@ const sidebars = {
   systemDocs: [
     'index',
     {
+      // Lives at the site root (src/pages/agents.md), not under /hardware:
+      // it spans hardware setup AND the software/SDK onboarding.
+      type: 'link',
+      label: 'For AI Agents',
+      href: '/agents',
+    },
+    {
       type: 'category',
       label: 'Getting Started',
       collapsible: true,
