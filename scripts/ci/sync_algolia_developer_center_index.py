@@ -67,8 +67,9 @@ def default_versions_path() -> Path:
 
 def load_versions(versions_json: str | None) -> dict[str, str]:
     """Load %key% -> value substitutions, mirroring src/versions.cjs: versions.json provides
-    the defaults and the PLATFORM_VERSION env var overrides platform_version at build time, so
-    the indexed content stays identical to what the Docusaurus remark plugin renders."""
+    the defaults and the matching SCREAMING_SNAKE env var (e.g. PLATFORM_VERSION) overrides
+    each key at build time, so the indexed content stays identical to what the Docusaurus
+    remark plugin renders."""
     path = Path(versions_json) if versions_json else default_versions_path()
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
@@ -78,9 +79,10 @@ def load_versions(versions_json: str | None) -> dict[str, str]:
     if not isinstance(data, dict):
         raise SystemExit(f"versions file must contain a JSON object: {path}")
     versions = {str(key): str(value) for key, value in data.items()}
-    env_override = os.environ.get("PLATFORM_VERSION")
-    if env_override:
-        versions["platform_version"] = env_override
+    for key in versions:
+        env_override = os.environ.get(key.upper())
+        if env_override:
+            versions[key] = env_override
     return versions
 
 
@@ -187,12 +189,23 @@ def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int, 
     trimmed = 0
     max_seen = 0
 
+    # (path, rel, section, url) sources: every markdown file under docs/ (served under
+    # /hardware), plus the agent onboarding page which lives in src/pages/ and is served
+    # at the site root (/agents) because it spans the hardware AND software pillars.
+    sources: list[tuple[Path, str, str, str]] = []
     for path in sorted(docs_dir.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in EXTENSIONS:
             continue
         if any(part in SKIP_PARTS for part in path.relative_to(docs_dir).parts):
             continue
+        rel = path.relative_to(docs_dir).as_posix()
+        sources.append((path, rel, section_for_path(path, docs_dir), route_for_path(path, docs_dir, site_base_url)))
 
+    agents_page = docs_dir.parent / "src" / "pages" / "agents.md"
+    if agents_page.is_file():
+        sources.append((agents_page, "src/pages/agents.md", "Agents", f"{site_base_url.rstrip('/')}/agents"))
+
+    for path, rel, section, url in sources:
         # Substitute %platform_version% (and any other versions.json key) up front so both the
         # title and the cleaned body carry real values — matching the rendered, remark-processed
         # page instead of indexing the literal token.
@@ -201,10 +214,7 @@ def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int, 
         if not body:
             continue
 
-        rel = path.relative_to(docs_dir).as_posix()
         title = title_from_markdown(path, raw)
-        section = section_for_path(path, docs_dir)
-        url = route_for_path(path, docs_dir, site_base_url)
         route = urllib.parse.urlparse(url).path or "/hardware"
         record = {
             "objectID": f"{SOURCE}:{hashlib.sha1(rel.encode('utf-8')).hexdigest()}",
