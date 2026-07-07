@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,49 +15,63 @@
 
   <!-- Mobile Nav Toggle -->
   <button id="menu-toggle"
-          class="lg:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white px-3 py-2 rounded-md shadow-md">
+    class="lg:hidden fixed top-4 left-4 z-50 bg-blue-600 text-white px-3 py-2 rounded-md shadow-md">
     ☰
   </button>
 
   <!-- Backdrop for mobile sidebar -->
   <div id="menu-backdrop"
-       class="hidden fixed inset-0 bg-black bg-opacity-30 z-30 lg:hidden transition-opacity duration-300"></div>
+    class="hidden fixed inset-0 bg-black bg-opacity-30 z-30 lg:hidden transition-opacity duration-300"></div>
 
   <!-- Back to Developer Portal (persistent, outside the card so it shows on every tab) -->
   <div class="mx-auto w-[90%] lg:w-[80%] max-w-6xl mt-14 lg:mt-8 mb-3">
     <a href="https://developer.sima.ai"
-       class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-medium transition shadow-sm">
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-300 bg-white text-blue-700 hover:bg-blue-50 hover:text-blue-800 font-medium transition shadow-sm">
       <span aria-hidden="true">←</span> Go Back to Developer Portal
     </a>
   </div>
 
   <!-- Main Container -->
-  <div id="devkit-container" class="mx-auto w-[90%] lg:w-[80%] max-w-6xl bg-white rounded-2xl shadow-md flex flex-col lg:flex-row overflow-hidden border border-gray-200 mb-8">
+  <div id="devkit-container"
+    class="mx-auto w-[90%] lg:w-[80%] max-w-6xl bg-white rounded-2xl shadow-md flex flex-col lg:flex-row overflow-hidden border border-gray-200 mb-8">
 
     <!-- Sidebar -->
     <aside id="sidebar"
-           class="w-64 bg-gray-50 border-r border-gray-200 flex flex-col fixed lg:static h-full lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
+      class="w-64 bg-gray-50 border-r border-gray-200 flex flex-col fixed lg:static h-full lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out z-40">
       <div class="p-5 text-xl font-semibold border-b border-gray-200 text-blue-700 flex justify-between items-center">
         <button id="qsg-home" class="qsg-home text-blue-700 hover:text-blue-800">Quick Start Guide</button>
-        <button id="menu-close" class="lg:hidden text-gray-600 hover:text-blue-700 text-2xl leading-none">&times;</button>
+        <button id="menu-close"
+          class="lg:hidden text-gray-600 hover:text-blue-700 text-2xl leading-none">&times;</button>
       </div>
 
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
         <div id="nav-devkit" class="space-y-2 hidden">
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="package">In the Package</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="interfaces">Interfaces</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="inside">Inside the DevKit</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="local">Local Setup</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="remote">Remote Setup</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="develop">Prepare for Development</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="troubleshooting">Troubleshooting</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="package">In the Package</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="interfaces">Interfaces</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="inside">Inside the DevKit</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="local">Local Setup</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="remote">Remote Setup</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="develop">Prepare for Development</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="troubleshooting">Troubleshooting</button>
         </div>
         <div id="nav-hhhl" class="space-y-2 hidden">
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="hhhl-overview">1. Supported Hosts</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="hhhl-install">2. Install the Card</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="hhhl-host">3. Host Setup</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="hhhl-verify">4. Verify and Test</button>
-          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition" data-section="hhhl-troubleshooting">5. Troubleshooting</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="hhhl-overview">1. Supported Hosts</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="hhhl-install">2. Install the Card</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="hhhl-host">3. Host Setup</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="hhhl-verify">4. Verify and Test</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="hhhl-troubleshooting">5. Troubleshooting</button>
         </div>
       </nav>
     </aside>
@@ -110,14 +125,18 @@
 
           <div class="hotspot-container relative w-full max-w-3xl mx-auto">
             <img src="images/package.png" alt="SiMa DevKit Package" class="rounded-lg shadow-lg w-full" />
-            <div class="hotspot" style="top: 40%; left: 30%;" data-label="1" data-title="SiMa DevKit" data-desc="The SiMa.ai Modalix DevKit, your main hardware platform."></div>
-            <div class="hotspot" style="top: 55%; left: 65%;" data-label="2" data-title="Power Supply" data-desc="The 12V power adapter that provides power to the DevKit."></div>
-            <div class="hotspot" style="top: 70%; left: 20%;" data-label="3" data-title="USB-C Cable" data-desc="Used for console/debug access from your host computer."></div>
+            <div class="hotspot" style="top: 40%; left: 30%;" data-label="1" data-title="SiMa DevKit"
+              data-desc="The SiMa.ai Modalix DevKit, your main hardware platform."></div>
+            <div class="hotspot" style="top: 55%; left: 65%;" data-label="2" data-title="Power Supply"
+              data-desc="The 12V power adapter that provides power to the DevKit."></div>
+            <div class="hotspot" style="top: 70%; left: 20%;" data-label="3" data-title="USB-C Cable"
+              data-desc="Used for console/debug access from your host computer."></div>
           </div>
 
           <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
-                    data-next="interfaces">Next Step →</button>
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="interfaces">Next Step →</button>
           </div>
         </section>
 
@@ -131,393 +150,410 @@
 
           <div class="hotspot-container relative w-full max-w-3xl mx-auto">
             <img src="images/devkit-interfaces.png" alt="SiMa DevKit Interfaces" class="rounded-lg shadow-lg w-full" />
-            <div class="hotspot" style="top: 42%; left: 20%;" data-label="1" data-title="12 V Power Input" data-desc="Connect the Power supply here."></div>
-            <div class="hotspot" style="top: 50%; left: 22%;" data-label="2" data-title="HDMI Output" data-desc="Connect an HDMI Monitor here."></div>
-            <div class="hotspot" style="top: 55%; left: 30%;" data-label="3" data-title="USB 3.0 (4x Type –A Connectors)" data-desc="Connect any USB device to one of these ports (Mouse, Keyboard, Speaker,
+            <div class="hotspot" style="top: 42%; left: 20%;" data-label="1" data-title="12 V Power Input"
+              data-desc="Connect the Power supply here."></div>
+            <div class="hotspot" style="top: 50%; left: 22%;" data-label="2" data-title="HDMI Output"
+              data-desc="Connect an HDMI Monitor here."></div>
+            <div class="hotspot" style="top: 55%; left: 30%;" data-label="3"
+              data-title="USB 3.0 (4x Type –A Connectors)" data-desc="Connect any USB device to one of these ports (Mouse, Keyboard, Speaker,
 Microphone, Camera, etc.)"></div>
-            <div class="hotspot" style="top: 55%; left: 40%;" data-label="4" data-title="Gigabit Ethernet Innterface" data-desc="Connect this port to the network or Host Computer."></div>
-            <div class="hotspot" style="top: 60%; left: 45%;" data-label="5" data-title="USB-C Debug Port" data-desc="Connect your host PC here for debugging via serial console."></div>
+            <div class="hotspot" style="top: 55%; left: 40%;" data-label="4" data-title="Gigabit Ethernet Innterface"
+              data-desc="Connect this port to the network or Host Computer."></div>
+            <div class="hotspot" style="top: 60%; left: 45%;" data-label="5" data-title="USB-C Debug Port"
+              data-desc="Connect your host PC here for debugging via serial console."></div>
           </div>
 
           <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
-                    data-next="inside">Next Step →</button>
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="inside">Next Step →</button>
           </div>
         </section>
 
         <!-- 3️⃣ Inside the DevKit -->
         <section id="section-inside" class="content-section hidden text-center" data-flow="devkit">
-        <h1 class="text-3xl font-semibold mb-4 text-blue-800">Inside The DevKit</h1>
-        <p class="text-gray-700 mb-6">
-        Hover or tap on each marker to explore major components inside the SiMa DevKit.
-        For detailed pinout and hardware information, see the
-        <a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Hardware_Reference_1.0_8-12-2025.pdf"
-            target="_blank" rel="noopener noreferrer"
-            class="text-blue-600 underline hover:text-blue-700">
-            Modalix SOM Carrier Board Hardware Reference (PDF)
-        </a>.
-        </p>
+          <h1 class="text-3xl font-semibold mb-4 text-blue-800">Inside The DevKit</h1>
+          <p class="text-gray-700 mb-6">
+            Hover or tap on each marker to explore major components inside the SiMa DevKit.
+            For detailed pinout and hardware information, see the
+            <a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Hardware_Reference_1.0_8-12-2025.pdf"
+              target="_blank" rel="noopener noreferrer" class="text-blue-600 underline hover:text-blue-700">
+              Modalix SOM Carrier Board Hardware Reference (PDF)
+            </a>.
+          </p>
 
-        <div class="hotspot-container relative w-full max-w-3xl mx-auto">
+          <div class="hotspot-container relative w-full max-w-3xl mx-auto">
             <img src="images/devkit-inside.png" alt="Inside SiMa DevKit" class="rounded-lg shadow-lg w-full" />
 
             <!-- 1️⃣ Modalix SOM -->
-            <div class="hotspot" style="top: 35%; left: 50%;" data-label="1"
-                data-title="System on a Module (SoM)"
-                data-desc="Modalix SoM AI compute module with fan and heatsink."></div>
+            <div class="hotspot" style="top: 35%; left: 50%;" data-label="1" data-title="System on a Module (SoM)"
+              data-desc="Modalix SoM AI compute module with fan and heatsink."></div>
 
             <!-- 2️⃣ Carrier Board -->
-            <div class="hotspot" style="top: 65%; left: 50%;" data-label="2"
-                data-title="Carrier Board"
-                data-desc="Baseboard hosting connectors, power regulation, and peripheral interfaces for the SOM."></div>
+            <div class="hotspot" style="top: 65%; left: 50%;" data-label="2" data-title="Carrier Board"
+              data-desc="Baseboard hosting connectors, power regulation, and peripheral interfaces for the SOM."></div>
 
             <!-- 3️⃣ 2× MIPI Interfaces -->
-            <div class="hotspot" style="top: 45%; left: 32%;" data-label="3"
-                data-title="2 × MIPI Interfaces"
-                data-desc="Two high-speed CSI-2 connectors for image sensors or camera inputs."></div>
+            <div class="hotspot" style="top: 45%; left: 32%;" data-label="3" data-title="2 × MIPI Interfaces"
+              data-desc="Two high-speed CSI-2 connectors for image sensors or camera inputs."></div>
 
             <!-- 3️⃣ 1× GPIO Interfaces -->
-            <div class="hotspot" style="top: 35%; left: 65%;" data-label="4"
-                data-title="1 × GPIO Interface"
-                data-desc="40 Pin Header for General Purpose Input/Output."></div>
-        </div>
-        <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
-                    data-next="local">
-                Next Step →
+            <div class="hotspot" style="top: 35%; left: 65%;" data-label="4" data-title="1 × GPIO Interface"
+              data-desc="40 Pin Header for General Purpose Input/Output."></div>
+          </div>
+          <div class="mt-8 flex justify-end">
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="local">
+              Next Step →
             </button>
-        </div>
+          </div>
 
         </section>
 
         <!-- 4️⃣ Local Setup -->
         <section id="section-local" class="content-section hidden text-center" data-flow="devkit">
-        <h1 class="text-3xl font-semibold mb-4 text-blue-800">Local Setup</h1>
-        <p class="text-gray-700 mb-6">
-            In the standalone setup configuration, the Modalix DevKit 3.0 is used like a Linux PC. No network connection is required. Click on each item for more information.
-        </p>
+          <h1 class="text-3xl font-semibold mb-4 text-blue-800">Local Setup</h1>
+          <p class="text-gray-700 mb-6">
+            In the standalone setup configuration, the Modalix DevKit 3.0 is used like a Linux PC. No network connection
+            is required. Click on each item for more information.
+          </p>
 
-        <div class="hotspot-container relative w-full max-w-3xl mx-auto">
+          <div class="hotspot-container relative w-full max-w-3xl mx-auto">
             <img src="images/local-setup.png" alt="Local Setup Diagram" class="rounded-lg shadow-lg w-full" />
 
             <!-- 1️⃣ Monitor -->
-            <div class="hotspot" style="top: 35%; left: 55%;" data-label="1"
-                data-title="HDMI Monitor"
-                data-desc="Connect the HDMI cable of the Monitor to the HDMI port of the Devkit."></div>
+            <div class="hotspot" style="top: 35%; left: 55%;" data-label="1" data-title="HDMI Monitor"
+              data-desc="Connect the HDMI cable of the Monitor to the HDMI port of the Devkit."></div>
 
             <!-- 2️⃣ Mouse & Keyboard -->
-            <div class="hotspot" style="top: 65%; left: 73%;" data-label="2"
-                data-title="Mouse & Keyboard"
-                data-desc="Connect both to the USB port of the Devkit (not included in the DevKit)."></div>
+            <div class="hotspot" style="top: 65%; left: 73%;" data-label="2" data-title="Mouse & Keyboard"
+              data-desc="Connect both to the USB port of the Devkit (not included in the DevKit)."></div>
 
             <!-- 3️⃣ Camera -->
-            <div class="hotspot" style="top: 18%; left: 50%;" data-label="3"
-                data-title="USB Camera"
-                data-desc="Connect the camera to the USB port of the DevKit (not included in the DevKit)."></div>
+            <div class="hotspot" style="top: 18%; left: 50%;" data-label="3" data-title="USB Camera"
+              data-desc="Connect the camera to the USB port of the DevKit (not included in the DevKit)."></div>
 
             <!-- 4️⃣ Speaker -->
-            <div class="hotspot" style="top: 60%; left: 20%;" data-label="4"
-                data-title="USB Speaker or Headset"
-                data-desc="Connect the speaker or headset the USB port of the DevKit (not included in the DevKit)."></div>
-        </div>
-        <br/>
-        <p class="text-gray-700 mb-6">
+            <div class="hotspot" style="top: 60%; left: 20%;" data-label="4" data-title="USB Speaker or Headset"
+              data-desc="Connect the speaker or headset the USB port of the DevKit (not included in the DevKit)."></div>
+          </div>
+          <br />
+          <p class="text-gray-700 mb-6">
             Connect the Power supply to the 12V Power input and power up the DevKit.
-        </p>
-        <!-- 💻 Login Instructions -->
-        <div class="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-4 mt-6 text-left">
-        <h3 class="font-semibold text-blue-700 mb-2">Login & Run the Demo</h3>
+          </p>
+          <!-- 💻 Login Instructions -->
+          <div class="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-4 mt-6 text-left">
+            <h3 class="font-semibold text-blue-700 mb-2">Login & Run the Demo</h3>
 
-        <ol class="list-decimal pl-6 space-y-2 text-gray-700">
-            <li>
-            Use the default username 
-            <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima</code> 
-            and password 
-            <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">egdeai</code> 
-            to log in.
-            </li>
+            <ol class="list-decimal pl-6 space-y-2 text-gray-700">
+              <li>
+                Use the default username
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima</code>
+                and password
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">edgeai</code>
+                to log in.
+              </li>
 
-            <li>
-            <strong>Run the Demo</strong>
-            <ol class="list-decimal pl-6 mt-1 space-y-1">
-                <li>This demo requires a camera and a speaker.</li>
-                <li>Click the <strong>“Demo”</strong> icon on the desktop to launch the demo.</li>
-                <li>Ensure that you see a live camera image.</li>
-                <li>
-                Ask a question in the chat, for example:  
-                <em>“What do you see in the image?”</em>
-                </li>
+              <li>
+                <strong>Run the Demo</strong>
+                <ol class="list-decimal pl-6 mt-1 space-y-1">
+                  <li>This demo requires a camera and a speaker.</li>
+                  <li>Click the <strong>“Demo”</strong> icon on the desktop to launch the demo.</li>
+                  <li>Ensure that you see a live camera image.</li>
+                  <li>
+                    Ask a question in the chat, for example:
+                    <em>“What do you see in the image?”</em>
+                  </li>
+                </ol>
+              </li>
             </ol>
-            </li>
-        </ol>
-        </div>
+          </div>
 
-        <!-- Next Step Button -->
-        <div class="mt-8 flex justify-end">
-        <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
-                data-next="remote">
-            Remote Setup →
-        </button>
-        </div>            
+          <!-- Next Step Button -->
+          <div class="mt-8 flex justify-end">
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="remote">
+              Remote Setup →
+            </button>
+          </div>
         </section>
 
         <!-- 5️⃣ Remote Setup -->
         <section id="section-remote" class="content-section hidden text-center" data-flow="devkit">
-        <h1 class="text-3xl font-semibold mb-4 text-blue-800">Remote Setup</h1>
-        <p class="text-gray-700 mb-6">
-            Configure your DevKit for remote access using an external PC or Laptop. An Ethernet cable (not included in the Devkit) is required. The Devkit will be accessed through a web browser to operate a Demo.
-        </p>
+          <h1 class="text-3xl font-semibold mb-4 text-blue-800">Remote Setup</h1>
+          <p class="text-gray-700 mb-6">
+            Configure your DevKit for remote access using an external PC or Laptop. An Ethernet cable (not included in
+            the Devkit) is required. The Devkit will be accessed through a web browser to operate a Demo.
+          </p>
 
-        <div class="hotspot-container relative w-full max-w-3xl mx-auto">
+          <div class="hotspot-container relative w-full max-w-3xl mx-auto">
             <img src="images/remote-setup.png" alt="Remote Setup Diagram" class="rounded-lg shadow-lg w-full" />
 
             <!-- 1️⃣ Laptop -->
-            <div class="hotspot" style="top: 40%; left: 50%;" data-label="1"
-                data-title="Laptop using a browser"
-                data-desc="Connect your laptop to the DevKit to stream video and access the remote user interface using a Chrome browser."></div>
+            <div class="hotspot" style="top: 40%; left: 50%;" data-label="1" data-title="Laptop using a browser"
+              data-desc="Connect your laptop to the DevKit to stream video and access the remote user interface using a Chrome browser.">
+            </div>
 
             <!-- 2️⃣ USB Ethernet Dongle -->
             <div class="hotspot" style="top: 70%; left: 53%;" data-label="2"
-                data-title="Ethernet or USB to Ethernet Dongle"
-                data-desc="If your laptop does not have an Ethernet port, use a USB Ethernet dongle to connect."></div>
+              data-title="Ethernet or USB to Ethernet Dongle"
+              data-desc="If your laptop does not have an Ethernet port, use a USB Ethernet dongle to connect."></div>
 
             <!-- 3️⃣ DevKit -->
-            <div class="hotspot" style="top: 60%; left: 35%;" data-label="3"
-                data-title="DevKit"
-                data-desc="Connect the USB-C cable (included in the DevKit) to the DevKit USB-C port and the USB Type A port of the PC."></div>
-
-            <!-- 3️⃣ UART -->
-            <div class="hotspot" style="top: 70%; left: 43%;" data-label="4"
-                data-title="Serial Console"
-                data-desc="Optionally, connect your host's USB port to the DevKit's USB-C port for troubleshooting."></div>
-
+            <div class="hotspot" style="top: 60%; left: 35%;" data-label="3" data-title="DevKit"
+              data-desc="Connect the USB-C cable (included in the DevKit) to the DevKit USB-C port and the USB Type A port of the PC.">
             </div>
 
-        <!-- 💡 Note Section -->
-        <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mt-6 text-left">
-            <strong>How to run a demo:</strong> Once connected, open <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">http://modalix.local:8800</code>
-            or use the DevKit’s IP address in Chrome to access the remote web UI.  
+            <!-- 3️⃣ UART -->
+            <div class="hotspot" style="top: 70%; left: 43%;" data-label="4" data-title="Serial Console"
+              data-desc="Optionally, connect your host's USB port to the DevKit's USB-C port for troubleshooting.">
+            </div>
+
+          </div>
+
+          <!-- 💡 Note Section -->
+          <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mt-6 text-left">
+            <strong>How to run a demo:</strong> Once connected, open <code
+              class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">http://modalix.local:8800</code>
+            or use the DevKit’s IP address in Chrome to access the remote web UI.
 
             <!-- ✅ Finish Button -->
             <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition">
+              <button
+                class="next-btn bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition">
                 ✅ You’re all set for the demo!
-            </button>
+              </button>
             </div>
-        </div>
+          </div>
         </section>
 
         <!-- 6️⃣ Getting Started to Develop -->
         <section id="section-develop" class="content-section hidden text-center" data-flow="devkit">
-        <h1 class="text-3xl font-semibold mb-4 text-blue-800">Prepare for Development</h1>
-        <p class="text-gray-700 mb-6">
+          <h1 class="text-3xl font-semibold mb-4 text-blue-800">Prepare for Development</h1>
+          <p class="text-gray-700 mb-6">
             Once your DevKit is connected and powered up, you can begin developing with the SiMa Modalix DevKit 3.0.
-        </p>
+          </p>
 
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-left space-y-4">
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-left space-y-4">
             <!-- Step 1 -->
             <div>
-            <h3 class="text-blue-700 font-semibold mb-1">1️⃣ Sign Up on the SiMa Developer Portal</h3>
-            <p class="text-gray-700">
+              <h3 class="text-blue-700 font-semibold mb-1">1️⃣ Sign Up on the SiMa Developer Portal</h3>
+              <p class="text-gray-700">
                 Create an account at
-                <a href="https://developer.sima.ai/signup" target="_blank" class="text-blue-600 hover:underline font-medium">developer.sima.ai</a>.
-                After registration, your account will require SiMa approval before you can download the SDK and related software.
-            </p>
+                <a href="https://developer.sima.ai/signup" target="_blank"
+                  class="text-blue-600 hover:underline font-medium">developer.sima.ai</a>.
+                After registration, your account will require SiMa approval before you can download the SDK and related
+                software.
+              </p>
             </div>
 
             <!-- Step 2 -->
             <div>
-            <h3 class="text-blue-700 font-semibold mb-1">2️⃣ Install the SiMa CLI</h3>
-            <p class="text-gray-700">
-                Download and install <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli</code> on your host machine
+              <h3 class="text-blue-700 font-semibold mb-1">2️⃣ Install the SiMa CLI</h3>
+              <p class="text-gray-700">
+                Download and install <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli</code>
+                on your host machine
                 to access the SDK and developer tools.
-                Follow the <a href="https://docs.sima.ai/pages/sima_cli/main.html" target="_blank" class="text-blue-600 hover:underline font-medium">Installation Guide</a>.                
-            </p>
+                Follow the <a href="https://docs.sima.ai/pages/sima_cli/main.html" target="_blank"
+                  class="text-blue-600 hover:underline font-medium">Installation Guide</a>.
+              </p>
             </div>
 
             <!-- Step 3 -->
             <div>
-            <h3 class="text-blue-700 font-semibold mb-1">3️⃣ Explore the Documentation</h3>
-            <p class="text-gray-700">
+              <h3 class="text-blue-700 font-semibold mb-1">3️⃣ Explore the Documentation</h3>
+              <p class="text-gray-700">
                 Access our technical documentation for hardware, software, and code examples at
-                <a href="https://docs.sima.ai" target="_blank" class="text-blue-600 hover:underline font-medium">docs.sima.ai</a>.
-            </p>
+                <a href="https://docs.sima.ai" target="_blank"
+                  class="text-blue-600 hover:underline font-medium">docs.sima.ai</a>.
+              </p>
             </div>
-        </div>
+          </div>
 
-        <!-- Next Step Button -->
-        <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
-                    data-next="troubleshooting">
-            Next: Troubleshooting →
+          <!-- Next Step Button -->
+          <div class="mt-8 flex justify-end">
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="troubleshooting">
+              Next: Troubleshooting →
             </button>
-        </div>
+          </div>
         </section>
 
         <!-- 7️⃣ Troubleshooting -->
         <section id="section-troubleshooting" class="content-section hidden text-center" data-flow="devkit">
-        <h1 class="text-3xl font-semibold mb-4 text-blue-800">Troubleshooting</h1>
-        <p class="text-gray-700 mb-6">
+          <h1 class="text-3xl font-semibold mb-4 text-blue-800">Troubleshooting</h1>
+          <p class="text-gray-700 mb-6">
             Common issues and solutions to help you get your SiMa DevKit running smoothly.
-        </p>
+          </p>
 
-        <div class="max-w-3xl mx-auto text-left">
+          <div class="max-w-3xl mx-auto text-left">
             <div class="space-y-3">
-            <!-- Item 1 -->
-            <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-                <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
-                <span>The DevKit doesn’t power on</span>
-                <span class="accordion-icon text-gray-500">+</span>
+              <!-- Item 1 -->
+              <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+                  <span>The DevKit doesn’t power on</span>
+                  <span class="accordion-icon text-gray-500">+</span>
                 </button>
                 <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100">
-                Ensure the 12V power adapter is securely connected and the outlet is active.  
-                The red power LED on the board should illuminate when properly powered.
+                  Ensure the 12V power adapter is securely connected and the outlet is active.
+                  The red power LED on the board should illuminate when properly powered.
                 </div>
-            </div>
+              </div>
 
-            <!-- Item 2 -->
-            <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-            <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
-                <span>I can’t access the DevKit via browser remotely</span>
-                <span class="accordion-icon text-gray-500">+</span>
-            </button>
+              <!-- Item 2 -->
+              <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+                  <span>I can’t access the DevKit via browser remotely</span>
+                  <span class="accordion-icon text-gray-500">+</span>
+                </button>
 
-            <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 leading-relaxed">
-                <p class="mb-3">
-                Make sure your laptop and the DevKit are connected to the <strong>same network</strong>.  
-                Try opening 
-                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">http://modalix.local:8800</code> 
-                in Chrome.
-                </p>
+                <div
+                  class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 leading-relaxed">
+                  <p class="mb-3">
+                    Make sure your laptop and the DevKit are connected to the <strong>same network</strong>.
+                    Try opening
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">http://modalix.local:8800</code>
+                    in Chrome.
+                  </p>
 
-                <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-blue-900 text-sm mb-3">
-                <strong>Note:</strong> <br/>
-                The modalix.local address relies on <strong>mDNS</strong>, which may not work on all operating systems
-                (especially Windows).
+                  <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-blue-900 text-sm mb-3">
+                    <strong>Note:</strong> <br />
+                    The modalix.local address relies on <strong>mDNS</strong>, which may not work on all operating
+                    systems
+                    (especially Windows).
+                  </div>
+
+                  <p class="mb-2">If <strong>modalix.local</strong> is not reachable:</p>
+                  <ol class="list-decimal pl-6 space-y-1 text-sm text-gray-700">
+                    <li>
+                      After installing <code
+                        class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli</code>,
+                      run
+                      <code
+                        class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli device discover</code>
+                      on your host machine (while connected to the DevKit).
+                      This command lists all detected DevKits and their IP addresses.
+                    </li>
+
+                    <li>
+                      If no device appears, connect to the DevKit’s serial console from your host machine by running:
+                      <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli serial</code>
+                    </li>
+
+                    <li>
+                      Log in with username <code
+                        class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima</code>
+                      and password <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">edgeai</code>,
+                      then type
+                      <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">ifconfig</code>
+                      to display the assigned IP address.
+                    </li>
+
+                    <li>
+                      The same IP address can also be found under the <strong>Settings</strong> tab in the
+                      <em>Local Setup</em> interface once the DevKit is running.
+                    </li>
+                  </ol>
+                  <br />
+                  <p class="mb-2">If <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli</code>
+                    cannot discover your DevKit, it's possible that your DevKit runs an older version of the firmware.
+                    Check the next topic to learn how to update the DevKit.</p>
+                </div>
+              </div>
+              <!-- Item 3 -->
+              <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+                  <span>How to update the DevKit</span>
+                  <span class="accordion-icon text-gray-500">+</span>
+                </button>
+
+                <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 space-y-2">
+                  <p>
+                    Depending on the manufacturing date, your DevKit may be running an older firmware version
+                    that does not match the demo procedure described above.
+                    <strong>If your DevKit is running version 1.7, it must be converted to the 2.0 eLxr release</strong>
+                    before you can follow the Quick Start guide and try out the demos.
+                  </p>
+                  <p>
+                    To check your current firmware version and determine whether conversion is required,
+                    please follow the instructions in the conversion guide below.
+                  </p>
+
+                  <a href="../../../pages/tech-notes/elxr-conversion.html"
+                    class="inline-block text-blue-600 hover:underline font-medium">
+                    DevKit 1.7 → 2.0 eLxr Conversion Guide
+                  </a>
                 </div>
 
-                <p class="mb-2">If <strong>modalix.local</strong> is not reachable:</p>
-                <ol class="list-decimal pl-6 space-y-1 text-sm text-gray-700">
-                <li>
-                    After installing <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli</code>,  
-                    run 
-                    <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli device discover</code>  
-                    on your host machine (while connected to the DevKit).  
-                    This command lists all detected DevKits and their IP addresses.
-                </li>
+              </div>
+              <!-- Item 4 -->
+              <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+                  <span>How to update the demo suite</span>
+                  <span class="accordion-icon text-gray-500">+</span>
+                </button>
 
-                <li>
-                    If no device appears, connect to the DevKit’s serial console from your host machine by running:  
-                    <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli serial</code>
-                </li>
+                <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 space-y-2">
+                  <p>
+                    The out-of-the-box demo experience on the Modalix DevKit can be updated directly on the device
+                    without reflashing the system image. This is supported on DevKits running the
+                    <strong>eLxr release</strong>.
+                  </p>
 
-                <li>
-                    Log in with username <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima</code>  
-                    and password <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">edgeai</code>,  
-                    then type 
-                    <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">ifconfig</code>  
-                    to display the assigned IP address.
-                </li>
+                  <p>
+                    To update the demo suite, log in to your eLxr DevKit and run the following command:
+                  </p>
 
-                <li>
-                    The same IP address can also be found under the <strong>Settings</strong> tab in the  
-                    <em>Local Setup</em> interface once the DevKit is running.
-                </li>
-                </ol>
-                <br/>
-                <p class="mb-2">If <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli</code> cannot discover your DevKit, it's possible that your DevKit runs an older version of the firmware. Check the next topic to learn how to update the DevKit.</p>
-            </div>
-            </div>
-            <!-- Item 3 -->
-            <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-            <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
-                <span>How to update the DevKit</span>
-                <span class="accordion-icon text-gray-500">+</span>
-            </button>
-
-            <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 space-y-2">
-            <p>
-            Depending on the manufacturing date, your DevKit may be running an older firmware version
-            that does not match the demo procedure described above.
-            <strong>If your DevKit is running version 1.7, it must be converted to the 2.0 eLxr release</strong>
-            before you can follow the Quick Start guide and try out the demos.
-            </p>
-            <p>
-                To check your current firmware version and determine whether conversion is required,
-                please follow the instructions in the conversion guide below.
-            </p>
-
-            <a
-                href="../../../pages/tech-notes/elxr-conversion.html"
-                class="inline-block text-blue-600 hover:underline font-medium"
-            >
-                DevKit 1.7 → 2.0 eLxr Conversion Guide
-            </a>
-            </div>
-
-            </div>
-            <!-- Item 4 -->
-            <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-            <button
-                class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center"
-            >
-                <span>How to update the demo suite</span>
-                <span class="accordion-icon text-gray-500">+</span>
-            </button>
-
-            <div
-                class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 space-y-2"
-            >
-                <p>
-                The out-of-the-box demo experience on the Modalix DevKit can be updated directly on the device
-                without reflashing the system image. This is supported on DevKits running the
-                <strong>eLxr release</strong>.
-                </p>
-
-                <p>
-                To update the demo suite, log in to your eLxr DevKit and run the following command:
-                </p>
-
-                <pre class="bg-gray-100 text-sm p-3 rounded-md overflow-x-auto">
+                  <pre class="bg-gray-100 text-sm p-3 rounded-md overflow-x-auto">
 cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
                 </pre>
 
-                <p>
-                This script downloads and installs the latest version of the demo suite, ensuring that your
-                device is up to date with the current out-of-the-box experience.
-                </p>
-            </div>
-            </div>            
-            <!-- Item 5 -->
-            <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-                <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
-                <span>No display output on HDMI</span>
-                <span class="accordion-icon text-gray-500">+</span>
+                  <p>
+                    This script downloads and installs the latest version of the demo suite, ensuring that your
+                    device is up to date with the current out-of-the-box experience.
+                  </p>
+                </div>
+              </div>
+              <!-- Item 5 -->
+              <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+                  <span>No display output on HDMI</span>
+                  <span class="accordion-icon text-gray-500">+</span>
                 </button>
                 <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100">
-                Verify that your monitor is powered on and set to the correct HDMI input.  
-                Reconnect the HDMI cable and reboot the DevKit if necessary.
+                  Verify that your monitor is powered on and set to the correct HDMI input.
+                  Reconnect the HDMI cable and reboot the DevKit if necessary.
                 </div>
-            </div>
+              </div>
 
-            <!-- Item 6 -->
-            <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-                <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
-                <span>Forgot my login credentials</span>
-                <span class="accordion-icon text-gray-500">+</span>
+              <!-- Item 6 -->
+              <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                  class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+                  <span>Forgot my login credentials</span>
+                  <span class="accordion-icon text-gray-500">+</span>
                 </button>
                 <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100">
-                Use the default credentials — username <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima</code>  
-                and password <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">egdeai</code>.  
-                If these were changed, contact your administrator or SiMa support.
+                  Use the default credentials — username <code
+                    class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima</code>
+                  and password <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">edgeai</code>.
+                  If these were changed, contact your administrator or SiMa support.
                 </div>
-            </div>
+              </div>
 
             </div>
-        </div>
+          </div>
         </section>
 
-        
+
         <!-- HHHL PCIe Flow -->
         <section id="section-hhhl-overview" class="content-section hidden text-center" data-flow="hhhl">
           <h1 class="text-3xl font-semibold mb-4 text-blue-800">Supported Hosts</h1>
@@ -542,7 +578,9 @@ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
             </div>
           </div>
           <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition" data-next="hhhl-install">Next: Install the Card →</button>
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="hhhl-install">Next: Install the Card →</button>
           </div>
         </section>
 
@@ -551,13 +589,18 @@ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
           <p class="text-gray-700 mb-6">Install the PCIe card and connect bring-up interfaces before software setup.</p>
           <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-left space-y-3">
             <div><strong>Step 1:</strong> Power down the host and open the chassis.</div>
-            <div><strong>Step 2:</strong> If the motherboard has both black and blue PCIe slots, install the SiMa card in a black slot.</div>
+            <div><strong>Step 2:</strong> If the motherboard has both black and blue PCIe slots, install the SiMa card
+              in a black slot.</div>
             <div><strong>Step 3:</strong> Secure the bracket and reassemble the chassis.</div>
-            <div><strong>Step 4:</strong> It is recommended to connect the serial connector from card to host for debug access.</div>
-            <div><strong>Step 5:</strong> The PCIe card also includes a physical Ethernet port for direct network access when needed.</div>
+            <div><strong>Step 4:</strong> It is recommended to connect the serial connector from card to host for debug
+              access.</div>
+            <div><strong>Step 5:</strong> The PCIe card also includes a physical Ethernet port for direct network access
+              when needed.</div>
           </div>
           <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition" data-next="hhhl-host">Next: Host Setup →</button>
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="hhhl-host">Next: Host Setup →</button>
           </div>
         </section>
 
@@ -565,19 +608,27 @@ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
           <h1 class="text-3xl font-semibold mb-4 text-blue-800">Host Setup</h1>
           <p class="text-gray-700 mb-6">Install the host driver package based on your host OS.</p>
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 text-left text-blue-900">
-            <strong>Prerequisite:</strong> Install <code class="bg-white px-1 py-0.5 rounded text-sm">sima-cli</code> first on your host machine.
+            <strong>Prerequisite:</strong> Install <code class="bg-white px-1 py-0.5 rounded text-sm">sima-cli</code>
+            first on your host machine.
             Follow the setup guide:
-            <a href="https://docs.sima.ai/pages/sima_cli/main.html" target="_blank" rel="noopener noreferrer" class="text-blue-700 underline hover:text-blue-800">sima-cli installation</a>.
+            <a href="https://docs.sima.ai/pages/sima_cli/main.html" target="_blank" rel="noopener noreferrer"
+              class="text-blue-700 underline hover:text-blue-800">sima-cli installation</a>.
           </div>
           <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-left space-y-3">
-            <div class="host-label"><img src="images/ubuntu-icon.png" alt="Ubuntu icon" class="host-label-icon ubuntu-color" /><strong>Linux host:</strong></div>
-            <pre class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>sima-cli install drivers/linux</code></pre>
-            <div class="host-label"><img src="images/windows-icon.png" alt="Windows icon" class="host-label-icon windows-color" /><strong>Windows host:</strong></div>
-            <pre class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>sima-cli install drivers/windows</code></pre>
+            <div class="host-label"><img src="images/ubuntu-icon.png" alt="Ubuntu icon"
+                class="host-label-icon ubuntu-color" /><strong>Linux host:</strong></div>
+            <pre
+              class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>sima-cli install drivers/linux</code></pre>
+            <div class="host-label"><img src="images/windows-icon.png" alt="Windows icon"
+                class="host-label-icon windows-color" /><strong>Windows host:</strong></div>
+            <pre
+              class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>sima-cli install drivers/windows</code></pre>
             <div><strong>After install:</strong> Power cycle the host machine before validation.</div>
           </div>
           <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition" data-next="hhhl-verify">Next: Verify and Test →</button>
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="hhhl-verify">Next: Verify and Test →</button>
           </div>
         </section>
 
@@ -586,9 +637,11 @@ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
           <p class="text-gray-700 mb-6">Use device discovery to confirm PCIe enumeration and connectivity.</p>
           <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-left space-y-3">
             <div><strong>Step 1:</strong> On the host side, run:</div>
-            <pre class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>sima-cli device discover</code></pre>
+            <pre
+              class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>sima-cli device discover</code></pre>
             <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-900">
-              <strong>Note:</strong> PCIe virtual ethernet throughput testing is currently available on Linux hosts only.
+              <strong>Note:</strong> PCIe virtual ethernet throughput testing is currently available on Linux hosts
+              only.
             </div>
             <div><strong>Step 2:</strong> A successful output looks like:</div>
             <pre class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto"><code>                     SiMa PCIe Devices Detected
@@ -603,7 +656,9 @@ Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
             <div><strong>Step 3:</strong> If no devices are shown, continue to Troubleshooting.</div>
           </div>
           <div class="mt-8 flex justify-end">
-            <button class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition" data-next="hhhl-troubleshooting">Next: Troubleshooting →</button>
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="hhhl-troubleshooting">Next: Troubleshooting →</button>
           </div>
         </section>
 
@@ -612,7 +667,8 @@ Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
           <p class="text-gray-700 mb-6">Placeholder troubleshooting tips for common PCIe issues.</p>
           <div class="max-w-3xl mx-auto text-left space-y-3">
             <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-              <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+              <button
+                class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
                 <span>Card not detected</span>
                 <span class="accordion-icon text-gray-500">+</span>
               </button>
@@ -621,7 +677,8 @@ Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
               </div>
             </div>
             <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
-              <button class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
+              <button
+                class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
                 <span>Driver fails to load</span>
                 <span class="accordion-icon text-gray-500">+</span>
               </button>
@@ -637,4 +694,5 @@ Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
 
   <script src="app.js"></script>
 </body>
+
 </html>

@@ -334,6 +334,10 @@ jobs:
             "${s3_args[@]}"
 
           if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then
+            # Fire-and-forget, as before this PR. No blocking wait is needed: the dead-link prune
+            # skips this deploy's own ('hardware') source, so it never probes the content we just
+            # synced. The only URLs it probes are cross-source (software/examples), which this
+            # deploy does not change — so CloudFront propagation timing can't affect them.
             aws cloudfront create-invalidation \
               --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
               --paths "/*"
@@ -392,3 +396,15 @@ jobs:
             --api-key "${write_api_key}" \
             --index-name "${index_name}" \
             --sync
+
+          # Post-deploy: prune CROSS-SOURCE records (software/examples) whose URL is no longer
+          # reachable on the live site. It skips this deploy's own 'hardware' source — those are
+          # already reconciled deterministically by the --sync above, so there is no need to probe
+          # just-deployed (possibly not-yet-propagated) content. Fails safe: skips, never deletes,
+          # on ambiguous/transient errors.
+          python3 scripts/ci/sync_algolia_developer_center_index.py \
+            --site-base-url "${SYSDOC_URL}" \
+            --app-id "${app_id}" \
+            --api-key "${write_api_key}" \
+            --index-name "${index_name}" \
+            --prune-dead-links

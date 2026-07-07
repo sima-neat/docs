@@ -9,8 +9,11 @@
     "prebuild": "npm run fetch:serial-tool",
     "start": "docusaurus start --host 0.0.0.0",
     "build": "docusaurus build",
+    "build:agent-raw": "node scripts/build-agent-raw.cjs",
+    "postbuild": "npm run build:agent-raw",
     "serve": "docusaurus serve --host 0.0.0.0",
-    "clear": "docusaurus clear"
+    "clear": "docusaurus clear",
+    "clean": "docusaurus clear"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.1",

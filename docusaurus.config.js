@@ -76,6 +76,13 @@ const config = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: 'hardware',
+          // Substitute %platform_version% (and any other key in src/versions.cjs) at build
+          // time, including inside fenced code blocks. See src/remark/substituteVersions.cjs.
+          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
+        },
+        pages: {
+          // src/pages/agents.md (served at /agents) uses the same %key% tokens.
+          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
         },
         blog: false,
         theme: {
@@ -107,6 +114,10 @@ const config = {
       footer: {
         style: 'light',
         links: [
+          {
+            label: 'Documentation feedback',
+            href: 'https://github.com/sima-neat/docs/issues/new?template=doc-feedback-report.md',
+          },
           {
             html: '<button type="button" class="footer__link-item cookie-preferences-link" data-cookie-preferences>Cookie preferences</button>',
           },
