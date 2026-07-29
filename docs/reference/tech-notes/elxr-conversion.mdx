@@ -76,25 +76,9 @@ After flashing completes and you power-cycle the DevKit, it runs **eLxr** from e
 </details>
 
 <details open>
-<summary><strong>Step 3. Optional: Install 2.0 eLxr Out-of-the-box Demo</strong></summary>
+<summary><strong>Step 3. Install NEAT and Try Out Apps</strong></summary>
 
-If your DevKit runs version 1.7, it may include a 1.7-compatible OOB (out-of-the-box) demo. After you convert the DevKit to version 2.0 with eLxr, upgrade the OOB demo with the steps below.
-
-Connect your DevKit to the Internet and access it with SSH or the serial console.
-
-![Standalone DevKit](/img/tech-notes/conversion-devkit-standalone.png)
-
-*Standalone DevKit*
-
-<img src="/img/media/devkit-cli.png" alt="Run on the devkit console shell" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
-modalix:~$ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
-```
-
-If a previous OOB demo is already installed, the install script prompts you to confirm the upgrade. Type `Yes` to confirm.
-
-To install the assets, authorize the installation. The install script prints a code and an authorization URL. Open the **auth.sima.ai** link in a browser, log in with your **developer portal credentials**, and confirm the code printed in your terminal.
+With the DevKit running eLxr, install the Palette Neat SDK and run the example applications. Follow the [NEAT documentation](https://developer.sima.ai/software) for installation and trying out apps.
 
 </details>
 
@@ -115,3 +99,4 @@ If NFS-related error messages appear on the serial console after converting to e
 
 1. Update to the latest **tRoot** image (≥ 2.0.0).
 2. Follow [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) with `--fwtype elxr` and the eLxr `cpio_name` to flash eLxr to eMMC.
+3. Install the Neat SDK and try out apps via the [NEAT documentation](https://developer.sima.ai/software).
