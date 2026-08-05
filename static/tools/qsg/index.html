@@ -309,6 +309,47 @@ Microphone, Camera, etc.)"></div>
 
           </div>
 
+          <!-- 🔐 SSH Instructions -->
+          <div class="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-4 mt-6 text-left">
+            <h3 class="font-semibold text-blue-700 mb-2">Connect via SSH</h3>
+
+            <ol class="list-decimal pl-6 space-y-2 text-gray-700">
+              <li>
+                Connect the DevKit and your laptop to the <strong>same network</strong>, or connect them directly
+                with an Ethernet cable.
+              </li>
+
+              <li>
+                From a terminal on your laptop, connect using the DevKit’s mDNS hostname:
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@modalix.local</code>
+                — log in with password
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">edgeai</code>.
+              </li>
+
+              <li>
+                If <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">modalix.local</code> is not
+                reachable (mDNS may not work on all operating systems, especially Windows), find the DevKit’s IP
+                address instead:
+                <ul class="list-disc pl-6 mt-1 space-y-1">
+                  <li>
+                    Run
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli device discover</code>
+                    on your laptop to list detected DevKits and their IP addresses, or
+                  </li>
+                  <li>
+                    Open the <a href="https://developer.sima.ai/hardware/getting-started/setup-serial" target="_blank"
+                      rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">serial console</a>
+                    and run
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ip a | grep inet</code>
+                    to display the assigned IP address.
+                  </li>
+                </ul>
+                Then connect with
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@&lt;devkit-ip&gt;</code>.
+              </li>
+            </ol>
+          </div>
+
           <!-- 💡 Note Section -->
           <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mt-6 text-left">
             <strong>Try out apps:</strong> Once connected, explore and run example applications on your DevKit by
