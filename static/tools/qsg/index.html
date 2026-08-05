@@ -97,7 +97,7 @@
               </div>
               <div class="landing-card-body">
                 <h2>Modalix 3.0 DevKit</h2>
-                <p>Get started with the DevKit 3.0 setup, demo, and development flow.</p>
+                <p>Get started with the DevKit 3.0 setup and development flow.</p>
               </div>
               <div class="landing-card-cta">Open DevKit Guide →</div>
             </button>
@@ -244,7 +244,7 @@ Microphone, Camera, etc.)"></div>
           </p>
           <!-- 💻 Login Instructions -->
           <div class="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-4 mt-6 text-left">
-            <h3 class="font-semibold text-blue-700 mb-2">Login & Run the Demo</h3>
+            <h3 class="font-semibold text-blue-700 mb-2">Login & Try Out Apps</h3>
 
             <ol class="list-decimal pl-6 space-y-2 text-gray-700">
               <li>
@@ -256,16 +256,12 @@ Microphone, Camera, etc.)"></div>
               </li>
 
               <li>
-                <strong>Run the Demo</strong>
-                <ol class="list-decimal pl-6 mt-1 space-y-1">
-                  <li>This demo requires a camera and a speaker.</li>
-                  <li>Click the <strong>“Demo”</strong> icon on the desktop to launch the demo.</li>
-                  <li>Ensure that you see a live camera image.</li>
-                  <li>
-                    Ask a question in the chat, for example:
-                    <em>“What do you see in the image?”</em>
-                  </li>
-                </ol>
+                <strong>Try Out Apps</strong>
+                <p class="mt-1">
+                  Explore and run example applications on your DevKit by following the
+                  <a href="https://developer.sima.ai/examples" target="_blank" rel="noopener noreferrer"
+                    class="text-blue-600 hover:underline font-medium">NEAT examples</a>.
+                </p>
               </li>
             </ol>
           </div>
@@ -285,15 +281,15 @@ Microphone, Camera, etc.)"></div>
           <h1 class="text-3xl font-semibold mb-4 text-blue-800">Remote Setup</h1>
           <p class="text-gray-700 mb-6">
             Configure your DevKit for remote access using an external PC or Laptop. An Ethernet cable (not included in
-            the Devkit) is required. The Devkit will be accessed through a web browser to operate a Demo.
+            the Devkit) is required. The Devkit will be accessed over the network, for example via SSH.
           </p>
 
           <div class="hotspot-container relative w-full max-w-3xl mx-auto">
             <img src="images/remote-setup.png" alt="Remote Setup Diagram" class="rounded-lg shadow-lg w-full" />
 
             <!-- 1️⃣ Laptop -->
-            <div class="hotspot" style="top: 40%; left: 50%;" data-label="1" data-title="Laptop using a browser"
-              data-desc="Connect your laptop to the DevKit to stream video and access the remote user interface using a Chrome browser.">
+            <div class="hotspot" style="top: 40%; left: 50%;" data-label="1" data-title="Laptop"
+              data-desc="Connect your laptop to the DevKit over Ethernet to access it remotely, for example via SSH.">
             </div>
 
             <!-- 2️⃣ USB Ethernet Dongle -->
@@ -313,17 +309,66 @@ Microphone, Camera, etc.)"></div>
 
           </div>
 
+          <!-- 🔐 SSH Instructions -->
+          <div class="bg-gray-50 border border-gray-200 text-gray-800 rounded-lg p-4 mt-6 text-left">
+            <h3 class="font-semibold text-blue-700 mb-2">Connect via SSH</h3>
+
+            <ol class="list-decimal pl-6 space-y-2 text-gray-700">
+              <li>
+                Connect the DevKit and your laptop to the <strong>same network</strong>, or connect them directly
+                with an Ethernet cable. The DevKit uses <strong>DHCP</strong> by default, so for a direct connection
+                configure networking first — either set a static IP on your laptop or share your laptop’s network
+                connection — as described in the
+                <a href="https://developer.sima.ai/hardware/getting-started/standalone-mode/network" target="_blank"
+                  rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Network Setup guide</a>.
+              </li>
+
+              <li>
+                From a terminal on your laptop, connect using the DevKit’s mDNS hostname:
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@modalix.local</code>
+                — log in with password
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">edgeai</code>.
+              </li>
+
+              <li>
+                If <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">modalix.local</code> is not
+                reachable (mDNS may not work on all operating systems, especially Windows), find the DevKit’s IP
+                address instead:
+                <ul class="list-disc pl-6 mt-1 space-y-1">
+                  <li>
+                    <a href="https://developer.sima.ai/software/tools/sima-cli/" target="_blank"
+                      rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Install
+                      <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">sima-cli</code></a>
+                    on your laptop, then run
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli device discover</code>
+                    to list detected DevKits and their IP addresses, or
+                  </li>
+                  <li>
+                    Open the <a href="https://developer.sima.ai/hardware/getting-started/setup-serial" target="_blank"
+                      rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">serial console</a>
+                    and run
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ip a | grep inet</code>
+                    to display the assigned IP address.
+                  </li>
+                </ul>
+                Then connect with
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@&lt;devkit-ip&gt;</code>.
+              </li>
+            </ol>
+          </div>
+
           <!-- 💡 Note Section -->
           <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-lg p-4 mt-6 text-left">
-            <strong>How to run a demo:</strong> Once connected, open <code
-              class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">http://modalix.local:8800</code>
-            or use the DevKit’s IP address in Chrome to access the remote web UI.
+            <strong>Try out apps:</strong> Once connected, explore and run example applications on your DevKit by
+            following the
+            <a href="https://developer.sima.ai/examples" target="_blank" rel="noopener noreferrer"
+              class="text-blue-600 hover:underline font-medium">NEAT examples</a>.
 
             <!-- ✅ Finish Button -->
             <div class="mt-8 flex justify-end">
               <button
                 class="next-btn bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition">
-                ✅ You’re all set for the demo!
+                ✅ You’re all set!
               </button>
             </div>
           </div>
@@ -408,7 +453,7 @@ Microphone, Camera, etc.)"></div>
               <div class="accordion-item border border-gray-200 rounded-lg overflow-hidden">
                 <button
                   class="accordion-header w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 font-medium flex justify-between items-center">
-                  <span>I can’t access the DevKit via browser remotely</span>
+                  <span>I can’t access the DevKit remotely</span>
                   <span class="accordion-icon text-gray-500">+</span>
                 </button>
 
@@ -416,9 +461,8 @@ Microphone, Camera, etc.)"></div>
                   class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 leading-relaxed">
                   <p class="mb-3">
                     Make sure your laptop and the DevKit are connected to the <strong>same network</strong>.
-                    Try opening
-                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">http://modalix.local:8800</code>
-                    in Chrome.
+                    Try connecting with
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@modalix.local</code>.
                   </p>
 
                   <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-blue-900 text-sm mb-3">
@@ -454,10 +498,6 @@ Microphone, Camera, etc.)"></div>
                       to display the assigned IP address.
                     </li>
 
-                    <li>
-                      The same IP address can also be found under the <strong>Settings</strong> tab in the
-                      <em>Local Setup</em> interface once the DevKit is running.
-                    </li>
                   </ol>
                   <br />
                   <p class="mb-2">If <code class="bg-gray-100 px-1 py-0.5 rounded text-blue-700 text-sm">sima-cli</code>
@@ -476,16 +516,16 @@ Microphone, Camera, etc.)"></div>
                 <div class="accordion-body hidden px-4 py-3 text-gray-700 bg-white border-t border-gray-100 space-y-2">
                   <p>
                     Depending on the manufacturing date, your DevKit may be running an older firmware version
-                    that does not match the demo procedure described above.
+                    that does not match the procedure described above.
                     <strong>If your DevKit is running version 1.7, it must be converted to the 2.0 eLxr release</strong>
-                    before you can follow the Quick Start guide and try out the demos.
+                    before you can follow the Quick Start guide and try out the example applications.
                   </p>
                   <p>
                     To check your current firmware version and determine whether conversion is required,
                     please follow the instructions in the conversion guide below.
                   </p>
 
-                  <a href="../../../pages/tech-notes/elxr-conversion.html"
+                  <a href="https://developer.sima.ai/hardware/reference/tech-notes/elxr-conversion"
                     class="inline-block text-blue-600 hover:underline font-medium">
                     DevKit 1.7 → 2.0 eLxr Conversion Guide
                   </a>
