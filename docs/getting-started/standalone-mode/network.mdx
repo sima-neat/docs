@@ -69,6 +69,17 @@ modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
 modalix:~$ networkctl status
 ```
 
+**Modifying the Static IP Address**
+
+To change the IP address used by the `end0-static` profile, update the profile and re-activate it:
+
+```console
+modalix:~$ sudo nmcli connection modify end0-static ipv4.addresses 192.168.1.20/24
+modalix:~$ sudo nmcli connection up end0-static
+```
+
+Replace `192.168.1.20/24` with the address and prefix you want. NetworkManager stores the profiles under `/etc/NetworkManager/system-connections/`; the legacy `/etc/systemd/network/20-end0-static.network` file from release 2.0 and earlier no longer exists.
+
 </TabItem>
 <TabItem value="auto-config" label="Share a Host Network Connection">
 
@@ -139,6 +150,10 @@ This procedure applies only to DevKit firmware release 2.0 or earlier. On releas
    ```console
    modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
    ```
+
+   :::warning
+   This file exists only on firmware release 2.0 or earlier. On release 2.1 and later it has been replaced by NetworkManager profiles — modify the static IP with `nmcli` as described in the **Network Setup in the Linux Shell** tab.
+   :::
 
 7. In the **Network** section, update the IP address as needed.
 8. To configure DHCP mode, enter the commands below and boot the board.
