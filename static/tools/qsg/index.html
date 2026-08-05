@@ -320,7 +320,16 @@ Microphone, Camera, etc.)"></div>
               </li>
 
               <li>
-                Find the DevKit’s IP address:
+                From a terminal on your laptop, connect using the DevKit’s mDNS hostname:
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@modalix.local</code>
+                — log in with password
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">edgeai</code>.
+              </li>
+
+              <li>
+                If <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">modalix.local</code> is not
+                reachable (mDNS may not work on all operating systems, especially Windows), find the DevKit’s IP
+                address instead:
                 <ul class="list-disc pl-6 mt-1 space-y-1">
                   <li>
                     Run
@@ -335,13 +344,8 @@ Microphone, Camera, etc.)"></div>
                     to display the assigned IP address.
                   </li>
                 </ul>
-              </li>
-
-              <li>
-                From a terminal on your laptop, connect with
-                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@&lt;devkit-ip&gt;</code>
-                — log in with password
-                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">edgeai</code>.
+                Then connect with
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@&lt;devkit-ip&gt;</code>.
               </li>
             </ol>
           </div>
@@ -451,10 +455,17 @@ Microphone, Camera, etc.)"></div>
                   <p class="mb-3">
                     Make sure your laptop and the DevKit are connected to the <strong>same network</strong>.
                     Try connecting with
-                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@&lt;devkit-ip&gt;</code>.
+                    <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">ssh sima@modalix.local</code>.
                   </p>
 
-                  <p class="mb-2">To find the DevKit’s IP address:</p>
+                  <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 text-blue-900 text-sm mb-3">
+                    <strong>Note:</strong> <br />
+                    The modalix.local address relies on <strong>mDNS</strong>, which may not work on all operating
+                    systems
+                    (especially Windows).
+                  </div>
+
+                  <p class="mb-2">If <strong>modalix.local</strong> is not reachable:</p>
                   <ol class="list-decimal pl-6 space-y-1 text-sm text-gray-700">
                     <li>
                       After installing <code
