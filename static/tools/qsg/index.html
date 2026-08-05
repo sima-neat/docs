@@ -316,7 +316,11 @@ Microphone, Camera, etc.)"></div>
             <ol class="list-decimal pl-6 space-y-2 text-gray-700">
               <li>
                 Connect the DevKit and your laptop to the <strong>same network</strong>, or connect them directly
-                with an Ethernet cable.
+                with an Ethernet cable. The DevKit uses <strong>DHCP</strong> by default, so for a direct connection
+                configure networking first — either set a static IP on your laptop or share your laptop’s network
+                connection — as described in the
+                <a href="https://developer.sima.ai/hardware/getting-started/standalone-mode/network" target="_blank"
+                  rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Network Setup guide</a>.
               </li>
 
               <li>
@@ -332,9 +336,12 @@ Microphone, Camera, etc.)"></div>
                 address instead:
                 <ul class="list-disc pl-6 mt-1 space-y-1">
                   <li>
-                    Run
+                    <a href="https://developer.sima.ai/software/tools/sima-cli/" target="_blank"
+                      rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Install
+                      <code class="bg-gray-100 px-1 py-0.5 rounded text-sm">sima-cli</code></a>
+                    on your laptop, then run
                     <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli device discover</code>
-                    on your laptop to list detected DevKits and their IP addresses, or
+                    to list detected DevKits and their IP addresses, or
                   </li>
                   <li>
                     Open the <a href="https://developer.sima.ai/hardware/getting-started/setup-serial" target="_blank"
