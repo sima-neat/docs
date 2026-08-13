@@ -40,7 +40,8 @@ The card appears to the host as a PCIe accelerator device. On top of that, the P
 
 ```text
   Ubuntu Laptop  [HOST]                    Modalix HHHL Card  [MODALIX]
-  veth-simaai                              veth-simaai
+  veth-simaai                              veth-simaai (or eth2 —
+                                             name varies by firmware)
   00:53:49:4d:41:30                        00:53:49:4d:41:31
   10.0.0.1/24  <---- PCIe virtual Eth ---->  10.0.0.2/24
         ^
@@ -202,12 +203,25 @@ sima-user@sima-user-machine:~$ ip -br addr show veth-simaai
 veth-simaai   UNKNOWN   10.0.0.1/24
 ```
 
+On the card, list every interface rather than assuming a name — the card-side interface is **not** renamed by the host `udev` rule, and what it is called depends on the firmware:
+
 <img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
-sima@modalix:~$ ip -br addr show veth-simaai
+sima@modalix:~$ ip -br addr
+```
+
+Identify the PCIe virtual Ethernet interface by its **address `10.0.0.2/24`** and **MAC ending in `:41:31`**, whatever its name:
+
+```text
 veth-simaai   UNKNOWN   10.0.0.2/24
 ```
+
+:::note
+The name of this interface varies by firmware. The tested eLxr %platform_version% build reported `veth-simaai`, while other configurations report `eth2` — see [Virtual Network](/hardware/getting-started/pcie-mode/virtual-network).
+
+Both are correct. The host `udev` rule from Step 3 renames only the **host** interface, so `ip -br addr show veth-simaai` on the card returns `Device "veth-simaai" does not exist` on any build that names it differently. That message is not a failure — match on the IP and MAC instead.
+:::
 
 :::warning
 Do not change these default addresses through the Ubuntu GUI or NetworkManager unless SiMa engineering instructs you to. The NetworkManager drop-in exists to prevent automatic reconfiguration, not to set the values.
@@ -311,7 +325,7 @@ The field evidence establishes the workaround — the test failed with no `iperf
 | Linux PCIe host driver | PASS |
 | Host-side `veth-simaai` naming | PASS |
 | Host `veth-simaai` at `10.0.0.1/24` | PASS |
-| Modalix `veth-simaai` at `10.0.0.2/24` | PASS |
+| Modalix card-side interface at `10.0.0.2/24` | PASS |
 | Ping over PCIe | PASS |
 | SSH over PCIe | PASS |
 | Manual `iperf3` | PASS |
@@ -329,6 +343,7 @@ The NEAT limitation is not a PCIe hardware failure. Enumeration, driver binding,
 | `sima-cli` reports `veth-simaai not found` | Run `ip -br link` on the host. If the interface appears as `enp47s0` or another predictable name, check the `udev` rule and re-add or power-cycle the PCIe device. |
 | Host configuration files are missing | Create `90-network.rules` and `99-unmanaged-devices.conf` on the **host**, not on Modalix. |
 | `veth-simaai` is absent from **Settings → Network** | Expected. The interface is intentionally unmanaged (`NM_UNMANAGED=1` and `managed=0`). Verify with `ip -br addr` instead of the GUI, and do not recreate the interface just because the GUI does not list it. |
+| On the card, `ip -br addr show veth-simaai` returns `Device "veth-simaai" does not exist` | Expected on firmware that names the card-side interface differently (for example `eth2`). The host `udev` rule renames only the host interface. Run `ip -br addr` on the card and match on `10.0.0.2/24` and the MAC ending in `:41:31`. |
 | `veth-simaai` exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on Modalix, check both interfaces are up, and verify PCIe state. Do not change the IP addresses arbitrarily. |
 | Ping and SSH work but the throughput test fails | Start `iperf3 -s` on Modalix, leave it running, then retry the test from `sima-cli device discover` (Step 7). |
 | PCIe worked before reboot, unstable after | The enclosure has separate power. Use the cold-start sequence: host off first, enclosure off second; enclosure on first, host on second. |
