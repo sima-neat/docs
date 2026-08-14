@@ -1,116 +1,35 @@
 ---
 title: PCIe Card Bring-up and Troubleshooting
-description: Bring up a Modalix HHHL PCIe card in an external Thunderbolt/USB4 enclosure, fix veth-simaai naming, and validate ping, SSH, and throughput.
+description: Fix "veth-simaai not found", verify the PCIe virtual Ethernet link, and run the throughput test on a Modalix HHHL PCIe card.
 sidebar_position: 6
 ---
 
 # PCIe Card Bring-up and Troubleshooting
 
-Use this note when a Modalix HHHL PCIe card is enumerated by the host but the PCIe virtual Ethernet path does not come up cleanly — most often when the card lives in an **external Thunderbolt/USB4 PCIe enclosure** rather than an internal motherboard slot.
-
-It covers the host-side `udev` and NetworkManager configuration that gives the interface its expected name, the ping/SSH/throughput checks that prove the link, and a troubleshooting table for the failures seen during bring-up.
+Use this note when a Modalix HHHL PCIe card is detected by the host but the PCIe virtual Ethernet link does not come up — most often when the card is in an external Thunderbolt/USB4 enclosure.
 
 :::note
-This note complements [PCIe Mode](/hardware/getting-started/pcie-mode). Start there for DIP switches, slot selection, and the standard driver install. Come back here when `sima-cli device discover` reports `veth-simaai not found`, or when the throughput test fails after ping and SSH already work.
+Start with [PCIe Mode](/hardware/getting-started/pcie-mode) for hardware preparation and driver installation. Come back here when `sima-cli device discover` reports `veth-simaai not found`, or when the throughput test fails after ping and SSH already work.
 :::
 
-## Tested Configuration
-
-| Item | Value |
-| --- | --- |
-| Host OS | Ubuntu 24.04.4 LTS |
-| Platform / SDK | %platform_version% |
-| Modalix firmware | `2.1.2_master_B3369` (eLxr) |
-| NEAT | 0.3.0 |
-| Card | Early Access 32 GB Modalix HHHL PCIe card |
-| Enclosure | External Thunderbolt/USB4 PCIe enclosure |
-| Measured throughput | 7.61 Gbps, reported healthy by `sima-cli` |
-
-Throughput depends on the host, enclosure, Thunderbolt path, and software version. Treat 7.61 Gbps as the result from this setup, not a guaranteed number.
-
-:::warning
-**NEAT 0.3.0 does not support NEAT pipeline execution over PCIe.** PCIe execution support is planned for NEAT 0.4.0.
-
-The PCIe hardware and communication path can be completely healthy while pipelines still cannot run over PCIe. Validate enumeration, driver, virtual Ethernet, SSH, and throughput as described below; retest pipeline execution once NEAT 0.4.0 is available.
-:::
-
-## How the Connection Is Built
-
-The card appears to the host as a PCIe accelerator device. On top of that, the PCIe software stack exposes a **virtual Ethernet link**, so `ping`, `ssh`, `scp`, and `iperf3` work over PCIe with no RJ45 cable between the host and the card.
+The PCIe stack provides a virtual Ethernet link between the host and the card, so `ping`, `ssh`, `scp`, and `iperf3` work over PCIe with no Ethernet cable:
 
 ```text
-  Ubuntu Laptop  [HOST]                    Modalix HHHL Card  [MODALIX]
-  veth-simaai                              veth-simaai
-  00:53:49:4d:41:30                        00:53:49:4d:41:31
-  10.0.0.1/24  <---- PCIe virtual Eth ---->  10.0.0.2/24
-        ^
-        | Thunderbolt / USB4 -> External PCIe Enclosure -> PCIe
+[HOST] veth-simaai 10.0.0.1/24  <--- PCIe --->  10.0.0.2/24 veth-simaai [MODALIX]
 ```
 
-Throughout this note, **[HOST]** means the Ubuntu machine and **[MODALIX]** means Linux running on the card itself. The two configuration files below are created on the **host**, never on the card.
+**[HOST]** is the Ubuntu machine and **[MODALIX]** is Linux running on the card. Both configuration files below are created on the host.
 
-<details open>
-<summary><strong>Step 1. Use the Correct Power Sequence</strong></summary>
+## Power Sequence for External Enclosures
 
-An external enclosure has its own power domain, so rebooting the host does **not** power-cycle the card. If the enclosure stays powered while the host restarts, the PCIe endpoint can be left in an inconsistent state.
+An external enclosure has its own power domain, so rebooting the host does not power-cycle the card.
 
-**Power off:** host first, enclosure second.
+- **Power off:** host first, then the enclosure.
+- **Power on:** enclosure first, then the host.
 
-1. Shut down the Ubuntu host normally.
-2. Wait until it is completely powered off.
-3. Turn off the external PCIe enclosure.
+Cards in internal motherboard slots share host power and need no special sequence.
 
-**Power on:** enclosure first, host second.
-
-1. Turn on the external PCIe enclosure.
-2. Allow a few seconds for the card to initialize.
-3. Turn on the Ubuntu host.
-
-:::note
-This cold-start sequence is a recommendation for external Thunderbolt/USB4 enclosures, not a universal requirement for every PCIe system. Cards in internal motherboard slots share the host power domain and power-cycle with it.
-:::
-
-</details>
-
-<details open>
-<summary><strong>Step 2. Install the Host Driver and Confirm Enumeration</strong></summary>
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
-sima-user@sima-user-machine:~$ sima-cli install drivers/linux -v %platform_version%
-```
-
-A successful install reports `GStreamer`, `Kernel Module`, and `PCI Devices` as `PASS`, along with a line such as `0000:2f:00.0 Modalix HHHL v2 driver=sima_mla_drv`. See [Driver Installation](/hardware/getting-started/pcie-mode/driver-installation) for the full output and the Windows path.
-
-Confirm the endpoint independently:
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
-sima-user@sima-user-machine:~$ lspci -nnk -d 1f06:
-```
-
-```text
-2f:00.0 Processing accelerators [1200]: Device [1f06:0123] (rev 01)
-        Kernel driver in use: sima_mla_drv
-        Kernel modules: simaai_mla_drv
-```
-
-This confirms the endpoint is enumerated, a driver is bound, and the SiMa kernel module is present.
-
-:::note
-The driver name (`sima_mla_drv`) and the module name (`simaai_mla_drv`) are not identical in this output. That difference alone is not a failure.
-:::
-
-:::warning
-If nothing appears in `lspci`, stop here. Troubleshoot the physical Thunderbolt/PCIe path, enclosure power, card seating, and Thunderbolt authorization before touching any virtual Ethernet configuration.
-:::
-
-</details>
-
-<details open>
-<summary><strong>Step 3. Fix the veth-simaai Interface Name</strong></summary>
+## Fix "veth-simaai not found"
 
 After a successful driver install, `sima-cli` may still report:
 
@@ -118,33 +37,15 @@ After a successful driver install, `sima-cli` may still report:
 Virtual ethernet over PCIe is not available (veth-simaai not found).
 ```
 
-This does **not** mean the card is missing. The endpoint and driver are already working; the problem is the host-side interface *name*. Linux created the SiMa virtual NIC but Ubuntu applied a predictable interface name such as `enp47s0`, while `sima-cli` looks for `veth-simaai`:
+The card and driver are working. Ubuntu named the virtual interface `enp47s0` (or similar) instead of `veth-simaai`, which is the name `sima-cli` expects. Create two files on the **host** to fix the name and keep NetworkManager off the interface.
 
-```text
-  PCIe virtual NIC exists  ->  Ubuntu names it enp47s0  ->  sima-cli expects veth-simaai
-                                                             -> "veth-simaai not found"
-```
-
-The fix uses two host files: a `udev` rule that renames the interface, and a NetworkManager drop-in that keeps it unmanaged.
-
-| File (on the **host**) | Purpose |
-| --- | --- |
-| `/etc/udev/rules.d/90-network.rules` | Renames the SiMa PCIe virtual Ethernet interface to `veth-simaai` and marks it unmanaged. |
-| `/etc/NetworkManager/conf.d/99-unmanaged-devices.conf` | Explicitly tells NetworkManager not to manage `veth-simaai`. |
-
-`udev` is the Linux device manager: when a device is added, it applies rules based on properties such as the MAC address and can assign a specific interface name. Create the rule file with:
+`/etc/udev/rules.d/90-network.rules`:
 
 ```text
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="*:53:49:4d:41:30", NAME="veth-simaai", ENV{NM_UNMANAGED}="1"
 ```
 
-:::warning
-Use the wildcard pattern `*:53:49:4d:41:30` exactly as written. The observed host MAC was `00:53:49:4d:41:30`, but do not replace the wildcard with the exact MAC from one test system.
-
-Also match the **host** side. The card's own interface is `00:53:49:4d:41:31` — never copy the `...:31` address into the host rule.
-:::
-
-Ubuntu manages Wi-Fi and Ethernet interfaces with NetworkManager by default. Keep it away from the PCIe interface by creating `/etc/NetworkManager/conf.d/99-unmanaged-devices.conf`:
+`/etc/NetworkManager/conf.d/99-unmanaged-devices.conf`:
 
 ```ini
 [device-vethsimaai-unmanaged]
@@ -152,220 +53,86 @@ match-device=interface-name:veth-simaai
 managed=0
 ```
 
-This file only prevents automatic management and reconfiguration. It does not assign or store the `10.0.0.1` address.
-
-:::note
-The two files overlap — both help keep the interface unmanaged. This pair is the validated host configuration for this setup rather than a universal requirement for every Linux installation.
+:::warning
+Use the wildcard `*:53:49:4d:41:30` as written — do not substitute one system's exact MAC. The rule must match the **host** interface; the card's own interface ends in `:41:31`.
 :::
 
-</details>
+Apply the configuration:
 
-<details open>
-<summary><strong>Step 4. Apply the Host Configuration</strong></summary>
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
+```console
 sima-user@sima-user-machine:~$ sudo udevadm control --reload-rules
 sima-user@sima-user-machine:~$ sudo systemctl restart NetworkManager
 ```
 
-The rule matches `ACTION=="add"`, so reloading alone does not necessarily rename an interface that already exists. The device has to be re-added so a new device event fires — reconnect or power-cycle the PCIe enclosure. If the behavior is unclear, run the full cold-start sequence from Step 1.
+The rule matches `ACTION=="add"`, so reloading alone does not rename an interface that already exists. Reconnect or power-cycle the enclosure so a new device event fires.
 
-</details>
+## Verify the Link
 
-<details open>
-<summary><strong>Step 5. Verify the Link</strong></summary>
-
-Check the interface name, MAC, and flags on the host:
+Check the address on each side:
 
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
-```bash
-sima-user@sima-user-machine:~$ ip -br link
-```
-
-```text
-veth-simaai   UNKNOWN   00:53:49:4d:41:30   <BROADCAST,MULTICAST,UP,LOWER_UP>
-```
-
-:::note
-`UNKNOWN` does not mean the interface is broken. Virtual interfaces do not report carrier state the way a physical Ethernet port does. What matters is the name, the MAC, and the `UP,LOWER_UP` flags.
-:::
-
-Confirm the addresses on both sides. They default to `10.0.0.1/24` on the host and `10.0.0.2/24` on the card:
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
+```console
 sima-user@sima-user-machine:~$ ip -br addr show veth-simaai
 veth-simaai   UNKNOWN   10.0.0.1/24
 ```
 
 <img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
 
-```bash
+```console
 sima@modalix:~$ ip -br addr show veth-simaai
 veth-simaai   UNKNOWN   10.0.0.2/24
 ```
 
-:::note
-On older pre-eLxr builds this interface may appear as `eth2` instead. If the command returns `Device "veth-simaai" does not exist`, run `ip -br addr` and identify the interface by its address `10.0.0.2/24` and MAC ending in `:41:31`.
+Then confirm the path and discovery from the host:
 
-The host `udev` rule from Step 3 renames only the **host** interface — it has no effect on the card.
-:::
-
-:::warning
-Do not change these default addresses through the Ubuntu GUI or NetworkManager unless SiMa engineering instructs you to. The NetworkManager drop-in exists to prevent automatic reconfiguration, not to set the values.
-:::
-
-Then prove the IP path and shell access:
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
+```console
 sima-user@sima-user-machine:~$ ping 10.0.0.2
 sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
-```
-
-SSH runs over the PCIe virtual Ethernet path — no separate RJ45 cable between the host and the card is required.
-
-</details>
-
-<details open>
-<summary><strong>Step 6. Confirm Discovery with sima-cli</strong></summary>
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
 sima-user@sima-user-machine:~$ sima-cli device discover
-```
-
-```text
-Modalix HHHL v2
-Vendor ID: 0x1f06
-Device ID: 0x0123
-Location: 0000:2f:00.0
-
 Detected PCIe virtual ethernet.
 ```
 
-The earlier `veth-simaai not found` warning should be gone.
+:::note
+`UNKNOWN` is normal for virtual interfaces, and `veth-simaai` does not appear in **Settings → Network** because it is intentionally unmanaged. Verify with `ip`, not the GUI.
 
-</details>
+Do not change the default `10.0.0.1` / `10.0.0.2` addresses unless SiMa engineering instructs you to.
+:::
 
-<details open>
-<summary><strong>Step 7. Run the Throughput Test</strong></summary>
+## Throughput Test
 
-`sima-cli device discover` offers an optional throughput test across the virtual Ethernet path, from host `10.0.0.1` to Modalix `10.0.0.2`:
-
-```text
-Detected PCIe virtual ethernet. Run throughput test now? [y/N]:
-```
-
-In the tested environment this failed even though detection, `veth-simaai`, ping, and SSH were all working:
-
-```text
-Testing 10.0.0.1 -> 10.0.0.2 ...
-iperf3 test failed for 10.0.0.1 -> 10.0.0.2.
-```
-
-**Workaround:** start an `iperf3` server on the card first and leave it running.
+`sima-cli device discover` offers a throughput test across the virtual Ethernet path. It fails unless an `iperf3` server is already running on the card, so start one first and leave it running:
 
 <img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
 
-```bash
+```console
 sima@modalix:~$ iperf3 -s
 Server listening on 5201
 ```
 
-Then rerun discovery on the host and answer `y`:
-
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
-```bash
+```console
 sima-user@sima-user-machine:~$ sima-cli device discover
-```
-
-```text
 Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
 Virtual Ethernet Throughput: 7.61 Gbps (healthy)
 ```
 
-You can also measure the path manually with the same server running:
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
-sima-user@sima-user-machine:~$ iperf3 -c 10.0.0.2 -B 10.0.0.1
-```
-
-The tested system showed roughly 7–8 Gbps overall, with later intervals around 8.1–8.3 Gbps.
-
-:::note
-The field evidence establishes the workaround — the test failed with no `iperf3` server on Modalix and passed once `iperf3 -s` was started manually. It does not by itself establish the software root cause.
-:::
-
-</details>
-
-## Validation Status
-
-| Item | Result |
-| --- | --- |
-| External Thunderbolt/USB4 PCIe connection | PASS |
-| Modalix PCIe enumeration | PASS |
-| Linux PCIe host driver | PASS |
-| Host-side `veth-simaai` naming | PASS |
-| Host `veth-simaai` at `10.0.0.1/24` | PASS |
-| Modalix `veth-simaai` at `10.0.0.2/24` | PASS |
-| Ping over PCIe | PASS |
-| SSH over PCIe | PASS |
-| Manual `iperf3` | PASS |
-| `sima-cli` throughput test with workaround | PASS — 7.61 Gbps (healthy) |
-| NEAT pipeline execution over PCIe (NEAT 0.3.0) | Not supported by this NEAT release |
-| NEAT pipeline execution over PCIe (NEAT 0.4.0) | Pending future validation |
-
-The NEAT limitation is not a PCIe hardware failure. Enumeration, driver binding, virtual Ethernet, SSH, and throughput are validated independently of it.
+The tested setup measured roughly 7–8 Gbps. Actual throughput depends on the host, enclosure, and Thunderbolt path.
 
 ## Troubleshooting
 
 | Symptom | What to check |
 | --- | --- |
-| Modalix does not appear in `lspci` | Enclosure power, Thunderbolt/USB4 connection, card seating, Thunderbolt authorization. Then run a full host + enclosure cold power cycle (Step 1). |
-| `sima-cli` reports `veth-simaai not found` | Run `ip -br link` on the host. If the interface appears as `enp47s0` or another predictable name, check the `udev` rule and re-add or power-cycle the PCIe device. |
-| Host configuration files are missing | Create `90-network.rules` and `99-unmanaged-devices.conf` on the **host**, not on Modalix. |
-| `veth-simaai` is absent from **Settings → Network** | Expected. The interface is intentionally unmanaged (`NM_UNMANAGED=1` and `managed=0`). Verify with `ip -br addr` instead of the GUI, and do not recreate the interface just because the GUI does not list it. |
-| On the card, `ip -br addr show veth-simaai` returns `Device "veth-simaai" does not exist` | Older pre-eLxr builds name the card-side interface `eth2`. The host `udev` rule renames only the host interface. Run `ip -br addr` on the card and match on `10.0.0.2/24` and the MAC ending in `:41:31`. |
-| `veth-simaai` exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on Modalix, check both interfaces are up, and verify PCIe state. Do not change the IP addresses arbitrarily. |
-| Ping and SSH work but the throughput test fails | Start `iperf3 -s` on Modalix, leave it running, then retry the test from `sima-cli device discover` (Step 7). |
-| PCIe worked before reboot, unstable after | The enclosure has separate power. Use the cold-start sequence: host off first, enclosure off second; enclosure on first, host on second. |
-| NEAT pipeline will not run over PCIe | Expected on NEAT 0.3.0. Retest when NEAT 0.4.0 is available. |
-
-## Quick Reference
-
-Host configuration files:
-
-```text
-/etc/udev/rules.d/90-network.rules
-/etc/NetworkManager/conf.d/99-unmanaged-devices.conf
-```
-
-Verification commands:
-
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
-sima-user@sima-user-machine:~$ lspci -nnk -d 1f06:
-sima-user@sima-user-machine:~$ ip -br addr show veth-simaai
-sima-user@sima-user-machine:~$ ping 10.0.0.2
-sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
-sima-user@sima-user-machine:~$ sima-cli device discover
-```
-
-Bring-up is complete when the card is enumerated, the host driver is bound, `veth-simaai` is present at `10.0.0.1/24`, Modalix answers at `10.0.0.2/24`, SSH works, and the throughput test passes with the `iperf3` workaround applied.
+| Card does not appear in `lspci -nnk -d 1f06:` | Enclosure power, Thunderbolt/USB4 connection, and card seating. Then cold power-cycle both host and enclosure. |
+| `sima-cli` reports `veth-simaai not found` | Run `ip -br link` on the host. If the interface appears as `enp47s0` or another name, check the `udev` rule, then re-add or power-cycle the card. |
+| `veth-simaai` exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on the card, and that both interfaces are up. Do not change the addresses. |
+| `Device "veth-simaai" does not exist` on the card | Older pre-eLxr builds name the card-side interface `eth2`. The `udev` rule renames only the host interface. Run `ip -br addr` and match on `10.0.0.2/24` and the MAC ending `:41:31`. |
+| Ping and SSH work but the throughput test fails | Start `iperf3 -s` on the card, leave it running, then retry the test. |
+| PCIe worked before reboot, unstable after | Use the power sequence above — the enclosure has separate power. |
 
 ## Related
 
-- [PCIe Mode](/hardware/getting-started/pcie-mode) — hardware preparation, driver installation, and virtual network basics.
+- [PCIe Mode](/hardware/getting-started/pcie-mode) — hardware preparation and driver installation.
 - [Virtual Network](/hardware/getting-started/pcie-mode/virtual-network) — manual IP assignment and the MAC/IP addressing scheme.
 - [Modalix PCIe Card](/hardware/devkit/modalix-pcie-card) — card interfaces, switches, and connectors.
