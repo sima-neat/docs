@@ -101,7 +101,11 @@ Do not change the default `10.0.0.1` / `10.0.0.2` addresses unless SiMa engineer
 
 ## Throughput Test
 
-`sima-cli device discover` offers a throughput test across the virtual Ethernet path. It fails unless an `iperf3` server is already running on the card, so start one first and leave it running:
+`sima-cli device discover` offers a throughput test across the virtual Ethernet path. On current `sima-cli` releases it fails unless an `iperf3` server is already running on the card, so start one first and leave it running:
+
+:::note
+This manual step is only needed on current `sima-cli` releases. A fix that starts the card-side `iperf3` server and waits for it to accept connections is already merged and ships in an upcoming release — after that, the throughput test runs without starting a server by hand.
+:::
 
 <img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
 
