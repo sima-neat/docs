@@ -101,18 +101,7 @@ Do not change the default `10.0.0.1` / `10.0.0.2` addresses unless SiMa engineer
 
 ## Throughput Test
 
-`sima-cli device discover` offers a throughput test across the virtual Ethernet path. On current `sima-cli` releases it fails unless an `iperf3` server is already running on the card, so start one first and leave it running:
-
-:::note
-This manual step is only needed on current `sima-cli` releases. A fix that starts the card-side `iperf3` server and waits for it to accept connections is already merged and ships in an upcoming release — after that, the throughput test runs without starting a server by hand.
-:::
-
-<img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```console
-sima@modalix:~$ iperf3 -s
-Server listening on 5201
-```
+`sima-cli device discover` offers a throughput test across the virtual Ethernet path. It sets up both ends itself — no server needs to be started on the card:
 
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
@@ -132,7 +121,6 @@ The tested setup measured roughly 7–8 Gbps. Actual throughput depends on the h
 | `sima-cli` reports `veth-simaai not found` | Run `ip -br link` on the host. If the interface appears as `enp47s0` or another name, check the `udev` rule, then re-add or power-cycle the card. |
 | `veth-simaai` exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on the card, and that both interfaces are up. Do not change the addresses. |
 | `Device "veth-simaai" does not exist` on the card | Older pre-eLxr builds name the card-side interface `eth2`. The `udev` rule renames only the host interface. Run `ip -br addr` and match on `10.0.0.2/24` and the MAC ending `:41:31`. |
-| Ping and SSH work but the throughput test fails | Start `iperf3 -s` on the card, leave it running, then retry the test. |
 | PCIe worked before reboot, unstable after | Use the power sequence above — the enclosure has separate power. |
 
 ## Related
