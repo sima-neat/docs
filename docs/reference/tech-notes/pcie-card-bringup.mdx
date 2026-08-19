@@ -1,6 +1,6 @@
 ---
 title: PCIe Card Bring-up and Troubleshooting
-description: Fix "veth-simaai not found", verify the PCIe virtual Ethernet link, and run the throughput test on a Modalix HHHL PCIe card.
+description: Bring up and verify the PCIe virtual Ethernet link on a Modalix HHHL PCIe card, and run the throughput test.
 sidebar_position: 6
 ---
 
@@ -9,16 +9,16 @@ sidebar_position: 6
 Use this note when a Modalix HHHL PCIe card is detected by the host but the PCIe virtual Ethernet link does not come up — most often when the card is in an external Thunderbolt/USB4 enclosure.
 
 :::note
-Start with [PCIe Mode](/hardware/getting-started/pcie-mode) for hardware preparation and driver installation. Come back here when `sima-cli device discover` reports `veth-simaai not found`, or when the throughput test fails after ping and SSH already work.
+Start with [PCIe Mode](/hardware/getting-started/pcie-mode) for hardware preparation and driver installation. Come back here when `sima-cli device discover` does not detect the virtual Ethernet link, or when it is detected but `ping` and SSH do not work.
 :::
 
 The PCIe stack provides a virtual Ethernet link between the host and the card, so `ping`, `ssh`, `scp`, and `iperf3` work over PCIe with no Ethernet cable:
 
 ```text
-[HOST] veth-simaai 10.0.0.1/24  <--- PCIe --->  10.0.0.2/24 veth-simaai [MODALIX]
+[HOST] 10.0.0.1/24  <--- PCIe --->  10.0.0.2/24 [MODALIX]
 ```
 
-**[HOST]** is the Ubuntu machine and **[MODALIX]** is Linux running on the card. Both configuration files below are created on the host.
+**[HOST]** is the Ubuntu machine and **[MODALIX]** is Linux running on the card.
 
 ## Power Sequence for External Enclosures
 
@@ -29,15 +29,11 @@ An external enclosure has its own power domain, so rebooting the host does not p
 
 Cards in internal motherboard slots share host power and need no special sequence.
 
-## Fix "veth-simaai not found"
+## Interface Naming (Optional)
 
-After a successful driver install, `sima-cli` may still report:
+`sima-cli` resolves the PCIe virtual Ethernet interface from the card's PCI address in sysfs, so discovery works whatever the host has named the interface — usually a predictable name such as `enp47s0`. Renaming it is **not required**.
 
-```text
-Virtual ethernet over PCIe is not available (veth-simaai not found).
-```
-
-The card and driver are working. Ubuntu named the virtual interface `enp47s0` (or similar) instead of `veth-simaai`, which is the name `sima-cli` expects. Create two files on the **host** to fix the name and keep NetworkManager off the interface.
+The rename is still useful if you want a stable interface name across hosts, and to keep NetworkManager from reconfiguring the link. To apply it, create two files on the **host**.
 
 `/etc/udev/rules.d/90-network.rules`:
 
@@ -57,6 +53,8 @@ managed=0
 Use the wildcard `*:53:49:4d:41:30` as written — do not substitute one system's exact MAC. The rule must match the **host** interface; the card's own interface ends in `:41:31`.
 :::
 
+The two files work together: the NetworkManager drop-in matches `interface-name:veth-simaai`, so it only takes effect once the `udev` rule has applied that name.
+
 Apply the configuration:
 
 ```console
@@ -68,7 +66,7 @@ The rule matches `ACTION=="add"`, so reloading alone does not rename an interfac
 
 ## Verify the Link
 
-Check the address on each side:
+Check the address on each side. Substitute the host's own interface name if you did not apply the rename above:
 
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
@@ -94,7 +92,7 @@ Detected PCIe virtual ethernet.
 ```
 
 :::note
-`UNKNOWN` is normal for virtual interfaces, and `veth-simaai` does not appear in **Settings → Network** because it is intentionally unmanaged. Verify with `ip`, not the GUI.
+`UNKNOWN` is normal for virtual interfaces. If you applied the rename, the interface does not appear in **Settings → Network** because it is marked unmanaged — verify with `ip`, not the GUI.
 
 Do not change the default `10.0.0.1` / `10.0.0.2` addresses unless SiMa engineering instructs you to.
 :::
@@ -118,9 +116,9 @@ The tested setup measured roughly 7–8 Gbps. Actual throughput depends on the h
 | Symptom | What to check |
 | --- | --- |
 | Card does not appear in `lspci -nnk -d 1f06:` | Enclosure power, Thunderbolt/USB4 connection, and card seating. Then cold power-cycle both host and enclosure. |
-| `sima-cli` reports `veth-simaai not found` | Run `ip -br link` on the host. If the interface appears as `enp47s0` or another name, check the `udev` rule, then re-add or power-cycle the card. |
-| `veth-simaai` exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on the card, and that both interfaces are up. Do not change the addresses. |
-| `Device "veth-simaai" does not exist` on the card | Older pre-eLxr builds name the card-side interface `eth2`. The `udev` rule renames only the host interface. Run `ip -br addr` and match on `10.0.0.2/24` and the MAC ending `:41:31`. |
+| `sima-cli` reports `veth-simaai not found` | An older `sima-cli` that still matched on the interface name. Update `sima-cli`, or apply the `udev` rule above and re-add or power-cycle the card. |
+| Interface exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on the card, and that both interfaces are up. Do not change the addresses. |
+| `Device "veth-simaai" does not exist` | Expected when the rename has not been applied, or on older pre-eLxr card builds that name the card-side interface `eth2`. Run `ip -br addr` and match on the address and the MAC ending `:41:30` (host) or `:41:31` (card). |
 | PCIe worked before reboot, unstable after | Use the power sequence above — the enclosure has separate power. |
 
 ## Related
