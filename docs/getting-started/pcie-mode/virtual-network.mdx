@@ -53,7 +53,7 @@ When the interfaces are created, the host interface uses a MAC address in the fo
 2. `ifconfig` output on the SiMa.ai DevKit:
 
    ```console
-   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+   veth-simaai: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
        inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
        inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
        ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
@@ -62,6 +62,10 @@ When the interfaces are created, the host interface uses a MAC address in the fo
        TX packets 14109  bytes 4461636 (4.2 MiB)
        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
    ```
+
+   :::note
+   Older pre-eLxr builds name this interface `eth2`. If `veth-simaai` is not present, run `ip -br addr` on the DevKit and match on `10.0.0.2/24` and the MAC ending `:41:31`.
+   :::
 
 3. SSH from the host to the device. Use the default username `sima` and password `edgeai`.
 
