@@ -16,6 +16,14 @@ const landingSource = fs.readFileSync(
   path.join(docsRoot, 'src/pages/index.jsx'),
   'utf8',
 );
+const docusaurusConfigSource = fs.readFileSync(
+  path.join(docsRoot, 'docusaurus.config.js'),
+  'utf8',
+);
+const shellClientSource = fs.readFileSync(
+  path.join(docsRoot, 'src/clientModules/developerCenterShell.js'),
+  'utf8',
+);
 const manifest = JSON.parse(
   fs.readFileSync(path.join(docsRoot, 'static/developer-center-shell.json'), 'utf8'),
 );
@@ -90,6 +98,9 @@ for (const locale of manifest.language.locales) {
 assert.match(shellSource, /aria-haspopup="menu"/);
 assert.match(shellSource, /role="menuitemradio"/);
 assert.match(shellSource, /developer-center-language-change/);
+assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
+assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
+assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /placeholder="\$\{escapeHtml\(shellCopy\.search\.placeholder/);
 assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.search\.clear\)\}"/);

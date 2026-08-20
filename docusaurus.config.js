@@ -135,6 +135,10 @@ const config = {
         },
         items: [
           ...developerCenterShell.docusaurusNavbarItems(),
+          {
+            type: 'localeDropdown',
+            position: 'right',
+          },
         ],
       },
       footer: {

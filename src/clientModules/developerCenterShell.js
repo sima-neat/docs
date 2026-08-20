@@ -1,9 +1,12 @@
+import developerCenterShell from '../developerCenter/shell/config.cjs';
+
 const SHELL_ROOT_ID = 'developer-center-shell-root';
 const SHELL_SCRIPT_ID = 'developer-center-shell-script';
 const SHELL_STYLESHEET_ID = 'developer-center-shell-stylesheet';
 const DESKTOP_NAV_QUERY = '(min-width: 997px)';
 
 let navbarMediaQuery;
+let mobileLanguagePickerBound = false;
 
 function desktopNavMediaQuery() {
   if (!navbarMediaQuery && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
@@ -87,6 +90,32 @@ function watchNativeNavbarVisibility() {
   mediaQuery.__developerCenterShellBound = true;
 }
 
+function localeForLanguageLink(link) {
+  const htmlLang = link?.getAttribute('lang');
+  return developerCenterShell.SUPPORTED_LOCALES.find(
+    (locale) => locale.htmlLang === htmlLang,
+  )?.code;
+}
+
+function watchMobileLanguagePicker() {
+  if (mobileLanguagePickerBound) {
+    return;
+  }
+
+  document.addEventListener('click', (event) => {
+    const link = event.target.closest('.navbar-sidebar a[lang]');
+    const locale = localeForLanguageLink(link);
+    if (!locale) {
+      return;
+    }
+
+    window.dispatchEvent(
+      new CustomEvent('developer-center-language-change', {detail: {locale}}),
+    );
+  }, {capture: true});
+  mobileLanguagePickerBound = true;
+}
+
 function ensureRoot() {
   const existingRoot = document.getElementById(SHELL_ROOT_ID);
   if (existingRoot) {
@@ -115,6 +144,7 @@ async function mountShell() {
   document.documentElement.classList.add('developer-center-shell-active');
   syncNativeNavbarVisibility();
   watchNativeNavbarVisibility();
+  watchMobileLanguagePicker();
 }
 
 function scheduleMount() {

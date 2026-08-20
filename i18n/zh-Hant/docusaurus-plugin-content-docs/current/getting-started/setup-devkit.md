@@ -1,10 +1,10 @@
 ---
-title: "設定您的 DevKit。"
+title: "設定您的 DevKit"
 description: "進階逐步式 DevKit 開機程序——包含序列模式、獨立模式、PCIe 模式，以及韌體更新。"
 sidebar_position: 1
 ---
 
-# 設定您的 DevKit。
+# 設定您的 DevKit
 
 若要讓您的 Modalix DevKit 能夠立即使用，請從 [快速入門指南](pathname:///tools/qsg/index.html) 開始。
 
