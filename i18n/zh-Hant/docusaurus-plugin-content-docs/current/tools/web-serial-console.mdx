@@ -1,0 +1,64 @@
+---
+title: "Web Serial 控制台"
+description: "用於 SiMa.ai DevKit 的瀏覽器型序列埠控制台，使用 Web Serial API。"
+sidebar_position: 1
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Web Serial 控制台
+
+**SiMa.ai Web Serial 控制台** 是一個瀏覽器工具，可透過 [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API)，直接從 Chromium 瀏覽器連接到 SiMa.ai DevKit。無需安裝，只需在相容的瀏覽器中開啟該工具，然後透過 USB 將您的 DevKit 連接，即可開始使用。
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">啟動 Web Serial 控制台。</a>
+
+## 需求
+
+Web Serial API 僅適用於基於 Chromium 的瀏覽器：
+
+- **Google Chrome**（推薦使用）
+- **微軟 Edge**
+
+:::note
+Firefox 和 Safari 不支援 Web Serial API，因此無法與此工具搭配使用。
+:::
+
+## 開始使用
+
+1. 使用 USB 轉序列埠線，將您的 SiMa.ai DevKit 連接到您的電腦。
+2. 在支援的瀏覽器中開啟 [Web Serial 控制台](pathname:///tools/serial/index.html)。
+3. 在指令面板中點擊「**[+] 新增連線**」。
+4. 從瀏覽器彈出的視窗中選擇與您的 DevKit 相對應的序列埠，然後點擊「連線」。
+5. 控制台會自動偵測登入提示，並使用預設的憑證進行登入（`sima`/`edgeai`）。
+
+## 介面
+
+### 終端機
+
+直接在終端機視窗中輸入指令，然後按下 **Enter** 鍵，即可在已連接的 DevKit 上執行這些指令。
+
+### 指令面板
+
+頁面底部的指令面板可讓您快速存取常用的動作：
+
+| 按鈕 | 行動 |
+| --- | --- |
+| **[+] 新的連線** | 開啟一個新的連線分頁，以新增一個 DevKit。 |
+| **設定** | 在連接之前，請設定波特率和流量控制。 |
+| **登入** | 傳送預設的認證資訊（`sima`/`edgeai`）。 |
+| **建立人脈** | 在啟用的 DevKit 上執行 `ifconfig`。 |
+| **磁碟空間** | 在啟動的 DevKit 上執行 `df -h`。 |
+| **建立** | 顯示目前啟用的 DevKit 中的 `/etc/buildinfo`。 |
+| **登出** | 將「`logout`」指令傳送到目前啟用的「DevKit」。 |
+| **清楚** | 清除終端機的輸出結果。 |
+| **淺色/深色模式** | 切換使用者介面主題。 |
+| **全螢幕** | 進入全螢幕模式 |
+| **[隱藏]** | 摺疊命令選單，以獲得更大的終端機視窗。 |
+
+### 多重連線
+
+控制台支援同時連接多個 DevKit。每次連接都會在終端區域頂部開啟一個個別的分頁。點擊分頁以切換不同的連接，或點擊分頁上的 **×** 以斷開連接並關閉該工作階段。
+
+## 斷開連線
+
+點擊連線分頁上的「**×**」按鈕以斷開連線。在關閉連線之前，主控台會自動向 DevKit 發送 `logout` 指令。

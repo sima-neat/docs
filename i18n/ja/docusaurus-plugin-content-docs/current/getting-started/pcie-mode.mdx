@@ -1,0 +1,239 @@
+---
+title: "PCIe モード"
+description: "Modalix PCIe カードをホストシステムにインストールし、ドライバー、ネットワーク、および検出機能を有効にします。"
+sidebar_position: 4
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# PCIe モード
+
+<Tabs>
+<TabItem value="prereq" label="前提条件" default>
+
+:::note
+続行する前に、`sima-cli` をインストールまたはアップグレードしてください。このガイドは、最新バージョンの `sima-cli` での使用を想定しています。
+:::
+
+始める前に：
+
+- 対応するホストプラットフォーム：Ubuntu 22.04 LTS。
+- Windows 10/11のホストサポートは、現在ベータテスト段階にあります。
+- 最適なパフォーマンスと適切なドライバーの機能を確保するために、ホストマシンのUEFI/BIOS設定を構成してください。
+  - Intelベースのシステムでは、SRIOV、IOMMU、およびVT-Dを有効にしてください。
+  - AMDベースのシステムでは、AMD-Vを無効にし、IOMMUを有効にしてください。
+
+</TabItem>
+<TabItem value="hardware" label="ハードウェアの準備">
+
+![SiMa.ai MLSoC PCIe カードの PCIe DIP スイッチ](/img/devkit/pcie-dip-switch.png)
+
+1. 上記の図に示すように、MLSoC PCIe カードには、4つのディップスイッチがあります。スイッチ#1が`OFF`の位置になっていることを確認してください。
+2. 「実行/プログラム」スイッチがオンになっていることを確認してください。
+3. ホストマシンをシャットダウンし、DevKitをPCIeスロットに挿入し、ホストマシンを起動します。
+4. Modalixの早期アクセス版PCIeカードでは、DIPスイッチを工場出荷時のデフォルト位置に設定したままにしてください。
+5. ホストマザーボードに、プライマリ（青色）と非プライマリ（黒色）の PCIe スロットの両方が搭載されている場合は、SiMa PCIe カードをセカンダリ（黒色）のスロットにインストールしてください。
+6. カードのシリアルポート/UARTコネクタをホストに接続して、初期設定とデバッグを行うことをお勧めします。
+7. このPCIeカードには、物理的なイーサネットポートも搭載されており、ネットワークに直接接続できます。
+
+DevKitのインターフェース、スイッチ、コネクタの詳細については、[SiMa.aiとDevKitのインターフェース](/hardware/devkit/modalix-ea-pcie)を参照してください。
+
+:::note
+まれに、ホストマシンが再起動されたときにドライバーを自動的にロードする必要がない場合は、`/etc/modprobe.d/blacklist.conf` を作成（または、すでに存在する場合は編集）し、blacklist `sima_mla_drv` という行を追加します。 完了したら、`update-initramfs` を実行し、ホストマシンを再起動します。 再起動後、ドライバーは `insmod` または `modeprobe` を使用して手動でロードできます。
+:::
+
+</TabItem>
+<TabItem value="driver-linux" label="ドライバーのインストール (Linux)">
+
+最新のドライバーをインストールするには、Linux ホストで次のコマンドを実行してください。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux
+... ... ...
+=== Driver Installation Validation ===
+  Component            | Status     | Details
+  ----------------------------------------------------------------
+  GStreamer            | PASS       | ✅ GStreamer plugin 'pciehost' installed
+  Kernel Module        | PASS       | ✅ Kernel module 'sima_mla_drv' installed
+  PCI Devices          | PASS       | ✅ Detected SiMa PCIe device(s):
+  - 0000:04:00.0 Modalix HHHL v2              driver=sima_mla_drv
+
+✅ Installation complete.
+```
+
+特定のドライバーバージョンをインストールするには、次のフラグを使用します: `-v`
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux -v 2.1.0
+```
+
+:::note
+ドライバーのインストール後、検証を行う前に、ホストマシンを一度電源オフにしてから再度電源を入れ直してください。
+:::
+
+:::warning
+**MLSoC PCIeカード**のPCIeドライバーのサポートは、SDK 2.0.0で終了しました。上記のコマンドでインストールされるドライバーは、**Modalixのみ**をサポートします。MLSoC PCIeカードを使用している場合は、`sima-cli install drivers/linux -v 2.0.0`を使用して、2.0.0ドライバーをインストールしてください。
+:::
+
+</TabItem>
+<TabItem value="driver-windows" label="Driver Installation (Windows)">
+
+以下のコマンドを Windows ホストで実行し、ドライバーをインストールしてください。
+
+:::warning
+この機能は現在、技術プレビュー段階にあります。このドライバーをインストールすると、システムがドライバーのテスト署名モードに移行します。システムに変更を加える前に、確認を求められます。
+:::
+
+```console
+C:\Users\sima> sima-cli install drivers/windows
+... ... ...
+  ✅ Downloaded: pcie_develop_10082025_2.00.081025.1_B31.exe
+  🚀 Running installation script in: C:\Users\sima
+  📜 Script: pcie_develop_10082025_2.00.081025.1_B31.exe
+  ╭─ Post-Installation Instructions ─╮
+  │                                  │
+  │  Driver successfully installed   │
+  │                                  │
+  ╰──────────────────────────────────╯
+  ✅ Installation completed successfully.
+```
+
+Windows のデバイスマネージャーで、SiMa AI デバイスが正しく認識されているか確認してください。
+
+<img src="/img/devkit/windows-device.jpg" alt="Windows device manager showing SiMa AI device" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+:::note
+ドライバーのインストール後、検証を行う前に、ホストマシンを一度電源オフにしてから再度電源を入れ直してください。
+:::
+
+</TabItem>
+<TabItem value="verify" label="Verify and Test">
+
+検出コマンドを実行して、PCIe の列挙が正しく行われていることを確認してください。
+
+```console
+sima-cli device discover
+```
+
+セットアップが正しく行われた場合、コマンドの出力には、接続されている SiMa PCIe デバイスの一覧が表示されます。
+
+</TabItem>
+<TabItem value="virtual-network" label="Virtual Network">
+
+## 仮想ネットワーク {#virtual-network}
+
+:::note
+仮想ネットワーク機能は、Linuxホストのファームウェアバージョン`1.5`以降で利用できます。この機能を使用するには、DevKitを最新のファームウェアバージョンに[更新済み](/hardware/getting-started/firmware-update/)してください。
+
+この機能は、Linuxホストシステムでのみ利用可能です。
+:::
+
+PCI Express (PCIe) 経由でホストシステムに接続すると、SiMa.ai DevKit は仮想イーサネットインターフェースを確立します。このインターフェースにより、ホストと DevKit の間で、高速 PCIe バスを介した直接的なネットワーク通信が可能になります。
+
+仮想ネットワーク機能は主にデバッグ目的で設計されており、ユーザーは次の操作を実行できます。
+
+- **セキュアシェル（SSH）**: DevKit のコマンドラインインターフェースにリモートからアクセスし、トラブルシューティングやシステム管理を行います。
+- **セキュアコピープロトコル（SCP）**: ホストとDevKitの間でファイルを安全に転送し、開発およびデバッグのプロセス中にログ、設定、その他の必要なファイルを移動するのに役立ちます。
+
+この機能により、ユーザーは以下の操作も行えるようになります。
+
+- **ファームウェアの更新**: ファイルコピー方式に従って、`scp`および`ssh`ユーティリティを使用して、ファームウェアを手動で更新します。
+- **固定IPアドレスを割り当てる（PCIe経由のイーサネット）**: ホストマシン/MLSoCデバイスに対して、固定IPアドレスを手動で設定します。
+
+デフォルトでは、`10.0.cardnum.1`のアドレスがホストマシンに、`10.0.cardnum.2`のアドレスがMLSoCデバイスに割り当てられます。ただし、安定したネットワーク接続を維持するためには、モジュールをロードする際に、モジュールパラメータ`default_ip=false`を渡すことで、ホストインターフェースにデフォルトのIPアドレスが割り当てられるのを無効にする必要があります。
+
+モジュールがすでにロードされている場合は、以下の手順に従って、モジュールを一度削除してから、`default_ip=false`パラメータを指定して再ロードしてください。
+
+```console
+sudo modprobe -r sima_mla_drv
+sudo modprobe sima_mla_drv default_ip=false
+```
+
+**永続的な設定**
+
+システム再起動後も`default_ip=false`設定が維持されるようにするには、以下の手順に従ってください。
+
+1. 必要なオプションを含む modprobe 構成ファイルを作成します。
+
+   ```console
+   echo "options sima_mla_drv default_ip=false" | sudo tee /etc/modprobe.d/sima_mla_drv_options.conf
+   ```
+
+2. 新しい設定を含めるように、初期の RAM ファイルシステムを更新してください。
+
+   ```console
+   sudo update-initramfs -u
+   ```
+
+3. 変更を適用するには、ホストマシンを再起動してください。
+
+   ```console
+   sudo shutdown -r now
+   ```
+
+4. システムを再起動した後、パラメータが正しく設定されていることを確認してください。
+
+   ```console
+   cat /sys/module/sima_mla_drv/parameters/default_ip
+   ```
+
+**手動による IP アドレスの割り当て**
+
+モジュールを手動でロードする場合（`insmod`を使用）、以下のコマンドを使用します。これにより、ホストマシンのインターフェースに静的な IP アドレスを手動で割り当てることができ、さらに MLSoC デバイスにも割り当てることができます。
+
+```console
+sudo insmod sima_mla_drv.ko default_ip=false
+```
+
+また、ホストマシンに`ifconfig`ユーティリティがインストールされている必要があります。
+
+```console
+ifconfig <eth interface> 20.1.2.1
+```
+
+ホストインターフェースにIPアドレスが割り当てられると、SoCインターフェースには自動的にIP + 1が割り当てられます。たとえば、`20.1.2.1`がホストマシンに割り当てられた場合、MLSoCのIPは`20.1.2.2`になります。
+
+インターフェースが作成されると、ホストインターフェースには`cardnum:S:I:m:A:0`という形式のMACアドレスが、SoCインターフェースには`cardnum:S:I:m:A:1`というMACアドレスが割り当てられます。IPアドレスは、作成時に`host:10.0.cardnum.1`および`soc:10.0.cardnum.2`として割り当てられます。また、ホストマシンには`ifconfig`ユーティリティがインストールされている必要があります。
+
+1. ホストマシンにおける`ifconfig`の出力：
+
+   ```console
+   enp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.1  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4130  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:30  txqueuelen 1000  (Ethernet)
+       RX packets 14107  bytes 4460994 (4.4 MB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 818  bytes 74840 (74.8 KB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+2. `ifconfig` の出力結果（SiMa.ai、DevKit 上）。
+
+   ```console
+   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
+       RX packets 818  bytes 74840 (73.0 KiB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 14109  bytes 4461636 (4.2 MiB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+3. ホストからデバイスへ SSH で接続します。接続には、デフォルトのユーザー名 `sima` とパスワード `edgeai` を使用してください。
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+   The authenticity of host '10.0.0.2 (10.0.0.2)' can't be established.
+   ED25519 key fingerprint is SHA256:ulxwiRM+cCQNJ90R5Qn5eV+9hqvkVNo0eWQ9pY3l8E0.
+   This key is not known by any other names
+   Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+   Warning: Permanently added '10.0.0.2' (ED25519) to the list of known hosts..
+   sima@10.0.0.2's password:
+   sima@davinci:~#
+   ```
+
+</TabItem>
+</Tabs>

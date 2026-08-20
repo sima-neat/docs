@@ -51,9 +51,9 @@ function loadScript() {
 
 function activeSection() {
   const path = window.location.pathname;
-  if (path.startsWith('/software')) return 'software';
+  if (path.startsWith('/software') || /^\/(?:ko|ja|zh-Hant|uk)\/software(?:\/|$)/.test(path)) return 'software';
   if (path.startsWith('/examples')) return 'examples';
-  if (path.startsWith('/hardware')) return 'hardware';
+  if (path.startsWith('/hardware') || /^\/(?:ko|ja|zh-Hant|uk)\/hardware(?:\/|$)/.test(path)) return 'hardware';
   return '';
 }
 

@@ -1,0 +1,26 @@
+{
+  "sidebar.systemDocs.category.Getting Started": {
+    "message": "Початок роботи",
+    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.link.Quick Start Guide": {
+    "message": "Посібник зі швидкого старту",
+    "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "Варіанти DevKit",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Tools": {
+    "message": "Інструменти",
+    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.References": {
+    "message": "Довідкові матеріали",
+    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Tech Notes": {
+    "message": "Технічні нотатки",
+    "description": "The label for category 'Tech Notes' in sidebar 'systemDocs'"
+  }
+}

@@ -6,9 +6,14 @@
   "scripts": {
     "fetch:serial-tool": "bash scripts/fetch-serial-tool.sh",
     "prestart": "npm run fetch:serial-tool",
-    "prebuild": "npm run fetch:serial-tool",
+    "prebuild": "npm run fetch:serial-tool && npm run check:i18n-complete",
     "start": "docusaurus start --host 0.0.0.0",
+    "start:developer-center": "bash scripts/start-local-developer-center.sh",
     "build": "docusaurus build",
+    "check:language": "node scripts/check-developer-center-language.js",
+    "check:i18n": "node scripts/check-i18n.js",
+    "check:i18n-complete": "node scripts/check-i18n.js --require-complete",
+    "translate:i18n": "node scripts/translate-docs-ollama.js",
     "serve": "docusaurus serve --host 0.0.0.0",
     "clear": "docusaurus clear"
   },

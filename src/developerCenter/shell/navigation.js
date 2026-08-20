@@ -20,7 +20,7 @@ function markActiveNavItem() {
 }
 
 function normalizeHardwareBreadcrumbHome() {
-  if (!window.location.pathname.startsWith('/hardware')) {
+  if (shellConfig.activeSectionForPath(window.location.pathname) !== 'hardware') {
     return;
   }
 

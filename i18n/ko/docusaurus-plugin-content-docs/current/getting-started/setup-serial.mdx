@@ -1,0 +1,120 @@
+---
+title: "시리얼 연결을 구성합니다."
+description: "시리얼 콘솔을 통해 개발 호스트를 Modalix DevKit에 연결합니다."
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# 시리얼 연결을 구성합니다.
+
+초기 개발 단계에서는 시스템이 독립 실행형 구성으로 사용되거나 호스트 시스템의 PCIe 장치로 사용되는지에 관계없이 시리얼 인터페이스를 통해 DevKit에 연결하는 것이 좋습니다.
+
+독립 실행형 구성에서 시리얼 연결은 IP 주소를 획득하는 방식에 관계없이 DevKit에 안정적인 액세스를 제공합니다. 이를 통해 네트워크 연결이 불가능하거나 잘못 구성된 경우에도 개발자는 시스템의 구성, 모니터링 및 복구 작업을 제어할 수 있습니다.
+
+PCIe 구성에서 시리얼 인터페이스는 부팅 중에 PCIe 카드의 셸 및 디버그 콘솔에 직접 액세스할 수 있도록 합니다. 이는 특히 호스트 시스템 또는 PCIe 링크가 완전히 작동하지 않을 때 하위 수준 제어 및 문제 해결에 유용합니다.
+
+시리얼 인터페이스는 주로 개발 및 부팅을 위해 사용됩니다. 시스템이 완전히 구성되고 배포되면 일반적으로 지속적인 운영에는 시리얼 연결이 필요하지 않습니다.
+
+개발자의 컴퓨터 운영 체제에 따라 시리얼 인터페이스를 통해 DevKit에 연결하는 데 사용할 수 있는 방법이 다릅니다.
+
+<Tabs>
+<TabItem value="hardware" label="하드웨어 설정" default>
+
+사용 중인 보드를 선택하여 시리얼 케이블 연결을 확인하세요.
+
+<Tabs groupId="board">
+<TabItem value="modalix-devkit" label="Modalix DevKit" default>
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src="/img/devkit/modalix-devkit.png" alt="Modalix DevKit 커넥터" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit 커넥터</figcaption>
+</figure>
+
+제공된 시리얼 케이블을 사용하여 DevKit을 컴퓨터에 연결하세요.
+
+- **DevKit 연결:** 제공된 USB-A에서 USB-C 케이블을 사용하여 DevKit의 **UART** 포트에 연결합니다. (케이블 연결 방법은 장치 외부에 표시된 대로 따릅니다.)
+- **컴퓨터 쪽:** **USB Type-A** 포트에 연결합니다. 필요한 경우 USB 허브를 사용하십시오.
+
+</TabItem>
+<TabItem value="modalix-ea-kit" label="Modalix EA 키트">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="Modalix 얼리 액세스 키트 커넥터" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix 얼리 액세스 키트 커넥터</figcaption>
+</figure>
+
+제공된 시리얼 케이블을 사용하여 DevKit을 컴퓨터에 연결하세요.
+
+- **DevKit 사용 완료:** 평면형 커넥터의 삼각형 표시가 DevKit의 가장 오른쪽 핀과 일치하는지 확인합니다.
+- **컴퓨터 쪽:** **USB Type-A** 포트에 연결합니다. 필요한 경우 USB 허브를 사용하십시오.
+
+</TabItem>
+<TabItem value="modalix-ea-pcie" label="Modalix EA PCIe 카드">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix EA PCIe 카드 커넥터" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix EA PCIe 카드 커넥터</figcaption>
+</figure>
+
+제공된 시리얼 케이블을 사용하여 카드를 호스트에 연결하세요.
+
+- **카드 연결:** 제공된 USB-A to UART 케이블을 사용하여 카드의 **ARM UART** 포트에 연결합니다. 연결 방법은 위 이미지에서 확인할 수 있습니다.
+- **호스트 측:** **USB Type-A** 포트에 연결합니다. 필요한 경우 USB 허브를 사용하십시오.
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+**Windows**에서 시리얼 터미널을 통해 DevKit에 연결하려면 다음 단계를 따르세요.
+
+1. COM 포트를 확인하세요.
+   - **장치 관리자**를 열고 **포트(COM 및 LPT)**를 확장합니다.
+   - **USB 시리얼 포트(COMx)**와 같은 항목을 찾으세요.
+
+2. **시리얼 터미널을 설치하고 실행합니다**:
+   - [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) 또는 Tera Term을 사용하세요.
+   - 연결 유형을 **직렬**로 설정합니다.
+   - 올바른 **COM 포트**를 입력하세요(예: `COM3`).
+   - **보드 전송률**을 `115200`으로 설정합니다.
+
+3. **연결**을 시작하려면 **열기**를 클릭하세요.
+
+</TabItem>
+<TabItem value="mac-linux" label="MacOS 및 Linux 데스크톱">
+
+:::note
+계속하기 전에 `sima-cli`를 설치하거나 최신 버전으로 업데이트하십시오. 이 설명서는 최신 버전의 `sima-cli`와 함께 사용하기 위한 것입니다.
+:::
+
+Mac과 Linux에서 `sima-cli serial` 명령을 사용하여 SiMa 하드웨어의 시리얼 포트에 연결합니다.
+
+```console
+sima-cli serial
+```
+
+이 명령은 시리얼 포트에 액세스하는 데 필요한 종속성을 컴퓨터에 설치합니다. 시리얼 터미널을 종료하려면 Ctrl + A를 누른 다음 Ctrl + X를 누르세요.
+
+일부 이전 펌웨어 버전에서는 시스템이 시리얼 콘솔에 대해 다른 전송 속도를 사용할 수 있습니다. 터미널에 깨진 형태로 출력이 표시되면 전송 속도가 일치하지 않아 발생한 것일 수 있습니다. 더 높은 전송 속도를 지정해 보세요.
+
+```console
+sima-cli serial -b 921600
+```
+
+</TabItem>
+<TabItem value="web-serial" label="Web Serial Console">
+
+**Web Serial 콘솔**은 로컬 설치가 필요 없는 브라우저 기반의 대안입니다. Chromium 브라우저(Chrome 또는 Edge)에서 열고, USB를 통해 DevKit을 연결하면 바로 사용할 수 있습니다. PuTTY 또는 `sima-cli`를 설치할 수 없거나 설치하고 싶지 않을 때 유용합니다.
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Web Serial 콘솔을 실행합니다.</a>
+
+<p style={{marginTop: '1.75rem'}}>전체 내용을 확인하세요. <a href="/hardware/tools/web-serial-console">Web Serial 콘솔</a> 명령어 팔레트 참조, 다중 장치 지원, 문제 해결에 대한 페이지입니다.</p>
+
+</TabItem>
+</Tabs>
+
+시리얼 포트 콘솔에 로그인하라는 메시지가 표시되면 기본 **사용자 이름** `sima`과 **비밀번호** `edgeai`를 사용하세요.

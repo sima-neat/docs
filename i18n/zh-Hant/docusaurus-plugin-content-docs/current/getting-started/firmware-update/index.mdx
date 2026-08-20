@@ -1,0 +1,358 @@
+---
+title: "韌體更新"
+description: "保持 Modalix DevKit 韌體的最新版本的方法。"
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 韌體更新
+
+韌體是 DevKit 上運行的基礎軟體。維持韌體的最新狀態對於確保穩定性、安全性，以及提供對新功能和效能改進的存取至關重要。
+
+## 作業系統 {#os}
+
+SiMa.ai Modalix DevKit 執行的是 **eLxr Linux**，這是一個基於 Debian 的發行版本。**2025 年 12 月中旬之後**出貨的設備預先安裝了 eLxr。較早的 Modalix 設備（在 2025 年 12 月中旬之前出貨）預先安裝了 Yocto，並且可以按照 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion) 文章中的說明轉換為 eLxr。
+
+### eLxr Linux
+
+eLxr 是一個基於 Debian 的作業系統，旨在為 Modalix 平台提供更具彈性的開發者體驗。它提供：
+
+- 完整的 Debian 套件管理系統（`apt`）。
+- 一個更豐富的使用者空間環境，用於開發和除錯。
+- 能夠在裝置上直接建立和安裝工具。
+
+### eLxr 在 Modalix 上的優點
+
+Modalix 的使用者將能享有更方便開發者的環境，其中包括：
+
+- 可存取標準的 Debian 套件。
+- 無需跨平台編譯，即可實現更快速的迭代。
+- 簡化的工具鏈管理
+- 一個更廣泛的函式庫和框架生態系統
+
+## 更新方法
+
+有三種支援的方法可以用來更新 DevKit 的韌體：
+
+- **[使用 sima-cli 進行更新。](#sima-cli)** — 透過網路傳輸韌體映像檔，並自動在 DevKit 上觸發更新。此方法非常適合用於現場更新。
+- **[使用開機映像檔進行更新](#bootimage)** — 建立或恢復適用於 DevKit 的可啟動媒體。可用於修復有問題的裝置或設定多個啟動裝置。
+- **[使用網路啟動功能更新。](#netboot)** — 啟動一個本機 TFTP 伺服器，並透過網路直接啟動 DevKit，無需使用任何快閃記憶體媒體。非常適合用於系統恢復、工廠啟動或快速開發核心/根檔案系統。
+
+:::note
+請在繼續操作之前安裝或升級 `sima-cli`。本指南適用於最新版本的 `sima-cli`。
+:::
+
+:::warning
+將 Modalix DevKit 從 SDK 1.7 升級到 2.0 需要額外的步驟。請參閱 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion) 指南，以了解轉換程序。
+:::
+
+<Tabs groupId="firmware-update-method">
+<TabItem value="sima-cli" label="使用 sima-cli 更新。" default>
+
+## 使用 sima-cli 進行更新 {#sima-cli}
+
+此方法允許開發人員使用 `sima-cli` 工具來更新 SiMa.ai DevKit 上的韌體。此方法會將韌體映像檔下載到主機，然後將其傳輸到 DevKit 以進行更新。
+
+在繼續之前，請確保主機能夠透過網路連線到 DevKit。請參閱：
+
+- [獨立模式網路設定](/hardware/getting-started/standalone-mode/#network)
+- [PCIe 模式虛擬網路設定](/hardware/getting-started/pcie-mode#virtual-network)
+
+<Tabs groupId="sima-cli-source">
+<TabItem value="from-devkit" label="來自 DevKit" default>
+
+開發人員可以直接在獨立的 DevKit 上執行 `sima-cli`，以更新裝置。請確認 DevKit 已連接到可用的網路，然後執行：
+
+```console
+modalix:~$ sima-cli update
+```
+
+在執行 MLSoC 的 Yocto Linux 系統上，如果開發人員先前已下載並自行儲存映像檔，他們也可以指定完整的 URL，而不是版本字串。
+
+```console
+davinci:~$ sima-cli update http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="from-host" label="From Host Machine">
+
+:::note
+此方法僅支援在執行 Yocto 的 MLSoC 平台上使用。對於執行 eLxr Linux 的 Modalix 裝置，請直接在 DevKit 上執行更新。
+:::
+
+請從主機上執行這個指令：
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
+```
+
+這個指令也會在主機上安裝適當的 Linux 驅動程式版本（如果適用）。
+
+如果您已經下載了韌體，並將其儲存在您的網路中的某個位置，您可以提供 URL，以避免重複從網路上下載。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="download" label="Download only">
+
+如果開發人員偏好僅下載韌體映像檔，並使用進階的手動步驟來執行更新，他們可以透過執行 `sima-cli download`，並提供對應的 Modalix 韌體壓縮檔的 URL 來達成。
+
+</TabItem>
+</Tabs>
+
+:::note
+**針對 PCIe 系統更新：**
+
+- 從韌體版本 `1.5` 開始，可以在 PCIe 模式中使用虛擬乙太網路介面，從而無需使用實體線纜連接到 DevKit。這使得能夠透過現有的 PCIe 連線進行無縫更新。
+- 對於韌體版本為 `1.4` 或更早的版本，必須與 DevKit 建立直接的網路連線。在此情況下，請以獨立模式連接 DevKit。
+:::
+
+:::note
+若要**降級** DevKit，或安裝非最新版本（例如，預發布 `develop` 版本或內部工程版本），請改用 [網路啟動程序](#netboot)，它會從主機上的 TFTP 伺服器啟動 DevKit，並直接將目標映像刷入 eMMC。
+:::
+
+</TabItem>
+<TabItem value="bootimage" label="Update with Boot Image">
+
+## 使用開機映像檔更新。 {#bootimage}
+
+在某些情況下，使用標準方法更新 DevKit 的韌體可能無法實現或效果不佳。這包括以下情況：
+
+- DevKit 的內部儲存空間已損毀，或無法啟動。
+- 您需要準備多個可開機的 SD 卡或可移除式儲存裝置，以便進行部署。
+
+在這些情況下，您可以使用 `sima-cli bootimg` 命令來下載並將完整的可啟動映像寫入可移除裝置（例如，SD 卡或 NVMe 磁碟）。或者，您可以使用第三方工具，例如 [BalenaEtcher](https://etcher.balena.io/)。
+
+<Tabs groupId="bootimage-method">
+<TabItem value="sima-cli" label="Using sima-cli" default>
+
+```console
+sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
+```
+
+這個指令會執行以下步驟：
+
+1. 下載指定板型（`modalix` 或 `mlsoc`）和 SDK 版本的可啟動映像檔。
+2. 掃描您的主機系統，以尋找可移除儲存裝置。
+3. 提示您確認要將資料寫入哪個裝置。
+4. 將啟動映像檔直接寫入選取的裝置。
+
+程序完成後，您可以安全地取出 SD 卡，然後將其插入 DevKit。下次開機時，DevKit 將從新的映像檔啟動。
+
+**重要注意事項：**
+
+- 這個指令必須在 Linux 或 macOS 主機上執行。
+- 下載圖片需要網路連線。
+
+</TabItem>
+<TabItem value="third-party" label="Using Third-Party Tools">
+
+您也可以使用第三方映像寫入工具，例如 BalenaEtcher。
+
+1. 首先，使用 `sima-cli` 下載映像檔：
+
+   如果開發人員偏好僅下載韌體映像檔，並使用進階的手動步驟來執行更新，他們可以透過執行 `sima-cli download`，並提供對應的 Modalix 韌體壓縮檔的 URL 來達成。
+
+2. 解壓縮下載的檔案：
+
+   ```console
+   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
+   ```
+
+3. 使用 BalenaEtcher 選擇產生的 `.wic.gz` 檔案，然後將其燒錄到您的 SD 卡或 USB 隨身碟中。
+
+寫好程式碼後，將裝置插入 DevKit，然後開啟電源，即可從映像檔啟動。
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="netboot" label="Update with Net Boot">
+
+## 使用網路啟動功能更新。 {#netboot}
+
+在某些開發或恢復情境中，可能更適合（甚至必須）透過網路啟動 DevKit，而不是使用可移除裝置（例如 SD 卡）。這在以下情況下特別有用：
+
+- 您需要將 DevKit 降級到較舊版本的 SDK。
+- 您需要安裝一個**不是最新版本**的建構版本（例如，一個預發布的 `develop` 版本，或是一個內部工程版本）。
+- 您需要修復一個啟動程式或檔案系統損毀的板子，但沒有可用的 SD 卡。
+- 您打算更換新的主機板，並且希望避免內部儲存裝置產生磨損。
+- 您正在將 Modalix DevKit 從 Yocto Linux 轉換為 eLxr，或者從 eLxr 轉換回 Yocto Linux。請參閱 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion)，以了解轉換所需的特定先決條件。
+
+在這些情況下，請使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載適用於目標板的啟動映像檔，然後透過主機上的內建 TFTP 伺服器提供該映像檔。接著，在 U-Boot 中設定 DevKit，使其從該 TFTP 伺服器啟動，並將新的映像檔從主機刷寫到 eMMC。
+
+<details open>
+<summary><strong>步驟 1：硬體設定。</strong></summary>
+
+:::note
+此程序支援於 **macOS** 和 **Ubuntu Linux** 主機上。
+
+如果您尚未在您的主機機器上安裝 `sima-cli`，請在繼續之前先安裝。
+
+需要兩個終端機工作階段：
+
+1. 一個連接到 DevKit 的序列埠控制台會話，用於修改 U-Boot 環境變數，以便 DevKit 透過網路啟動。
+2. 一個主機 shell 工作階段，用於啟動 TFTP 伺服器並啟動 eMMC 快閃記憶體。
+:::
+
+1. 將 **DevKit 的乙太網路連接埠** 直接連接到主機 PC，並將主機的網路介面設定為靜態 IP 位址 **192.168.1.10**。在 Modalix 早期版本板上，請使用乙太網路連接埠 0。
+
+2. 將 DevKit 的 **UART 埠** 連接到主機，以便進行主控台存取。在主機上安裝 `sima-cli` 後，開啟一個序列終端：
+
+   ```console
+   sima-user@sima-user-machine:~$ sima-cli serial
+   ```
+
+3. 在 DevKit 上，按照 [這裡](/hardware/getting-started/standalone-mode/#network) 中的說明，將網路介面設定為預設的靜態 IP 位址 **192.168.1.20**。
+
+</details>
+
+<details open>
+<summary><strong>步驟 2：在主機上啟動 TFTP Netboot 伺服器。</strong></summary>
+
+**需求**
+
+- 主機和 DevKit 必須位於相同的實體網路或直接以太網路連線中。
+- 乙太網路連線必須是千兆介面或更快的介面（連線速率大於 1000 Mbps）。
+- 主機需要連接網路才能下載韌體映像檔。
+- UDP 埠 **69 (TFTP)** 不得被主機防火牆封鎖。
+
+將 `<version>` 替換為目標 SDK 版本（例如 `2.0.0`），將 `<boardtype>` 替換為 `modalix` 或 `mlsoc`，並將 `<fwtype>` 替換為 `yocto` 或 `elxr`。
+
+**在 macOS 上：**
+
+```console
+sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+```
+
+**在 Linux 系統上：**
+
+:::warning
+TFTP 伺服器會繫結到 69 埠，該埠具有特權，因此 `sudo` 需要：
+:::
+
+```console
+sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+```
+
+這個指令會執行以下步驟：
+
+1. 下載指定 SDK 版本和板型對應的可開機映像檔。
+2. 將檔案解壓縮到一個暫時的工作目錄中。
+3. 啟動一個本機 TFTP 伺服器，並提供已解壓縮的啟動檔案（例如：`Image`、`boot.scr`、`.dtb` 檔案等）。
+
+</details>
+
+<details open>
+<summary><strong>步驟 3：將 DevKit 設定為透過網路啟動。</strong></summary>
+
+在 DevKit 連接到主機時，進行電源重啟，方法是透過序列埠控制台進行操作。如果在電源重啟過程中序列埠控制台斷開連接，請重新連接。在出現啟動訊息之前，會有幾秒鐘的延遲——請等待，直到您看到訊息 `Hit any key to stop autoboot`，然後按下任意按鍵以進入 U-Boot 介面：
+
+```console
+... ... ...
+
+Address in DT is		ff:ff:ff:ff:ff:ff
+Address in environment is	68:e1:54:00:05:c6
+eth0: ethernet@a800000 [PRIME]
+Hit any key to stop autoboot:  0
+sima$
+```
+
+然後在 U-Boot 的指令介面中執行以下指令：
+
+```console
+sima:~$ setenv boot_targets net; saveenv; boot
+```
+
+對於 Modalix **eLxr** 目標，在啟動之前也請設定 cpio 映像檔的名稱：
+
+```console
+sima:~$ setenv cpio_name simaai-image-palette-modalix.cpio.gz; setenv boot_targets net; saveenv; boot
+```
+
+這會指示 DevKit 從主機的 TFTP 伺服器啟動，該伺服器已在步驟 2 中設定好。
+
+:::note
+預設情況下，DevKit 的 U-Boot 已設定如下：
+
+- `ipaddr=192.168.1.20`（DevKit 的乙太網路介面，為多埠板上的第一個埠）。
+- `serverip=192.168.1.10`（執行 TFTP 伺服器的主機）。
+
+若要使用不同的網路，請在 U-Boot 中更新 `serverip` 和 `ipaddr`，使其與您的環境相符，以確保 DevKit 可以透過您選擇的 IP 位址連線到主機。
+
+```console
+sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
+```
+:::
+
+</details>
+
+<details open>
+<summary><strong>步驟 4：更新 eMMC 韌體。</strong></summary>
+
+主機上的 `--netboot` 介面支援兩個指令：
+
+- `c` — 顯示所有已連線的使用者端，以及目前在其上執行的韌體版本。
+- `f` — 為選取的客戶端裝置重新燒錄 eMMC。
+
+請等待 DevKit 完成網路啟動程序——這可能需要幾分鐘。一旦序列埠控制台上顯示登入提示，則表示板卡已準備就緒。我們建議在整個啟動過程中保持序列埠控制台的連接，以便觀察完整的啟動序列。
+
+切換回主機終端，然後按下 **Enter** 鍵，直到您看到 `netboot>` 提示。您可以選擇輸入 `c` 以確認 DevKit 已連接，並顯示其目前的韌體版本，然後輸入 `f` 以進行韌體更新：
+
+```console
+netboot> f
+```
+
+您應該會看到類似以下的日誌：
+
+```text
+🔍 Checking SSH availability for 192.168.1.20...
+✅ Board is online!
+✅ SSH is available on 192.168.1.20
+netboot> f
+🔧 Initiating eMMC flash [...]
+```
+
+該圖片檔案大小約為 1.6 GB，傳輸過程大約需要幾分鐘。以下為進度範例：
+
+```text
+↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
+↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
+```
+
+完成刷機後，請重新啟動 DevKit。它現在將從 eMMC 啟動目標版本。
+
+:::note
+**如果 DevKit 的 IP 位址在網路啟動期間發生變更**（例如，因為 DHCP 分配的位址與預設的 `192.168.1.20` 不同），則 `f` 將無法自行連線到板卡。在 DevKit 的序列主控台上找到新的 IP 位址——它會顯示在啟動記錄中，並且在網路啟動後的 Shell 中由 `ip addr` 顯示——然後明確地將其傳遞給 `f`。
+
+```console
+netboot> f <new-ip>
+```
+:::
+
+</details>
+
+<details open>
+<summary><strong>疑難排解</strong></summary>
+
+- 如果 DevKit 無法透過網路啟動，請確認主機和裝置是否位於相同的子網路中（`192.168.1.x`）。
+- 在 Modalix 的早期體驗版中，僅支援乙太網路埠 0 以進行網路啟動。
+- 在 Linux 系統上，請確認主機防火牆允許使用 **UDP 埠 69（TFTP）**。
+- 請驗證從 DevKit 建立的連線：
+
+  ```console
+  modalix:~$ ping 192.168.1.10
+  ```
+
+- 如果 `f` 無法找到映像檔，請重新執行步驟 2 中的 `sima-cli bootimg --netboot` 指令，以重新整理 TFTP 路徑。
+- 如果在將 Modalix DevKit 轉換為 eLxr 後，序列埠控制台上出現與 NFS 相關的錯誤訊息，則可以安全地忽略這些訊息。
+
+</details>
+
+</TabItem>
+
+</Tabs>

@@ -1,0 +1,342 @@
+---
+title: "獨立模式"
+description: "設定 Modalix DevKit，使其能夠作為一個獨立運作的邊緣裝置。"
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 獨立模式
+
+在獨立模式下設定 DevKit 需要同時設定其序列埠連接和網路設定，以確保穩定且可靠的連線。序列埠介面作為一個重要的通訊連結，即使在網路不可用的情況下，也能讓 DevKit 進行持續的互動。
+
+DevKit 的 IP 位址可以使用以下其中一種方法來設定：
+
+- 透過網路進行自動設定。
+- 透過開發人員的電腦進行自動設定。
+- 手動設定靜態 IP 位址。
+
+選擇適當的方法取決於特定的網路環境和連線需求。
+
+<Tabs>
+<TabItem value="network" label="設定 DevKit 網路。" default>
+
+## 設定 DevKit 網路 {#network}
+
+預設情況下，DevKit 網路介面會使用 DHCP。
+
+- 如果您想將 DevKit 直接連接到您的電腦，請將您的電腦網路介面設定為靜態 IP 位址，然後直接連接到 DevKit。
+- 如果您希望 DevKit 能夠從網路自動取得其 IP 位址，您需要設定介面以使用 DHCP。
+
+**檢查目前的 IP 位址**
+
+從序列控制台執行：
+
+```console
+sima@modalix:~$ ip a | grep inet
+   inet 127.0.0.1/8 scope host lo
+   inet6 ::1/128 scope host noprefixroute
+   inet 192.168.91.181/22 brd 192.168.91.255 scope global dynamic noprefixroute end0
+   inet6 fe80::ab34:b995:9f6e:160e/64 scope link noprefixroute
+```
+
+<Tabs groupId="network-method">
+<TabItem value="linux-shell" label="Network Setup In The Linux Shell" default>
+
+:::note
+如果您想在不重新啟動裝置的情況下，切換靜態 IP 位址和 DHCP 設定，請依照以下指示操作。
+:::
+
+如果您已在 DevKit 上安裝了 `sima-cli`，並且想要在不重新啟動的情況下動態地切換 DHCP 和靜態設定，請執行：
+
+```console
+davinci:~$ sima-cli network
+```
+
+系統會提示您使用互動式選單，以便在靜態和 DHCP 網路設定之間切換。
+
+如果無法使用 `sima-cli`，請使用 `nmcli` 在預先設定的連線設定檔之間切換：`end0-static` 和 `end0-dhcp`。
+
+:::note
+以下說明使用 `NetworkManager` 設定檔來設定網路介面，適用於執行 eLxr 2.1 或更新版本的 DevKit 系統。如果您的系統執行的是較早的版本，請參閱 [v2.0.0 檔案說明](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell)。
+:::
+
+**切換至靜態 IP**
+
+若要將網路介面從 DHCP 變更為靜態，請執行：
+
+```console
+davinci:~$ sudo nmcli connection up end0-static
+davinci:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+davinci:~$ networkctl status
+```
+
+**切換至 DHCP**
+
+若要將網路介面從靜態設定變更為 DHCP，請執行：
+
+```console
+davinci:~$ sudo nmcli connection up end0-dhcp
+davinci:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+davinci:~$ networkctl status
+```
+
+</TabItem>
+<TabItem value="auto-config" label="Auto Config Through Dev Computer">
+
+:::note
+- 當開發者網路無法提供乙太網路連線給 DevKit 時，此方法適用。
+- 將 DevKit 插到開發者電腦的乙太網路連接埠中。如果開發者電腦沒有乙太網路連接埠，請使用 USB 轉乙太網路轉接器。
+- 電腦可以與 DevKit 共享網路，並使用 `pip` 來安裝 Python 套件。
+- 需要啟用主機電腦上的網際網路連線共用功能。
+:::
+
+1. 請依照以下步驟操作，這些步驟適用於 Ubuntu 作業系統。在其他平台上，操作步驟可能會有所不同；請在網路上搜尋相關的說明，了解如何分享網路連線。
+
+   - 在右上角，開啟「`Settings`」，然後前往「`Network`」區段。
+   - 在「`Wired`」下方，點擊加號以建立新的設定檔，如果您的裝置沒有現有的設定檔；或者，如果有的話，請修改現有的設定檔。
+   - 如果您正在建立一個新的設定檔，請將其命名為「共享」或您喜歡的任何名稱。
+   - 在「`IPv4`」分頁中，選擇「`Shared to other computers`」。然後點擊「套用」。
+   - 如果您已建立連線，請先關閉再重新開啟，以使變更生效。
+   - 您的電腦現在應該已與無線基地台連線。`10.42.0.0/24` 是 Ubuntu 在此設定中使用的預設子網路，但您的電腦可能使用不同的子網路。
+   - 如果執行下一個步驟後沒有任何結果，請執行 `ifconfig`，並在其中尋找您的乙太網路介面的 IP 位址（通常是 `eth0`）。
+
+2. 在 Ubuntu 機器上開啟終端機。輸入以下指令以掃描該 IP 位址範圍內的裝置：
+
+   ```console
+   sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24 | grep report
+      Nmap scan report for sima-user-machine (10.42.0.1)
+      Nmap scan report for 10.42.0.241
+   ```
+
+   這份清單列出在這個子網路中使用的 IP 位址。結尾為 `.1` 的是您的主機。結尾不是 `.1` 的則是 SiMa DevKit 的 IP 位址。在上面的範例中，板子是 `10.42.0.241`，主機是 `10.42.0.1`。
+
+3. 透過執行以下指令來測試連線：
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.42.0.241
+   ...
+   Last login: Mon Nov 27 19:58:33 2023
+   davinci:~$
+   ```
+
+4. 為了測試您是否可以從板子上連線到您的主機，請從板子上 ping `10.42.0.1`。如果您的主機上正在執行 SSH 伺服器，您也可以使用 SSH 連線：
+
+   ```console
+   davinci:~$ ping 10.42.0.1
+      PING 10.42.0.1 (10.42.0.1): 56 data bytes
+      64 bytes from 10.42.0.1: seq=0 ttl=64 time=0.598 ms
+      64 bytes from 10.42.0.1: seq=1 ttl=64 time=0.703 ms
+      64 bytes from 10.42.0.1: seq=2 ttl=64 time=0.639 ms
+      ^C
+      --- 10.42.0.1 ping statistics ---
+      3 packets transmitted, 3 packets received, 0% packet loss
+      round-trip min/avg/max = 0.598/0.646/0.703 ms
+   ```
+
+5. 如果您無法透過 ping 或 SSH 連接到板子，請使用靜態 IP 設定方法。
+
+</TabItem>
+<TabItem value="uboot" label="Network Setup In The U-Boot Shell">
+
+:::note
+此程序僅適用於 DevKit 韌體 2.0 或更早版本。在 2.1 或更新版本中，使用者可以依賴 Linux 端的設定。在 U-Boot 中設定網路，可確保網路設定在韌體升級期間得以保留。
+:::
+
+1. 透過 UART 連接到 DevKit，並使用 [序列終端機](/hardware/getting-started/setup-serial)。
+2. 重新啟動 DevKit。
+3. 當出現訊息時，請按下任意按鍵以進入 U-Boot，訊息內容為：`Hit any key to stop autoboot`。
+
+4. 若要切換為靜態 IP 位址，請輸入以下指令：
+
+   ```console
+   sima:~$ env set forcenetcfg static; saveenv
+   sima:~$ boot
+   ```
+
+5. 主機板將會重新啟動，並使用 `192.168.1.20` 和 `192.168.2.20` 作為第一個和第二個乙太網路埠。
+6. 若要修改板子的靜態 IP 位址，請在裝置啟動後編輯網路設定檔，方法是使用 `vi`。
+
+   ```console
+   davinci:~$ sudo vi /etc/systemd/network/20-end0-static.network
+   ```
+
+7. 在「**網路**」區段中，根據需要更新 IP 位址。
+8. 若要設定 DHCP 模式，請輸入以下指令，然後重新啟動主機板。
+
+   ```console
+   sima:~$ env set forcenetcfg dhcp; saveenv
+   sima:~$ boot
+   ```
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="nvme" label="Configure NVMe Storage">
+
+## 設定 NVMe 儲存空間 {#nvme}
+
+**Modalix DevKit** 包含一個 500GB NVMe（非揮發性記憶體快取規格）硬碟。
+對於需要額外儲存容量的開發人員，可以將預先安裝的硬碟替換為相容的 M.2 NVMe 模組，並直接安裝在主機板上。
+
+:::note
+請在繼續操作之前安裝或升級 `sima-cli`。本指南適用於最新版本的 `sima-cli`。
+:::
+
+:::note
+這個指令必須直接在 Modalix DevKit 上執行。
+:::
+
+安裝完 `sima-cli` 之後，您可以使用以下指令來格式化 NVMe 磁碟：
+
+```console
+modalix:~$ sima-cli nvme format
+```
+
+格式化完成後，NVMe 磁碟將會自動掛載到 `/media/nvme`。
+
+若要驗證掛載狀態並查看儲存空間使用情況，請執行：
+
+```console
+modalix:~$ df -h
+```
+
+這個指令會顯示所有已掛載檔案系統上的可用磁碟空間，包括 NVMe 磁碟機。
+
+如果需要重新掛載 NVMe 磁碟機，請執行：
+
+```console
+modalix:~$ sima-cli nvme remount
+```
+
+無論是 `format` 命令還是 `remount` 命令，都會自動在 `/etc/fstab` 檔案中新增一筆記錄，因此 NVMe 磁碟會一直自動掛載。
+
+</TabItem>
+<TabItem value="mipi" label="Configure MIPI Interfaces">
+
+## 設定 MIPI 介面 {#mipi}
+
+:::note
+請在繼續操作之前安裝或升級 `sima-cli`。本指南適用於最新版本的 `sima-cli`。
+:::
+
+:::note
+此程序需要一台已安裝最新版 sima-cli 的主機。此外，還需要 **Modalix 開發套件** 的韌體版本為 `1.7.0_master_B1965` 或更高版本。這是因為此版本包含必要的 `.dtbo` 檔案，以支援 MIPI。
+:::
+
+**Modalix DevKit** 包含兩個 MIPI 介面，用於將 MIPI 攝影機連接到裝置，作為輸入。 MIPI 連接埠直接位於載板上，開發人員需要遵循以下步驟來啟用它們。
+
+在開始之前，請確保在 **Modalix Devkit** 關閉時，將 MIPI 攝影機連接到其中一個 MIPI 連接埠。
+
+連接完成後，將一條序列線連接到主機，然後連接到 **Modalix Devkit**。 之後，開啟 **Modalix Devkit**。
+
+然後，使用 `sima-cli` 建立序列終端，並在 3 秒倒數期間按下任意鍵，立即進入 `uboot`。
+
+```console
+sima-cli serial -b 115200
+...
+Hit any key to stop autoboot:  0
+sima$
+```
+
+進入 uboot 之後，將 `dtbos` 變數設定為適當的「裝置樹 Blob 覆蓋檔案」（`.dtbo`）。正確的檔案取決於「主機板」、「相機製造商」、「感測器類型」和「相機連接埠」。設定完成後，儲存環境設定，然後啟動作業系統。
+
+檔案名稱遵循以下模式：
+
+```text
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+```
+
+根據您的硬體規格，選擇每個元件：
+
+| 組件 | 價值觀 | 描述 |
+| --- | --- | --- |
+| 載板 | `connectech`, `seeedstudio`, `waveshare` | 載板型號 |
+| 相機製造商 | `ARDU`, `ECON`, `LI` | Arducam、e-con Systems 或 Leopard Imaging |
+| 感測器類型 | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | 相機感光元件型號 |
+| 港口 | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | 相機連接的 MIPI 埠號。 |
+
+例如，一個 Connectech 擴充板，其 Leopard Imaging IMX477 感測器連接到 0 號埠：
+
+```console
+sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+```
+
+目前提供的完整清單 `.dtbo` 檔案是：
+
+```text
+modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
+modalix-som-connectech-ECON-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-IMX678-0CAM.dtbo
+modalix-som-connectech-ECON-IMX678-1CAM.dtbo
+modalix-som-connectech-ECON-IMX678-2CAM.dtbo
+modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-LI-AR0234-0CAM.dtbo
+modalix-som-connectech-LI-AR0234-1CAM.dtbo
+modalix-som-connectech-LI-AR0234-2CAM.dtbo
+modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-OG05C10-0CAM.dtbo
+modalix-som-connectech-LI-OG05C10-1CAM.dtbo
+modalix-som-connectech-LI-OG05C10-2CAM.dtbo
+modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-LI-AR0234-1CAM.dtbo
+modalix-som-waveshare-LI-AR0234-2CAM.dtbo
+modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+```
+
+為了驗證介面，請將 Modalix SOM 連接到顯示器並進行登入。然後，使用 libcamera 來驗證與相機的連線，並使用 Modalix。
+
+1. 列出可用的相機：
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. 顯示相機 1 的不同相機格式：
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. 從相機 1 擷取一張圖片：
+
+   ```console
+   sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```
+
+</TabItem>
+</Tabs>

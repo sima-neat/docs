@@ -1,0 +1,157 @@
+---
+title: "SiMa.ai 硬體檔案"
+description: "用於 SiMa.ai MLSoC Modalix DevKit 產品的硬體設定、韌體和低階介面。"
+sidebar_position: 1
+slug: /
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# SiMa.ai 硬體檔案
+
+本指南涵蓋硬體設定、韌體以及 SiMa.ai 的 MLSoC Modalix DevKit 產品的低階介面。這是一份專用的硬體參考資料，軟體、機器學習和管線工具則分別以不同的檔案呈現。
+
+## 關於 MLSoC 和 Modalix
+
+**MLSoC Modalix** 是 SiMa.ai 的第二代機器學習系統晶片。它結合了一個 Arm Cortex-A65 應用處理器、一個高吞吐量的機器學習加速器 (MLA)、一個用於相機輸入的影像訊號處理器 (ISP)，以及一個用於傳統視覺工作負載的電腦視覺單元 (CVU)——所有這些都整合在單一晶片上。
+
+這種整合讓開發人員可以在邊緣部署多模態、生成式和視覺 AI 管線，而無需將個別的加速器、主機 CPU 和相機橋接器組合在一起。這裡記錄的每個產品——DevKit、早期存取套件以及 PCIe 卡——都是基於相同的 MLSoC Modalix 矽晶片建置的，因此為某種外觀形式編寫的應用程式可以輕鬆地移植到其他外觀形式。
+
+![Modalix 區塊圖，顯示 PCIe Gen5、10G 以太網路、MIPI CSI2、ARM A65、影像訊號處理器 (ISP)、電腦視覺處理單元 (CVU)、視訊編解碼器、多層感知器 (MLA)、LPDDR5、網路晶片 (NoC) 以及系統區塊。](/img/media/modalix-arch.png)
+
+## DevKit 作品集
+
+SiMa.ai 提供一系列以 MLSoC Modalix 為基礎的開發套件和產品，旨在支援廣泛的邊緣 AI 應用 — 從高效的視覺推論到進階的多模態和生成式 AI 工作負載。點擊下方任一套件，即可跳轉至其詳細頁面，或在表格中比較功能。
+
+<div className="card-grid">
+  <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
+    <img src="/img/media/modalix-devkit-no-label.png" alt="Modalix DevKit" />
+    <h4>Modalix DevKit</h4>
+    <p>這是一款體積小、節省能源的模組，可用於將 Modalix AI 功能整合到客製化的硬體設計中。</p>
+  </a>
+  <a className="card devkit-card" href="/hardware/devkit/modalix-ea-kit">
+    <img src="/img/media/modalix-ea-kit.png" alt="Modalix 搶先體驗套件" />
+    <h4>Modalix 搶先體驗版 DevKit</h4>
+    <p>專為邊緣運算中的現代人工智慧而設計，支援大型語言模型、多模態輸入和生成式人工智慧工作負載。</p>
+  </a>
+  <a className="card devkit-card" href="/hardware/devkit/modalix-ea-pcie">
+    <img src="/img/media/modalix-ea-pcie.jpg" alt="Modalix 搶先體驗版 PCIe 擴充卡" />
+    <h4>Modalix 搶先體驗版 PCIe 擴充卡</h4>
+    <p>針對可擴展邊緣運算系統設計的半高/半長 (HHHL) 卡。</p>
+  </a>
+</div>
+
+### 功能比較
+
+| 功能 | Modalix DevKit | Modalix 搶先體驗版 DevKit | Modalix 搶先體驗版 PCIe 擴充卡 |
+| --- | --- | --- | --- |
+| **檔案與作業系統** | | | |
+| 產品簡介 | [view](https://sima.ai/wp-content/uploads/2025/05/SoM-Product-Brief.pdf) | [view](https://sima.ai/wp-content/uploads/2025/05/Modalix-SoC-Product-Brief_May-20-2025.pdf) | — |
+| 預先安裝的作業系統 | [eLxr Linux](/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/hardware/getting-started/firmware-update/#os) | [eLxr Linux](/hardware/getting-started/firmware-update/#os) |
+| **計算** | | | |
+| ARM 核心 | 8 核心 ARM Cortex-A65，時脈 1.4GHz | 8 核心 ARM Cortex-A65，時脈 1.4GHz | 8 核心 ARM Cortex-A65，時脈 1.4GHz |
+| 影像訊號處理器 (ISP) | ARM C-71，時脈 1.2 GHz | ARM C-71，時脈 1.2 GHz | ARM C-71，時脈 1.2 GHz |
+| CVU（電腦視覺單元） | Synopsys EV74，時脈 750 MHz，16 位元，每秒運算次數 (GOPS) | Synopsys EV74，時脈 750 MHz，16 位元，每秒運算次數 (GOPS) | Synopsys EV74，時脈 750 MHz，16 位元，每秒運算次數 (GOPS) |
+| **記憶體與儲存空間** | | | |
+| 記憶體容量 | 32GB LPDDR5 | 64GB LPDDR5 | 32GB LPDDR5 |
+| 儲存 | 16GB eMMC | 10 GB eMMC | 16GB eMMC |
+| SD 卡插槽 | ✖ | ✔ | ✔ |
+| NVMe (PCIe) | ✔ 500GB | ✖ | ✖ |
+| **建立人脈** | | | |
+| 乙太網路 | 1 個 1GbE | 1 個 1GbE 介面（end0），1 個 10GbE 介面（end1），2 個 10GbE SFP+ 介面（end2/3） | 1 個 1GbE |
+| Wi-Fi/4G LTE | 透過擴充板提供 2 個 M.2 插槽，目前正在等待軟體支援。 | ✖ | ✖ |
+| **相機輸入** | | | |
+| MIPI CSI | 2 組 2 條通道的 MIPI CSI | 4 條 4 條紋的 MIPI CSI | ✖ |
+| GMSL2 透過 FAKRA 協定 | ✖ | ✖ | 兩個 GMSL2 連接埠，採用 FAKRA 規格 |
+| **輸入/輸出與顯示** | | | |
+| GPIO/連接器 | 40 針 GPIO 接頭 | 40 針 GPIO 接頭 | ✖ |
+| USB | 4 個 USB 3.0 連接埠 | ✖ | ✖ |
+| HDMI | 1 個 HDMI 1.4 連接埠 | ✖ | ✖ |
+| 圖形控制器 | [Silicon Motion SM768](https://www.siliconmotion.com/download/3PR/a/SM768_PB_EN_202004.pdf) | ✖ | ✖ |
+| **視訊編解碼器** | | | |
+| H.264/H.265 編碼器 | 4kp60 | 4kp60 | 4kp60 |
+| MJPEG 編碼器 | 4kp30 | 4kp30 | 4kp30 |
+| H.264/H.265 解碼器 | 4kp60 | 4kp60 | 4kp60 |
+| AV1 和 MJPEG 解碼器 | 4kp60 | 4kp60 | 4kp60 |
+| **外觀尺寸** | | | |
+| 將其作為 PCIe 卡片，用於主機。 | ✖ | ✖ | ✔ |
+
+<a className="docs-button" href="https://sima.ai/contact/" target="_blank" rel="noreferrer">訂購您的 DevKit。</a>
+
+## 部署架構
+
+現代機器學習和推理應用程式需要具備彈性的架構，以應對各種部署情境。SiMa.ai 的解決方案旨在適應這些需求，提供可最佳化效能、效率和可擴展性的設定。無論是整合到更大的系統中，還是作為獨立設備使用，MLSoC Modalix 都能確保針對各種使用案例實現無縫的適應性。
+
+<Tabs>
+<TabItem value="standalone" label="MLSoC Modalix 作為獨立裝置" default>
+
+在這個架構中，MLSoC Modalix 作為一個獨立的、自成一體的裝置運作。它特別適合於需要小型化、高效能和盡可能降低功耗的應用。
+
+**主要應用案例**
+
+- **Edge AI 應用**：部署於邊緣端，可在無需依賴中央伺服器或雲端基礎架構的情況下執行推論。非常適合智慧攝影機、工業物聯網裝置或自主機器人等應用。
+- **考量成本的部署**：減少對額外硬體的需求，使其成為一種具有成本效益的解決方案，適用於獨立作業。
+- **電力受限環境**：針對能源效率至關重要的情境進行最佳化，例如由電池或太陽能板供電的遠端監控系統。
+
+**優點**
+
+- **獨立運行**：無需主機系統，可簡化部署流程並降低系統複雜度。
+- **節能高效**：設計時注重降低功耗，使其適用於對電力敏感的環境。
+- **體積小巧且易於攜帶**：其小巧的尺寸使其能夠輕鬆地部署在空間有限的環境中。
+
+**典型的資料流程**
+
+1. 資料會直接從網路介面或感測器接收。
+2. MLSoC Modalix 內建一個 [NEAT 應用程式](https://docs.sima-neat.com)，用於定義裝置上的推論管線。
+3. MLSoC 和 Modalix 會執行推論，並在本地處理資料。
+4. 結果會透過網路連線傳送到其他裝置或系統，以便進行後續處理或視覺化呈現。
+
+<a className="docs-button" href="/hardware/getting-started/standalone-mode">使用 DevKit 設定獨立模式系統。</a>
+
+</TabItem>
+<TabItem value="pcie" label="MLSoC 作為 Modalix PCIe 卡">
+
+在這個架構中，MLSoC Modalix 就像一張 PCIe 卡，可以無縫地整合到主機系統中。這種設定非常適合需要額外運算資源來執行推論任務，但同時又具備足夠的資料儲存和處理能力的主機系統，例如伺服器、桌上型電腦或工作站。
+
+**主要應用案例**
+
+- **高效能系統：** 適用於資料中心或高階工作站，在這些環境中，大規模資料處理和儲存至關重要。主機系統負責處理需要大量 CPU 運算的任務，而 MLSoC Modalix 則執行專用的推論作業。
+- **擴展的 I/O 解決方案：**目標系統可能需要額外的 I/O 功能，而這些功能在 MLSoC Modalix 上並非隨時可用，例如 USB 介面或其他感測輸入。此架構使系統能夠利用主機系統的擴展 I/O 資源，以支援諸如影片分析或大規模 AI 模型推論等應用。
+
+**優點**
+
+- **強化運算資源：** 透過將推論任務卸載到專用硬體，來擴充主機系統的功能。
+- **靈活性：** 適用於需要根據需求增加額外推論卡片的環境。
+
+**典型的資料處理流程**
+
+1. 主機系統會從感測器、周邊設備、儲存裝置或網路介面擷取資料。
+2. MLSoC Modalix 內含一個 [NEAT 應用程式](https://docs.sima-neat.com)，用於封裝推理管線和經過調整的 AI 模型。
+3. 資料會透過 PCIe 介面傳送到 MLSoC 的 Modalix，以進行推論。
+4. 結果會由主機系統處理，或轉送至後端系統以進行後續操作。
+
+<a className="docs-button" href="/hardware/getting-started/pcie-mode">使用 DevKit 建立 PCIe 模式系統。</a>
+
+</TabItem>
+</Tabs>
+
+## 開始使用
+
+請選擇與您的設定相符的路徑。每份指南涵蓋了該模式下的序列主控台存取、網路啟動和韌體管理。
+
+<div className="card-grid">
+  <a className="card" href={useBaseUrl('/tools/qsg/index.html')} target="_blank" rel="noreferrer">
+    <h4>快速入門指南</h4>
+    <p>逐步互動式教學，引導使用者完成首次啟動 DevKit 的設定。</p>
+  </a>
+  <a className="card" href="/hardware/getting-started/standalone-mode">
+    <h4>獨立模式</h4>
+    <p>將 MLSoC Modalix 作為一個獨立的邊緣裝置來執行——無需主機。</p>
+  </a>
+  <a className="card" href="/hardware/getting-started/pcie-mode">
+    <h4>PCIe 模式</h4>
+    <p>將 Modalix PCIe 卡安裝到主機系統中，以進行卸載式推論。</p>
+  </a>
+</div>

@@ -8,6 +8,8 @@ The shell defines:
 - canonical section routes for Hardware, Software, and Examples
 - external destinations for Models and Community
 - common theme persistence keys and cookie behavior
+- global documentation-language persistence and localized section routes
+- localized shell branding and navigation labels
 - CloudFront-routed section navigation behavior
 - navbar active-state normalization
 
@@ -16,6 +18,11 @@ The shell defines:
 sites mounted under `build.{env}.neat.sima.ai`. Those sites should mount the
 runtime shell and use local fallback values only for development or standalone
 origin debugging.
+
+The language control lives in this shell rather than in an individual docs
+site. It writes `sima-neat-locale` as a parent-domain cookie so Hardware and
+Software share one preference. Local standalone Software builds can use
+`DOCS_PREFERRED_LOCALE=<locale>` instead of rendering their own selector.
 
 Keep this code framework-light. Docusaurus consumes it directly today, and the
 same config/runtime should be reusable by the apps portal and future cross-site

@@ -1,0 +1,45 @@
+---
+title: "Modalix 얼리 액세스 PCIe 카드"
+description: "HHHL PCIe 얼리 액세스 카드로, 임베디드 엣지 시스템을 위한 고성능 ML 추론 기능을 제공합니다."
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix 얼리 액세스 PCIe 카드
+
+Modalix PCIe HHHL(절반 높이/절반 길이) 얼리 액세스 보드는 고성능을 제공하고 임베디드 엣지 애플리케이션을 위한 간편한 머신 러닝 추론을 가능하게 하는 Modalix 장치를 통합합니다.
+
+<Tabs>
+<TabItem value="interfaces" label="인터페이스" default>
+
+<img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="SiMa.ai Modalix EA PCIe 카드 인터페이스" style={{width: '100%', display: 'block', margin: '0 auto'}} />
+
+| 인터페이스 | 설명 |
+| --- | --- |
+| 이더넷 포트(eth0, eth1) | RJ45, 기가비트 이더넷 네트워크 인터페이스를 통해 원격 연결을 지원합니다. |
+| PCI 익스프레스 5.0 x4 인터페이스 | 호스트 시스템에 통합하는 데 사용되는 고속 PCIe 인터페이스입니다. 호스트 구성에 따라 어댑터가 필요할 수 있습니다. |
+| COM 포트를 호스트에 연결 | 호스트 시스템에 연결하여 디버깅을 용이하게 합니다. 제공된 케이블의 화살표 표시가 올바르게 정렬되도록 가장 왼쪽에 있는 핀에 연결되었는지 확인하십시오. |
+| SD 카드 슬롯 | SD 카드 슬롯은 Modalix EA PCIe 카드의 뒷면에 있습니다. |
+| 카메라용 GMSL2 FAKRA 포트 | 기가비트 멀티미디어 직렬 링크는 안정적인 고대역폭 비디오 전송을 보장합니다. |
+
+</TabItem>
+<TabItem value="features" label="주요 기능">
+
+| 기능 | 자세한 내용 |
+| --- | --- |
+| PCIe 인터페이스 | 표준 보드 가장자리 커넥터가 있는 하나의 PCIe Gen 5.0 x4 링크 인터페이스. |
+| 시스템 메모리 | 높은 대역폭과 낮은 지연 시간을 제공하는 16GB 또는 32GB LPDDR5 DRAM 인터페이스. |
+| eMMC 플래시 스토리지 | 부팅 및 시스템 저장 공간을 위한 32GB eMMC 플래시 메모리 인터페이스 1개. |
+| QSPI NOR 플래시 | 펌웨어 및 부트 로더 저장을 위한 128Mbit QSPI NOR 플래시 인터페이스 1개. |
+| 이더넷 | RJ45 커넥터를 통해 1개의 10Gbps 이더넷 인터페이스를 제공합니다. |
+| JTAG 인터페이스 | 하드웨어 디버깅 및 시스템 초기화를 위한 하나의 선택적 JTAG 인터페이스입니다. |
+| 마이크로 SD 인터페이스 | 탈착식 저장 장치와 시스템 복구를 위한 하나의 Micro SD 카드 인터페이스. |
+| 디버깅: UART (Troot) | Troot 진단 및 디버깅을 위한 전용 디버그 UART 인터페이스 하나. |
+| UART (Linux) 디버깅 | Linux 콘솔 접근 및 디버깅을 위한 전용 디버그 UART 인터페이스. |
+| 카메라 인터페이스 | 직렬 링크를 통해 원격 카메라를 연결하기 위한 두 개의 GMSL2 FAKRA 포트입니다. |
+| 상태 표시기 | 시스템 전원 상태를 나타내는 하나의 전원 LED. |
+
+</TabItem>
+</Tabs>

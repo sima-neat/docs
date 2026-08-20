@@ -1,0 +1,163 @@
+---
+title: "在 Modalix SOM DevKit 上設定 Bluetooth。"
+description: "將 Bluetooth USB 轉接器連接到 Modalix SOM DevKit，然後啟動 bluez 協議堆疊。"
+sidebar_position: 4
+---
+
+# 在 Modalix SOM DevKit 上設定 Bluetooth。
+
+這份技術檔案描述了如何將 Bluetooth USB 轉接器連接到 Modalix SOM DevKit，並使用 `bluez` 啟動 Bluetooth 協議堆疊。
+
+:::info
+Bluetooth 支援功能需要 SDK 版本 **2.1.0** 或更高版本，且必須在 eLxr 執行階段上執行。若要檢查執行階段，請參閱 [轉換為 eLxr](./elxr-conversion)。
+:::
+
+<details open>
+<summary><strong>步驟 1：連接一個 Bluetooth USB 轉接器。</strong></summary>
+
+將 Bluetooth USB 轉接器插入 DevKit 上的其中一個 USB 連接埠，然後確認核心是否使用 `lsusb` 正確識別該裝置：
+
+```console
+sima@modalix:~$ lsusb
+Bus 002 Device 002: ID 0bda:0489 Realtek Semiconductor Corp. 4-Port USB 3.0 Hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 003: ID 7392:c611 Edimax Technology Co., Ltd Edimax Bluetooth Adapter
+Bus 001 Device 002: ID 0bda:5489 Realtek Semiconductor Corp. 4-Port USB 2.0 Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+```
+
+Bluetooth 介面卡應該會顯示在列表中（在本範例中，是匯流排 001 裝置 003 上的 `Edimax Bluetooth Adapter`）。如果您的介面卡未顯示在列表中，請拔下並重新插入，或嘗試使用不同的 USB 連接埠。
+
+</details>
+
+<details open>
+<summary><strong>步驟 2：安裝 BlueZ。</strong></summary>
+
+安裝 `bluez` 堆疊和 `bluetooth` 服務：
+
+```console
+sima@modalix:~$ sudo apt update && sudo apt-get install bluez bluetooth -y
+```
+
+</details>
+
+<details open>
+<summary><strong>步驟 3：驗證 Bluetooth 核心模組。</strong></summary>
+
+確認內建的 `bluetooth` 核心模組是否可用：
+
+```console
+sima@modalix:~$ modinfo bluetooth
+filename:       /lib/modules/6.18.3-modalix/kernel/net/bluetooth/bluetooth.ko
+alias:          net-pf-31
+license:        GPL
+version:        2.22
+description:    Bluetooth Core ver 2.22
+author:         Marcel Holtmann <marcel@holtmann.org>
+srcversion:     5D3CDB34E67B8B16F66F6AC
+depends:        ecdh_generic,rfkill
+intree:         Y
+name:           bluetooth
+vermagic:       6.18.3-modalix SMP preempt mod_unload aarch64
+parm:           disable_esco:Disable eSCO connection creation (bool)
+parm:           disable_ertm:Disable enhanced retransmission mode (bool)
+parm:           enable_ecred:Enable enhanced credit flow control mode (bool)
+```
+
+</details>
+
+<details open>
+<summary><strong>步驟 4：啟動 bluetoothctl。</strong></summary>
+
+啟動互動式 Bluetooth 控制器：
+
+```console
+sima@modalix:~$ bluetoothctl
+Agent registered
+[bluetooth]#
+```
+
+`bluetoothctl` 是 BlueZ 的互動式指令介面，用於管理本機配接器和遠端裝置。從 `[bluetooth]#` 指令提示字元開始，以下指令涵蓋了典型的配對和連線流程：
+
+| 指令 | 目的 |
+| --- | --- |
+| `power on` | 開啟本機的 Bluetooth 控制器。在進行任何掃描或配對之前，這是必要的。 |
+| `agent on` / `default-agent` | 註冊並啟用預設配對代理程式，以便在此終端機中處理 PIN 碼和確認提示。 |
+| `scan on` | 開始搜尋。附近的裝置會以 `[NEW] Device <MAC> <Name>` 的形式顯示。當目標裝置已列出時，執行 `scan off`。 |
+| `devices` | 列出控制器已偵測到的裝置。 |
+| `pair <MAC>` | 透過 MAC 位址與裝置配對。系統可能會提示您在兩端都確認密碼。 |
+| `trust <MAC>` | 將該裝置標記為「受信任」，以便在下次啟動時自動重新連線，而無需重新配對。 |
+| `connect <MAC>` | 建立一個有效的連線。對於音訊裝置而言，這會顯示在步驟 6 中使用的 A2DP 接收端。 |
+| `info <MAC>` | 顯示裝置詳細資訊（已配對、已信任、已連線、支援的設定檔）。 |
+| `disconnect <MAC>` / `remove <MAC>` | 中斷連線，或完全移除配對記錄。 |
+| `help` | 列出所有可用的指令及其參數。 |
+| `quit` / `exit` | 離開 `bluetoothctl` 介面。 |
+
+一個簡化的配對課程可能如下所示：
+
+```console
+[bluetooth]# power on
+[bluetooth]# agent on
+[bluetooth]# scan on
+...
+[NEW] Device AA:BB:CC:DD:EE:FF My Speaker
+[bluetooth]# scan off
+[bluetooth]# pair AA:BB:CC:DD:EE:FF
+[bluetooth]# trust AA:BB:CC:DD:EE:FF
+[bluetooth]# connect AA:BB:CC:DD:EE:FF
+```
+
+一旦 `connect` 報告 `Connection successful`，該裝置便已準備好執行以下音訊路由步驟。
+
+</details>
+
+:::note
+步驟 5 到步驟 7 僅適用於 Bluetooth **音訊**裝置（例如：揚聲器、耳機等）。對於非音訊周邊設備（例如：鍵盤、滑鼠、遊戲手把、感測器、檔案傳輸裝置），在步驟 4 中進行配對就已足夠，您可以跳過本指南的其餘部分。
+:::
+
+<details open>
+<summary><strong>步驟 5：安裝音訊函式庫和播放器。</strong></summary>
+
+若要將音訊從 DevKit 串流至已配對的 Bluetooth 喇叭或耳機，請安裝 PipeWire、BlueZ SPA 外掛程式，以及一個終端機音訊播放器：
+
+```console
+sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
+```
+
+</details>
+
+<details open>
+<summary><strong>步驟 6：將音訊路由傳送到 Bluetooth 接收端。</strong></summary>
+
+在完成第 4 步驟，並已配對且連接 Bluetooth 音訊裝置後，列出可用的 PipeWire/PulseAudio 輸出裝置：
+
+```console
+sima@modalix:~$ pactl list short sinks
+```
+
+找到與您已配對的裝置相對應的 `bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink` 條目，然後將其設定為預設的音訊輸出裝置（將佔位符 MAC 位址替換為來自先前指令的值）：
+
+```console
+sima@modalix:~$ pactl set-default-sink bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink
+```
+
+重新啟動 Bluetooth 和音訊服務，以便新的路由設定生效：
+
+```console
+sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-pulse
+```
+
+</details>
+
+<details open>
+<summary><strong>步驟 7：使用 cmus 播放音訊。</strong></summary>
+
+啟動 `cmus`，並將音訊檔案或目錄加入播放佇列，以驗證透過 Bluetooth 裝置的播放效果：
+
+```console
+sima@modalix:~$ cmus
+```
+
+在 `cmus` 介面中，按下 `5` 以切換到檔案瀏覽器，導航至媒體檔案，然後按下 `Enter` 以播放。音訊現在應該會串流到已配對的 Bluetooth 裝置。
+
+</details>

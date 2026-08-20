@@ -1,0 +1,135 @@
+---
+title: "Налаштування NFS"
+description: "Надайте спільний доступ до великих наборів даних і файлів моделей між хостом Ubuntu та Modalix DevKit через NFS."
+sidebar_position: 2
+---
+
+# Налаштування NFS
+
+Під час роботи з великими наборами даних або файлами моделей швидкий і ефективний доступ до файлів є важливим для забезпечення плавної демонстрації та зручного процесу розробки.
+
+Використання NFS (мережевої файлової системи) забезпечує безперешкодний обмін файлами між машиною Ubuntu (сервером) і Modalix DevKit (клієнтом), надаючи прямий доступ до великих обсягів пам’яті без необхідності створення локальних копій.
+
+:::note
+NFS особливо корисний, коли в DevKit відсутні високошвидкісні, великі обсяги пам’яті, як-от NVMe. Це стосується таких платформ, як MLSoC і комплект раннього доступу Modalix (EA), де покладатися лише на SD-карти може призвести до збільшення часу завантаження.
+:::
+
+NFS може бути особливо корисним у таких випадках:
+
+- Великі моделі або набори даних необхідно передавати між різними пристроями.
+- Обсяг локального сховища на пристрої користувача обмежений або недоступний.
+- Централізоване керування сховищем є кращим рішенням для спрощення процесу оновлення.
+
+<details open>
+<summary><strong>Крок 1. Налаштування сервера NFS.</strong></summary>
+
+1. **Встановіть серверне ядро NFS**:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo apt update
+   sima-user@sima-user-machine:~$ sudo apt install -y nfs-kernel-server
+   ```
+
+2. **Створіть спільну папку**:
+
+   Оберіть каталог, яким ви хочете поділитися з Modalix DevKit:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo mkdir -p /mnt/nfs_share
+   sima-user@sima-user-machine:~$ sudo chmod 777 /mnt/nfs_share
+   ```
+
+3. **Відредагуйте файл налаштувань NFS Export**:
+
+   Відкрийте файл експорту:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo nano /etc/exports
+   ```
+
+   Додайте наступний рядок в кінці, замінивши `<modalix_ip>` на IP-адресу Modalix DevKit:
+
+   ```
+   /mnt/nfs_share <modalix_ip>(rw,sync,no_subtree_check)
+   ```
+
+   Якщо ви хочете надати доступ з будь-якої IP-адреси у вашій мережі (для тестування), використовуйте:
+
+   ```
+   /mnt/nfs_share *(rw,sync,no_subtree_check)
+   ```
+
+4. **Застосуйте зміни та перезапустіть службу NFS**:
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo exportfs -a
+   sima-user@sima-user-machine:~$ sudo systemctl restart nfs-kernel-server
+   ```
+
+</details>
+
+<details open>
+<summary><strong>Крок 2. Налаштування клієнта NFS.</strong></summary>
+
+1. **Створіть точку монтування**:
+
+   ```bash
+   modalix:~$ sudo mkdir -p /mnt/
+   ```
+
+2. **Змонтуйте мережеву папку NFS**:
+
+   Замініть `<server_ip>` на IP-адресу комп’ютера з операційною системою Ubuntu:
+
+   ```bash
+   modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
+   ```
+
+3. **Перевірте встановлення**:
+
+   Перевірте, чи правильно змонтовано мережеву файлову систему NFS:
+
+   ```bash
+   modalix:~$ df -h | grep mnt
+   ```
+
+</details>
+
+<details open>
+<summary><strong>Крок 3. Забезпечення постійного підключення</strong></summary>
+
+Щоб автоматично під’єднати мережеву файлову систему NFS під час завантаження, виконайте такі дії в Modalix:
+
+1. **Створіть файл mnt.mount**:
+
+   ```bash
+   modalix:~$ sudo vi /etc/systemd/system/mnt.mount
+   ```
+
+2. **Додайте цей вміст до файлу, обов’язково замініть server_IP на IP-адресу машини Ubuntu:**
+
+   ```
+   [Unit]
+   Description=NFS Mount
+   After=network-online.target
+   Requires=network-online.target
+
+   [Mount]
+   What=<server_IP>:/mnt/nfs_share
+   Where=/mnt/
+   Type=nfs
+   Options=defaults,_netdev
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. **Збережіть і вийдіть. Потім перевірте налаштування:**
+
+   ```bash
+   modalix:~$ sudo systemctl daemon-reload
+   modalix:~$ sudo systemctl enable mnt.mount
+   modalix:~$ sudo systemctl start mnt.mount
+   ```
+
+</details>

@@ -1,0 +1,101 @@
+---
+title: "Modalix DevKit"
+description: "Компактна, високопродуктивна платформа Modalix для швидкої розробки прототипів вбудованих периферійних систем штучного інтелекту."
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix DevKit
+
+**Modalix DevKit** — це компактна, високопродуктивна платформа розробки, призначена для швидкого створення прототипів і тестування вбудованих периферійних застосунків штучного інтелекту. DevKit, створена на основі потужної платформи Modalix, поєднує в собі передове апаратне прискорення та оптимізований програмний комплекс, що забезпечує ефективне, гнучке та масштабоване обчислення штучного інтелекту для різних завдань, таких як комп’ютерний зір, великі мовні моделі (LLM) і обробка багатомодальних даних у реальному часі.
+
+<Tabs>
+<TabItem value="interfaces" label="Інтерфейси" default>
+
+<img src="/img/devkit/modalix-devkit.png" alt="SiMa.ai Modalix Інтерфейси SoM." style={{width: '60%', display: 'block', margin: '0 auto'}} />
+
+| Інтерфейс | Опис |
+| --- | --- |
+| Ethernet-порт (end0) | RJ45, мережеві інтерфейси 1GigE для віддаленого підключення. |
+| COM-порт для підключення до хоста (USB-C). | Спрощує налагодження, забезпечуючи підключення до хост-системи. |
+| MIPI Інтерфейси (X2) | Для підключення камер MIPI. [Налаштування](/hardware/getting-started/standalone-mode/#mipi) |
+| USB Інтерфейси (X4) | Інтерфейси USB 3.0, що підтримують мікрофон, динамік і USB відеокамеру. |
+| Інтерфейс HDMI (1 шт.) | HDMI 1.4 для підключення зовнішнього дисплея (максимальна роздільна здатність 4K при 30 Гц, 1080p при 60 Гц). |
+| Вбудована пам’ять (eMMC) | 16 ГБ |
+| NVMe | M.2, 512 ГБ |
+| USB | 4 порти USB 3.0. |
+
+Для отримання додаткової інформації про продукт відвідайте офіційний веб-сайт: [SiMa.ai](https://sima.ai/mlsoc/).
+
+</TabItem>
+<TabItem value="features" label="Основні характеристики">
+
+| Функція | Деталі |
+| --- | --- |
+| Продуктивність штучного інтелекту MLA | 50 тераоперацій за секунду для обчислень у нейронній мережі INT8. Також підтримує обчислення з точністю bf16. |
+| Споживання енергії | Від 8 Вт до 12 Вт, залежно від навантаження. |
+| Підрозділ обробки заявок (ПОЗ) | Кластер із восьми двоядерних процесорів [Процесор Arm Cortex-A65](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65), що працюють у режимі багатопоточності, з частотою до 1,4 ГГц, забезпечує продуктивність до 32 тис. Dhrystone MIPs. Восьмиядерний процесор з частотою 1,4 ГГц. |
+| Відеокодек | Підтримує стандарти стиснення H.264 (AVC), H.265 (HEVC) та MJPEG. Забезпечує підтримку профілів AVC Main/High, HEVC Main та MJPEG Baseline. Кодек підтримує H.264/H.265 зі швидкістю до 4K при 60 кадрах в секунду. |
+| Відеодекодер | підтримує стандарти стиснення H.264 (AVC), H.265 (HEVC), AV1 та MJPEG. Він підтримує профілі AVC main/high, HEVC main, AV1 main та MJPEG Baseline. Він підтримує пікселі 4:2:0 і 8-бітну точність. Декодер підтримує H.264/H.265 зі швидкістю до 4KP60. |
+| Підрозділ комп’ютерного зору (ПКЗ) | Чотирьохядерний процесор Synopsys [Процесор ARC EV74 Vision](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors), що підтримує до **750 операцій з 16-бітними даними в секунду (GOPS)**. |
+| Пам’ять | 32 ГБ оперативної пам’яті LPDDR5, з яких 6 ГБ виділено для ядер ARM і 16 ГБ – для модуля машинного навчання (MLA). Решта об’єму пам’яті виділяється для інших компонентів системи. |
+| Зберігання | 16 ГБ вбудованої пам’яті eMMC із роз’ємом для карти microSD для додаткового обсягу пам’яті. |
+| Налагодження зв’язків | 1 порт 10GigE доступний через основну плату. |
+
+</TabItem>
+<TabItem value="revisions" label="Редагування">
+
+<table>
+  <colgroup>
+    <col style={{width: '200px'}} />
+    <col />
+    <col />
+    <col />
+  </colgroup>
+  <thead>
+    <tr><th>Перегляд</th><th>1</th><th>2</th><th>3</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Зображення</th>
+      <td><img src="/img/media/modalix-devkit-blue.png" alt="Версія 1" width="80%" /></td>
+      <td><img src="/img/media/modalix-devkit-white.png" alt="Версія 2" width="80%" /></td>
+      <td><img src="/img/media/modalix-devkit-blue.png" alt="Версія 3" width="80%" /></td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Колір корпусу</th>
+      <td>Синій</td><td>Білий</td><td>Синій</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Основна плата</th>
+      <td>Waveshare</td><td>Seeed Studio</td><td>Waveshare</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>MIPI Тип роз’єму</th>
+      <td>22 виводи</td><td>30 контактів</td><td>22 виводи</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Послідовні інтерфейси камери</th>
+      <td>CSI1/CSI2</td><td>CSI0/CSI2</td><td>CSI1/CSI2</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Формат серійного номера</th>
+      <td>SNXXX</td><td>SNXXX-S</td><td>SNXXX</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Перегляд SoM</th>
+      <td>1 (Без наклейки, лише основна плата для розробників)</td>
+      <td>1 (Без наклейки, лише плата DevKit).</td>
+      <td><a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf">2</a> (Наклейка, сумісна з материнськими платами сторонніх виробників)</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Наявність</th>
+      <td>GA</td><td>Зразки для інженерних випробувань</td><td>Зразки для інженерних випробувань</td>
+    </tr>
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>

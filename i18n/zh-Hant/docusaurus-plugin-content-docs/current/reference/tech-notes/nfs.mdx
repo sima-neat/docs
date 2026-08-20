@@ -1,0 +1,135 @@
+---
+title: "設定 NFS"
+description: "透過 NFS，在 Ubuntu 主機和 Modalix DevKit 之間共享大型資料集和模型檔案。"
+sidebar_position: 2
+---
+
+# 設定 NFS
+
+在處理大型資料集或模型檔案時，快速且高效的檔案存取對於順暢的示範和開發體驗至關重要。
+
+使用 NFS（網路檔案系統）可實現 Ubuntu 機器（伺服器）和 Modalix DevKit（使用者端）之間無縫的檔案共用，從而可以直接存取大型儲存空間，而無需建立本機副本。
+
+:::note
+NFS 在以下情況下特別有用：當 DevKit 缺乏高速、大容量的儲存裝置，例如 NVMe。這適用於 MLSoC 和 Modalix 早期存取套件 (EA) 等平台，如果僅依賴 SD 卡，可能會導致載入時間變慢。
+:::
+
+在以下情況下，NFS 可能特別有用：
+
+- 大型模型或資料集需要跨多個裝置進行共享。
+- 使用者端上的本機儲存空間有限或無法使用。
+- 為了簡化更新作業，建議採用集中式儲存管理。
+
+<details open>
+<summary><strong>步驟 1：設定 NFS 伺服器</strong></summary>
+
+1. **安裝 NFS 核心伺服器**：
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo apt update
+   sima-user@sima-user-machine:~$ sudo apt install -y nfs-kernel-server
+   ```
+
+2. **建立一個共用資料夾**：
+
+   選擇一個目錄，以便與 Modalix DevKit 共享：
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo mkdir -p /mnt/nfs_share
+   sima-user@sima-user-machine:~$ sudo chmod 777 /mnt/nfs_share
+   ```
+
+3. **編輯 NFS 匯出檔案**：
+
+   開啟匯出檔案：
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo nano /etc/exports
+   ```
+
+   在結尾處新增以下這一行，將 `<modalix_ip>` 替換為 Modalix DevKit 的 IP 位址：
+
+   ```
+   /mnt/nfs_share <modalix_ip>(rw,sync,no_subtree_check)
+   ```
+
+   如果您想允許網路中任何 IP 位址都能存取（用於測試），請使用：
+
+   ```
+   /mnt/nfs_share *(rw,sync,no_subtree_check)
+   ```
+
+4. **套用變更並重新啟動 NFS 服務**：
+
+   ```bash
+   sima-user@sima-user-machine:~$ sudo exportfs -a
+   sima-user@sima-user-machine:~$ sudo systemctl restart nfs-kernel-server
+   ```
+
+</details>
+
+<details open>
+<summary><strong>步驟 2：設定 NFS 使用者端。</strong></summary>
+
+1. **建立掛載點**：
+
+   ```bash
+   modalix:~$ sudo mkdir -p /mnt/
+   ```
+
+2. **掛載 NFS 共享資料夾**：
+
+   將 `<server_ip>` 替換為 Ubuntu 機器上的 IP 位址：
+
+   ```bash
+   modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
+   ```
+
+3. **確認掛載點**：
+
+   檢查 NFS 共享是否已正確掛載：
+
+   ```bash
+   modalix:~$ df -h | grep mnt
+   ```
+
+</details>
+
+<details open>
+<summary><strong>步驟 3：設定磁碟機永久掛載。</strong></summary>
+
+若要於啟動時自動掛載 NFS 共用資料夾，請在 Modalix 上執行以下步驟：
+
+1. **建立 mnt.mount 檔案**：
+
+   ```bash
+   modalix:~$ sudo vi /etc/systemd/system/mnt.mount
+   ```
+
+2. **將此內容新增到檔案中，請務必將「server_IP」替換為 Ubuntu 機器上的 IP 位址：**
+
+   ```
+   [Unit]
+   Description=NFS Mount
+   After=network-online.target
+   Requires=network-online.target
+
+   [Mount]
+   What=<server_IP>:/mnt/nfs_share
+   Where=/mnt/
+   Type=nfs
+   Options=defaults,_netdev
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+3. **儲存並退出。然後，測試設定：**
+
+   ```bash
+   modalix:~$ sudo systemctl daemon-reload
+   modalix:~$ sudo systemctl enable mnt.mount
+   modalix:~$ sudo systemctl start mnt.mount
+   ```
+
+</details>

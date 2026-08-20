@@ -1,86 +1,83 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
 import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
 const actions = developerCenterShell.navbarItems();
 
-// 11:59:59 PM Pacific (PDT, UTC-7) on Jun 15, 2026. The WIP banner auto-hides
-// once the viewer's clock passes this instant.
-const WIP_DEADLINE = Date.parse('2026-06-15T23:59:59-07:00');
+function readLocalePreference() {
+  const supported = new Set(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code));
+  const cookie = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(`${developerCenterShell.LOCALE_COOKIE}=`));
+  const cookieLocale = cookie
+    ? decodeURIComponent(cookie.split('=').slice(1).join('='))
+    : '';
+  if (supported.has(cookieLocale)) return cookieLocale;
 
-function WipBanner() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(true);
-
-  useEffect(() => {
-    // Hide once the viewer's clock passes the deadline.
-    if (Date.now() >= WIP_DEADLINE) {
-      setVisible(false);
-      return undefined;
-    }
-    // Publish the banner's height so the fixed bars and content below it are
-    // pushed down by exactly the right amount (--wip-offset, default 0).
-    const root = document.documentElement;
-    const syncOffset = () => {
-      if (ref.current) {
-        root.style.setProperty('--wip-offset', `${ref.current.offsetHeight}px`);
-      }
-    };
-    syncOffset();
-    window.addEventListener('resize', syncOffset);
-    return () => {
-      window.removeEventListener('resize', syncOffset);
-      root.style.removeProperty('--wip-offset');
-    };
-  }, []);
-
-  if (!visible) {
-    return null;
+  try {
+    const storedLocale = window.localStorage.getItem(developerCenterShell.LOCALE_KEY);
+    if (supported.has(storedLocale)) return storedLocale;
+  } catch (_) {
+    // Restricted storage should not prevent the English landing page rendering.
   }
-  return (
-    <div ref={ref} className="wip-banner" role="status">
-      🚧 This documentation site is a work in progress — content is incomplete and may change.
-    </div>
-  );
+
+  return developerCenterShell.DEFAULT_LOCALE;
 }
 
-function PortalButton({action}) {
+function localizedActionHref(action, locale) {
+  if (action.external || locale === developerCenterShell.DEFAULT_LOCALE) return action.href;
+  if (action.key === 'hardware') return `/${locale}${action.href}`;
+  if (action.key === 'software') return `${action.href}/${locale}`;
+  return action.href;
+}
+
+function PortalButton({action, label, locale}) {
   const className = clsx(styles.portalButton, styles[action.tone]);
-  if (action.external) {
-    return (
-      <a className={className} href={action.href}>
-        {action.label}
-      </a>
-    );
-  }
   return (
-    <Link className={className} to={action.href}>
-      {action.label}
-    </Link>
+    <a className={className} href={localizedActionHref(action, locale)}>
+      {label}
+    </a>
   );
 }
 
 export default function Home() {
+  const [locale, setLocale] = useState(developerCenterShell.DEFAULT_LOCALE);
+
+  useEffect(() => {
+    setLocale(readLocalePreference());
+    const onLanguageChange = (event) => {
+      if (developerCenterShell.SHELL_TRANSLATIONS[event?.detail?.locale]) {
+        setLocale(event.detail.locale);
+      }
+    };
+    window.addEventListener('developer-center-language-change', onLanguageChange);
+    return () => window.removeEventListener('developer-center-language-change', onLanguageChange);
+  }, []);
+
+  const copy = developerCenterShell.SHELL_TRANSLATIONS[locale]
+    || developerCenterShell.SHELL_TRANSLATIONS.en;
+
   return (
     <Layout
-      title="Developer Center"
-      description="SiMa.ai Developer Center">
-      <WipBanner />
+      title={copy.landing.kicker}
+      description={copy.landing.summary}>
       <main className={styles.pageShell}>
         <section className={styles.hero}>
           <div className={styles.brandPanel}>
             <img className={styles.logo} src="/img/sima-logo.png" alt="SiMa.ai" />
-            <p className={styles.kicker}>Developer Center</p>
-            <h1>Open, Simple, Performant, Neat!</h1>
-            <p className={styles.summary}>
-              Learn how to build physical AI with SiMa.ai technology. Explore hardware interfaces, software tools, and best practices for building high-performance AI applications.
-            </p>
-            <div className={styles.actions} aria-label="Documentation sections">
+            <p className={styles.kicker}>{copy.landing.kicker}</p>
+            <h1>{copy.landing.title}</h1>
+            <p className={styles.summary}>{copy.landing.summary}</p>
+            <div className={styles.actions} aria-label={copy.landing.sectionsLabel}>
               {actions.map((action) => (
-                <PortalButton key={action.label} action={action} />
+                <PortalButton
+                  key={action.key}
+                  action={action}
+                  label={copy.navItems[action.key] || action.label}
+                  locale={locale}
+                />
               ))}
             </div>
           </div>

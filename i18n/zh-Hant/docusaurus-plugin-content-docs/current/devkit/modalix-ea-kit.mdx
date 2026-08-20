@@ -1,0 +1,47 @@
+---
+title: "Modalix 搶先體驗版 DevKit"
+description: "用於評估、原型設計和邊緣 AI 部署的預發布版高效能 Modalix 開發平台。"
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix 搶先體驗版 DevKit
+
+**Modalix 搶先體驗版 DevKit** 是一款預發布的高效能開發平台，旨在用於評估、原型設計和部署邊緣 AI 應用程式。 作為搶先體驗版本，它為精選的開發人員提供先進的硬體加速功能和最佳化的軟體堆疊，適用於廣泛的推論工作負載，包括電腦視覺、大型語言模型 (LLM) 和即時多模態處理。
+
+<Tabs>
+<TabItem value="interfaces" label="介面" default>
+
+<img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="SiMa.ai Modalix 早期版本套件介面" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+| 介面 | 描述 |
+| --- | --- |
+| 乙太網路埠 (eth0、eth1、eth2、eth3) | RJ45，用於遠端連線的 10GigE 網路介面。 |
+| 12V 電源 (J8) | 需要一個 12V 電源轉接器，請使用隨附的電源轉接器連接到此連接埠。 |
+| 電源開關 | 在電源供應器連接器的旁邊，如果需要，可以使用筆觸及開關，以開啟或關閉裝置。 |
+| COM 埠至主機 | 透過連接到主機系統，以方便進行除錯。請確認隨附纜線上的箭頭標記連接到最左側的插腳，以確保正確對齊。 |
+| 重設按鈕 | 僅以獨立模式提供。允許重設裝置，以便重新啟動或從錯誤中恢復。 |
+| MIPI 介面 (X4) | 用於連接相機。 |
+| Micro SD 卡插槽 | 用於額外的儲存空間。 |
+
+如需更多產品資訊，請瀏覽官方網站：[SiMa.ai](https://sima.ai/mlsoc/)。
+
+</TabItem>
+<TabItem value="features" label="主要功能">
+
+| 功能 | 詳細資訊 |
+| --- | --- |
+| MLA 人工智慧效能 | 每秒可執行 50 兆次運算，用於 INT8 神經網路運算。同時也支援 bf16 精度。 |
+| 耗電量 | 根據工作量，範圍從 8W 到 12W。 |
+| 申請處理部門 (APU) | 一組由八個組成的 [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) 雙執行緒處理器，運作頻率高達 1.4 GHz，可提供高達 32K Dhrystone MIPs 的效能。八核心，頻率為 1.4 GHz。 |
+| 視訊編碼器 | 支援 H.264（AVC）、H.265（HEVC）和 MJPEG 壓縮標準。它支援 AVC 主要/高畫質設定檔、HEVC 主要設定檔和 MJPEG 基本設定檔。編碼器支援高達 4KP60 幀率的 H.264/H.265。 |
+| 視訊解碼器 | 支援 H.264 (AVC)、H.265 (HEVC)、AV1 和 MJPEG 壓縮標準。它支援 AVC 主要/高畫質設定檔、HEVC 主要設定檔、AV1 主要設定檔和 MJPEG 基本設定檔。它支援 4:2:0 像素和 8 位元精確度。解碼器支援高達 4KP60 幀率的 H.264/H.265。 |
+| 電腦視覺單元 (CVU) | 四核心 Synopsys [ARC EV74 視覺處理器](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors)，支援高達 **750 個 16 位元的 GOPS**。 |
+| 記憶體 | 64GB LPDDR5 記憶體，其中 10GB 分配給 ARM 核心，40GB 分配給 MLA，其餘則由系統使用。 |
+| 儲存 | 內建 10GB eMMC 儲存空間，並配備 microSD 卡插槽，可擴充儲存空間。 |
+| 建立人脈 | 4 個 10GbE 連接埠。 |
+
+</TabItem>
+</Tabs>

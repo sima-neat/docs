@@ -25,6 +25,28 @@ const themeBootstrapScript = `(function(){try{
   document.documentElement.setAttribute('data-theme-choice',t);
 }catch(e){}})();`;
 
+// Apply the cross-site documentation-language preference before Docusaurus
+// hydrates so Hardware and Software switch without flashing the previous
+// locale. Hardware's locale prefix precedes its route base (`/ja/hardware`).
+const languageBootstrapScript = `(function(){try{
+  var supported=${JSON.stringify(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code))};
+  var m=document.cookie.match(/(?:^|; )${developerCenterShell.LOCALE_COOKIE}=([^;]*)/);
+  var preferred=m?decodeURIComponent(m[1]):${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)};
+  if(supported.indexOf(preferred)===-1)return;
+  var parts=window.location.pathname.split('/').filter(Boolean);
+  var hardwareIndex=parts.indexOf('hardware');
+  if(hardwareIndex<0)return;
+  var localeIndex=hardwareIndex>0&&supported.indexOf(parts[hardwareIndex-1])>0?hardwareIndex-1:-1;
+  var current=localeIndex>=0?parts[localeIndex]:${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)};
+  if(current===preferred)return;
+  if(localeIndex>=0)parts.splice(localeIndex,1);
+  if(preferred!==${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)}){
+    hardwareIndex=parts.indexOf('hardware');
+    parts.splice(hardwareIndex,0,preferred);
+  }
+  window.location.replace('/'+parts.join('/')+window.location.search+window.location.hash);
+}catch(e){}})();`;
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'SiMa.ai System Documentation',
@@ -40,6 +62,11 @@ const config = {
       tagName: 'script',
       attributes: {},
       innerHTML: themeBootstrapScript,
+    },
+    {
+      tagName: 'script',
+      attributes: {},
+      innerHTML: languageBootstrapScript,
     },
     {
       tagName: 'script',
@@ -65,7 +92,13 @@ const config = {
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code),
+    localeConfigs: Object.fromEntries(
+      developerCenterShell.SUPPORTED_LOCALES.map(({code, label, htmlLang}) => [
+        code,
+        {label, htmlLang},
+      ]),
+    ),
   },
 
   presets: [

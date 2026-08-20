@@ -1,0 +1,358 @@
+---
+title: "ファームウェアの更新"
+description: "Modalix DevKit のファームウェアを最新の状態に保つための方法。"
+sidebar_position: 5
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# ファームウェアの更新
+
+ファームウェアは、DevKit上で動作する基本的なソフトウェアです。ファームウェアを最新の状態に保つことは、安定性、セキュリティを確保し、新機能やパフォーマンスの向上にアクセスするために不可欠です。
+
+## オペレーティングシステム {#os}
+
+SiMa.aiとModalixのDevKitは、eLxrとLinuxを搭載しており、Debianをベースとしたディストリビューションです。**2025年12月中旬以降に出荷される**ユニットには、eLxrがあらかじめインストールされています。それ以前（2025年12月中旬以前）に出荷されたModalixユニットには、Yoctoがあらかじめインストールされており、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)の記事に従ってeLxrに変換できます。
+
+### eLxr Linux
+
+eLxrは、Modalixプラットフォーム上で、より柔軟な開発体験を実現するために設計された、DebianをベースとしたOSです。その特徴は以下のとおりです。
+
+- 完全なDebianパッケージ管理（`apt`）
+- 開発およびデバッグのための、より充実したユーザー環境
+- デバイス上で直接ツールを構築およびインストールできる機能
+
+### ModalixにおけるeLxrの利点
+
+Modalix のユーザーは、より開発しやすい環境を利用できるようになり、具体的には以下の点が改善されます。
+
+- 標準の Debian パッケージへのアクセス。
+- クロスコンパイルなしで、より迅速な反復開発が可能
+- 簡素化されたツールチェーン管理
+- より多様なライブラリやフレームワークからなるエコシステム
+
+## 更新方法
+
+DevKitのファームウェアを更新するためのサポートされている方法は3つあります。
+
+- **[sima-cli を使用して更新します。](#sima-cli)** — ファームウェアイメージをネットワーク経由で転送し、DevKit で自動的にアップデートを実行します。この方法は、現場でのアップデートに最適です。
+- **[ブートイメージで更新](#bootimage)** — DevKit の起動可能なメディアを作成または復元します。故障したデバイスの復旧や、複数の起動デバイスの準備に役立ちます。
+- **[Net Boot で更新](#netboot)** — ローカルの TFTP サーバーを起動し、DevKit をフラッシュメディアを使用せずにネットワーク経由で直接起動します。リカバリー、工場出荷時の設定、または高速なカーネル/ルートファイルシステムの開発に最適です。
+
+:::note
+続行する前に、`sima-cli` をインストールまたはアップグレードしてください。このガイドは、最新バージョンの `sima-cli` での使用を想定しています。
+:::
+
+:::warning
+Modalix DevKit を SDK 1.7 から 2.0 にアップグレードするには、追加の手順が必要です。変換手順については、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion) ガイドを参照してください。
+:::
+
+<Tabs groupId="firmware-update-method">
+<TabItem value="sima-cli" label="sima-cli を使用して更新します。" default>
+
+## sima-cli で更新 {#sima-cli}
+
+この方法では、開発者は `sima-cli` ツールを使用して、SiMa.ai DevKit のファームウェアを更新できます。この手順では、ファームウェアイメージをホストマシンにダウンロードし、DevKit に転送して更新を行います。
+
+作業を開始する前に、ホストマシンがネットワーク経由で DevKit にアクセスできることを確認してください。詳細については、以下を参照してください。
+
+- [スタンドアロンモードのネットワーク設定](/hardware/getting-started/standalone-mode/#network)
+- [PCIe モードの仮想ネットワーク設定](/hardware/getting-started/pcie-mode#virtual-network)
+
+<Tabs groupId="sima-cli-source">
+<TabItem value="from-devkit" label="DevKitから" default>
+
+開発者は、スタンドアロンの DevKit 上で `sima-cli` を直接実行して、デバイスを更新できます。DevKit がインターネットに接続されていることを確認してから、次のコマンドを実行してください。
+
+```console
+modalix:~$ sima-cli update
+```
+
+MLSoC 上で Yocto Linux を実行している開発者は、バージョン文字列の代わりに完全な URL を指定することもできます。これは、以前にイメージをダウンロードしてホストに配置した場合に適用されます。
+
+```console
+davinci:~$ sima-cli update http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="from-host" label="From Host Machine">
+
+:::note
+この方法は、Yocto を実行している MLSoC プラットフォームでのみサポートされます。eLxr Linux を実行している Modalix デバイスの場合は、DevKit 上で直接アップデートを実行してください。
+:::
+
+ホストマシンから次のコマンドを実行してください。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
+```
+
+このコマンドは、該当する場合、ホストに適切な Linux ドライバーバージョンもインストールします。
+
+ファームウェアをダウンロードし、ネットワーク上のどこかに保存している場合は、URL を指定することで、インターネットから繰り返しダウンロードする必要がなくなります。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="download" label="Download only">
+
+開発者がファームウェアイメージのみをダウンロードし、より高度な手動手順で更新を実行したい場合は、適切なModalixファームウェアアーカイブのURLを指定して、`sima-cli download`を実行することで、そのように行うことができます。
+
+</TabItem>
+</Tabs>
+
+:::note
+**PCIe システムのアップデートについて：**
+
+- ファームウェアバージョン`1.5`から、仮想イーサネットインターフェースをPCIeモードで使用できるようになり、DevKitへの物理的なケーブル接続が不要になります。これにより、既存のPCIe接続を介したシームレスなアップデートが可能になります。
+- ファームウェアのバージョンが`1.4`またはそれ以前の場合、DevKitと直接ネットワーク接続を確立する必要があります。この場合、DevKitをスタンドアロンモードで接続してください。
+:::
+
+:::note
+DevKit をダウングレードする場合、または最新リリースではないビルド（例：プレリリース版の `develop` ビルド、または社内向けのエンジニアリングイメージ）をインストールする場合は、代わりに [ネットワークブートの手順](#netboot) を使用してください。この手順では、ホスト上の TFTP サーバーから DevKit を起動し、ターゲットイメージを直接 eMMC に書き込みます。
+:::
+
+</TabItem>
+<TabItem value="bootimage" label="Update with Boot Image">
+
+## ブートイメージで更新 {#bootimage}
+
+場合によっては、標準的な方法でDevKitのファームウェアを更新しても、更新ができない、または十分な効果が得られないことがあります。以下のような状況が考えられます。
+
+- DevKitの内部ストレージが破損しているか、起動に失敗しています。
+- デプロイのために、複数の起動可能なSDカードまたはリムーバブルドライブを用意する必要があります。
+
+このような場合、`sima-cli bootimg` コマンドを使用して、完全なブート可能なイメージをダウンロードし、リムーバブルデバイス（例：SDカードまたはNVMe ドライブ）に書き込むことができます。あるいは、[BalenaEtcher](https://etcher.balena.io/) のようなサードパーティ製のツールを使用することもできます。
+
+<Tabs groupId="bootimage-method">
+<TabItem value="sima-cli" label="Using sima-cli" default>
+
+```console
+sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
+```
+
+このコマンドは、以下の手順を実行します。
+
+1. 指定されたボードタイプ（`modalix`または`mlsoc`）とSDKバージョンに対応する、起動可能なイメージファイルをダウンロードします。
+2. ホストシステムをスキャンして、リムーバブルストレージデバイスを検出します。
+3. 書き込み先のデバイスを確認するように促します。
+4. 選択したデバイスにブートイメージを直接書き込みます。
+
+処理が完了したら、SDカードを安全に取り出して、DevKit に挿入できます。 次に起動すると、DevKit は新しいイメージから起動します。
+
+**重要な注意点：**
+
+- このコマンドは、LinuxまたはmacOSのホスト上で実行する必要があります。
+- 画像をダウンロードするには、インターネット接続が必要です。
+
+</TabItem>
+<TabItem value="third-party" label="Using Third-Party Tools">
+
+BalenaEtcherのようなサードパーティ製のイメージ書き込みツールも使用できます。
+
+1. まず、`sima-cli` を使用してイメージファイルをダウンロードします。
+
+   開発者がファームウェアイメージのみをダウンロードし、より高度な手動手順で更新を実行したい場合は、適切なModalixファームウェアアーカイブのURLを指定して、`sima-cli download`を実行することで、そのように行うことができます。
+
+2. ダウンロードしたアーカイブの内容を抽出します。
+
+   ```console
+   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
+   ```
+
+3. BalenaEtcherを使用して、生成された`.wic.gz`ファイルを選択し、SDカードまたはUSBドライブに書き込んでください。
+
+一度書き込んだら、デバイスをDevKitに挿入し、電源を入れてイメージから起動します。
+
+</TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="netboot" label="Update with Net Boot">
+
+## Net Boot で更新 {#netboot}
+
+特定の開発または復旧の状況においては、SDカードなどのリムーバブルデバイスを使用する代わりに、ネットワーク経由でDevKitを起動する方が、より適切であるか、あるいは必須となる場合があります。これは、特に以下の状況で役立ちます。
+
+- DevKit を、より古いバージョンの SDK に**ダウングレード**する必要があります。
+- 最新版ではないビルドをインストールする必要があります（たとえば、プレリリース版の`develop`ビルドや、社内向けのエンジニアリングイメージなど）。
+- 破損したブートローダーまたはファイルシステムを持つボードを復旧する必要があり、SDカードが利用できません。
+- 新しい基板を導入し、内部ストレージデバイスの摩耗を防ぎたいのですね。
+- Yocto LinuxからeLxrへ、またはeLxrからYocto Linuxへ、Modalix DevKitを変換しています。変換に関する具体的な前提条件については、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)を参照してください。
+
+このような場合、`--netboot`オプションと`sima-cli bootimg`を組み合わせて使用します。これにより、ターゲットボードに適したブートイメージがダウンロードされ、ホストマシンに組み込まれたTFTPサーバーを通じて提供されます。次に、DevKitをU-Bootで設定し、そのTFTPサーバーからブートするようにします。その後、新しいイメージがホストからeMMCに書き込まれます。
+
+<details open>
+<summary><strong>ステップ1：物理的な設定</strong></summary>
+
+:::note
+この手順は、**macOS** および **Ubuntu Linux** のホストでサポートされています。
+
+ホストマシンに `sima-cli` がインストールされていない場合は、先にインストールしてから続行してください。
+
+2つのターミナルセッションが必要です。
+
+1. DevKit に接続されたシリアルコンソールセッションを使用し、U-Boot の環境変数を変更して、DevKit がネットワーク経由で起動するように設定します。
+2. TFTPサーバーを起動し、eMMCフラッシュの初期化を開始するために使用されるホストシェルセッション。
+:::
+
+1. **DevKitのイーサネットポート**をホストPCに直接接続し、ホストのネットワークインターフェースを固定IPアドレス**192.168.1.10**に設定します。Modalixの早期アクセス版ボードでは、イーサネットポート0を使用してください。
+
+2. DevKit の **UART ポート**をホストに接続し、コンソールアクセスを可能にします。ホストに `sima-cli` をインストールし、シリアルターミナルを開きます。
+
+   ```console
+   sima-user@sima-user-machine:~$ sima-cli serial
+   ```
+
+3. DevKitで、ネットワークインターフェースをデフォルトの固定IPアドレス**192.168.1.20**に設定します。設定方法は、[ここに](/hardware/getting-started/standalone-mode/#network)に記載されている手順に従ってください。
+
+</details>
+
+<details open>
+<summary><strong>ステップ2：ホスト上でTFTP Netbootサーバーを起動します。</strong></summary>
+
+**要件**
+
+- ホストとDevKitは、同じ物理ネットワーク上にあるか、または直接のイーサネット回線で接続されている必要があります。
+- イーサネット接続は、ギガビットインターフェース以上（1000 Mbpsを超えるリンク速度）である必要があります。
+- ホストは、ファームウェアイメージをダウンロードするためにインターネット接続が必要です。
+- UDPポート**69（TFTP）**は、ホストのファイアウォールによってブロックされないようにしてください。
+
+`<version>` を、ターゲットとなる SDK のバージョン（例：`2.0.0`）に置き換え、`<boardtype>` を `modalix` または `mlsoc` に、`<fwtype>` を `yocto` または `elxr` に置き換えてください。
+
+**macOS の場合：**
+
+```console
+sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+```
+
+**Linux 環境の場合：**
+
+:::warning
+TFTPサーバーは、特権が必要なポート69にバインドされるため、`sudo` が必要です。
+:::
+
+```console
+sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+```
+
+このコマンドは、以下の手順を実行します。
+
+1. 要求されたSDKバージョンとボードタイプに対応する、起動可能なイメージファイルをダウンロードします。
+2. ファイルを一時的な作業ディレクトリに展開します。
+3. ローカルの TFTP サーバーを起動し、抽出されたブートファイル（`Image`、`boot.scr`、`.dtb`ファイルなど）を配信します。
+
+</details>
+
+<details open>
+<summary><strong>手順3：DevKit を Netboot 用に設定します。</strong></summary>
+
+DevKit をシリアルコンソールを介してホストに接続した状態で、電源を入れ直してください。電源の入れ直し中にシリアルコンソールの接続が切れた場合は、再度接続してください。起動メッセージが表示されるまでに数秒の遅延があります。メッセージ「`Hit any key to stop autoboot`」が表示されるまで待ち、その後、任意のキーを押して U-Boot シェルに移動します。
+
+```console
+... ... ...
+
+Address in DT is		ff:ff:ff:ff:ff:ff
+Address in environment is	68:e1:54:00:05:c6
+eth0: ethernet@a800000 [PRIME]
+Hit any key to stop autoboot:  0
+sima$
+```
+
+次に、U-Boot シェルで以下のコマンドを実行します。
+
+```console
+sima:~$ setenv boot_targets net; saveenv; boot
+```
+
+Modalixの**eLxr**ターゲットの場合、起動前にcpioイメージの名前を設定してください。
+
+```console
+sima:~$ setenv cpio_name simaai-image-palette-modalix.cpio.gz; setenv boot_targets net; saveenv; boot
+```
+
+これは、ステップ2で準備したホストのTFTPサーバーから起動するように、DevKitに指示します。
+
+:::note
+デフォルトでは、DevKit は、U-Boot とともに、以下の設定で構成されています。
+
+- `ipaddr=192.168.1.20`（DevKitのイーサネットインターフェース、マルチポートボードの最初のポート）。
+- `serverip=192.168.1.10`（TFTPサーバーが稼働しているホストマシン）。
+
+別のネットワークを使用するには、U-Boot 内の `serverip` と `ipaddr` を更新して、現在の環境に合わせます。これにより、選択した IP アドレスで DevKit がホストにアクセスできるようになります。
+
+```console
+sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
+```
+:::
+
+</details>
+
+<details open>
+<summary><strong>手順4：eMMCにファームウェアを書き込みます。</strong></summary>
+
+ホスト上の `--netboot` シェルは、次の 2 つのコマンドをサポートしています。
+
+- `c` — 接続されているすべてのクライアントと、現在それらのクライアントで実行されているファームウェアのバージョンを表示します。
+- `f` — 選択したクライアントのeMMCにファームウェアを書き込みます。
+
+DevKit がネットワークブートを完了するまで待ちます。これには数分かかる場合があります。シリアルコンソールにログインプロンプトが表示されたら、ボードは準備完了です。完全なブートシーケンスを観察するために、シリアルコンソールを接続したままにしておくことをお勧めします。
+
+ホストターミナルに戻り、`netboot>` プロンプトが表示されるまで **Enter** キーを押します。オプションで、`c` と入力して、DevKit が接続されていることを確認し、現在のファームウェアバージョンを表示してから、`f` と入力してフラッシュします。
+
+```console
+netboot> f
+```
+
+以下のようなログが表示されるはずです。
+
+```text
+🔍 Checking SSH availability for 192.168.1.20...
+✅ Board is online!
+✅ SSH is available on 192.168.1.20
+netboot> f
+🔧 Initiating eMMC flash [...]
+```
+
+画像のサイズは約1.6GBで、転送には数分かかります。進捗状況の例：
+
+```text
+↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
+↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
+```
+
+フラッシュ処理が完了したら、DevKit の電源を入れ直してください。これで、eMMC からターゲットバージョンが起動するようになります。
+
+:::note
+**ネットブート中にDevKitのIPアドレスが変更された場合**（たとえば、DHCPによってデフォルトの`192.168.1.20`とは異なるアドレスが割り当てられた場合）、`f`は単独ではボードに到達できません。DevKitのシリアルコンソールで新しいIPアドレスを確認してください。これはブートログに表示され、ネットブートされたシェルで`ip addr`によって示されます。その後、そのIPアドレスを`f`に明示的に渡してください。
+
+```console
+netboot> f <new-ip>
+```
+:::
+
+</details>
+
+<details open>
+<summary><strong>トラブルシューティング</strong></summary>
+
+- DevKit がネットワークブートに失敗した場合、ホストとデバイスの両方が同じサブネット (`192.168.1.x`) 上にあることを確認してください。
+- Modalixの早期アクセス版では、ネットワークブートに利用できるのはイーサネットポート0のみです。
+- Linux 環境では、ホストのファイアウォールが **UDP ポート 69 (TFTP)** を許可するように設定されていることを確認してください。
+- DevKitからの接続を確認してください。
+
+  ```console
+  modalix:~$ ping 192.168.1.10
+  ```
+
+- `f` がイメージを見つけられない場合は、ステップ2の `sima-cli bootimg --netboot` コマンドを再度実行して、TFTPパスを更新してください。
+- Modalix DevKit を eLxr に変換した後、シリアルコンソールに NFS 関連のエラーメッセージが表示された場合、それらは無視しても問題ありません。
+
+</details>
+
+</TabItem>
+
+</Tabs>

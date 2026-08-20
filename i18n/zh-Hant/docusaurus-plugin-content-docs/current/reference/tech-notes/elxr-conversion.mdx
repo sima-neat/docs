@@ -1,0 +1,120 @@
+---
+title: "轉換為 eLxr"
+description: "將現有的 SiMa.ai，以 Yocto 為基礎的 DevKit 遷移至新的 eLxr 執行階段，並在需要時恢復。"
+sidebar_position: 3
+---
+
+# 轉換為 eLxr
+
+本指南說明如何將現有的 SiMa.ai **Yocto 架構的 DevKit** 轉換為新的 **eLxr 執行階段**環境，以及在需要時如何切換回 Yocto。
+
+:::note
+從 SDK **2.0.0** 及其後續版本開始，即可使用 eLxr 平台，該平台可在 **Modalix DevKit** 上使用。
+
+轉換為 eLxr 需要更新 tRoot 並重新刷寫 eMMC，此過程由 [網路啟動](/hardware/getting-started/firmware-update/#netboot) 協助完成。
+:::
+
+**eLxr** 平台取代了舊版的 Yocto 環境，成為 SiMa.ai DevKit 的全新預設執行階段。
+它為開發人員提供了顯著的優勢：
+
+- **簡化的更新** — 採用統一的根檔案系統佈局，並擴大根檔案系統的容量。
+- **標準套件管理程式** — 以 Debian 為基礎，提供持續的套件管理功能。
+
+在進行遷移之前，請確認目前的環境，並按照以下快速檢查步驟操作。
+
+若要確認 DevKit 目前執行的韌體版本，請透過序列埠或 SSH 連線，然後執行：
+
+```bash
+cat /etc/buildinfo | grep DISTRO
+```
+
+您應該會看到以下其中一種情況：
+
+```text
+DISTRO = poky
+```
+
+或
+
+```text
+DISTRO = eLxr
+```
+
+如果您看到 `poky`，請按照以下步驟進行遷移。
+
+<details open>
+<summary><strong>步驟 1：更新至最新版本的 tRoot。</strong></summary>
+
+在繼續進行 eLxr 轉換之前，請將 DevKit 更新到最新的 **tRoot** 映像檔。
+
+此更新是必要的，以確保 tRoot（受信任的根）與 eLxr 相容。
+
+當主機使用靜態 IP 位址 `192.168.1.10`，且 DevKit 可透過 `192.168.1.20` 存取時（請參閱 [網路設定](/hardware/getting-started/standalone-mode/#network)）：
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```bash
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 2.0.0 --troot_only
+```
+
+在更新順利完成後，請**重新啟動 DevKit**，以應用變更。
+
+</details>
+
+<details open>
+<summary><strong>步驟 2：透過網路啟動 eLxr 映像檔，並將其燒錄到 eMMC。</strong></summary>
+
+轉換的剩餘步驟使用標準的 TFTP 網路啟動 + 快閃程序，該程序已記錄在 [使用網路啟動功能更新。](/hardware/getting-started/firmware-update/#netboot) 中。請按照以下針對 eLxr 的特定值執行該程序：
+
+- **步驟 2（啟動 TFTP 伺服器）：** 使用 `--boardtype modalix --fwtype elxr -v 2.0.0`。
+- **步驟 3（設定 U-Boot）：** 在執行 `boot` 之前，除了設定 `boot_targets=net` 之外，還需要設定 `cpio_name=simaai-image-palette-modalix.cpio.gz`。
+- **步驟 4（快閃）：** 在 `netboot>` 提示字元處輸入 `f`。
+
+![連接示意圖](/img/tech-notes/conversion-diagram.png)
+
+*連接圖*
+
+完成刷機程序並重新啟動 DevKit 後，它將會直接從 eMMC 啟動並執行 **eLxr**。
+
+</details>
+
+<details open>
+<summary><strong>步驟 3：選用。安裝 2.0 eLxr 隨附的示範版本。</strong></summary>
+
+您的 DevKit，版本為 1.7，可能預先載入了與 1.7 相容的即用型 (OOB) 示範。在將 DevKit 轉換為 2.0 版本，並使用 eLxr 之後，您可以按照以下說明升級即用型示範。
+
+若要繼續，請將您的 DevKit 連接到網際網路，並使用 SSH 連線或序列主控台來存取它。
+
+![獨立的 DevKit](/img/tech-notes/conversion-devkit-standalone.png)
+
+*獨立 DevKit*
+
+<img src="/img/media/devkit-cli.png" alt="Run on the devkit console shell" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```bash
+modalix:~$ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
+```
+
+在安裝腳本執行期間，如果您已經安裝了先前版本的 OOB 體驗，系統會提示您確認是否要升級示範版本。請輸入 `Yes` 以確認。
+
+若要安裝資源，您必須授權安裝。安裝腳本會在安裝命令期間顯示一個程式碼和一個授權網址。開啟瀏覽器，導覽至 **auth.sima.ai** 連結，並使用您的 **開發者入口網站憑證** 登入。確認終端機中顯示的程式碼，以授權安裝。
+
+</details>
+
+<details open>
+<summary><strong>還原至 Yocto（可選）。</strong></summary>
+
+若要切換回 Yocto，請再次執行 [使用網路啟動功能更新。](/hardware/getting-started/firmware-update/#netboot)，並使用 `--fwtype yocto`。對於 Yocto 目標，不需要 `cpio_name` U-Boot 變數，只需要 `setenv boot_targets net`、`saveenv` 和 `boot`。
+
+:::note
+在轉換回 Yocto 時，**沒有最低 tRoot 版本要求**，因此可以跳過上述步驟 1。
+
+如果在轉換為 eLxr 後，序列埠控制台上出現與 NFS 相關的錯誤訊息，則可以安全地忽略這些訊息。
+:::
+
+</details>
+
+## 摘要
+
+1. 更新至最新的 **tRoot** 映像檔（≥ 2.0.0）。
+2. 請按照以下步驟操作：先執行 [使用網路啟動功能更新。](/hardware/getting-started/firmware-update/#netboot)，然後使用 `--fwtype elxr` 和 eLxr `cpio_name`，將 eLxr 刷入 eMMC。
