@@ -504,7 +504,7 @@
     });
   }
 
-  async function runSearch(manifest, state, root) {
+  async function runSearch(manifest, state, root, locale) {
     const search = manifest.search || DEFAULT_MANIFEST.search;
     if (!isSearchConfigured(search)) {
       state.searchConfigured = false;
@@ -535,6 +535,7 @@
         payload: {
           query,
           hitsPerPage: MAX_SEARCH_RESULTS,
+          facetFilters: [`language:${locale}`],
           attributesToHighlight: ['title', 'content', 'hierarchy.lvl0', 'hierarchy.lvl1', 'hierarchy.lvl2'],
           attributesToSnippet: ['content:24'],
         },
@@ -584,7 +585,7 @@
     root.querySelector('[data-developer-center-search-input]')?.focus();
   }
 
-  function mountSearch(root, manifest) {
+  function mountSearch(root, manifest, locale) {
     const search = manifest.search || DEFAULT_MANIFEST.search;
 
     const state = {
@@ -605,7 +606,7 @@
 
     const scheduleSearch = () => {
       window.clearTimeout(state.timer);
-      state.timer = window.setTimeout(() => runSearch(manifest, state, root), 150);
+      state.timer = window.setTimeout(() => runSearch(manifest, state, root, locale), 150);
     };
 
     const onInput = () => {
@@ -846,7 +847,7 @@
       applyTheme(current === 'light' ? 'dark' : 'light', manifest);
       render(target, manifest, options);
     });
-    const cleanupSearch = mountSearch(target, manifest);
+    const cleanupSearch = mountSearch(target, manifest, locale);
     const cleanupLanguagePicker = mountLanguagePicker(target, manifest, locale);
     target.__developerCenterShellCleanup = () => {
       cleanupSearch();

@@ -10,6 +10,7 @@ The shell defines:
 - common theme persistence keys and cookie behavior
 - global documentation-language persistence and localized section routes
 - localized shell branding and navigation labels
+- language-filtered Algolia search across localized documentation records
 - CloudFront-routed section navigation behavior
 - navbar active-state normalization
 
@@ -27,3 +28,8 @@ Software share one preference. Local standalone Software builds can use
 Keep this code framework-light. Docusaurus consumes it directly today, and the
 same config/runtime should be reusable by the apps portal and future cross-site
 search without making those sites depend on Docusaurus internals.
+
+Search producers add a `language` attribute to every Algolia record. The
+shared shell filters each query to the selected documentation locale, while
+language-neutral Examples records advertise all supported locales. Sync jobs
+preserve existing index settings when adding `filterOnly(language)`.

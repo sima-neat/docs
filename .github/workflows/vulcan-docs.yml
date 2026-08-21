@@ -204,6 +204,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          python3 scripts/ci/test_sync_algolia_developer_center_index.py
           python3 scripts/ci/sync_algolia_developer_center_index.py \
             --docs-dir docs \
             --site-base-url "${SYSDOC_URL}" \

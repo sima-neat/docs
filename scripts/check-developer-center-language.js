@@ -98,6 +98,7 @@ for (const locale of manifest.language.locales) {
 assert.match(shellSource, /aria-haspopup="menu"/);
 assert.match(shellSource, /role="menuitemradio"/);
 assert.match(shellSource, /developer-center-language-change/);
+assert.match(shellSource, /facetFilters: \[`language:\$\{locale\}`\]/);
 assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /developer-center-language-change/);
