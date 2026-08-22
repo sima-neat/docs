@@ -31,7 +31,7 @@ const themeBootstrapScript = `(function(){try{
 const languageBootstrapScript = `(function(){try{
   var supported=${JSON.stringify(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code))};
   var m=document.cookie.match(/(?:^|; )${developerCenterShell.LOCALE_COOKIE}=([^;]*)/);
-  var preferred=m?decodeURIComponent(m[1]):${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)};
+  var preferred=m?decodeURIComponent(m[1]):null;
   if(supported.indexOf(preferred)===-1)return;
   var parts=window.location.pathname.split('/').filter(Boolean);
   var hardwareIndex=parts.indexOf('hardware');

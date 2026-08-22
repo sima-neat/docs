@@ -111,7 +111,7 @@ jobs:
           curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
           echo "${HOME}/.sima-cli/.venv/bin" >> "${GITHUB_PATH}"
           "${HOME}/.sima-cli/.venv/bin/sima-cli" neat install i18n
-          sima-i18n --version
+          "${HOME}/.sima-cli/.venv/bin/sima-i18n" --version
 
       - name: Configure AWS credentials for Vulcan config
         uses: aws-actions/configure-aws-credentials@v6
@@ -154,6 +154,7 @@ jobs:
                           "appId": algolia["app_id"],
                           "apiKey": algolia["search_api_key"],
                           "indexName": algolia["index_name"],
+                          "languageFacet": True,
                       },
                       {
                           "key": "apps",

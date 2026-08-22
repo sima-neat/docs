@@ -1,14 +1,17 @@
 import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
 const actions = developerCenterShell.navbarItems();
 
-function readLocalePreference() {
+function readLocalePreference(routeLocale) {
   const supported = new Set(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code));
+  if (supported.has(routeLocale)) return routeLocale;
+
   const cookie = document.cookie
     .split('; ')
     .find((entry) => entry.startsWith(`${developerCenterShell.LOCALE_COOKIE}=`));
@@ -44,11 +47,15 @@ function PortalButton({action, label, locale}) {
 }
 
 export default function Home() {
-  const [locale, setLocale] = useState(developerCenterShell.DEFAULT_LOCALE);
+  const {i18n} = useDocusaurusContext();
+  const routeLocale = developerCenterShell.SHELL_TRANSLATIONS[i18n.currentLocale]
+    ? i18n.currentLocale
+    : developerCenterShell.DEFAULT_LOCALE;
+  const [locale, setLocale] = useState(routeLocale);
   const quickStartHref = useBaseUrl('/tools/qsg/index.html');
 
   useEffect(() => {
-    setLocale(readLocalePreference());
+    setLocale(readLocalePreference(routeLocale));
     const onLanguageChange = (event) => {
       if (developerCenterShell.SHELL_TRANSLATIONS[event?.detail?.locale]) {
         setLocale(event.detail.locale);
@@ -56,7 +63,7 @@ export default function Home() {
     };
     window.addEventListener('developer-center-language-change', onLanguageChange);
     return () => window.removeEventListener('developer-center-language-change', onLanguageChange);
-  }, []);
+  }, [routeLocale]);
 
   const copy = developerCenterShell.SHELL_TRANSLATIONS[locale]
     || developerCenterShell.SHELL_TRANSLATIONS.en;

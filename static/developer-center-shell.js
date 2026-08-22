@@ -553,7 +553,7 @@
         payload: {
           query,
           hitsPerPage: MAX_SEARCH_RESULTS,
-          facetFilters: [`language:${locale}`],
+          ...(index.languageFacet ? {facetFilters: [`language:${locale}`]} : {}),
           // Require every query term to match (strict AND). Without this, Algolia's default
           // word-dropping fallback floods multi-word searches (e.g. "llima pull") with loose
           // partial matches. When nothing matches all terms, hits are empty and the UI shows

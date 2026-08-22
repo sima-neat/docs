@@ -98,8 +98,12 @@ for (const locale of manifest.language.locales) {
 assert.match(shellSource, /aria-haspopup="menu"/);
 assert.match(shellSource, /role="menuitemradio"/);
 assert.match(shellSource, /developer-center-language-change/);
-assert.match(shellSource, /facetFilters: \[`language:\$\{locale\}`\]/);
+assert.match(
+  shellSource,
+  /index\.languageFacet \? \{facetFilters: \[`language:\$\{locale\}`\]\} : \{\}/,
+);
 assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
+assert.match(docusaurusConfigSource, /var preferred=m\?decodeURIComponent\(m\[1\]\):null/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
@@ -112,7 +116,9 @@ assert.match(
 assert.match(shellSource, /addEventListener\('developer-center-language-change', onLanguageChange\)/);
 assert.match(hardwareRootSource, /function useShellLocale\(\)/);
 assert.match(hardwareRootSource, /addEventListener\("developer-center-language-change"/);
-assert.match(landingSource, /function readLocalePreference\(\)/);
+assert.match(landingSource, /function readLocalePreference\(routeLocale\)/);
+assert.match(landingSource, /useDocusaurusContext\(\)/);
+assert.match(landingSource, /setLocale\(readLocalePreference\(routeLocale\)\)/);
 assert.match(landingSource, /addEventListener\('developer-center-language-change'/);
 assert.match(landingSource, /action\.key === 'hardware'/);
 assert.match(landingSource, /action\.key === 'software'/);
