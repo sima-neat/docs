@@ -1,0 +1,60 @@
+---
+title: 建立啟動映像
+description: 為 Modalix 開發套件建立或恢復可啟動媒體。
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 建立啟動映像
+
+當標準更新路徑不可用或需要可移動啟動媒體時，請使用啟動映像。常見情況包括：
+
+- 開發套件的內部儲存損壞或無法啟動。
+- 您需要準備多個可啟動的 SD 卡或可移動磁碟以進行部署。
+
+使用 `sima-cli bootimg` 將完整的可啟動映像下載並寫入可移動裝置，例如 SD 卡或 NVMe 磁碟。您也可以使用第三方工具，例如 [BalenaEtcher](https://etcher.balena.io/)。
+
+<Tabs groupId="bootimage-method">
+<TabItem value="sima-cli" label="使用 sima-cli" default>
+
+```console
+sima-cli bootimg -v %platform_version% --boardtype [modalix|mlsoc]
+```
+
+此命令執行以下步驟：
+
+1. 下載指定板型（`modalix` 或 `mlsoc`）和 SDK 版本的可啟動映像。
+2. 掃描您的主機，以查找可移動儲存裝置。
+3. 提示您確認要寫入哪個裝置。
+4. 將啟動映像直接寫入選定的裝置。
+
+完成此過程後，取出 SD 卡並將其插入開發套件。下次啟動時，開發套件將從新的映像啟動。
+
+**重要注意事項：**
+
+- 必須在 Linux 或 macOS 主機上執行此命令。
+- 需要網路連線才能下載映像。
+
+</TabItem>
+<TabItem value="third-party" label="使用第三方工具">
+
+您也可以使用第三方映像寫入工具（例如 BalenaEtcher）來寫入映像。
+
+1. 首先，使用 `sima-cli` 下載映像。
+
+   若要僅下載用於手動更新步驟的韌體映像，請使用適當的 Modalix 韌體檔案的 URL 執行 `sima-cli download`。
+
+2. 提取下載的檔案內容：
+
+   ```console
+   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
+   ```
+
+3. 使用 BalenaEtcher 選擇產生的 `.wic.gz` 檔案，並將其閃存到您的 SD 卡或 USB 磁碟。
+
+寫入後，將裝置插入開發套件並開機，以從映像啟動。
+
+</TabItem>
+</Tabs>

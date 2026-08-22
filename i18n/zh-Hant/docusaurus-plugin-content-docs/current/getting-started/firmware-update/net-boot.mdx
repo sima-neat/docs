@@ -1,0 +1,185 @@
+---
+title: "網路啟動恢復"
+description: "透過網路啟動 Modalix DevKit，並將韌體燒錄到 eMMC。"
+sidebar_position: 2
+---
+
+# 網路啟動恢復
+
+當您需要透過網路啟動 DevKit，而不是從可移除媒體啟動時，請使用網路啟動恢復功能。這在以下情況下很有用：
+
+- 您需要將 DevKit 降級到較舊版本的 SDK。
+- 您需要安裝一個**不是最新版本**的建構版本（例如，預發布版本）。 `develop` 建立或使用內部工程映像檔。
+- 您需要修復一個損壞了啟動程式或檔案系統的板子，但沒有可用的 SD 卡。
+- 您正在更換新的主機板，並且希望避免內部儲存裝置過度使用。
+- 您正在將一個 Modalix DevKit 從 Yocto Linux 轉換為 eLxr，或者從 eLxr 轉換回 Yocto Linux。請參閱 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion)，以了解轉換所需的特定先決條件。
+
+使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像，並從主機上的內建 TFTP 伺服器提供該映像。然後，您可以在 U-Boot 中設定 DevKit，以便從該 TFTP 伺服器啟動，並將新的映像刷入 eMMC。
+
+<details open>
+<summary><strong>步驟 1：實體設定</strong></summary>
+
+:::note
+此程序支援 **macOS** 以及 **Ubuntu Linux** 主機。
+
+如果您尚未在您的主機上安裝 `sima-cli`，請在繼續之前先安裝。
+
+需要兩個終端機工作階段：
+
+1. 連接到 DevKit 的序列埠主控台。使用此主控台來修改 U-Boot 環境變數，以便 DevKit 透過網路啟動。
+2. 一個主機的 Shell 工作階段。使用這個工作階段來啟動 TFTP 伺服器，並開始 eMMC 快閃記憶體的運作。
+:::
+
+1. 將 **DevKit 的乙太網路連接埠** 直接連接到主機，並將主機的網路介面設定為靜態 IP 位址 **192.168.1.10**。在 Modalix 早期版本 DevKit 上，使用乙太網路連接埠 0。
+
+2. 將 DevKit 的 **UART 連接埠**連接到主機，以便進行主控台存取。在主機上安裝 `sima-cli` 後，開啟一個序列終端：
+
+   ```console
+   sima-user@sima-user-machine:~$ sima-cli serial
+   ```
+
+3. 在 DevKit 上，按照 [獨立模式網路設定](/hardware/getting-started/standalone-mode/network) 的步驟，將網路介面設定為預設的靜態 IP 位址 **192.168.1.20**。
+
+</details>
+
+<details open>
+<summary><strong>步驟 2：在主機上啟動 TFTP Netboot 伺服器。</strong></summary>
+
+**需求**
+
+- 主機和 DevKit 必須位於相同的實體網路或直接以太網路連線中。
+- 乙太網路連線必須是千兆介面或更快的介面（傳輸速率大於 1000 Mbps）。
+- 主機需要連線到網際網路才能下載韌體映像檔。
+- UDP 埠 **69 (TFTP)** 不得被主機的防火牆封鎖。
+
+將 `<version>` 替換為目標 SDK 版本（例如 `%platform_version%`），將 `<boardtype>` 替換為 `modalix` 或 `mlsoc`，並將 `<fwtype>` 替換為 `yocto` 或 `elxr`。
+
+**在 macOS 上：**
+
+```console
+sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+```
+
+**關於 Linux：**
+
+:::warning
+TFTP 伺服器會繫結到 69 埠，而該埠需要特權才能存取，因此 `sudo` 必須提供：
+:::
+
+```console
+sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+```
+
+這個指令：
+
+1. 下載指定 SDK 版本和板型對應的可開機映像檔。
+2. 將檔案解壓縮到一個暫時的工作目錄中。
+3. 啟動一個本機 TFTP 伺服器，並提供已解壓縮的啟動檔案（例如：`Image`、`boot.scr`、`.dtb` 檔案等）。
+
+</details>
+
+<details open>
+<summary><strong>步驟 3：將 DevKit 設定為透過網路啟動 </strong></summary>。
+
+在 DevKit 連接到主機時，進行電源重啟。如果在電源重啟過程中，序列埠連接中斷，請重新連接。等待直到看到「`Hit any key to stop autoboot`」，然後按下任意鍵以進入 U-Boot 介面：
+
+```console
+... ... ...
+
+Address in DT is		ff:ff:ff:ff:ff:ff
+Address in environment is	68:e1:54:00:05:c6
+eth0: ethernet@a800000 [PRIME]
+Hit any key to stop autoboot:  0
+sima$
+```
+
+然後在 U-Boot 終端機中執行以下指令：
+
+```console
+sima:~$ setenv boot_targets net; saveenv; boot
+```
+
+對於 Modalix **eLxr** 目標，在啟動之前也請設定 cpio 映像檔的名稱：
+
+```console
+sima:~$ setenv cpio_name simaai-image-palette-modalix.cpio.gz; setenv boot_targets net; saveenv; boot
+```
+
+這會指示 DevKit 從步驟 2 中準備好的主機 TFTP 伺服器啟動。
+
+:::note
+預設情況下，DevKit U-Boot 的設定如下：
+
+- `ipaddr=192.168.1.20`（DevKit的乙太網路介面，多埠板上的第一個埠）。
+- `serverip=192.168.1.10`（執行 TFTP 伺服器的主機）。
+
+若要使用不同的網路，請在 U-Boot 中更新 `serverip` 和 `ipaddr`，使其與您的環境相符。請確認 DevKit 可以透過您選擇的 IP 位址連線到主機。
+
+```console
+sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
+```
+:::
+
+</details>
+
+<details open>
+<summary><strong>步驟 4：更新 eMMC。</strong></summary>
+
+這個 `--netboot` 主機上的 Shell 支援兩個指令：
+
+- `c` — 顯示所有已連線的使用者端，以及目前正在這些使用者端上執行的韌體版本。
+- `f` — 將選取的客戶端裝置的 eMMC 進行快閃操作。
+
+請等待 DevKit 完成網路啟動。這可能需要幾分鐘。一旦序列主控台上顯示登入提示，則板子已準備就緒。我們建議在整個啟動過程中保持序列主控台的連接，以便觀察完整的啟動序列。
+
+切換回主機終端，然後按 **Enter** 鍵，直到您看到 `netboot>` 提示。您可以選擇輸入 `c` 以確認 DevKit 已連接，並顯示其目前的韌體版本，然後輸入 `f` 以進行刷寫：
+
+```console
+netboot> f
+```
+
+您應該會看到類似以下的日誌：
+
+```text
+🔍 Checking SSH availability for 192.168.1.20...
+✅ Board is online!
+✅ SSH is available on 192.168.1.20
+netboot> f
+🔧 Initiating eMMC flash [...]
+```
+
+該影像檔案大小約為 1.6 GB，傳輸過程大約需要幾分鐘。以下為進度範例：
+
+```text
+↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
+↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
+```
+
+完成刷機後，請重新啟動 DevKit。它會從 eMMC 啟動目標版本。
+
+:::note
+**如果 DevKit 的 IP 位址在網路啟動期間發生變更**（例如，因為 DHCP 分配的位址與預設的 `192.168.1.20` 不同），則 `f` 將無法自行連線到板卡。在 DevKit 的序列埠主控台上找到新的 IP 位址。它會顯示在啟動記錄中，並且在網路啟動後的 Shell 中由 `ip addr` 顯示。然後明確地將其傳遞給 `f`：
+
+```console
+netboot> f <new-ip>
+```
+:::
+
+</details>
+
+<details open>
+<summary><strong>Troubleshooting</strong></summary>
+
+- 如果 DevKit 無法透過網路啟動，請確認主機和裝置是否位於相同的子網路中 (`192.168.1.x`)。
+- 在 Modalix 搶先體驗版中，僅支援乙太網路埠 0 進行網路啟動。
+- 在 Linux 上，請確認主機防火牆允許使用 **UDP 埠 69（TFTP）**。
+- 請驗證與 DevKit 的連線。
+
+  ```console
+  modalix:~$ ping 192.168.1.10
+  ```
+
+- 如果 `f` 無法找到映像檔，請從步驟 2 重新執行 `sima-cli bootimg --netboot` 命令，以重新整理 TFTP 路徑。
+- 如果在將 Modalix DevKit 轉換為 eLxr 後，序列控制台上出現與 NFS 相關的錯誤訊息，則可以安全地忽略這些訊息。
+
+</details>

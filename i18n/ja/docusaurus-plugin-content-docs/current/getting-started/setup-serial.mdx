@@ -1,6 +1,6 @@
 ---
-title: "シリアル接続を設定する"
-description: "シリアルコンソールを介して、開発用のホストをModalix DevKitに接続します。"
+title: シリアル接続を設定します。
+description: シリアルコンソールを介して、開発ホストをModalix DevKitに接続します。
 sidebar_position: 2
 ---
 
@@ -8,96 +8,80 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 
-# シリアル接続を設定する
+# シリアル接続を設定します。
 
-開発の初期段階では、システムがスタンドアロン構成で使用される場合でも、ホストシステム内の PCIe デバイスとして使用される場合でも、シリアルインターフェースを介して DevKit に接続することを強くお勧めします。
+起動時に、スタンドアロンモードまたはPCIeモードのいずれを使用する場合でも、DevKitのシリアルインターフェースに接続してください。
 
-スタンドアロン構成では、シリアル接続は、IPアドレスの取得方法に関係なく、DevKit への信頼性の高いアクセスを提供します。これにより、ネットワーク接続が利用できない場合や、誤って構成されている場合でも、開発者はシステムの構成、監視、および復旧タスクを制御できるようになります。
+スタンドアロンモードでは、シリアルアクセスを使用することで、ネットワークへのアクセスが利用できない場合や、ネットワーク設定が正しくない場合でも、DevKitの構成、監視、および復旧を行うことができます。
 
-PCIe 構成では、シリアルインターフェースは、起動時に PCIe カードのシェルおよびデバッグコンソールへの直接アクセスを提供します。これは、ホストシステムまたは PCIe リンクが完全に動作していない場合の、低レベルの制御やトラブルシューティングに特に役立ちます。
+PCIeモードでは、シリアルインターフェースを使用すると、起動時にPCIeカードのシェルやデバッグコンソールに直接アクセスできます。ホストドライバーまたはPCIeリンクが完全に機能する前に、低レベルの制御やトラブルシューティングに使用してください。
 
-シリアルインターフェースは、主に開発および起動を目的としています。システムが完全に構成および展開されると、継続的な操作には通常、シリアル接続は必要ありません。
+シリアルアクセスは主に開発および初期設定に使用されます。デプロイ後、通常、通常の運用にはシリアル接続は必要ありません。
 
-開発者のコンピューターのオペレーティングシステムによって、シリアルインターフェースを介して DevKit に接続するためのさまざまな方法が利用できます。
+ハードウェアに最適なケーブル構成を選択し、次にコンピューターで使用するシリアルターミナルの方法を選択してください。
 
-<Tabs>
-<TabItem value="hardware" label="ハードウェアの設定" default>
+## ハードウェアのセットアップ
 
-使用するボードを選択して、シリアルケーブルの接続を確認してください。
+シリアルケーブルの接続を確認するには、使用しているボードを選択してください。
 
 <Tabs groupId="board">
 <TabItem value="modalix-devkit" label="Modalix DevKit" default>
 
 <figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
-  <img src="/img/devkit/modalix-devkit.png" alt="Modalix DevKit コネクタ" style={{width: '100%', borderRadius: 10}} />
+  <img src="/img/devkit/modalix-devkit.png" alt="Modalix DevKit connectors" style={{width: '100%', borderRadius: 10}} />
   <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit コネクタ</figcaption>
 </figure>
 
-付属のシリアルケーブルを使用して、DevKit をコンピューターに接続してください。
+付属のシリアルケーブルを使用して、DevKitをコンピューターに接続してください。
 
-- **DevKit の接続:** 筐体に記載されているように、付属の USB-A - USB-C ケーブルを使用して、DevKit の **UART** ポートに接続してください。
-- **コンピューター側：** **USB Type-A** ポートに接続します。必要に応じて、USB ハブを使用してください。
+- **DevKitの接続:** 付属のUSB-A - USB-Cケーブルを使用して、エンクロージャーにラベル表示されている**UART**ポートにDevKitを接続してください。
+- **コンピューター側:** **USB Type-A**ポートに接続します。必要に応じてUSBハブを使用してください。
 
 </TabItem>
-<TabItem value="modalix-ea-kit" label="Modalix EAキット">
+<TabItem value="modalix-ea-kit" label="Modalix EA Kit">
 
 <figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
-  <img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="Modalix 早期アクセス版キットのコネクター" style={{width: '100%', borderRadius: 10}} />
-  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix 早期アクセス版キット用コネクター</figcaption>
+  <img src="/img/devkit/modalix-ea-kit-interfaces.png" alt="Modalix Early Access Kit connectors" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix早期アクセスキットコネクター</figcaption>
 </figure>
 
-付属のシリアルケーブルを使用して、DevKit をコンピューターに接続してください。
+付属のシリアルケーブルを使用して、DevKitをコンピューターに接続してください。
 
-- **DevKit の接続:** フラットコネクタ上の三角形のマークが、DevKit の一番右側のピンと一致するようにしてください。
-- **コンピューター側：** **USB Type-A** ポートに接続します。必要に応じて、USB ハブを使用してください。
+- **DevKitの接続:** フラットコネクタ上の三角形のマークが、DevKitの最も右側のピンと一致するように接続してください。
+- **コンピューター側:** **USB Type-A**ポートに接続します。必要に応じてUSBハブを使用してください。
 
 </TabItem>
-<TabItem value="modalix-ea-pcie" label="Modalix EA PCIe カード">
+<TabItem value="modalix-pcie-card" label="Modalix PCIe Card">
 
 <figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
-  <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix EA、PCIe カードコネクタ" style={{width: '100%', borderRadius: 10}} />
-  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix EA、PCIe カードコネクタ</figcaption>
+  <img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix PCIe Card connectors" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix PCIeカードコネクタ</figcaption>
 </figure>
 
 付属のシリアルケーブルを使用して、カードをホストに接続してください。
 
-- **カードの端部:** 上記の画像に示すように、付属のUSB-A - UARTケーブルを使用して、カードの**ARM UART**ポートに接続します。
-- **ホスト側:** **USB Type-A** ポートに接続します。必要に応じて、USB ハブを使用してください。
+- **カードの接続:** 上の画像に示すように、付属のUSB-A - UARTケーブルを使用して、カードの**ARM UART**ポートに接続します。
+- **ホスト側：** **USB Type-A**ポートに接続します。必要に応じてUSBハブを使用してください。
 
 </TabItem>
 </Tabs>
 
-</TabItem>
-<TabItem value="windows" label="Windows">
+## シリアルターミナルを開く
 
-**Windows** 上のシリアルターミナルを使用して **DevKit** に接続するには、次の手順に従ってください。
-
-1. COMポートを特定します。
-   - **デバイスマネージャー**を開く → **ポート（COM & LPT）**を展開する。
-   - 「**USB シリアルポート（COMx）**」という項目を探してください。
-
-2. **シリアルターミナルのインストールと起動**:
-   - [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) または **Tera Term** を使用してください。
-   - 接続タイプを**シリアル**に設定します。
-   - 正しい**COMポート**を入力してください（例：`COM3`）。
-   - **ボーレート**を`115200`に設定します。
-
-3. **「開く」**をクリックして、接続を開始します。
-
-</TabItem>
-<TabItem value="mac-linux" label="MacOSとLinuxのデスクトップ">
+<Tabs>
+<TabItem value="mac-linux" label="macOS & Linux" default>
 
 :::note
-続行する前に、`sima-cli` をインストールまたはアップグレードしてください。このガイドは、最新バージョンの `sima-cli` での使用を想定しています。
+続行する前に、`sima-cli`をインストールまたはアップグレードしてください。このガイドは、最新の`sima-cli`バージョンで使用することを目的としています。
 :::
 
-MacおよびLinuxで、`sima-cli serial`コマンドを使用して、SiMaハードウェアのシリアルポートに接続します。
+macOSまたはLinuxでシリアルポートに接続するには、`sima-cli serial`を使用してください。
 
 ```console
 sima-cli serial
 ```
 
-このコマンドを実行すると、シリアルポートにアクセスするために必要な依存関係がコンピューターにインストールされます。シリアルターミナルを終了するには、Ctrl + A を押してから Ctrl + X を押します。
+このコマンドは、シリアルポートにアクセスするために必要な依存関係をインストールします。シリアルターミナルを終了するには、Ctrl + A を押し、次に Ctrl + X を押します。
 
 一部の古いファームウェアバージョンでは、システムがシリアルコンソールに対して異なるボーレートを使用する場合があります。ターミナルに文字化けした出力が表示される場合は、ボーレートが一致していないことが原因である可能性があります。より高いボーレートを指定してみてください。
 
@@ -106,15 +90,32 @@ sima-cli serial -b 921600
 ```
 
 </TabItem>
+<TabItem value="windows" label="Windows">
+
+**Windows**からDevKitに接続するには、次の手順に従ってください。
+
+1. COMポートを特定してください：
+   - **デバイスマネージャー**を開き、**ポート（COM & LPT）**を展開します。
+   - 「USBシリアルポート（COMx）」という項目を探してください。
+
+2. シリアルターミナルをインストールして開きます。
+   - 「[PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)」または「Tera Term」を使用してください。
+   - 接続タイプを「シリアル」に設定します。
+   - 正しい**COMポート**を入力してください（例：`COM3`）。
+   - **ボーレート**を`115200`に設定します。
+
+3. 接続を開始するには、**「開く」**をクリックしてください。
+
+</TabItem>
 <TabItem value="web-serial" label="Web Serial Console">
 
-**Web Serial コンソール**は、ローカルへのインストールが不要なブラウザベースの代替手段です。Chromiumブラウザ（ChromeまたはEdge）で開き、DevKitをUSB経由で接続するだけで使用できます。PuTTYや`sima-cli`をインストールできない場合や、インストールしたくない場合に便利です。
+**Web Serial Console** は、ローカルでのインストールを必要としない、ブラウザベースの代替手段です。Chromium ブラウザで開き、USB 経由で DevKit に接続し、シリアルコンソールに接続します。
 
-<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Web Serial コンソールを起動します。</a>
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Webシリアルコンソールを起動します</a>
 
-<p style={{marginTop: '1.75rem'}}>全文を見る <a href="/hardware/tools/web-serial-console">Web Serial コンソール</a> コマンドパレットのリファレンス、マルチデバイス対応、およびトラブルシューティングに関するページ。</p>
+コマンドパレットのリファレンス、複数デバイスのサポート、およびトラブルシューティングについては、<p style={{marginTop: '1.75rem'}}>完全な<a href="/hardware/tools/web-serial-console">Web Serial Console</a>ページをご覧ください。</p>
 
 </TabItem>
 </Tabs>
 
-シリアルポートコンソールへのログインを促されたら、デフォルトの**ユーザー名**`sima`と**パスワード**`edgeai`を使用してください。
+シリアルコンソールでログインを促されたら、デフォルトの**ユーザー名** `sima` と **パスワード** `edgeai` を使用してください。

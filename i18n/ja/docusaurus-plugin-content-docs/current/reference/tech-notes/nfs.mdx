@@ -1,47 +1,47 @@
 ---
-title: "NFS を設定する"
-description: "UbuntuのホストとModalix DevKitの間で、大規模なデータセットやモデルファイルをNFS経由で共有します。"
+title: "NFS の設定"
+description: "大規模なデータセットやモデルファイルを、UbuntuホストとModalix DevKitの間でNFSを使用して共有します。"
 sidebar_position: 2
 ---
 
-# NFS を設定する
+# NFS の設定
 
-大規模なデータセットやモデルファイルを使用する場合、スムーズなデモや開発体験を実現するためには、高速かつ効率的なファイルアクセスが不可欠です。
+大量のデータセットやモデルファイルを、Ubuntuホストに保存し、DevKitからアクセスする必要がある場合は、NFSを使用してください。
 
-NFS（ネットワークファイルシステム）を使用すると、Ubuntuマシン（サーバー）とModalix DevKit（クライアント）間でシームレスなファイル共有が可能になり、ローカルコピーを必要とせずに、大規模なストレージに直接アクセスできます。
+NFS（ネットワークファイルシステム）は、Ubuntuホスト（サーバー）とModalix DevKit（クライアント）の間でファイルを共有します。これにより、DevKitは、ローカルコピーなしでホストのストレージにアクセスできます。
 
 :::note
-NFS は、特に DevKit に高速かつ大容量のストレージ（NVMe など）が搭載されていない場合に役立ちます。これは、MLSoC や Modalix Early Access Kit (EA) などのプラットフォームにも当てはまり、SD カードのみに依存すると、読み込み時間が遅くなる可能性があります。
+DevKitに、NVMeのような高速かつ大容量のストレージが搭載されていない場合、NFSは役立ちます。これは、MLSoCやModalixの早期アクセス版（EA）など、SDカードのみのストレージを使用している場合に、読み込み時間が遅くなるという問題があるプラットフォームにも当てはまります。
 :::
 
-NFS は、特に次のような場合に役立ちます。
+以下の状況で NFS を使用してください。
 
 - 大規模なモデルやデータセットは、複数のデバイス間で共有する必要があります。
 - クライアント側のローカルストレージには制限があるか、利用できません。
-- 集中型のストレージ管理を行うことで、更新作業を簡素化できます。
+- 更新作業においては、集中管理型のストレージ管理方式をご希望なのですね。
 
 <details open>
-<summary><strong>ステップ1：NFSサーバーのセットアップ</strong></summary>
+<summary>ステップ1：NFSサーバーのセットアップ<strong> </strong> </summary>
 
-1. **NFSカーネルサーバーをインストールします**：
+1. NFSカーネルサーバーをインストールします。
 
    ```bash
    sima-user@sima-user-machine:~$ sudo apt update
    sima-user@sima-user-machine:~$ sudo apt install -y nfs-kernel-server
    ```
 
-2. **共有ディレクトリを作成する**:
+2. 共有ディレクトリを作成します。
 
-   Modalix DevKit と共有するディレクトリを選択してください。
+   ModalixとDevKitで共有するディレクトリを選択してください。
 
    ```bash
    sima-user@sima-user-machine:~$ sudo mkdir -p /mnt/nfs_share
    sima-user@sima-user-machine:~$ sudo chmod 777 /mnt/nfs_share
    ```
 
-3. **NFS エクスポートファイルを編集します**：
+3. NFSのエクスポート設定ファイルを編集します。
 
-   エクスポートファイルを**開く**：
+   エクスポートファイルを展開します。
 
    ```bash
    sima-user@sima-user-machine:~$ sudo nano /etc/exports
@@ -53,13 +53,13 @@ NFS は、特に次のような場合に役立ちます。
    /mnt/nfs_share <modalix_ip>(rw,sync,no_subtree_check)
    ```
 
-   ネットワーク内のすべての IP からのアクセスを許可したい場合（テスト目的の場合）、次のように設定します。
+   ネットワーク内のすべてのIPアドレスからのアクセスを許可したい場合（テスト目的の場合）、以下を使用してください。
 
    ```
    /mnt/nfs_share *(rw,sync,no_subtree_check)
    ```
 
-4. **変更を適用し、NFSサービスを再起動します**:
+4. 変更を適用し、NFSサービスを再起動してください。
 
    ```bash
    sima-user@sima-user-machine:~$ sudo exportfs -a
@@ -71,21 +71,21 @@ NFS は、特に次のような場合に役立ちます。
 <details open>
 <summary><strong>ステップ2：NFSクライアントの設定</strong></summary>
 
-1. **マウントポイントを作成する**:
+1. マウントポイントを作成します。
 
    ```bash
    modalix:~$ sudo mkdir -p /mnt/
    ```
 
-2. **NFS共有をマウントする**:
+2. NFS共有をマウントします。
 
-   `<server_ip>` を Ubuntu マシンの IP アドレスに置き換えてください。
+   `<server_ip>` を、Ubuntu ホストマシンの IP アドレスに置き換えてください。
 
    ```bash
    modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
    ```
 
-3. **マウントの状態を確認してください**：
+3. マウントの状態を確認してください。
 
    NFS共有が正しくマウントされているか確認してください。
 
@@ -96,17 +96,17 @@ NFS は、特に次のような場合に役立ちます。
 </details>
 
 <details open>
-<summary><strong>ステップ3：マウントを永続化する</strong></summary>
+<summary><strong>ステップ3：マウントを永続化する。</strong></summary>
 
-起動時に NFS 共有を自動的にマウントするには、Modalix で以下の手順を実行してください。
+起動時に NFS 共有を自動的にマウントするには、次の手順を実行してください。 Modalix:
 
-1. **mnt.mount ファイルを作成します**:
+1. `mnt.mount` ファイルを作成します。
 
    ```bash
    modalix:~$ sudo vi /etc/systemd/system/mnt.mount
    ```
 
-2. **この内容をファイルに追加し、必ず server_IP を Ubuntu マシンの IP アドレスに置き換えてください。**
+2. 次の内容をファイルに追加し、`server_IP` を Ubuntu ホストの IP アドレスに置き換えてください。
 
    ```
    [Unit]
@@ -124,7 +124,7 @@ NFS は、特に次のような場合に役立ちます。
    WantedBy=multi-user.target
    ```
 
-3. **保存して終了します。次に、設定をテストします。**
+3. 変更を保存して終了し、設定をテストします。
 
    ```bash
    modalix:~$ sudo systemctl daemon-reload

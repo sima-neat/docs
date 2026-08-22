@@ -1,53 +1,68 @@
 ---
 title: "참고 자료"
-description: "SiMa.ai 및 Modalix 제품에 대한 빠른 시작 안내서, 제품 요약 자료, 데이터 시트, 하드웨어 참조 설명서."
+description: "SiMa.ai Modalix 제품에 대한 제품 개요, 데이터 시트, 하드웨어 참조 설명서, 그리고 디자인 및 튜닝 가이드를 사용자가 만들고자 하는 제품에 따라 분류하여 제공합니다."
 sidebar_position: 4
 ---
 
 # 참고 자료
 
-이 섹션에서는 빠른 시작 가이드, 제품 개요, 데이터시트, 하드웨어 참조 설명서 등 SiMa.ai 및 Modalix 제품에 대한 포괄적인 제품 문서를 제공합니다.
+이 페이지는 SiMa.ai Modalix 제품에 대한 간략한 설명, 데이터시트, 하드웨어 참조 설명서, 그리고 디자인 및 튜닝 가이드를 정리하여 제공합니다. 내용은 플랫폼 평가부터 자체 Modalix 기반 제품을 설계, 튜닝 및 통합하는 것까지, 사용자가 수행하려는 작업에 따라 분류됩니다. *SiMa.ai 담당자에게 문의*라고 표시된 문서는 요청 시 배포됩니다.
 
 ## 빠른 시작 안내서
 
-| 문서 | 다운로드 링크 |
-| --- | --- |
-| Modalix SoM 개발 키트 3.0 빠른 시작 안내서 | [대화형 가이드 실행](pathname:///tools/qsg/index.html) |
+DevKit을 처음 사용하시나요? 여기에서 시작하세요. 이 대화형 가이드에서는 나머지 설명서를 살펴보기 전에 첫 번째 부팅 과정을 안내해 드립니다.
 
-## 제품 개요
+| 문서 | 설명 | 다운로드 |
+| --- | --- | --- |
+| **Modalix SoM DevKit 3.0 빠른 시작 안내서** | DevKit의 개봉 및 첫 부팅 과정을 단계별로 안내하는 대화형 튜토리얼입니다. 전원 공급, 직렬 통신, 초기 네트워크 설정 등을 다룹니다. 이 튜토리얼을 통해 하드웨어를 가장 빠르게 사용해 볼 수 있습니다. | [인터랙티브 가이드 시작](pathname:///tools/qsg/index.html) |
 
-| 문서 | 다운로드 링크 |
-| --- | --- |
-| Modalix SoC 제품 개요 | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
-| Modalix SoM 제품 개요 | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoM-Product-Brief_05.3.pdf) |
-| Modalix SoM 개발 키트 3.0 제품 개요 | [Download PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) |
+## Modalix를 평가하고 제품을 선택하세요.
 
-## 데이터 시트
+플랫폼을 이해하고, 제품이 귀사의 요구 사항에 적합한지 확인한 후, 세부적인 사항을 검토하십시오.
 
-| 문서 | 다운로드 링크 |
-| --- | --- |
-| Modalix SoC 데이터시트 | 귀하의 SiMa.ai 담당자에게 문의하십시오. |
-| Modalix SoM 데이터시트 | [Download PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
+| 문서 | 설명 | 다운로드 |
+| --- | --- | --- |
+| **Modalix SoC 제품 개요** | 전반적인 개요는 다음과 같습니다. MLSoC Modalix 실리콘 — 머신 러닝 가속기(MLA), 이미지 신호 프로세서(ISP), 컴퓨터 비전 장치(CVU), 비디오 코덱 및 입출력 장치 — 를 통해 뛰어난 성능과 전력 효율을 제공합니다. 먼저 이 내용을 검토하여 Modalix 작업량에 적합합니다. | [PDF 다운로드](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
+| **Modalix SoM 제품 개요** | Modalix 시스템 온 모듈에 대한 개요입니다. 이 모듈은 제품 통합을 위해 LPDDR5, 전원 공급 장치, 보드 간 연결 장치와 함께 패키징된 SoC입니다. 완전한 DevKit 대신 SoM을 기반으로 하는 맞춤형 디자인을 구상할 때 여기서부터 시작하세요. | [PDF 다운로드](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoM-Product-Brief_05.3.pdf) |
+| **Modalix SoM DevKit 3.0 제품 개요** | DevKit의 기능, 인터페이스 및 외형에 대한 요약입니다. 주문하기 전에 이 키트가 귀사의 평가 및 프로토타입 제작 요구 사항에 부합하는지 확인하는 데 활용하십시오. | [PDF 다운로드](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) |
+| **Modalix PCIe HHHL 하드웨어 레퍼런스** | 절반 높이/절반 길이(HHHL) Modalix PCIe 카드에 대한 하드웨어 참조 자료입니다. 여기에는 커넥터 및 전원 정보, 기계적 크기, 호스트 통합 요구 사항이 포함되어 있습니다. 이 자료를 검토하여 호스트에 연결된 추론 시스템에 적합한지 평가하십시오. | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_Modalix_PHHHL_Manual_Rev1.00_2-21-2026.pdf) |
 
-## 하드웨어 참조 설명서
+## 맞춤형 캐리어 보드를 설계합니다.
 
-| 문서 | 다운로드 |
-| --- | --- |
-| Modalix SoM(시스템 온 모듈) 캐리어 보드 하드웨어 레퍼런스 | [Download PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
-| Modalix PCIe HHHL 하드웨어 레퍼런스 | [Download PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_Modalix_PHHHL_Manual_Rev1.00_2-21-2026.pdf) |
+Modalix SoM을 사용자 정의 보드에 통합하는 데 필요한 핵심 참고 자료는 다음과 같습니다. 핀 배치, 전원 공급, 고속 신호 라우팅, 초기 부팅 절차.
 
-## 설정 및 조정 방법 안내
+| 문서 | 설명 | 다운로드 |
+| --- | --- | --- |
+| **Modalix SoM(시스템 온 모듈) 캐리어 보드 하드웨어 레퍼런스** | Modalix 모듈을 기반으로 캐리어 보드를 설계할 때 참고할 수 있는 주요 가이드: 커넥터 핀 배치, 인터페이스 매핑, 전원 공급, 참조 연결 정보가 포함되어 있습니다. 맞춤형 보드 설계를 시작하기 전에 먼저 이 내용을 읽어보세요. | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
+| **Modalix SoM 데이터시트** | SoM에 대한 상세한 전기적, 기계적, 열적 사양 — 커넥터 핀 배열, 전원 시퀀스, 전류 소비량, 작동 한계. 보드 수준 설계 결정을 위한 신뢰할 수 있는 정보 출처입니다. | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
+| **Modalix SoC 데이터시트** | MLSoC Modalix 다이의 상세한 전기적, 기계적, 열적 사양 — 핀 기능, 전원 공급 회로, 신호 타이밍 및 작동 한계. 미리 통합된 SoM을 기준으로 설계하는 대신 실리콘 수준에서 설계할 때 필요합니다. | *SiMa.ai 담당자에게 문의하세요.* |
+| **캐리어 보드 시스템 온 모듈(SoM) 설정 가이드** | 새로 제작된 캐리어 보드를 켜고 테스트하는 단계별 절차입니다. 여기에는 전원 공급부터 부팅되는 SoM(System on Module)까지의 과정이 포함되며, 주요 점검 사항과 발생 가능한 일반적인 문제점을 확인하는 방법이 제시되어 있습니다. | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
 
-| 문서 | 다운로드 |
-| --- | --- |
-| 캐리어 보드 시스템 온 모듈(SoM) 설정 가이드 | [Download PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.2_4-16-2026.pdf) |
-| Modalix 카메라 및 ISP 튜닝 가이드 | 귀하의 SiMa.ai 담당자에게 문의하십시오. |
+## 칩 온 보드(Chip-On-Board) 설계
 
-## 회로도 및 설계 패키지
+미리 통합된 SoM을 사용하는 대신 MLSoC Modalix 칩을 PCB에 직접 장착(칩 온 보드)하는 방식으로 설계하면 어떨까요? 이렇게 하면 고속 배선, 메모리 튜닝, 그리고 베어 다이 레이아웃에 필요한 최적화된 레퍼런스 디자인을 구현할 수 있습니다.
 
-| 문서 | 다운로드 |
-| --- | --- |
-| Modalix PCB 배선 지침 | 귀하의 SiMa.ai 담당자에게 문의하십시오. |
-| Modalix DDR 튜닝 가이드 | 귀하의 SiMa.ai 담당자에게 문의하십시오. |
-| Modalix 얼리 액세스 개발 키트 디자인 패키지 | 귀하의 SiMa.ai 담당자에게 문의하십시오. |
-| Modalix PCIe HHHL 디자인 패키지 | 귀하의 SiMa.ai 담당자에게 문의하십시오. |
+| 문서 | 설명 | 다운로드 |
+| --- | --- | --- |
+| **Modalix PCB 배선 지침** | PCIe, MIPI CSI-2, 이더넷 및 기타 중요한 신호 라인에 대한 고속 배선 규칙(임피던스, 길이 일치, 기준면 지침 등)을 적용하여 맞춤형 보드에서 신호 무결성을 유지합니다. | *SiMa.ai 담당자에게 문의하세요.* |
+| **Modalix DDR 튜닝 가이드** | 길이 일치, 종단 처리, 보정 등을 포함하여 LPDDR5 배선 및 튜닝 지침을 제공하여 설계에서 안정적이고 최고 속도의 메모리 작동을 보장합니다. | *SiMa.ai 담당자에게 문의하세요.* |
+| **Modalix 얼리 액세스 DevKit 디자인 패키지** | 얼리 액세스 DevKit의 회로도 및 디자인 자료입니다. 이는 베어 SoC를 기반으로 자체 보드를 설계할 수 있도록 제작된 칩-온-보드 레퍼런스 디자인입니다. | *SiMa.ai 담당자에게 문의하세요.* |
+| **Modalix PCIe HHHL 디자인 패키지** | PCIe HHHL 카드에 대한 회로도 및 디자인 자료. 디자인을 수정하거나 확장할 때 칩-온-보드 참조 자료로 유용하게 사용할 수 있습니다. | *SiMa.ai 담당자에게 문의하세요.* |
+
+## 카메라와 ISP 설정을 조정합니다.
+
+카메라 센서를 연결하고 온칩 ISP를 통해 최적화된 이미지를 얻는 데 필요한 자료입니다.
+
+| 문서 | 설명 | 다운로드 |
+| --- | --- | --- |
+| **Modalix 카메라 및 ISP 튜닝 가이드** | 특정 카메라 센서에 맞게 Modalix 이미지 신호 프로세서를 조정하는 절차 — 보정, 노출, 화이트 밸런스 및 이미지 품질 파이프라인. 센서가 연결되고 인식된 후 이미지 품질을 미세 조정하는 데 사용합니다. | *SiMa.ai 담당자에게 문의하세요.* |
+
+> MIPI CSI-2 카메라를 DevKit에 물리적으로 연결하고 사용하려면 먼저 [ MIPI 카메라 인터페이스](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)를 참조하십시오.
+
+## 전력 및 열 설계 계획
+
+SiMa.ai는 Modalix SoM의 열 솔루션을 설계하기 위한 전용 SoM 열 설계 가이드를 제공합니다. 이 페이지의 다른 곳에 나열된 데이터시트 및 하드웨어 참조에 있는 전기적, 열적, 기계적 제한 사항과 함께 사용하여 전력 공급 용량을 결정하고, 방열판을 선택하고, 냉각 성능을 검증할 때 활용하십시오.
+
+| 문서 | 설명 | 다운로드 |
+| --- | --- | --- |
+| **Modalix 시스템 온 칩(SoC) 열 설계 지침** | Modalix SoM의 열 솔루션을 설계하기 위한 전문 참고 자료입니다. 여기에는 전력 소산 및 열 예산, 권장되는 방열판 및 공기 흐름 구성, 접합부 온도 관리, 측정 및 검증 절차가 포함됩니다. 맞춤형 보드 또는 인클로저의 냉각 시스템을 설계할 때 주요 지침으로 활용할 수 있습니다. | *SiMa.ai 담당자에게 문의하세요.* |

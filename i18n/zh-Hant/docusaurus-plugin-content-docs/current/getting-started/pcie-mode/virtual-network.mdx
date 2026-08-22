@@ -1,0 +1,77 @@
+---
+title: "虛擬網路"
+description: "為 Modalix PCIe 卡設定透過 PCIe 的乙太網路存取。"
+sidebar_position: 3
+---
+
+# 虛擬網路
+
+:::note
+在使用虛擬網路功能之前，請務必確認您的 DevKit 已更新至最新的韌體版本，即 [updated](/hardware/getting-started/firmware-update)。
+
+此功能僅適用於 Linux 主機。
+:::
+
+當 Modalix PCIe 卡透過 PCIe 連接時，它會在主機和卡之間建立一個虛擬乙太網路介面。
+
+請使用虛擬網路來：
+
+- **安全殼層 (SSH)**：用於疑難排解和系統管理，請存取 DevKit 的命令列。
+- **安全複製協定 (SCP)**：在主機與 DevKit 之間傳輸日誌、設定檔和其他檔案。
+
+## 手動指定 IP 位址
+
+當您使用 `insmod` 手動載入模組時，請使用以下指令。這樣您就可以將靜態 IP 位址指派給主機介面，然後再指派給 Modalix PCIe 卡。
+
+```console
+sudo insmod sima_mla_drv.ko default_ip=false
+```
+
+這也需要在主機上安裝 `ifconfig` 這個工具。
+
+```console
+ifconfig <eth interface> 20.1.2.1
+```
+
+在您將 IP 位址指派給主機介面後，IP + 1 會自動指派給 SoC 介面。例如，如果主機使用 `20.1.2.1`，則 MLSoC 的 IP 位址為 `20.1.2.2`。
+
+當建立介面時，主機介面會使用格式為 `cardnum:S:I:m:A:0` 的 MAC 位址，而 SoC 介面則使用 `cardnum:S:I:m:A:1`。IP 位址會在建立時指派，分別為 `host:10.0.cardnum.1` 和 `soc:10.0.cardnum.2`。
+
+1. 在主機上執行的 `ifconfig` 指令的輸出結果：
+
+   ```console
+   enp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.1  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4130  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:30  txqueuelen 1000  (Ethernet)
+       RX packets 14107  bytes 4460994 (4.4 MB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 818  bytes 74840 (74.8 KB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+2. `ifconfig` 在 SiMa.ai DevKit 上的輸出：
+
+   ```console
+   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
+       RX packets 818  bytes 74840 (73.0 KiB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 14109  bytes 4461636 (4.2 MiB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+3. 從主機透過 SSH 連接到裝置。請使用預設的使用者名稱 `sima` 和密碼 `edgeai`。
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+   The authenticity of host '10.0.0.2 (10.0.0.2)' can't be established.
+   ED25519 key fingerprint is SHA256:ulxwiRM+cCQNJ90R5Qn5eV+9hqvkVNo0eWQ9pY3l8E0.
+   This key is not known by any other names
+   Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+   Warning: Permanently added '10.0.0.2' (ED25519) to the list of known hosts..
+   sima@10.0.0.2's password:
+   sima@modalix:~#
+   ```

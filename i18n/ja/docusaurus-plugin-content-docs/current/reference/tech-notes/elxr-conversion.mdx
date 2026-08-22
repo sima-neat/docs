@@ -1,34 +1,31 @@
 ---
 title: "eLxr に変換"
-description: "既存の SiMa.ai、Yocto ベースの DevKit を新しい eLxr ランタイムに移行し、必要に応じて元に戻します。"
+description: "既存のSiMa.ai、YoctoベースのDevKitをeLxrに変換し、必要に応じて元に戻します。"
 sidebar_position: 3
 ---
 
 # eLxr に変換
 
-このガイドでは、既存の SiMa.ai をベースとした Yocto **DevKit** を、新しい **eLxr** ランタイム環境に変換する方法と、必要に応じて Yocto に戻す方法を説明します。
+このガイドを使用して、既存の SiMa.ai をベースとした **Yocto 기반 DevKit** を、**eLxr** ランタイム環境に変換し、必要に応じて Yocto に戻します。
 
 :::note
 eLxrプラットフォームは、SDK **2.0.0** 以降のバージョンから、**Modalix DevKit** で利用できます。
 
-eLxr への変換には、tRoot のアップデートと、[ネットワークブート](/hardware/getting-started/firmware-update/#netboot) を使用した eMMC の再フラッシュが必要です。
+eLxr への変換には、tRoot の更新と eMMC の再フラッシュが必要であり、これらは [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) によって行われます。
 :::
 
-**eLxr** プラットフォームは、従来の Yocto 環境に代わり、SiMa.ai DevKit の新しい標準ランタイムとして機能します。
-これにより、開発者にとって大きなメリットがあります。
+**eLxr** プラットフォームは、従来の Yocto 環境に代わり、SiMa.ai DevKit のデフォルトのランタイムとして機能します。このプラットフォームは、以下の機能を提供します。
 
-- **簡略化された更新** — 統一されたルートファイルシステムのレイアウトと、より大きなルートファイルシステム。
+- **簡素化されたアップデート** — より大きなルートファイルシステムを備え、統一されたルートファイルシステムレイアウトに変更。
 - **標準パッケージマネージャー** — Debianをベースとした、継続的なパッケージ管理機能を提供する基盤。
 
-移行前に現在の環境を確認するには、以下の簡単なチェックを行ってください。
-
-現在、DevKit がどのファームウェアで動作しているかを確認するには、シリアル接続または SSH 経由で接続し、次のコマンドを実行します。
+移行する前に、DevKit がどのファームウェアで動作しているかを確認してください。シリアルポートまたは SSH を介して接続し、次のコマンドを実行します。
 
 ```bash
 cat /etc/buildinfo | grep DISTRO
 ```
 
-以下のいずれかが表示されるはずです。
+以下のいずれかの表示になるはずです。
 
 ```text
 DISTRO = poky
@@ -40,81 +37,66 @@ DISTRO = poky
 DISTRO = eLxr
 ```
 
-もし`poky`を見つけた場合は、以下の手順に従って移行してください。
+`poky` が表示された場合は、以下の手順に従って移行してください。
 
 <details open>
-<summary><strong>ステップ1：最新版のtRootにアップデートしてください。</strong></summary>
+<summary> <strong> ステップ1：最新のtRootに更新 </strong> </summary>
 
-eLxr への変換を開始する前に、DevKit を最新の **tRoot** イメージに更新してください。
+eLxr に変換する前に、DevKit を最新の **tRoot** イメージに更新してください。
 
-この更新は、tRoot（信頼されたルート）が eLxr と互換性があることを保証するために必要です。
+この更新により、tRoot（信頼されたルート）が eLxr と互換性を持つようになります。
 
-ホストの IP アドレスを静的 IP アドレス `192.168.1.10` に設定し、DevKit が `192.168.1.20` でアクセス可能であることを確認してください（[ネットワーク設定](/hardware/getting-started/standalone-mode/#network) を参照）。
+ホストのIPアドレスを静的IPアドレス `192.168.1.10` に設定し、DevKit が `192.168.1.20` でアクセスできるようにします（[ ネットワーク設定 ](/hardware/getting-started/standalone-mode/network) を参照）。
 
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
-sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 2.0.0 --troot_only
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
 ```
 
-アップデートが正常に完了したら、**DevKit の電源を入れ直して**、変更を適用してください。
+アップデートが正常に完了したら、**電源を入れ直してください。 DevKit変更を適用するには、こちらをクリックしてください。
 
 </details>
 
 <details open>
-<summary><strong>ステップ2：eLxrイメージをネットブートし、eMMCに書き込みます。</strong></summary>
+<summary><strong>手順2：Netboot を使用して eLxr eMMC にイメージを書き込み、フラッシュを実行します。</strong></summary>
 
-残りの変換プロセスでは、[Net Boot で更新](/hardware/getting-started/firmware-update/#netboot) に記載されている標準の TFTP ネットブートとフラッシュの手順を使用します。以下の eLxr に固有の値を参照して、その手順に従ってください。
+変換の残りの部分は、標準の TFTP ネットワークブートとフラッシュ手順を使用します。詳細は、次のドキュメントを参照してください。 [ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)その手順に従って、 eLxr以下に具体的な値を記載します。
 
-- **ステップ2（TFTPサーバーの起動）：** `--boardtype modalix --fwtype elxr -v 2.0.0` を使用します。
-- **ステップ3（U-Boot の設定）：** `boot` を実行する前に、`boot_targets=net` に加えて、`cpio_name=simaai-image-palette-modalix.cpio.gz` を設定します。
-- **ステップ4（フラッシュ）：**`f`を`netboot>`のプロンプトに入力します。
+- **手順2（TFTPサーバーの起動）：** `--boardtype modalix --fwtype elxr -v %platform_version%` を使用します。
+- **ステップ3（U-Bootの設定）：** `boot`を実行する前に、`boot_targets=net`に加えて、`cpio_name=simaai-image-palette-modalix.cpio.gz`を設定します。
+- **手順4（フラッシュ）：**`f`と入力し、`netboot>`のプロンプトでEnterキーを押します。
 
 ![接続図](/img/tech-notes/conversion-diagram.png)
 
 *接続図*
 
-書き込みが完了し、DevKit の電源を入れ直すと、eMMC から **eLxr** がネイティブに実行されます。
+フラッシュ処理が完了し、DevKitの電源を入れ直すと、eMMCから**eLxr**が起動します。
 
 </details>
 
 <details open>
-<summary><strong>ステップ3：オプション：2.0のeLxrのすぐに使えるデモ版をインストールします。</strong></summary>
+<summary><strong>ステップ3：NEATをインストールし、アプリケーションを試す</strong></summary>
 
-お客様のバージョン1.7のDevKitには、バージョン1.7に対応したOOB（開封後すぐに使用可能）デモがあらかじめインストールされている場合があります。eLxrを使用してDevKitをバージョン2.0に変換した後、以下の手順に従ってOOBデモをアップグレードできます。
-
-作業を進めるには、DevKitをインターネットに接続し、SSHセッションまたはシリアルコンソールを使用してアクセスしてください。
-
-![スタンドアロンの DevKit](/img/tech-notes/conversion-devkit-standalone.png)
-
-*スタンドアロンのDevKit*
-
-<img src="/img/media/devkit-cli.png" alt="Run on the devkit console shell" width="55" style={{float: 'left', marginRight: '8px'}} />
-
-```bash
-modalix:~$ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash setup-oob.sh
-```
-
-インストールスクリプトの実行中に、すでに以前のバージョンの OOB エクスペリエンスがインストールされている場合、デモをアップグレードするかどうかを確認するメッセージが表示されます。確認する場合は、`Yes` と入力してください。
-
-アセットをインストールするには、インストールを承認する必要があります。インストールスクリプトでは、インストールコマンドの実行中にコードと承認 URL が表示されます。ブラウザを開き、**auth.sima.ai** リンクにアクセスし、**開発者ポータルの認証情報**でログインします。ターミナルに表示されたコードを確認して、インストールを承認してください。
+DevKitでeLxrを実行している状態で、Palette Neat SDKをインストールし、サンプルアプリケーションを実行します。インストールとアプリケーションの実行については、[NEATドキュメント](https://developer.sima.ai/software)を参照してください。
 
 </details>
 
 <details open>
-<summary><strong>Yocto に戻す（オプション）</strong></summary>
+<summary><strong>Yoctoに戻す（オプション）</strong></summary>
 
-元の状態に戻すには Yocto、以下を参照 [Net Boot で更新](/hardware/getting-started/firmware-update/#netboot) 再び `--fwtype yocto`。 `cpio_name` U-Boot 変数は必須ではありません。 Yocto 対象 — 〇〇のみ `setenv boot_targets net`, `saveenv`, `boot`.
+Yoctoに戻すには、`--fwtype yocto`を指定して、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)を再度実行します。Yoctoターゲットの場合、`cpio_name` U-Boot変数は必要ありません。`setenv boot_targets net`、`saveenv`、`boot`のみを実行します。
 
 :::note
-Yocto に戻す際に、**tRoot の最小バージョン要件はありません**。したがって、上記のステップ 1 は省略できます。
+Yocto に戻して変換する際に、**tRoot の最小バージョン要件はありません**。したがって、上記のステップ 1 は省略できます。
 
-eLxr に変換した後、シリアルコンソールに NFS 関連のエラーメッセージが表示された場合でも、安全に無視できます。
+eLxr に変換した後、シリアルコンソールに NFS 関連のエラーメッセージが表示された場合、それらは無視しても問題ありません。
 :::
 
 </details>
 
 ## 要約
 
-1. 最新の **tRoot** イメージ（≥ 2.0.0）にアップデートしてください。
-2. [Net Boot で更新](/hardware/getting-started/firmware-update/#netboot) を実行し、`--fwtype elxr` と eLxr `cpio_name` を使用して、eMMC に eLxr を書き込みます。
+1. 最新の **tRoot** イメージ（バージョン 2.0.0 以上）に更新してください。
+2. [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)の手順に従い、`--fwtype elxr`とeLxr `cpio_name`を使用して、eLxrをeMMCに書き込みます。
+3. Neat SDKをインストールし、[NEATドキュメント](https://developer.sima.ai/software)を参照して、アプリを試してみてください。

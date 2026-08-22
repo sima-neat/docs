@@ -1,0 +1,45 @@
+---
+title: Modalix PCIe 카드
+description: 호스트 연결형 추론 시스템을 위해 MLSoC Modalix를 기반으로 제작된 HHHL PCIe 카드입니다.
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+#  모달릭스 PCIe 카드
+
+**Modalix PCIe 카드**는 **MLSoC Modalix**를 기반으로 제작된 하프 높이/하프 길이(HHHL) PCIe 카드입니다. 호스트 장치에 설치되어 PCIe를 통해 전용 Modalix 추론 가속 기능을 제공합니다.
+
+<Tabs>
+<TabItem value="interfaces" label="Interfaces" default>
+
+<img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix PCIe Card interfaces" style={{width: '100%', display: 'block', margin: '0 auto'}} />
+
+| 인터페이스 | 설명 |
+| --- | --- |
+| 이더넷 포트(eth0, eth1) | 원격 연결을 위한 RJ45, 기가비트 이더넷 네트워크 인터페이스입니다. |
+| PCI-Express 5.0 x4 인터페이스 | 호스트 장치에 통합하기 위한 PCIe 인터페이스입니다. 호스트 구성에 따라 어댑터가 필요할 수 있습니다. |
+| 호스트용 COM 포트 | 직렬 콘솔을 호스트에 연결하여 디버깅합니다. 제공된 케이블의 화살표를 가장 왼쪽 핀과 정렬하십시오. |
+| SD 카드 슬롯 | Modalix PCIe 카드의 뒷면에 있습니다. |
+| 카메라용 GMSL2 FAKRA 포트 | 고대역폭 비디오 전송을 위한 기가비트 멀티미디어 직렬 링크 포트입니다. |
+
+</TabItem>
+<TabItem value="features" label="Key Features">
+
+| 기능 | 세부 정보 |
+| --- | --- |
+| PCIe 인터페이스 | 표준 보드 가장자리 커넥터가 있는 하나의 PCIe Gen 5.0 x4 링크 인터페이스. |
+| 시스템 메모리 | 높은 대역폭 및 낮은 지연 시간 작동을 위한 16GB 또는 32GB LPDDR5 DRAM 인터페이스. |
+| eMMC 플래시 스토리지 | 부팅 및 시스템 스토리지를 위한 하나의 32GB eMMC 플래시 메모리 인터페이스. |
+| QSPI NOR 플래시 | 펌웨어 및 부트 로더 스토리지를 위한 하나의 128Mbit QSPI NOR 플래시 인터페이스. |
+| 이더넷 | RJ45 커넥터를 통해 하나의 10Gbps 이더넷 인터페이스. |
+| JTAG 인터페이스 | 하드웨어 디버깅 및 시스템 초기화를 위한 하나의 선택적 JTAG 인터페이스. |
+| 마이크로 SD 인터페이스 | 이동식 스토리지 및 시스템 복구를 위한 하나의 마이크로 SD 카드 인터페이스. |
+| 디버그 UART (tRoot) | tRoot 진단 및 디버깅을 위한 하나의 전용 디버그 UART 인터페이스. |
+| 디버그 UART (Linux) | Linux 콘솔 액세스 및 디버깅을 위한 하나의 전용 디버그 UART 인터페이스. |
+| 카메라 인터페이스 | 직렬 링크를 통해 원격 카메라를 연결하기 위한 두 개의 GMSL2 FAKRA 포트. |
+| 상태 표시기 | 시스템 전원 상태를 나타내는 하나의 전원 LED. |
+
+</TabItem>
+</Tabs>

@@ -6,31 +6,31 @@ sidebar_position: 2
 
 # NFS 설정
 
-대규모 데이터 세트 또는 모델 파일을 사용할 때 빠르고 효율적인 파일 접근은 원활한 데모 및 개발 환경을 위해 필수적입니다.
+필요한 경우 NFS를 사용하세요. DevKit 저장된 대규모 데이터 세트 또는 모델 파일에 액세스하려면 Ubuntu 호스트.
 
-NFS(네트워크 파일 시스템)를 사용하면 Ubuntu 머신(서버)과 Modalix DevKit (클라이언트) 간에 원활한 파일 공유가 가능하며, 로컬 복사본을 필요로 하지 않고 대용량 저장 장치에 직접 접근할 수 있습니다.
+NFS(네트워크 파일 시스템)는 호스트 간에 파일을 공유합니다. Ubuntu 호스트(서버)와 해당 Modalix DevKit (클라이언트). DevKit 로컬 복사본 없이 호스트 스토리지를 액세스할 수 있습니다.
 
 :::note
-NFS는 특히 DevKit에 고속, 대용량 저장 장치(예: NVMe)가 부족할 때 유용합니다. 이는 MLSoC 및 Modalix 얼리 액세스 키트(EA)와 같은 플랫폼에도 적용되며, 이들 플랫폼에서 SD 카드에만 의존하면 로딩 시간이 더 오래 걸릴 수 있습니다.
+DevKit에 고속, 대용량 저장 장치(예: NVMe)가 부족할 때 NFS가 유용합니다. 이는 MLSoC 및 Modalix 얼리 액세스 키트(EA)와 같은 플랫폼에도 적용되며, SD 카드만 사용하는 저장 장치는 로딩 시간을 지연시킬 수 있습니다.
 :::
 
-NFS는 특히 다음과 같은 경우에 유용할 수 있습니다.
+다음과 같은 경우 NFS를 사용하세요.
 
 - 대규모 모델이나 데이터 세트는 여러 장치에서 공유해야 합니다.
-- 클라이언트 측의 로컬 저장 공간은 제한적이거나 사용할 수 없습니다.
-- 업데이트를 간소화하기 위해 중앙 집중식 스토리지 관리를 사용하는 것이 좋습니다.
+- 클라이언트 측의 로컬 저장 공간이 제한적이거나 사용할 수 없습니다.
+- 업데이트 관리를 위해 중앙 집중식 스토리지 관리를 선호하시나요?
 
 <details open>
 <summary><strong>1단계: NFS 서버 설정</strong></summary>
 
-1. **NFS 커널 서버를 설치합니다**:
+1. NFS 커널 서버를 설치합니다.
 
    ```bash
    sima-user@sima-user-machine:~$ sudo apt update
    sima-user@sima-user-machine:~$ sudo apt install -y nfs-kernel-server
    ```
 
-2. **공유 디렉터리 생성**:
+2. 공유 디렉터리를 만듭니다.
 
    Modalix DevKit와 공유할 디렉터리를 선택하세요.
 
@@ -39,7 +39,7 @@ NFS는 특히 다음과 같은 경우에 유용할 수 있습니다.
    sima-user@sima-user-machine:~$ sudo chmod 777 /mnt/nfs_share
    ```
 
-3. **NFS 내보내기 파일을 편집합니다**:
+3. NFS 내보내기 파일을 편집합니다.
 
    내보내기 파일을 엽니다.
 
@@ -59,7 +59,7 @@ NFS는 특히 다음과 같은 경우에 유용할 수 있습니다.
    /mnt/nfs_share *(rw,sync,no_subtree_check)
    ```
 
-4. **변경 사항을 적용하고 NFS 서비스를 다시 시작합니다**:
+4. 변경 사항을 적용하고 NFS 서비스를 다시 시작합니다.
 
    ```bash
    sima-user@sima-user-machine:~$ sudo exportfs -a
@@ -69,25 +69,25 @@ NFS는 특히 다음과 같은 경우에 유용할 수 있습니다.
 </details>
 
 <details open>
-<summary><strong>2단계: NFS 클라이언트 설정</strong></summary>
+<summary><strong>2단계. NFS 클라이언트 설정</strong></summary>
 
-1. **마운트 지점 생성**:
+1. 마운트 지점을 생성합니다.
 
    ```bash
    modalix:~$ sudo mkdir -p /mnt/
    ```
 
-2. **NFS 공유를 마운트합니다**:
+2. NFS 공유를 마운트합니다.
 
-   `<server_ip>`를 Ubuntu 서버의 IP 주소로 변경하세요.
+   `<server_ip>`을 Ubuntu 호스트 머신의 IP 주소로 대체하십시오.
 
    ```bash
    modalix:~$ sudo mount <server_ip>:/mnt/nfs_share /mnt/
    ```
 
-3. **마운트 상태 확인**:
+3. 마운트 상태를 확인하십시오.
 
-   NFS 공유가 올바르게 마운트되었는지 확인하세요.
+   NFS 공유가 올바르게 마운트되었는지 확인합니다.
 
    ```bash
    modalix:~$ df -h | grep mnt
@@ -96,17 +96,17 @@ NFS는 특히 다음과 같은 경우에 유용할 수 있습니다.
 </details>
 
 <details open>
-<summary><strong>3단계: 마운트 설정을 영구적으로 유지</strong></summary>
+<summary><strong>3단계. 마운트 지점을 영구적으로 설정합니다.</strong></summary>
 
-부팅 시 NFS 공유를 자동으로 마운트하려면 Modalix에서 다음 단계를 수행하십시오.
+부팅 시 NFS 공유 폴더를 자동으로 마운트하려면 다음 단계를 수행하세요. Modalix:
 
-1. **mnt.mount 파일을 생성합니다**:
+1. `mnt.mount` 파일을 생성합니다.
 
    ```bash
    modalix:~$ sudo vi /etc/systemd/system/mnt.mount
    ```
 
-2. **이 내용을 파일에 추가하되, server_IP를 Ubuntu 서버의 IP 주소로 반드시 변경하십시오.**
+2. 다음 내용을 파일에 추가하고, `server_IP`를 Ubuntu 호스트의 IP 주소로 바꿉니다.
 
    ```
    [Unit]
@@ -124,7 +124,7 @@ NFS는 특히 다음과 같은 경우에 유용할 수 있습니다.
    WantedBy=multi-user.target
    ```
 
-3. **저장하고 종료합니다. 그런 다음, 구성을 테스트합니다.**
+3. 저장하고 종료한 다음, 설정을 테스트합니다.
 
    ```bash
    modalix:~$ sudo systemctl daemon-reload

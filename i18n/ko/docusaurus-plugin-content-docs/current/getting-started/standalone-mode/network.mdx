@@ -1,0 +1,166 @@
+---
+title: 네트워크 설정
+description: 독립 모드에서 Modalix DevKit 네트워킹을 구성합니다.
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 네트워크 설정
+
+독립 모드에서는 직렬 액세스와 네트워크 액세스를 모두 구성합니다. 직렬 액세스를 통해 네트워크 연결이 불가능하거나 잘못 구성된 경우에도 DevKit에 접근할 수 있습니다.
+
+기본적으로 DevKit 네트워크 인터페이스는 DHCP를 사용합니다.
+
+- DevKit을 컴퓨터에 직접 연결하려면 컴퓨터의 네트워크 인터페이스를 정적 IP로 구성하고 DevKit에 직접 연결하세요.
+- DevKit이 네트워크에서 IP 주소를 자동으로 얻도록 하려면 인터페이스를 DHCP를 사용하도록 구성하세요.
+
+## 현재 IP 주소 확인
+
+시리얼 콘솔에서 다음 명령을 실행합니다.
+
+```console
+sima@modalix:~$ ip a | grep inet
+   inet 127.0.0.1/8 scope host lo
+   inet6 ::1/128 scope host noprefixroute
+   inet 192.168.91.181/22 brd 192.168.91.255 scope global dynamic noprefixroute end0
+   inet6 fe80::ab34:b995:9f6e:160e/64 scope link noprefixroute
+```
+
+<Tabs groupId="network-method">
+<TabItem value="linux-shell" label="Network Setup in the Linux Shell" default>
+
+:::note
+장치를 재부팅하지 않고 정적 IP와 DHCP 간에 전환하려면 다음 지침을 따르세요.
+:::
+
+DevKit에 `sima-cli`가 설치되어 있는 경우, 재부팅 없이 DHCP와 정적 구성 간에 전환하려면 다음 명령을 실행하세요.
+
+```console
+modalix:~$ sima-cli network
+```
+
+이 명령은 정적 및 DHCP 네트워크 구성에 대한 대화형 메뉴를 엽니다.
+
+`sima-cli`를 사용할 수 없는 경우, 미리 구성된 연결 프로필 간에 전환하려면 `nmcli`를 사용하십시오. 사용 가능한 프로필은 `end0-static` 및 `end0-dhcp`입니다.
+
+:::note
+다음 지침에서는 `NetworkManager` 프로필을 사용하며, eLxr 2.1 이상을 실행하는 DevKit 시스템에 적용됩니다. 시스템에서 이전 버전을 실행 중인 경우 [v2.0.0 설명서를 참조하십시오. ](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell).
+:::
+
+**고정 IP 주소로 전환**
+
+네트워크 인터페이스를 DHCP에서 고정 IP로 변경하려면 다음 명령을 실행하세요.
+
+```console
+modalix:~$ sudo nmcli connection up end0-static
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ networkctl status
+```
+
+**DHCP로 전환**
+
+네트워크 인터페이스를 정적 IP에서 DHCP로 변경하려면 다음 명령을 실행하세요.
+
+```console
+modalix:~$ sudo nmcli connection up end0-dhcp
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ networkctl status
+```
+
+**정적 IP 주소 변경**
+
+`end0-static` 프로필에서 사용하는 IP 주소를 변경하려면 프로필을 업데이트하고 다시 활성화하십시오.
+
+```console
+modalix:~$ sudo nmcli connection modify end0-static ipv4.addresses 192.168.1.20/24
+modalix:~$ sudo nmcli connection up end0-static
+```
+
+원하는 주소와 접두사를 사용하여 `192.168.1.20/24`를 대체하십시오. NetworkManager는 프로필을 `/etc/NetworkManager/system-connections/`에 저장합니다. 2.0 버전 이하에서 사용되던 기존 `/etc/systemd/network/20-end0-static.network` 파일은 더 이상 존재하지 않습니다.
+
+</TabItem>
+<TabItem value="auto-config" label="Share a Host Network Connection">
+
+:::note
+- DevKit이 개발자 네트워크에 직접 연결할 수 없을 때 이 옵션을 사용합니다.
+- DevKit을 호스트 이더넷 포트에 연결합니다. 호스트에 이더넷 포트가 없는 경우 USB-to-이더넷 어댑터를 사용합니다.
+- 호스트는 `pip`를 사용하여 Python 패키지 설치를 포함하여 인터넷 액세스를 DevKit와 공유할 수 있습니다.
+- 이 옵션은 호스트 컴퓨터에서 인터넷 연결 공유가 필요합니다.
+:::
+
+1. Ubuntu 호스트에서 인터넷 연결 공유를 활성화합니다.
+
+   - 오른쪽 상단에서 `Settings`를 열고 `Network` 섹션으로 이동합니다.
+   - `Wired` 아래에서 더하기 기호를 클릭하여 보드에 대한 기존 설정 프로필이 없는 경우 새 설정 프로필을 만들거나, 기존 프로필이 있는 경우 해당 프로필을 수정합니다.
+   - 새 프로필을 만드는 경우 "공유" 또는 원하는 다른 이름으로 지정합니다.
+   - `IPv4` 탭에서 `Shared to other computers`를 선택합니다. 적용을 클릭합니다.
+   - 기존 연결이 있는 경우 변경 사항을 적용하려면 연결을 껐다가 다시 켭니다.
+   - 이제 호스트가 DevKit와 네트워크로 연결되어야 합니다. `10.42.0.0/24`는 이 설정에 Ubuntu에서 사용하는 기본 서브넷이지만, 호스트는 다른 서브넷을 사용할 수 있습니다.
+   - 다음 단계에서 결과가 반환되지 않으면 `ifconfig`를 실행하고 이더넷 인터페이스의 IP 주소를 확인합니다.
+
+2. Ubuntu 호스트에서 터미널을 열고 해당 IP 범위의 장치를 스캔합니다.
+
+   ```console
+   sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24 | grep report
+      Nmap scan report for sima-user-machine (10.42.0.1)
+      Nmap scan report for 10.42.0.241
+   ```
+
+이 결과는 이 서브넷의 IP 주소를 나열합니다. "`.1`"로 끝나는 주소는 일반적으로 호스트입니다. 다른 주소는 DevKit입니다. 이 예에서는 DevKit이 "`10.42.0.241`"이고 호스트는 "`10.42.0.1`"입니다.
+
+3. 다음 명령을 실행하여 연결을 테스트합니다.
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.42.0.241
+   ...
+   Last login: Mon Nov 27 19:58:33 2023
+   modalix:~$
+   ```
+
+4. DevKit에서 `10.42.0.1` 호스트에 핑을 보냅니다. 호스트에서 SSH 서버가 실행 중인 경우 SSH를 통해 연결할 수도 있습니다.
+
+   ```console
+   modalix:~$ ping 10.42.0.1
+   ```
+
+5. DevKit에 핑을 보내거나 SSH로 접속할 수 없는 경우, 정적 IP 구성 방법을 사용하십시오.
+
+</TabItem>
+<TabItem value="uboot" label="Network Setup in the U-Boot Shell">
+
+:::note
+이 절차는 DevKit 펌웨어 버전 2.0 이하에만 적용됩니다. 버전 2.1 이상에서는 Linux 측 구성을 사용하십시오. U-Boot에서 네트워크를 구성하면 펌웨어 업그레이드 시에도 네트워크 설정이 유지됩니다.
+
+1. UART 및 [ 직렬 터미널을 통해 DevKit에 연결합니다(](/hardware/getting-started/setup-serial)).
+2. DevKit를 재부팅합니다.
+3. 메시지 `Hit any key to stop autoboot`가 표시되면 아무 키나 눌러 U-Boot로 들어갑니다.
+4. 고정 IP로 전환하려면 다음 명령을 입력합니다.
+
+   ```console
+   sima:~$ env set forcenetcfg static; saveenv
+   sima:~$ boot
+   ```
+
+5. 보드는 재부팅되며 첫 번째 및 두 번째 이더넷 포트에 `192.168.1.20` 및 `192.168.2.20`를 사용합니다.
+6. 보드의 정적 IP 주소를 수정하려면 장치가 부팅된 후 `vi`를 사용하여 네트워크 파일을 편집합니다.
+
+   ```console
+   modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
+   ```
+
+   :::경고
+   이 파일은 펌웨어 버전 2.0 이하에서만 존재합니다. 버전 2.1 이상에서는 NetworkManager 프로필로 대체되었으므로, **Linux 셸의 네트워크 설정** 탭에 설명된 대로 `nmcli`를 사용하여 정적 IP를 수정하십시오.
+   :::
+
+7. **네트워크** 섹션에서 필요에 따라 IP 주소를 업데이트합니다.
+8. DHCP 모드를 구성하려면 아래 명령을 입력하고 보드를 재부팅합니다.
+
+   ```console
+   sima:~$ env set forcenetcfg dhcp; saveenv
+   sima:~$ boot
+   ```
+
+</TabItem>
+</Tabs>

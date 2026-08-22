@@ -1,0 +1,89 @@
+---
+title: ドライバーのインストール
+description: Modalix PCIeカードのドライバーをインストールし、PCIeの検出を確認します。
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# ドライバーのインストール
+
+お使いのオペレーティングシステム用のホストドライバーをインストールし、ホストがModalix PCIeカードを検出できることを確認します。
+
+<Tabs groupId="pcie-driver">
+<TabItem value="linux" label="Linux" default>
+
+Linuxホストで次のコマンドを実行して、最新のドライバーをインストールします。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux
+... ... ...
+=== Driver Installation Validation ===
+  Component            | Status     | Details
+  ----------------------------------------------------------------
+  GStreamer            | PASS       | ✅ GStreamer plugin 'pciehost' installed
+  Kernel Module        | PASS       | ✅ Kernel module 'sima_mla_drv' installed
+  PCI Devices          | PASS       | ✅ Detected SiMa PCIe device(s):
+  - 0000:04:00.0 Modalix HHHL v2              driver=sima_mla_drv
+
+✅ Installation complete.
+```
+
+特定のドライバーバージョンをインストールするには、`-v`フラグを使用します。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux -v %platform_version%
+```
+
+:::note
+ドライバーのインストール後、検証する前にホストマシンを再起動してください。
+:::
+
+:::warning
+レガシー**MLSoC PCIeカード**のPCIeドライバーのサポートは、SDK 2.0.0で終了しました。上記のコマンドでインストールされるドライバーは**Modalix**をサポートします。レガシーMLSoC PCIeカードを使用している場合は、`sima-cli install drivers/linux -v 2.0.0`を使用して2.0.0ドライバーをインストールしてください。
+:::
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+Windowsホストで次のコマンドを実行して、ドライバーをインストールします。
+
+:::warning
+この機能は現在、技術プレビュー版です。このドライバーをインストールすると、システムがドライバーのテスト署名モードになります。システムに変更を加える前に、プロンプトを確認してください。
+:::
+
+```console
+C:\Users\sima> sima-cli install drivers/windows
+... ... ...
+  ✅ Downloaded: pcie_develop_10082025_2.00.081025.1_B31.exe
+  🚀 Running installation script in: C:\Users\sima
+  📜 Script: pcie_develop_10082025_2.00.081025.1_B31.exe
+  ╭─ Post-Installation Instructions ─╮
+  │                                  │
+  │  Driver successfully installed   │
+  │                                  │
+  ╰──────────────────────────────────╯
+  ✅ Installation completed successfully.
+```
+
+WindowsデバイスマネージャーでSiMa AIデバイスを確認します。
+
+<img src="/img/devkit/windows-device.jpg" alt="WindowsデバイスマネージャーにSiMa AIデバイスが表示されている" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+:::note
+ドライバーのインストール後、検証する前にホストマシンを再起動してください。
+:::
+
+</TabItem>
+</Tabs>
+
+## 検証とテスト
+
+次のコマンドを実行して、PCIeの列挙を確認します。
+
+```console
+sima-cli device discover
+```
+
+セットアップが正しい場合、コマンドの出力には接続されているSiMa PCIeデバイスが一覧表示されます。

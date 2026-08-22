@@ -1,0 +1,37 @@
+---
+title: "硬體準備"
+description: "準備好主機和 Modalix PCIe 擴充卡，以便用於 PCIe 模式。"
+sidebar_position: 1
+---
+
+# 硬體準備
+
+:::note
+請在繼續操作之前安裝或升級 `sima-cli`。本指南適用於最新版本的 `sima-cli`。
+:::
+
+在您開始之前：
+
+- 支援的主機平台：Ubuntu 22.04 LTS。
+- Windows 10/11 主機支援目前處於測試階段。
+- 設定您的主機的 UEFI/BIOS 設定，以支援 PCIe 驅動程式。
+  - 在 Intel 架構的機器上，啟用 SRIOV、IOMMU 和 VT-D。
+  - 在搭載 AMD 處理器的電腦上，請停用 AMD-V 並啟用 IOMMU。
+
+## 準備 PCIe 擴充卡
+
+![ Modalix PCIe 卡的 DIP 開關](/img/devkit/pcie-dip-switch.png)
+
+1. 在 Modalix PCIe 卡上，找到上方所示的四個 DIP 開關。請確認開關 #1 處於 `OFF` 位置。
+2. 請確認「執行/程式」開關是否已 `ON`.
+3. 關閉主機電源，將 Modalix PCIe 卡插入 PCIe 插槽，然後開啟主機電源。
+4. 除非另有指示，否則請將 DIP 開關維持在其出廠時的預設位置。
+5. 如果主機主機板同時提供一個主要（藍色）和一個非主要（黑色）PCIe 插槽，請將 Modalix PCIe 卡安裝在次要（黑色）插槽中。
+6. 將卡片的序列連接器/UART 連接到主機，以便進行啟動和除錯。
+7. 這張 PCIe 卡還配備了一個實體乙太網路連接埠，以便直接存取網路。
+
+如需更詳細地了解 PCIe 卡的介面、開關和連接器，請參閱 [ Modalix PCIe 卡，也就是 ](/hardware/devkit/modalix-pcie-card)。
+
+:::note
+在極少數情況下，您可能不希望驅動程式在主機重新啟動時自動載入。若要停用自動載入，請建立或編輯 `/etc/modprobe.d/blacklist.conf`，並新增 `blacklist sima_mla_drv`。然後執行 `update-initramfs`，並重新啟動主機。重新啟動後，使用 `insmod` 或 `modprobe` 手動載入驅動程式。
+:::

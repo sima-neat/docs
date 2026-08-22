@@ -1,0 +1,45 @@
+---
+title: Modalix PCIe 擴充卡
+description: HHHL PCIe 擴充卡，採用 MLSoC Modalix，用於主機連接的推論系統。
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix PCIe 擴充卡
+
+**Modalix PCIe 擴充卡** 是一種半高/半長 (HHHL) PCIe 擴充卡，其核心為 **MLSoC Modalix**。它安裝在主機機器上，並透過 PCIe 提供專用的 Modalix 推論加速功能。
+
+<Tabs>
+<TabItem value="interfaces" label="Interfaces" default>
+
+<img src="/img/devkit/modalix-ea-pcie-interfaces.jpg" alt="Modalix PCIe Card interfaces" style={{width: '100%', display: 'block', margin: '0 auto'}} />
+
+| 介面 | 描述 |
+| --- | --- |
+| 以太網路埠（eth0、eth1） | RJ45，用於遠端連線的高速乙太網路介面。 |
+| PCI-Express 5.0 x4 介面 | 用於與主機整合的 PCIe 介面。 根據主機配置，可能需要使用轉接器。 |
+| 連接到主機的 COM 埠 | 將序列控制台連接到主機，以便進行除錯。 將隨附電纜上的箭頭與最左側的針腳對齊。 |
+| SD 卡插槽 | 位於 Modalix PCIe 卡的背面。 |
+| GMSL2 FAKRA 埠，用於連接相機 | 用於高頻寬影片傳輸的千兆多媒體序列鏈路 (GMSL) 埠。 |
+
+</TabItem>
+<TabItem value="features" label="Key Features">
+
+| 功能 | 詳情 |
+| --- | --- |
+| PCIe 介面 | 一個 PCIe Gen 5.0 x4 鏈路介面，帶有標準板邊連接器。|
+| 系統記憶體 | 16GB 或 32GB LPDDR5 DRAM 介面，用於高頻寬、低延遲操作。|
+| eMMC 快閃儲存 | 一個 32GB eMMC 快閃記憶體介面，用於啟動和系統儲存。|
+| QSPI NOR 快閃記憶體 | 一個 128Mbit QSPI NOR 快閃記憶體介面，用於韌體和啟動載入程式儲存。|
+| 以太網路 | 一個 10Gbps 以太網路介面，通過 RJ45 連接器。|
+| JTAG 介面 | 一個可選的 JTAG 介面，用於硬體除錯和啟動。|
+| Micro SD 介面 | 一個 Micro SD 卡介面，用於可移動儲存和系統恢復。|
+| 除錯 UART (tRoot) | 一個專用的除錯 UART 介面，用於 tRoot 診斷和除錯。|
+| 除錯 UART (Linux) | 一個專用的除錯 UART 介面，用於 Linux 控制台訪問和除錯。|
+| 攝像頭介面 | 兩個 GMSL2 FAKRA 端口，用於通過串列鏈路連接遠端攝像頭。|
+| 狀態指示器 | 一個電源 LED，用於指示系統電源狀態。|
+
+</TabItem>
+</Tabs>

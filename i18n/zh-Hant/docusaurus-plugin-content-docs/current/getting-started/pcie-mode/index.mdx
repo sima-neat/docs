@@ -1,0 +1,23 @@
+---
+title: "PCIe 模式"
+description: "將 Modalix PCIe 卡安裝到主機中，並啟動驅動程式、網路和偵測功能。"
+sidebar_position: 4
+---
+
+# PCIe 模式
+
+在 PCIe 模式下，Modalix PCIe 卡安裝在主機機器上，並透過 PCIe 提供 Modalix 推論加速功能。主機負責協調、儲存和 I/O，而卡則負責處理推論工作負載。
+
+當 Modalix 硬體以 PCIe 卡的形式安裝，而不是作為獨立的 DevKit 運行時，請使用本節。
+
+<div class="overview-link-columns overview-link-columns-single">
+  <section class="overview-link-panel overview-link-panel-start">
+    <h2>設定 PCIe 模式</h2>
+    <p>準備卡，安裝主機驅動程式，並可選擇設定透過 PCIe 的乙太網路存取。</p>
+    <ul class="overview-link-list">
+      <li><a class="overview-link-card" href="/hardware/getting-started/pcie-mode/hardware-preparation"><strong>硬體準備</strong><span>安裝 Modalix PCIe 卡，檢查 DIP 開關，連接序列/ UART，並確認插槽指引。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/pcie-mode/driver-installation"><strong>驅動程式安裝</strong><span>安裝 Linux 或 Windows 驅動程式，然後驗證 PCIe 的偵測。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/pcie-mode/virtual-network"><strong>虛擬網路</strong><span>使用透過 PCIe 的乙太網路進行 SSH、SCP 和手動 IP 設定。</span></a></li>
+    </ul>
+  </section>
+</div>

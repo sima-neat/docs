@@ -1,0 +1,65 @@
+---
+title: sima-cli を使用したアップデート
+description: ネットワーク経由で実行中の Modalix DevKit を sima-cli でアップデートします。
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# sima-cli を使用したアップデート
+
+DevKit が実行中で、ネットワーク経由でアクセスできる場合に、`sima-cli update` を使用します。この方法では、ファームウェアイメージをダウンロードし、DevKit でアップデートをトリガーします。
+
+続行する前に、ホストがネットワーク経由で DevKit にアクセスできることを確認してください。以下を参照してください。
+
+- [スタンドアロンモードのネットワーク設定](/hardware/getting-started/standalone-mode/network)
+- [PCIe モードの仮想ネットワーク設定](/hardware/getting-started/pcie-mode/virtual-network)
+
+<Tabs groupId="sima-cli-source">
+<TabItem value="from-devkit" label="DevKit から" default>
+
+スタンドアロン DevKit 上で `sima-cli` を直接実行します。DevKit がアクティブなインターネット接続を持っていることを確認し、次を実行します。
+
+```console
+modalix:~$ sima-cli update
+```
+
+Yocto Linux を実行している MLSoC では、以前にダウンロードして自分でホストした場合、バージョン文字列の代わりに完全な URL を指定することもできます。
+
+```console
+modalix:~$ sima-cli update http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="from-host" label="ホストマシンから">
+
+:::note
+この方法は、Yocto を実行している MLSoC プラットフォームでのみサポートされています。eLxr Linux を実行している Modalix デバイスの場合は、DevKit 上で直接アップデートを実行してください。
+:::
+
+ホストマシンから次のコマンドを使用します。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
+```
+
+このコマンドは、該当する場合、ホストに適切な Linux ドライバーバージョンもインストールします。
+
+ファームウェアをダウンロードしてネットワーク上にホストしている場合は、URL を指定して、繰り返しインターネットからダウンロードすることを回避します。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="download" label="ダウンロードのみ">
+
+ファームウェアイメージをダウンロードして、手動のアップデート手順を実行する場合は、適切な Modalix ファームウェアアーカイブの URL を指定して、`sima-cli download` を実行します。
+
+</TabItem>
+</Tabs>
+
+:::note
+DevKit を **ダウングレード** するか、**最新リリースではない**ビルド (例: プレリリース版の `develop` ビルドまたは内部エンジニアリングイメージ) をインストールするには、代わりに [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) を使用してください。これにより、DevKit がホスト上の TFTP サーバーから起動し、ターゲットイメージが eMMC に直接フラッシュされます。
+:::

@@ -1,0 +1,89 @@
+---
+title: Встановлення драйвера
+description: Встановіть драйвери PCIe-карти Modalix і перевірте виявлення PCIe.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Встановлення драйвера
+
+Встановіть драйвер для вашої операційної системи, а потім перевірте, чи може хост-комп’ютер виявити PCIe-карту Modalix.
+
+<Tabs groupId="pcie-driver">
+<TabItem value="linux" label="Linux" default>
+
+Виконайте наступну команду на хост-комп’ютері Linux, щоб встановити останню версію драйвера.
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux
+... ... ...
+=== Driver Installation Validation ===
+  Component            | Status     | Details
+  ----------------------------------------------------------------
+  GStreamer            | PASS       | ✅ GStreamer plugin 'pciehost' installed
+  Kernel Module        | PASS       | ✅ Kernel module 'sima_mla_drv' installed
+  PCI Devices          | PASS       | ✅ Detected SiMa PCIe device(s):
+  - 0000:04:00.0 Modalix HHHL v2              driver=sima_mla_drv
+
+✅ Installation complete.
+```
+
+Щоб встановити певну версію драйвера, використовуйте прапорець `-v`:
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux -v %platform_version%
+```
+
+:::note
+Після встановлення драйвера перед перевіркою перезавантажте хост-комп’ютер.
+:::
+
+:::warning
+Підтримка PCIe-драйверів для застарілих **MLSoC PCIe-карт** припинилася з версією SDK 2.0.0. Драйвер, встановлений наведеною вище командою, підтримує **Modalix**. Якщо ви використовуєте застарілу MLSoC PCIe-карту, встановіть драйвер версії 2.0.0, використовуючи команду `sima-cli install drivers/linux -v 2.0.0`.
+:::
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+Виконайте наступну команду на хост-комп’ютері Windows, щоб встановити драйвер.
+
+:::warning
+Ця функція зараз знаходиться в стадії технічної попередньої версії. Встановлення цього драйвера переводить систему в режим тестування підпису драйверів. Підтвердіть запит перед внесенням будь-яких змін до системи.
+:::
+
+```console
+C:\Users\sima> sima-cli install drivers/windows
+... ... ...
+  ✅ Downloaded: pcie_develop_10082025_2.00.081025.1_B31.exe
+  🚀 Running installation script in: C:\Users\sima
+  📜 Script: pcie_develop_10082025_2.00.081025.1_B31.exe
+  ╭─ Post-Installation Instructions ─╮
+  │                                  │
+  │  Driver successfully installed   │
+  │                                  │
+  ╰──────────────────────────────────╯
+  ✅ Installation completed successfully.
+```
+
+Перевірте диспетчер пристроїв Windows на наявність пристрою SiMa AI.
+
+<img src="/img/devkit/windows-device.jpg" alt="Диспетчер пристроїв Windows, що показує пристрій SiMa AI" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+:::note
+Після встановлення драйвера перед перевіркою перезавантажте хост-комп’ютер.
+:::
+
+</TabItem>
+</Tabs>
+
+## Перевірка та тестування
+
+Виконайте команду виявлення, щоб підтвердити перелік PCIe:
+
+```console
+sima-cli device discover
+```
+
+Якщо налаштування виконано правильно, вихід команди міститиме список підключених SiMa PCIe-пристроїв.

@@ -1,358 +1,47 @@
 ---
 title: "펌웨어 업데이트"
-description: "Modalix DevKit 펌웨어를 최신 상태로 유지하는 방법."
+description: "Modalix DevKit 펌웨어를 업데이트, 복구 또는 재설치하는 방법을 선택하세요."
 sidebar_position: 5
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # 펌웨어 업데이트
 
-펌웨어는 DevKit에서 실행되는 기본 소프트웨어입니다. 펌웨어를 최신 상태로 유지하는 것은 안정성, 보안을 보장하고 새로운 기능과 성능 향상에 접근할 수 있도록 하는 데 필수적입니다.
+DevKit 펌웨어를 최신 상태로 유지하고, 부팅되지 않는 장치를 복구하거나 특정 펌웨어 버전을 설치하십시오.
+
+:::note
+계속하기 전에 `sima-cli`를 설치하거나 최신 버전으로 업데이트하십시오. 이 설명서는 최신 `sima-cli` 버전을 사용하는 것을 기준으로 작성되었습니다.
+:::
+
+:::warning
+Modalix DevKit을 SDK 1.7에서 2.0으로 업그레이드하려면 추가 단계가 필요합니다. 변환 절차에 대해서는 [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion) 가이드 문서를 참조하십시오.
+:::
 
 ## 운영 체제 {#os}
 
-SiMa.ai와 Modalix DevKit는 **eLxr Linux**를 실행하며, 이는 Debian 기반 배포판입니다. **2025년 12월 중순 이후**에 출고되는 장치에는 eLxr가 미리 설치되어 있습니다. 이전 Modalix 장치(2025년 12월 중순 이전에 출고된 장치)에는 Yocto가 미리 설치되어 있으며, [eLxr로 변환합니다.](/hardware/reference/tech-notes/elxr-conversion) 문서에 따라 eLxr로 변환할 수 있습니다.
+SiMa.ai와 Modalix DevKit는 eLxr Linux를 실행하며, 이는 Debian 기반 배포판입니다. **2025년 12월 중순 이후**에 출하되는 장치에는 eLxr가 미리 설치되어 있습니다. 이보다 먼저 출하된 Modalix 장치(2025년 12월 중순 이전에 출하)에는 Yocto가 미리 설치되어 있으며, [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion) 기사를 참고하여 eLxr로 변환할 수 있습니다.
 
-### eLxr Linux
-
-eLxr은 Modalix 플랫폼에서 더욱 유연한 개발 환경을 제공하기 위해 설계된 Debian 기반 운영체제입니다. 다음과 같은 기능을 제공합니다.
+eLxr는 Modalix 플랫폼에서 개발을 위해 사용되는 Debian 기반 운영체제입니다. 다음과 같은 기능을 제공합니다.
 
 - 완전한 Debian 패키지 관리 (`apt`)
-- 개발 및 디버깅을 위한 더욱 향상된 사용자 환경
-- 기기에서 직접 도구를 구축하고 설치할 수 있는 능력
-
-### Modalix에서 eLxr을 사용할 때 얻을 수 있는 이점
-
-Modalix 사용자는 다음과 같은 더욱 편리한 개발 환경을 누릴 수 있습니다.
-
-- 표준 Debian 패키지에 대한 접근 권한
+- 개발 및 디버깅을 위한 더욱 폭넓은 사용자 환경
+- 기기에서 직접 도구를 제작하고 설치할 수 있는 능력
 - 크로스 컴파일 없이 더 빠른 반복 작업
-- 간소화된 도구 체인 관리
 - 더욱 폭넓은 라이브러리 및 프레임워크 생태계
 
-## 업데이트 방법
+아래 펌웨어 업데이트 방법을 사용하여 DevKit의 펌웨어를 업데이트하고, 부팅 가능한 복구 미디어를 생성하거나, 네트워크를 통해 펌웨어를 다시 설치하십시오.
 
-DevKit 펌웨어를 업데이트하는 방법은 세 가지입니다.
-
-- **[sima-cli를 사용하여 업데이트하세요.](#sima-cli)** — 네트워크를 통해 펌웨어 이미지를 전송하고 DevKit에서 자동으로 업데이트를 시작합니다. 이 방법은 현장 업데이트에 가장 적합합니다.
-- **[부트 이미지로 업데이트](#bootimage)** — DevKit용 부팅 가능한 미디어를 생성하거나 복구합니다. 이 기능은 오류가 있는 장치를 복구하거나 여러 개의 부팅 장치를 설정하는 데 유용합니다.
-- **[Net Boot를 사용하여 업데이트합니다.](#netboot)** — 로컬 TFTP 서버를 시작하고 플래싱 미디어 없이 네트워크를 통해 DevKit를 직접 부팅합니다. 복구, 공장 초기 설정 또는 빠른 커널/루트 파일 시스템 개발에 이상적입니다.
-
-:::note
-계속하기 전에 `sima-cli`를 설치하거나 최신 버전으로 업데이트하십시오. 이 설명서는 최신 버전의 `sima-cli`와 함께 사용하기 위한 것입니다.
+:::tip
+DevKit에 인터넷 연결이 없는 경우, 호스트 기반 워크플로를 사용하십시오. **Net Boot Recovery**를 사용하여 호스트에서 부팅하고 eMMC를 플래싱하거나, **Create Boot Image**를 사용하여 이동식 부팅 미디어를 준비하십시오. 호스트 장치는 펌웨어 이미지를 다운로드하기 위해 인터넷 연결이 필요하며, 이미 로컬에 이미지가 있는 경우에는 예외입니다.
 :::
 
-:::warning
-Modalix DevKit을 SDK 1.7에서 2.0으로 업그레이드하려면 추가 단계가 필요합니다. 변환 절차에 대해서는 [eLxr로 변환합니다.](/hardware/reference/tech-notes/elxr-conversion) 가이드를 참조하십시오.
-:::
-
-<Tabs groupId="firmware-update-method">
-<TabItem value="sima-cli" label="sima-cli를 사용하여 업데이트합니다." default>
-
-## 다음으로 업데이트합니다. sima-cli {#sima-cli}
-
-이 방법을 사용하면 개발자가 `sima-cli` 도구를 사용하여 SiMa.ai DevKit의 펌웨어를 업데이트할 수 있습니다. 이 방식은 펌웨어 이미지를 호스트 시스템에 다운로드한 다음, 업데이트를 위해 DevKit로 전송합니다.
-
-작업을 진행하기 전에 호스트 시스템이 네트워크를 통해 DevKit에 연결할 수 있는지 확인하십시오. 다음을 참조하십시오.
-
-- [독립 실행형 모드 네트워크 설정](/hardware/getting-started/standalone-mode/#network)
-- [PCIe 모드 가상 네트워크 설정](/hardware/getting-started/pcie-mode#virtual-network)
-
-<Tabs groupId="sima-cli-source">
-<TabItem value="from-devkit" label="DevKit에서" default>
-
-개발자는 독립 실행형 DevKit에서 `sima-cli`를 직접 실행하여 장치를 업데이트할 수 있습니다. DevKit이 활성 상태의 인터넷 연결을 가지고 있는지 확인한 후 다음 명령을 실행합니다.
-
-```console
-modalix:~$ sima-cli update
-```
-
-MLSoC에서 Yocto Linux를 실행하는 개발자는 이전에 이미지를 다운로드하여 호스트에 직접 업로드한 경우 버전 문자열 대신 전체 URL을 지정할 수도 있습니다.
-
-```console
-davinci:~$ sima-cli update http://your-server/image.tar.gz
-```
-
-</TabItem>
-<TabItem value="from-host" label="From Host Machine">
-
-:::note
-이 방법은 Yocto를 실행하는 MLSoC 플랫폼에서만 지원됩니다. eLxr Linux를 실행하는 Modalix 장치의 경우, DevKit에서 직접 업데이트를 수행하십시오.
-:::
-
-호스트 머신에서 다음 명령을 사용하세요.
-
-```console
-sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
-```
-
-이 명령은 해당되는 경우 호스트에 적절한 Linux 드라이버 버전을 설치합니다.
-
-펌웨어를 다운로드하여 네트워크의 어느 곳에든 저장해 놓았다면, 인터넷에서 반복적으로 다운로드하는 대신 해당 URL을 제공할 수 있습니다.
-
-```console
-sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
-```
-
-</TabItem>
-<TabItem value="download" label="Download only">
-
-개발자가 펌웨어 이미지만 다운로드하여 고급 수동 단계를 사용하여 업데이트를 수행하려는 경우, 해당 Modalix 펌웨어 아카이브의 URL과 함께 `sima-cli download`를 실행하여 그렇게 할 수 있습니다.
-
-</TabItem>
-</Tabs>
-
-:::note
-**PCIe 시스템 업데이트:**
-
-- 펌웨어 버전 `1.5`부터 가상 이더넷 인터페이스를 PCIe 모드에서 사용할 수 있으므로, DevKit에 물리적 케이블을 연결할 필요가 없습니다. 이를 통해 기존 PCIe 연결을 통해 원활한 업데이트가 가능합니다.
-- 펌웨어 버전 `1.4` 또는 이전 버전의 경우, DevKit와 직접 네트워크 연결을 설정해야 합니다. 이 경우, DevKit를 독립 모드로 연결하십시오.
-:::
-
-:::note
-DevKit을 이전 버전으로 다운그레이드하거나 최신 버전이 아닌 빌드(예: 사전 릴리스 `develop` 빌드 또는 내부 엔지니어링 이미지)를 설치하려면 대신 [네트워크 부팅 절차](#netboot)를 사용하십시오. 그러면 호스트의 TFTP 서버에서 DevKit을 부팅하고 대상 이미지를 eMMC에 직접 플래싱합니다.
-:::
-
-</TabItem>
-<TabItem value="bootimage" label="Update with Boot Image">
-
-## 부트 이미지로 업데이트 {#bootimage}
-
-경우에 따라 표준 방법을 사용하여 DevKit 펌웨어를 업데이트하는 것이 불가능하거나 충분하지 않을 수 있습니다. 여기에는 다음과 같은 상황이 포함됩니다.
-
-- DevKit의 내부 저장 장치가 손상되었거나 부팅에 실패했습니다.
-- 배포를 위해 여러 개의 부팅 가능한 SD 카드 또는 이동식 드라이브를 준비해야 합니다.
-
-이러한 상황에서 `sima-cli bootimg` 명령을 사용하여 부팅 가능한 이미지를 다운로드하고 이동식 장치(예: SD 카드 또는 NVMe 드라이브)에 기록할 수 있습니다. 또는 [발레나 에처](https://etcher.balena.io/)와 같은 타사 도구를 사용할 수도 있습니다.
-
-<Tabs groupId="bootimage-method">
-<TabItem value="sima-cli" label="Using sima-cli" default>
-
-```console
-sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
-```
-
-이 명령어는 다음 단계를 수행합니다.
-
-1. 지정된 보드 유형(`modalix` 또는 `mlsoc`)과 SDK 버전에 대한 부팅 가능한 이미지를 다운로드합니다.
-2. 호스트 시스템을 스캔하여 이동식 저장 장치를 검색합니다.
-3. 어떤 장치에 데이터를 쓸지 확인하라는 메시지를 표시합니다.
-4. 선택한 장치에 부트 이미지를 직접 기록합니다.
-
-프로세스가 완료되면 SD 카드를 안전하게 제거하고 DevKit에 삽입할 수 있습니다. 다음 부팅 시에는 DevKit가 새로운 이미지에서 시작됩니다.
-
-**참고 사항:**
-
-- 이 명령어는 Linux 또는 macOS 호스트에서 실행해야 합니다.
-- 이미지를 다운로드하려면 인터넷 연결이 필요합니다.
-
-</TabItem>
-<TabItem value="third-party" label="Using Third-Party Tools">
-
-BalenaEtcher와 같은 타사 이미지 작성 도구를 사용할 수도 있습니다.
-
-1. 먼저, `sima-cli`를 사용하여 이미지를 다운로드합니다.
-
-   개발자가 펌웨어 이미지만 다운로드하여 고급 수동 단계를 사용하여 업데이트를 수행하려는 경우, 해당 Modalix 펌웨어 아카이브의 URL과 함께 `sima-cli download`를 실행하여 그렇게 할 수 있습니다.
-
-2. 다운로드한 압축 파일의 내용을 추출합니다.
-
-   ```console
-   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
-   ```
-
-3. BalenaEtcher를 사용하여 생성된 `.wic.gz` 파일을 선택하고 SD 카드 또는 USB 드라이브에 굽습니다.
-
-작성이 완료되면 장치를 DevKit에 연결하고 전원을 켜 이미지를 통해 부팅합니다.
-
-</TabItem>
-</Tabs>
-
-</TabItem>
-<TabItem value="netboot" label="Update with Net Boot">
-
-## Net Boot로 업데이트 {#netboot}
-
-일부 개발 또는 복구 시나리오에서는 SD 카드와 같은 이동식 장치를 사용하는 대신 네트워크를 통해 DevKit를 부팅하는 것이 더 나은 선택일 수 있으며, 심지어 필요할 수도 있습니다. 특히 다음과 같은 경우에 유용합니다.
-
-- DevKit을 이전 버전의 SDK로 **다운그레이드**해야 합니다.
-- 최신 버전이 아닌 빌드를 설치해야 합니다(예: 사전 릴리스 버전의 `develop` 빌드 또는 내부 엔지니어링 이미지).
-- 손상된 부트 로더 또는 파일 시스템이 있는 보드를 복구해야 하는데, SD 카드가 없습니다.
-- 새 보드를 도입하려 하시는데, 내부 저장 장치의 마모를 줄이고 싶으신 것 같습니다.
-- Yocto Linux에서 eLxr로, 또는 eLxr에서 Yocto Linux로 Modalix DevKit를 변환하고 있습니다. 변환에 필요한 구체적인 요구 사항은 [eLxr로 변환합니다.](/hardware/reference/tech-notes/elxr-conversion)를 참조하십시오.
-
-이러한 상황에서는 `--netboot` 옵션과 함께 `sima-cli bootimg`를 사용합니다. 그러면 대상 보드에 적합한 부트 이미지를 다운로드한 후 호스트 시스템에 내장된 TFTP 서버를 통해 해당 이미지를 제공합니다. 그런 다음 DevKit을 U-Boot에서 구성하여 해당 TFTP 서버에서 부팅하도록 하고, 호스트에서 새 이미지를 eMMC에 플래시합니다.
-
-<details open>
-<summary><strong>1단계: 물리적 설정</strong></summary>
-
-:::note
-이 절차는 **macOS** 및 **Ubuntu Linux** 호스트에서 지원됩니다.
-
-호스트 시스템에 `sima-cli`가 설치되어 있지 않으면, 계속하기 전에 설치하십시오.
-
-터미널 세션 두 개가 필요합니다.
-
-1. DevKit에 연결된 시리얼 콘솔 세션을 사용하여 U-Boot 환경 변수를 수정하여 DevKit가 네트워크를 통해 부팅되도록 합니다.
-2. TFTP 서버를 시작하고 eMMC 플래시를 활성화하는 데 사용되는 호스트 셸 세션입니다.
-:::
-
-1. **DevKit의 이더넷 포트**를 호스트 PC에 직접 연결하고 호스트의 네트워크 인터페이스를 정적 IP 주소 **192.168.1.10**으로 설정합니다. Modalix 얼리 액세스 보드에서는 이더넷 포트 0을 사용합니다.
-
-2. DevKit의 **UART 포트**를 호스트에 연결하여 콘솔에 액세스합니다. 호스트에 `sima-cli`를 설치한 후 시리얼 터미널을 엽니다.
-
-   ```console
-   sima-user@sima-user-machine:~$ sima-cli serial
-   ```
-
-3. DevKit에서 네트워크 인터페이스를 기본 정적 IP 주소인 **192.168.1.20**으로 구성하려면 [여기](/hardware/getting-started/standalone-mode/#network)에 있는 지침을 따르세요.
-
-</details>
-
-<details open>
-<summary><strong>2단계. 호스트에서 TFTP Netboot 서버를 시작합니다.</strong></summary>
-
-**요구 사항**
-
-- 호스트와 DevKit은 동일한 물리적 네트워크 또는 직접 이더넷 연결을 통해 연결되어야 합니다.
-- 이더넷 연결은 기가비트 인터페이스 이상이어야 하거나 더 빠른 속도를 지원해야 합니다(링크 속도는 1000Mbps를 초과해야 함).
-- 호스트는 펌웨어 이미지를 다운로드하기 위해 인터넷 연결이 필요합니다.
-- UDP 포트 **69(TFTP)**는 호스트 방화벽에 의해 차단되어서는 안 됩니다.
-
-`<version>`을 대상 SDK 버전(예: `2.0.0`)으로, `<boardtype>`을 `modalix` 또는 `mlsoc`로, `<fwtype>`을 `yocto` 또는 `elxr`로 바꿉니다.
-
-**macOS에서:**
-
-```console
-sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
-```
-
-**Linux 환경:**
-
-:::warning
-TFTP 서버는 권한이 필요한 포트 69에 연결되므로, `sudo` 명령어를 사용해야 합니다.
-:::
-
-```console
-sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
-```
-
-이 명령어는 다음 단계를 수행합니다.
-
-1. 요청한 SDK 버전과 보드 유형에 대한 부팅 가능한 이미지를 다운로드합니다.
-2. 파일을 임시 작업 디렉터리에 추출합니다.
-3. 로컬 TFTP 서버를 시작하고 추출된 부트 파일을 제공합니다(`Image`, `boot.scr`, `.dtb` 파일 등).
-
-</details>
-
-<details open>
-<summary><strong>3단계: DevKit을 Netboot에 맞게 구성합니다.</strong></summary>
-
-DevKit을 호스트에 직렬 콘솔을 통해 연결한 상태에서 전원을 껐다가 다시 켜십시오. 전원 재부팅 중에 직렬 콘솔 연결이 끊어지면 다시 연결하십시오. 부팅 메시지가 나타나기 전에 몇 초 정도의 짧은 지연 시간이 있습니다. 메시지 `Hit any key to stop autoboot`가 나타날 때까지 기다린 다음 아무 키나 눌러 U-Boot 셸로 들어가십시오.
-
-```console
-... ... ...
-
-Address in DT is		ff:ff:ff:ff:ff:ff
-Address in environment is	68:e1:54:00:05:c6
-eth0: ethernet@a800000 [PRIME]
-Hit any key to stop autoboot:  0
-sima$
-```
-
-다음으로 U-Boot 셸에서 다음 명령을 실행합니다.
-
-```console
-sima:~$ setenv boot_targets net; saveenv; boot
-```
-
-Modalix 및 eLxr 대상 시스템의 경우, 부팅하기 전에 cpio 이미지 이름을 설정하십시오.
-
-```console
-sima:~$ setenv cpio_name simaai-image-palette-modalix.cpio.gz; setenv boot_targets net; saveenv; boot
-```
-
-이 명령은 DevKit에 2단계에서 준비된 호스트의 TFTP 서버에서 부팅하도록 지시합니다.
-
-:::note
-기본적으로 DevKit은 다음과 같이 구성된 U-Boot를 사용합니다.
-
-- `ipaddr=192.168.1.20`(DevKit의 이더넷 인터페이스, 멀티포트 보드의 첫 번째 포트).
-- `serverip=192.168.1.10` (TFTP 서버를 실행하는 호스트 머신).
-
-다른 네트워크를 사용하려면 U-Boot에서 `serverip` 및 `ipaddr`를 업데이트하여 현재 환경에 맞게 설정하고, 선택한 IP 주소에서 DevKit이 호스트에 연결될 수 있도록 합니다.
-
-```console
-sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
-```
-:::
-
-</details>
-
-<details open>
-<summary><strong>4단계: eMMC에 펌웨어를 적용합니다.</strong></summary>
-
-호스트의 `--netboot` 셸은 두 가지 명령을 지원합니다.
-
-- `c` — 연결된 모든 클라이언트와 현재 해당 클라이언트에서 실행 중인 펌웨어 버전을 표시합니다.
-- `f` — 선택한 클라이언트의 eMMC를 플래싱합니다.
-
-DevKit이 네트워크 부팅을 완료할 때까지 기다립니다. 이 과정은 몇 분 정도 걸릴 수 있습니다. 시리얼 콘솔에 로그인 프롬프트가 표시되면 보드가 준비된 것입니다. 전체 부팅 시퀀스를 관찰하기 위해 시리얼 콘솔을 계속 연결해 두는 것이 좋습니다.
-
-호스트 터미널로 돌아가서 `netboot>` 프롬프트가 나타날 때까지 **Enter** 키를 누릅니다. 선택적으로 `c`를 입력하여 DevKit이 연결되었는지 확인하고 현재 펌웨어 버전을 표시한 다음, `f`를 입력하여 펌웨어를 업데이트합니다.
-
-```console
-netboot> f
-```
-
-다음과 유사한 로그를 확인할 수 있습니다.
-
-```text
-🔍 Checking SSH availability for 192.168.1.20...
-✅ Board is online!
-✅ SSH is available on 192.168.1.20
-netboot> f
-🔧 Initiating eMMC flash [...]
-```
-
-이미지 파일 크기는 대략 1.6GB이며, 전송하는 데 몇 분 정도 걸립니다. 예시 진행 상황:
-
-```text
-↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
-↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
-```
-
-플래싱이 완료되면 DevKit의 전원을 껐다가 다시 켜십시오. 그러면 장치가 eMMC에서 대상 버전으로 부팅됩니다.
-
-:::note
-**네트부팅 중에 DevKit의 IP 주소가 변경된 경우** (예: DHCP가 기본값인 `192.168.1.20`와 다른 주소를 할당한 경우) `f`는 자체적으로 보드에 연결하지 못합니다. DevKit의 직렬 콘솔에서 새 IP 주소를 찾으세요. 이 주소는 부팅 로그에 출력되고 네트부팅된 셸에서 `ip addr`로 표시됩니다. 그런 다음 이 주소를 `f`에 명시적으로 전달하세요.
-
-```console
-netboot> f <new-ip>
-```
-:::
-
-</details>
-
-<details open>
-<summary><strong>문제 해결</strong></summary>
-
-- DevKit가 네트워크 부팅에 실패하면 호스트와 장치가 동일한 서브넷(`192.168.1.x`)에 있는지 확인하십시오.
-- Modalix 얼리 액세스 보드에서는 네트워크 부팅을 위해 이더넷 포트 0만 지원됩니다.
-- Linux 환경에서는 호스트 방화벽이 **UDP 포트 69(TFTP)**를 통해 통신할 수 있도록 설정되었는지 확인하십시오.
-- DevKit에서 연결 상태를 확인합니다.
-
-  ```console
-  modalix:~$ ping 192.168.1.10
-  ```
-
-- `f`에서 이미지를 찾지 못하면 2단계의 `sima-cli bootimg --netboot` 명령을 다시 실행하여 TFTP 경로를 새로 고칩니다.
-- Modalix DevKit를 eLxr로 변환한 후 시리얼 콘솔에 NFS 관련 오류 메시지가 표시되면 안전하게 무시해도 됩니다.
-
-</details>
-
-</TabItem>
-
-</Tabs>
+<div class="overview-link-columns overview-link-columns-single">
+  <section class="overview-link-panel overview-link-panel-recovery">
+    <h2>업데이트 방법을 선택하세요.</h2>
+    <p>현재 DevKit의 상태와 설치해야 하는 펌웨어에 맞는 경로를 선택하세요.</p>
+    <ul class="overview-link-list">
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/sima-cli"><strong>sima-cli를 사용하여 업데이트</strong><span>네트워크를 통해 작동 중인 DevKit을 업데이트합니다. 이는 현재 펌웨어 업데이트의 기본 경로입니다.</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/net-boot"><strong>네트 부트 복구</strong><span>다운그레이드, 사전 릴리스 빌드, 손상된 시스템, eLxr 변환 또는 eMMC 플래싱에 TFTP 네트 부트를 사용합니다.</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/boot-image"><strong>부트 이미지 생성</strong><span>복구 또는 이동식 미디어 설정을 위해 부팅 가능한 SD 카드, USB 드라이브 또는 NVMe 이미지를 작성합니다.</span></a></li>
+    </ul>
+  </section>
+</div>

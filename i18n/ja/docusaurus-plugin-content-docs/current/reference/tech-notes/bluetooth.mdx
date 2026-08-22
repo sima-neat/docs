@@ -1,19 +1,19 @@
 ---
-title: "Bluetoothを、Modalix SOM DevKitに設定します。"
-description: "Bluetooth USBアダプターをModalix SOM DevKit に接続し、bluezスタックを起動します。"
+title: "BluetoothをModalix SoM DevKitに設定します。"
+description: "BluetoothとUSBアダプターをModalix SoM DevKitに接続し、bluezスタックを起動します。"
 sidebar_position: 4
 ---
 
-# Bluetoothを、Modalix SOM DevKitに設定します。
+# BluetoothをModalix SoM DevKitに設定します。
 
-この技術資料では、Bluetooth USBアダプターをModalix SOM DevKitに接続し、`bluez`を使用してBluetoothスタックを起動する方法について説明します。
+このガイドを参照して、Bluetooth USBアダプターをModalix SoM DevKitに接続し、`bluez`を使用してBluetoothスタックを起動してください。
 
 :::info
-Bluetoothのサポートには、eLxrランタイム上で動作するSDKリリース**2.1.0**以降が必要です。ランタイムの確認方法については、[eLxr に変換](./elxr-conversion)を参照してください。
+Bluetoothのサポートには、eLxrランタイム上で動作するSDKリリース**2.1.0**以降が必要です。ランタイムを確認するには、[「eLxr」への変換](./elxr-conversion)を参照してください。
 :::
 
 <details open>
-<summary><strong>ステップ1：Bluetooth USBアダプターを接続します。</strong></summary>
+<summary> <strong>ステップ1：Bluetooth USBアダプターを接続</strong> </summary>
 
 Bluetooth USBアダプターをDevKitのUSBポートのいずれかに接続し、`lsusb`を使用してカーネルがそれを認識していることを確認します。
 
@@ -26,14 +26,14 @@ Bus 001 Device 002: ID 0bda:5489 Realtek Semiconductor Corp. 4-Port USB 2.0 Hub
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
 
-Bluetoothアダプターがリストに表示されるはずです（この例では、Bus 001 Device 003 に接続されている `Edimax Bluetooth Adapter` です）。アダプターがリストに表示されない場合は、一度取り外して再度接続するか、別のUSBポートを試してください。
+Bluetoothアダプターがリストに表示されるはずです。この例では、アダプターはバス001、デバイス003の`Edimax Bluetooth Adapter`です。アダプターがリストに表示されない場合は、一度取り外して再度接続するか、別のUSBポートを試してください。
 
 </details>
 
 <details open>
-<summary><strong>ステップ2：BlueZ をインストールします。</strong></summary>
+<summary><strong>ステップ2：BlueZ</strong></summary>をインストールします。
 
-`bluez` スタックと `bluetooth` サービスをインストールしてください。
+`bluez`スタックと`bluetooth`サービスをインストールします。
 
 ```console
 sima@modalix:~$ sudo apt update && sudo apt-get install bluez bluetooth -y
@@ -42,9 +42,9 @@ sima@modalix:~$ sudo apt update && sudo apt-get install bluez bluetooth -y
 </details>
 
 <details open>
-<summary><strong>ステップ3：Bluetoothカーネルモジュールを確認します。</strong></summary>
+<summary><strong>ステップ3：確認します。 Bluetooth カーネルモジュール</strong></summary>
 
-ツリー内に存在する`bluetooth`カーネルモジュールが利用可能であることを確認してください。
+ツリー内の状態を確認します。 `bluetooth` カーネルモジュールが利用可能です。
 
 ```console
 sima@modalix:~$ modinfo bluetooth
@@ -67,9 +67,9 @@ parm:           enable_ecred:Enable enhanced credit flow control mode (bool)
 </details>
 
 <details open>
-<summary><strong>手順4：bluetoothctlを起動します。</strong></summary>
+<summary><strong>ステップ4：bluetoothctlを起動します</strong></summary>
 
-インタラクティブな Bluetooth コントローラーを起動します。
+インタラクティブなBluetoothコントローラーを開始します。
 
 ```console
 sima@modalix:~$ bluetoothctl
@@ -77,16 +77,16 @@ Agent registered
 [bluetooth]#
 ```
 
-`bluetoothctl` は、ローカルアダプターとリモートデバイスを管理するための BlueZ のインタラクティブシェルです。`[bluetooth]#` プロンプトから、以下のコマンドを使用して、一般的なペアリングと接続のプロセスを実行できます。
+`bluetoothctl` は、ローカルアダプターとリモートデバイスを管理するための BlueZ のインタラクティブシェルです。`[bluetooth]#` プロンプトから、通常の手順（ペアリングと接続）で使用するコマンドは次のとおりです。
 
 | コマンド | 目的 |
 | --- | --- |
 | `power on` | ローカルのBluetoothコントローラーの電源を入れます。スキャンやペアリングを行う前に必ず行ってください。 |
-| `agent on` / `default-agent` | デフォルトのペアリングエージェントを登録および有効化し、PINコードと確認のプロンプトをこのシェルで処理するように設定します。 |
+| `agent on` / `default-agent` | デフォルトのペアリングエージェントを登録および有効化し、PINコードの入力と確認のプロンプトをこのシェルで処理するように設定します。 |
 | `scan on` | 検出を開始します。近くのデバイスは、`[NEW] Device <MAC> <Name>` という名前の行として表示されます。対象のデバイスがリストに表示されたら、`scan off` を一度実行してください。 |
 | `devices` | コントローラーが検出したデバイスのリスト。 |
 | `pair <MAC>` | MACアドレスを使用してデバイスとペアリングします。両方のデバイスでパスキーの確認を求められる場合があります。 |
-| `trust <MAC>` | デバイスを信頼済みとしてマークすることで、次回起動時に再ペアリングなしで自動的に再接続されるようにします。 |
+| `trust <MAC>` | このデバイスを信頼済みとして登録することで、次回起動時に再ペアリングなしで自動的に再接続されるようにします。 |
 | `connect <MAC>` | アクティブな接続を確立します。オーディオデバイスの場合、これはステップ6で使用されるA2DPシンクを公開する役割を果たします。 |
 | `info <MAC>` | デバイスの詳細を表示します（ペアリング済み、信頼済み、接続済み、対応プロファイル）。 |
 | `disconnect <MAC>` / `remove <MAC>` | セッションを切断するか、ペアリング情報を完全に削除します。 |
@@ -107,18 +107,18 @@ Agent registered
 [bluetooth]# connect AA:BB:CC:DD:EE:FF
 ```
 
-`connect` が `Connection successful` を報告すると、デバイスは以下のオーディオルーティングのステップの準備が整います。
+`connect` が `Connection successful` を報告した後、デバイスは以下のオーディオルーティングのステップの準備が整います。
 
 </details>
 
 :::note
-ステップ5から7は、Bluetooth **オーディオ**デバイス（スピーカー、ヘッドセットなど）に対してのみ必要な手順です。オーディオ以外の周辺機器（キーボード、マウス、ゲームパッド、センサー、ファイル転送デバイスなど）の場合は、ステップ4でのペアリングで十分であり、このガイドの残りの手順は省略できます。
+手順5から7は、スピーカーやヘッドセットなどのBluetooth **オーディオ**デバイスにのみ必要です。キーボード、マウス、ゲームパッド、センサー、ファイル転送デバイスなどのオーディオ以外の周辺機器については、手順4でのペアリングで十分です。
 :::
 
 <details open>
-<summary><strong>ステップ5：オーディオライブラリとプレーヤーをインストールします。</strong></summary>
+<summary> <strong>ステップ5：オーディオライブラリとプレーヤーをインストール</strong> </summary>
 
-DevKit からペアリングされた Bluetooth スピーカーまたはヘッドセットにオーディオをストリーミングするには、PipeWire、BlueZ SPAプラグイン、およびコンソールオーディオプレーヤーをインストールしてください。
+DevKitからペアリングされたBluetoothスピーカーまたはヘッドセットにオーディオをストリーミングするには、PipeWire、BlueZ SPAプラグイン、およびコンソールオーディオプレーヤーをインストールします。
 
 ```console
 sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
@@ -127,9 +127,9 @@ sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
 </details>
 
 <details open>
-<summary><strong>手順6：オーディオをBluetooth接続先にルーティングします。</strong></summary>
+<summary><strong>ステップ6：オーディオを次の場所にルーティングします。 Bluetooth シンク</strong></summary>
 
-ステップ4でペアリングおよび接続したBluetooth対応のオーディオデバイスを使用して、利用可能なPipeWire/PulseAudioの出力先を一覧表示します。
+～を使って Bluetooth ステップ4でペアリングおよび接続したオーディオデバイスについて、利用可能なPipeWire/PulseAudioの出力先をリスト表示します。
 
 ```console
 sima@modalix:~$ pactl list short sinks
@@ -152,7 +152,7 @@ sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-p
 <details open>
 <summary><strong>手順7：cmusでオーディオを再生します。</strong></summary>
 
-`cmus` を起動し、オーディオファイルまたはディレクトリをキューに追加して、Bluetooth デバイス経由での再生を確認します。
+起動 `cmus` オーディオファイルまたはディレクトリをキューに入れ、再生が正常に行われるかどうかを確認します。 Bluetooth シンク：
 
 ```console
 sima@modalix:~$ cmus
