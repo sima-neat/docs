@@ -11,9 +11,9 @@
     "start:developer-center": "bash scripts/start-local-developer-center.sh",
     "build": "docusaurus build",
     "check:language": "node scripts/check-developer-center-language.js",
-    "check:i18n": "node scripts/check-i18n.js",
-    "check:i18n-complete": "node scripts/check-i18n.js --require-complete",
-    "translate:i18n": "node scripts/translate-docs-ollama.js",
+    "check:i18n": "sima-i18n check",
+    "check:i18n-complete": "sima-i18n check --require-complete",
+    "translate:i18n": "sima-i18n translate",
     "serve": "docusaurus serve --host 0.0.0.0",
     "clear": "docusaurus clear"
   },

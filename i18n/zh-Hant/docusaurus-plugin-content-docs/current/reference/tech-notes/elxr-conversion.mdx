@@ -64,7 +64,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 2.0.0 --troot_o
 <details open>
 <summary><strong>步驟 2：透過網路啟動 eLxr 映像檔，並將其燒錄到 eMMC。</strong></summary>
 
-轉換的剩餘步驟使用標準的 TFTP 網路啟動 + 快閃程序，該程序已記錄在 [使用網路啟動功能更新。](/hardware/getting-started/firmware-update/#netboot) 中。請按照以下針對 eLxr 的特定值執行該程序：
+轉換的剩餘步驟使用標準的 TFTP 網路啟動 + 快閃程序，該程序已記錄在 [使用網路啟動功能更新](/hardware/getting-started/firmware-update/#netboot) 中。請按照以下針對 eLxr 的特定值執行該程序：
 
 - **步驟 2（啟動 TFTP 伺服器）：** 使用 `--boardtype modalix --fwtype elxr -v 2.0.0`。
 - **步驟 3（設定 U-Boot）：** 在執行 `boot` 之前，除了設定 `boot_targets=net` 之外，還需要設定 `cpio_name=simaai-image-palette-modalix.cpio.gz`。
@@ -104,7 +104,7 @@ modalix:~$ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash se
 <details open>
 <summary><strong>還原至 Yocto（可選）。</strong></summary>
 
-若要切換回 Yocto，請再次執行 [使用網路啟動功能更新。](/hardware/getting-started/firmware-update/#netboot)，並使用 `--fwtype yocto`。對於 Yocto 目標，不需要 `cpio_name` U-Boot 變數，只需要 `setenv boot_targets net`、`saveenv` 和 `boot`。
+若要切換回 Yocto，請再次執行 [使用網路啟動功能更新](/hardware/getting-started/firmware-update/#netboot)，並使用 `--fwtype yocto`。對於 Yocto 目標，不需要 `cpio_name` U-Boot 變數，只需要 `setenv boot_targets net`、`saveenv` 和 `boot`。
 
 :::note
 在轉換回 Yocto 時，**沒有最低 tRoot 版本要求**，因此可以跳過上述步驟 1。
@@ -117,4 +117,4 @@ modalix:~$ cd /tmp && curl -O https://tools.modalix.info/setup-oob.sh && bash se
 ## 摘要
 
 1. 更新至最新的 **tRoot** 映像檔（≥ 2.0.0）。
-2. 請按照以下步驟操作：先執行 [使用網路啟動功能更新。](/hardware/getting-started/firmware-update/#netboot)，然後使用 `--fwtype elxr` 和 eLxr `cpio_name`，將 eLxr 刷入 eMMC。
+2. 請按照以下步驟操作：先執行 [使用網路啟動功能更新](/hardware/getting-started/firmware-update/#netboot)，然後使用 `--fwtype elxr` 和 eLxr `cpio_name`，將 eLxr 刷入 eMMC。

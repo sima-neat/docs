@@ -36,9 +36,9 @@ Modalix 的使用者將能享有更方便開發者的環境，其中包括：
 
 有三種支援的方法可以用來更新 DevKit 的韌體：
 
-- **[使用 sima-cli 進行更新。](#sima-cli)** — 透過網路傳輸韌體映像檔，並自動在 DevKit 上觸發更新。此方法非常適合用於現場更新。
+- **[使用 sima-cli 進行更新](#sima-cli)** — 透過網路傳輸韌體映像檔，並自動在 DevKit 上觸發更新。此方法非常適合用於現場更新。
 - **[使用開機映像檔進行更新](#bootimage)** — 建立或恢復適用於 DevKit 的可啟動媒體。可用於修復有問題的裝置或設定多個啟動裝置。
-- **[使用網路啟動功能更新。](#netboot)** — 啟動一個本機 TFTP 伺服器，並透過網路直接啟動 DevKit，無需使用任何快閃記憶體媒體。非常適合用於系統恢復、工廠啟動或快速開發核心/根檔案系統。
+- **[使用網路啟動功能更新](#netboot)** — 啟動一個本機 TFTP 伺服器，並透過網路直接啟動 DevKit，無需使用任何快閃記憶體媒體。非常適合用於系統恢復、工廠啟動或快速開發核心/根檔案系統。
 
 :::note
 請在繼續操作之前安裝或升級 `sima-cli`。本指南適用於最新版本的 `sima-cli`。
@@ -118,7 +118,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} h
 </TabItem>
 <TabItem value="bootimage" label="Update with Boot Image">
 
-## 使用開機映像檔更新。 {#bootimage}
+## 使用開機映像檔更新 {#bootimage}
 
 在某些情況下，使用標準方法更新 DevKit 的韌體可能無法實現或效果不佳。這包括以下情況：
 
@@ -173,7 +173,7 @@ sima-cli bootimg -v 2.0.0 --boardtype [modalix|mlsoc]
 </TabItem>
 <TabItem value="netboot" label="Update with Net Boot">
 
-## 使用網路啟動功能更新。 {#netboot}
+## 使用網路啟動功能更新 {#netboot}
 
 在某些開發或恢復情境中，可能更適合（甚至必須）透過網路啟動 DevKit，而不是使用可移除裝置（例如 SD 卡）。這在以下情況下特別有用：
 

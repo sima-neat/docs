@@ -32,6 +32,22 @@ Build the static site:
 npm run build
 ```
 
+## Translation tooling
+
+Documentation translation and structural validation use the shared
+`@sima-neat/i18n` CLI. Install it once, then use the repository configuration:
+
+```bash
+sima-cli neat install i18n
+npm run check:i18n
+npm run translate:i18n -- --locale ja --source docs/index.mdx
+```
+
+Translation is a preview unless `--write` is supplied. Locale terminology,
+source scope, output layout, and the Ollama provider live in
+`sima-i18n.config.json`; translation behavior belongs in the shared i18n
+repository.
+
 ## Vulcan Publishing
 
 `.github/workflows/vulcan-docs.yml` builds the site on Vulcan and publishes the generated static output to the sysdoc S3 bucket for the selected environment.
