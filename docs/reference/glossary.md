@@ -51,7 +51,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Applications & Frameworks
 
 **NEAT**
-: SiMa.ai's application framework for the MLSoC Modalix. NEAT replaces the older Palette/MPK toolchain. Full documentation at [docs.sima-neat.com](https://docs.sima-neat.com).
+: SiMa.ai's application framework for the MLSoC Modalix. NEAT replaces the older Palette/MPK toolchain. Full documentation is available in the [software docs](https://developer.sima.ai/software).
 
 **NEAT application**
 : A packaged on-device inference pipeline (model + pre/post-processing graph + runtime metadata) produced by the NEAT toolchain and loaded onto the MLSoC Modalix for execution.
@@ -59,13 +59,13 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Hardware & Form Factors
 
 **DevKit**
-: A pre-assembled SiMa.ai development board (Modalix DevKit, Modalix Early Access Kit, Modalix Early Access PCIe Card) intended for evaluating the silicon and developing applications before designing a custom carrier.
+: A pre-assembled SiMa.ai development kit, such as the Modalix DevKit or Modalix Early Access DevKit, intended for evaluating the silicon and developing applications before designing a custom carrier.
 
 **eMMC**
 : **Embedded MultiMediaCard.** Onboard flash storage soldered to the DevKit. Used to store the boot image and root filesystem.
 
 **HHHL**
-: **Half-Height, Half-Length.** A PCIe card form factor compatible with most server and workstation chassis. The Modalix Early Access PCIe Card is an HHHL card.
+: **Half-Height, Half-Length.** A PCIe card form factor compatible with most server and workstation chassis. The Modalix PCIe Card is an HHHL card.
 
 **LPDDR5**
 : **Low-Power Double Data Rate 5** memory. The system RAM used on Modalix products. The MLSoC Modalix supports 32- and 64-bit LPDDR5 configurations across 8 channels.
@@ -74,12 +74,12 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 : **System on Chip.** A single die that integrates CPUs, accelerators, memory controllers, and I/O — as opposed to a multi-chip module.
 
 **SoM**
-: **System on Module.** A board that exposes a SoC plus its supporting RAM, storage, and power circuitry on a connector for integration into a custom carrier board. The Modalix DevKit is built around the Modalix SoM.
+: **System on Module.** A module that exposes a SoC plus its supporting RAM, storage, and power circuitry on a connector for integration into a custom carrier board. The Modalix DevKit is built around the Modalix SoM.
 
 ## Interfaces
 
 **GMSL2**
-: **Gigabit Multimedia Serial Link, version 2.** An automotive-grade serial protocol for transporting camera and sensor data over coax (FAKRA) cabling. Supported on the Modalix Early Access PCIe Card.
+: **Gigabit Multimedia Serial Link, version 2.** An automotive-grade serial protocol for transporting camera and sensor data over coax (FAKRA) cabling. Supported on the Modalix PCIe Card.
 
 **MIPI CSI**
 : **Mobile Industry Processor Interface — Camera Serial Interface.** The standard high-speed serial interface for connecting image sensors to a SoC.
@@ -87,7 +87,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Deployment
 
 **PCIe mode**
-: A deployment architecture in which the MLSoC Modalix lives on a PCIe card plugged into a host system. The host handles I/O and orchestration; the card handles inference. See [PCIe Mode](/hardware/getting-started/pcie-mode).
+: A deployment architecture in which the Modalix PCIe Card is plugged into a host machine. The host machine handles I/O and orchestration; the card handles inference. See [PCIe Mode](/hardware/getting-started/pcie-mode).
 
 **Standalone mode**
-: A deployment architecture in which the MLSoC Modalix runs as a self-contained device, with no host system, processing sensor data locally and emitting results over the network. See [Standalone Mode](/hardware/getting-started/standalone-mode/).
+: A deployment architecture in which a Modalix DevKit or Modalix SoM-based system runs as a self-contained device, processing sensor data locally and emitting results over the network. See [Standalone Mode](/hardware/getting-started/standalone-mode).

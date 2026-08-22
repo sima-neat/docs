@@ -12,6 +12,12 @@
   },
   "navItems": [
     {
+      "key": "quickstart",
+      "label": "Quick Start Guide",
+      "href": "/tools/qsg/index.html",
+      "external": true
+    },
+    {
       "key": "hardware",
       "label": "Hardware",
       "href": "/hardware",

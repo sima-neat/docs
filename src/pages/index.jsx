@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
+import useBaseUrl from '@docusaurus/useBaseUrl';
 import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
@@ -44,6 +45,7 @@ function PortalButton({action, label, locale}) {
 
 export default function Home() {
   const [locale, setLocale] = useState(developerCenterShell.DEFAULT_LOCALE);
+  const quickStartHref = useBaseUrl('/tools/qsg/index.html');
 
   useEffect(() => {
     setLocale(readLocalePreference());
@@ -80,6 +82,14 @@ export default function Home() {
                 />
               ))}
             </div>
+            <a
+              className={styles.quickStart}
+              href={quickStartHref}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Quick Start Guide
+            </a>
           </div>
         </section>
       </main>

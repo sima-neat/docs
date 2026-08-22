@@ -14,8 +14,11 @@
     "check:i18n": "sima-i18n check",
     "check:i18n-complete": "sima-i18n check --require-complete",
     "translate:i18n": "sima-i18n translate",
+    "build:agent-raw": "node scripts/build-agent-raw.cjs",
+    "postbuild": "npm run build:agent-raw",
     "serve": "docusaurus serve --host 0.0.0.0",
-    "clear": "docusaurus clear"
+    "clear": "docusaurus clear",
+    "clean": "docusaurus clear"
   },
   "dependencies": {
     "@docusaurus/core": "^3.8.1",

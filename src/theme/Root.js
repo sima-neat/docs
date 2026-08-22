@@ -131,7 +131,7 @@ function HardwareSubnav() {
   const links = [
     {
       label: copy.gettingStarted,
-      href: useBaseUrl("/hardware/getting-started/setup-devkit"),
+      href: useBaseUrl("/hardware/getting-started"),
       active: location.pathname.includes(gettingStartedBase),
     },
     {
@@ -208,7 +208,6 @@ function HardwareSubnav() {
 export default function Root({children}) {
   return (
     <>
-      <WipBanner />
       <HardwareSubnav />
       {children}
     </>

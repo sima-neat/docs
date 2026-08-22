@@ -48,6 +48,12 @@ source scope, output layout, and the Ollama provider live in
 `sima-i18n.config.json`; translation behavior belongs in the shared i18n
 repository.
 
+Clean the build artifacts (removes the generated `build/` output and the `.docusaurus/` cache):
+
+```bash
+npm run clean
+```
+
 ## Vulcan Publishing
 
 `.github/workflows/vulcan-docs.yml` builds the site on Vulcan and publishes the generated static output to the sysdoc S3 bucket for the selected environment.

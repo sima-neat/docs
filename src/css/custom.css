@@ -49,20 +49,20 @@ html[data-theme='dark'] {
 
   html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + var(--wip-offset)) !important;
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - var(--wip-offset)) !important;
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
   }
 
   /* Offset the right-side "On this page" table of contents below the bar. */
   html.developer-center-shell-active .theme-doc-toc-desktop {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem + var(--wip-offset));
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem - var(--wip-offset));
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 1rem);
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 2rem);
   }
 }
 
 .docs-subnav {
   position: fixed;
-  top: calc(var(--ifm-navbar-height) + var(--wip-offset));
+  top: var(--ifm-navbar-height);
   right: 0;
   left: 0;
   z-index: 850;
@@ -152,7 +152,7 @@ html[data-theme='dark'] {
 
   /* Section sub-bar sits just below the single navbar; scrolls horizontally. */
   .docs-subnav {
-    top: calc(var(--ifm-navbar-height) + var(--wip-offset));
+    top: var(--ifm-navbar-height);
     z-index: 150;
   }
 
@@ -193,7 +193,7 @@ html[data-theme='dark'] {
   /* Push content below the fixed sub-bar. The sub-bar is a direct child of
      #__docusaurus only on hardware pages, so :has scopes this correctly. */
   #__docusaurus:has(> .docs-subnav) .main-wrapper {
-    margin-top: calc(var(--docs-subnav-height) + var(--wip-offset));
+    margin-top: var(--docs-subnav-height);
   }
 }
 
@@ -310,47 +310,6 @@ html[data-theme='dark'] {
 
 .navbar__logo img {
   object-fit: contain;
-}
-
-/* Work-in-progress notice pinned above the Developer Center bar on the landing
-   page (auto-hides by date). The banner is fixed above everything; --wip-offset
-   (set to the banner's measured height by JS, with a sane CSS fallback) pushes
-   the fixed bars and the page content down to make room. */
-:root {
-  --wip-offset: 0rem;
-}
-
-.wip-banner {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem 1.25rem;
-  background: linear-gradient(90deg, #dc6821, #c25718);
-  color: #fffaf4;
-  font-weight: 700;
-  font-size: 0.95rem;
-  line-height: 1.35;
-  text-align: center;
-  box-shadow: 0 1px 6px rgba(28, 47, 58, 0.18);
-}
-
-/* Push the fixed Developer Center shell bar, the native navbar, and the page
-   content down by the banner height. --wip-offset is 0 when no banner is mounted
-   (so these are no-ops elsewhere) and is set to the banner's height by JS on the
-   landing page. The `html` prefix raises specificity above the shell/infima
-   `top: 0` defaults so the offset actually applies. */
-html .developer-center-shell,
-html .navbar--fixed-top {
-  top: var(--wip-offset);
-}
-
-html .main-wrapper {
-  margin-top: var(--wip-offset);
 }
 
 .footer {
@@ -520,6 +479,159 @@ html[data-theme='dark'] .card-grid .card {
 
 html[data-theme='dark'] .devkit-card img {
   background: rgba(255, 255, 255, 0.92);
+}
+
+.overview-link-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+  margin: 1.2rem 0 0.4rem;
+}
+
+.overview-link-columns-single {
+  grid-template-columns: 1fr;
+}
+
+.overview-link-panel {
+  --overview-panel-accent: #5998dd;
+  --overview-panel-accent-soft: rgba(89, 152, 221, 0.18);
+  background: linear-gradient(180deg, #ffffff 0%, #f4f8fc 100%);
+  border: 1px solid #d6e2ef;
+  border-radius: 18px;
+  padding: 1.05rem 1rem 1rem;
+  box-shadow: 0 14px 30px rgba(16, 36, 58, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.overview-link-panel::before {
+  content: "";
+  position: absolute;
+  top: -38px;
+  right: -10px;
+  width: 180px;
+  height: 180px;
+  border-radius: 999px;
+  background: radial-gradient(circle, var(--overview-panel-accent-soft) 0%, rgba(255, 255, 255, 0) 68%);
+  pointer-events: none;
+}
+
+.overview-link-panel::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, var(--overview-panel-accent) 0%, rgba(255, 255, 255, 0) 72%);
+}
+
+.overview-link-panel-start {
+  --overview-panel-accent: #5998dd;
+  --overview-panel-accent-soft: rgba(89, 152, 221, 0.2);
+}
+
+.overview-link-panel-mode {
+  --overview-panel-accent: #2a9c4f;
+  --overview-panel-accent-soft: rgba(42, 156, 79, 0.18);
+}
+
+.overview-link-panel-recovery {
+  --overview-panel-accent: #d26728;
+  --overview-panel-accent-soft: rgba(210, 103, 40, 0.16);
+}
+
+.overview-link-panel h2 {
+  margin: 0 0 0.45rem;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  display: inline-block;
+  position: relative;
+  padding-right: 0.2rem;
+}
+
+.overview-link-panel h2::after {
+  content: "";
+  display: block;
+  width: 52px;
+  height: 4px;
+  border-radius: 999px;
+  margin-top: 0.38rem;
+  background: var(--overview-panel-accent);
+}
+
+.overview-link-panel p {
+  margin: 0 0 0.9rem;
+  color: #35536f;
+}
+
+.overview-link-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.overview-link-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 7.25rem;
+  box-sizing: border-box;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  border: 1px solid #cad6e5;
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none !important;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  position: relative;
+}
+
+.overview-link-card:hover {
+  text-decoration: none !important;
+  transform: translateY(-2px);
+  border-color: var(--ifm-color-primary-light);
+  box-shadow: 0 12px 24px rgba(16, 36, 58, 0.12);
+}
+
+.overview-link-card strong {
+  display: block;
+  margin-bottom: 0.24rem;
+  color: #10243a;
+  line-height: 1.25;
+}
+
+.overview-link-card span {
+  display: block;
+  color: #4b6278;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+html[data-theme='dark'] .overview-link-panel {
+  background: linear-gradient(180deg, #0f172a 0%, #111c31 100%);
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
+}
+
+html[data-theme='dark'] .overview-link-panel p {
+  color: #b9c7d8;
+}
+
+html[data-theme='dark'] .overview-link-card {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
+html[data-theme='dark'] .overview-link-card strong {
+  color: #f3f8ff;
+}
+
+html[data-theme='dark'] .overview-link-card span {
+  color: #b9c7d8;
 }
 
 .cookie-preferences-link {

@@ -8,7 +8,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Web Serial Console
 
-The **SiMa.ai Web Serial Console** is a browser-based tool for connecting to SiMa.ai DevKits directly from a Chromium-based browser via the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API). No installation is required — open the tool in a compatible browser, plug in your DevKit via USB, and connect.
+The **SiMa.ai Web Serial Console** connects to SiMa.ai DevKits from a Chromium-based browser through the [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API). No local installation is required. Open the tool in a compatible browser, plug in your DevKit via USB, and connect.
 
 <a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Launch Web Serial Console</a>
 
@@ -29,7 +29,7 @@ Firefox and Safari do not support the Web Serial API and cannot be used with thi
 2. Open the [Web Serial Console](pathname:///tools/serial/index.html) in a supported browser.
 3. Click **[+] New Connection** in the command palette.
 4. Select the serial port corresponding to your DevKit from the browser pop-up and click **Connect**.
-5. The console will automatically detect a login prompt and log in using the default credentials (`sima`/`edgeai`).
+5. The console detects the login prompt and logs in with the default credentials (`sima`/`edgeai`).
 
 ## Interface
 
@@ -57,8 +57,8 @@ The command palette at the bottom of the page provides quick access to common ac
 
 ### Multiple Connections
 
-The console supports connecting to multiple DevKits simultaneously. Each connection opens as a separate tab at the top of the terminal area. Click a tab to switch between active connections, or click **×** on a tab to disconnect and close that session.
+The console can connect to multiple DevKits at the same time. Each connection opens as a separate tab at the top of the terminal area. Click a tab to switch between connections, or click **×** on a tab to disconnect and close that session.
 
 ## Disconnecting
 
-Click the **×** button on a connection tab to disconnect. The console will automatically send a `logout` command to the DevKit before closing the connection.
+Click **×** on a connection tab to disconnect. The console sends `logout` to the DevKit before closing the connection.
