@@ -314,6 +314,7 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     assert.match(glossarySource, /750 16 位元 GOPS/);
     assert.doesNotMatch(translatedCorpus, /條紋/, 'zh-Hant translates a MIPI lane as a visual stripe');
     assert.doesNotMatch(translatedCorpus, /港口/, 'zh-Hant translates a hardware port as a maritime harbor');
+    assert.doesNotMatch(translatedCorpus, /建立人脈/, 'zh-Hant translates networking as relationship-building');
     assert.match(translatedCorpus, /2 個 2 通道 MIPI CSI/);
     assert.match(translatedCorpus, /4 個 4 通道 MIPI CSI/);
   }
@@ -330,6 +331,20 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     assert.ok(
       (translatedCorpus.match(/750 16-бітних GOPS/g) || []).length >= 6,
       'uk does not consistently preserve the canonical CVU throughput unit',
+    );
+    assert.doesNotMatch(
+      translatedCorpus,
+      /Підрозділ комп’ютерного зору/,
+      'uk translates a hardware unit as an organizational subdivision',
+    );
+    const mipiCameraSource = fs.readFileSync(
+      path.join(translatedDocsRoot, 'getting-started/standalone-mode/mipi-camera-interfaces.mdx'),
+      'utf8',
+    );
+    assert.doesNotMatch(mipiCameraSource, /материнської плати|Основна плата/);
+    assert.ok(
+      (mipiCameraSource.match(/плат(?:а|и|і)-носі(?:й|я|ї)/g) || []).length >= 4,
+      'uk does not consistently identify the MIPI carrier board',
     );
   }
   if (locale === 'ko') {
