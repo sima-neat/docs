@@ -7,6 +7,18 @@
     "message": "빠른 시작 가이드",
     "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
   },
+  "sidebar.systemDocs.category.Standalone Mode": {
+    "message": "독립 실행형 모드",
+    "description": "The label for category 'Standalone Mode' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.PCIe Mode": {
+    "message": "PCIe 모드",
+    "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Firmware Update": {
+    "message": "펌웨어 업데이트",
+    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  },
   "sidebar.systemDocs.category.DevKit Variants": {
     "message": "DevKit 변형",
     "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"

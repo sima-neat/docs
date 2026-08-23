@@ -69,10 +69,10 @@ for (const [locale, sources] of Object.entries(translationSources)) {
   }
 }
 const expectedSidebarMessages = {
-  ko: ['시작하기', '빠른 시작 가이드', 'DevKit 변형', '도구', '참조', '기술 노트'],
-  ja: ['はじめに', 'クイックスタートガイド', 'DevKit バリエーション', 'ツール', 'リファレンス', '技術ノート'],
-  'zh-Hant': ['開始使用', '快速入門指南', 'DevKit 型號', '工具', '參考資料', '技術說明'],
-  uk: ['Початок роботи', 'Посібник зі швидкого старту', 'Варіанти DevKit', 'Інструменти', 'Довідкові матеріали', 'Технічні нотатки'],
+  ko: ['시작하기', '빠른 시작 가이드', '독립 실행형 모드', 'PCIe 모드', '펌웨어 업데이트', 'DevKit 변형', '도구', '참조', '기술 노트'],
+  ja: ['はじめに', 'クイックスタートガイド', 'スタンドアロンモード', 'PCIe モード', 'ファームウェア更新', 'DevKit バリエーション', 'ツール', 'リファレンス', '技術ノート'],
+  'zh-Hant': ['開始使用', '快速入門指南', '獨立模式', 'PCIe 模式', '韌體更新', 'DevKit 型號', '工具', '參考資料', '技術說明'],
+  uk: ['Початок роботи', 'Посібник зі швидкого старту', 'Автономний режим', 'Режим PCIe', 'Оновлення прошивки', 'Варіанти DevKit', 'Інструменти', 'Довідкові матеріали', 'Технічні нотатки'],
 };
 const earlyAccessConstraints = {
   ko: ['레거시', '기존 Early Access 고객'],
@@ -107,6 +107,9 @@ const modeTabLabels = {
 const sidebarTranslationKeys = [
   'sidebar.systemDocs.category.Getting Started',
   'sidebar.systemDocs.link.Quick Start Guide',
+  'sidebar.systemDocs.category.Standalone Mode',
+  'sidebar.systemDocs.category.PCIe Mode',
+  'sidebar.systemDocs.category.Firmware Update',
   'sidebar.systemDocs.category.DevKit Variants',
   'sidebar.systemDocs.category.Tools',
   'sidebar.systemDocs.category.References',
@@ -473,6 +476,12 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   const translatedCorpus = translatedDocs
     .map((translatedDoc) => fs.readFileSync(translatedDoc, 'utf8'))
     .join('\n');
+  assert.doesNotMatch(translatedCorpus, /alt="Run on the host machine"/);
+  assert.doesNotMatch(
+    translatedCorpus,
+    /alt="Modalix (?:DevKit|Early Access Kit|PCIe Card) connectors"/,
+  );
+  assert.doesNotMatch(translatedCorpus, /alt="Modalix PCIe Card interfaces"/);
   const localizedIndexSource = fs.readFileSync(path.join(translatedDocsRoot, 'index.mdx'), 'utf8');
   const localizedGettingStartedSource = fs.readFileSync(
     path.join(translatedDocsRoot, 'getting-started/index.md'),
