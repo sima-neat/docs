@@ -55,6 +55,28 @@ const context = {window: {}};
 vm.runInNewContext(shellSource, context);
 
 const {localeFromPath, localizedPath} = context.window.DeveloperCenterShell;
+const storedShellValues = new Map();
+const shellCookieWrites = [];
+context.window.location = {hostname: 'localhost', protocol: 'https:'};
+context.window.localStorage = {
+  setItem(key, value) {
+    storedShellValues.set(key, value);
+  },
+};
+context.document = {
+  get cookie() {
+    return '';
+  },
+  set cookie(value) {
+    shellCookieWrites.push(value);
+  },
+};
+context.window.DeveloperCenterShell.writeLocale('ja');
+assert.equal(storedShellValues.get(shellConfig.LOCALE_KEY), 'ja');
+assert.ok(
+  shellCookieWrites.some((value) => value.startsWith(`${shellConfig.LOCALE_COOKIE}=ja;`)),
+  'one-argument shell locale persistence did not write the locale cookie',
+);
 for (const [, sourcePath] of i18nReadmeSource.matchAll(/--source\s+(\S+)/g)) {
   assert.ok(
     fs.existsSync(path.join(docsRoot, sourcePath)),

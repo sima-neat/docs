@@ -42,6 +42,7 @@
     {key: 'examples', label: 'Examples'},
   ];
   const MAX_SEARCH_RESULTS = 24;
+  let activeManifest = DEFAULT_MANIFEST;
 
   function normalizeTheme(value) {
     return VALID_THEMES.has(value) ? value : null;
@@ -172,7 +173,7 @@
     }
   }
 
-  function writeLocale(locale, manifest) {
+  function writeLocale(locale, manifest = activeManifest) {
     const config = languageConfig(manifest);
     try {
       window.localStorage.setItem(config.key, locale);
@@ -941,6 +942,7 @@
     if (!target) return;
 
     const manifest = await loadManifest();
+    activeManifest = manifest;
     applyTheme(initialTheme(manifest), manifest);
     render(target, manifest, options);
 
