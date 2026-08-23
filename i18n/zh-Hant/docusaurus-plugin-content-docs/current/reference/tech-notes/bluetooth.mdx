@@ -127,7 +127,7 @@ sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
 </details>
 
 <details open>
-<summary><strong>步驟 6：將音訊路由至 Bluetooth 水槽</strong></summary>
+<summary><strong>步驟 6：將音訊路由至 Bluetooth 音訊輸出裝置</strong></summary>
 
 有了 Bluetooth 從步驟 4 開始，配對並連接音訊裝置，然後列出可用的 PipeWire/PulseAudio 輸出裝置：
 
@@ -152,7 +152,7 @@ sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-p
 <details open>
 <summary><strong>步驟 7：使用 cmus 播放音訊。</strong></summary>
 
-啟動 `cmus` 並將音訊檔案或目錄加入佇列，以驗證其播放功能。 Bluetooth 水槽：
+啟動 `cmus` 並將音訊檔案或目錄加入佇列，以驗證其透過 Bluetooth 音訊輸出裝置播放：
 
 ```console
 sima@modalix:~$ cmus

@@ -199,11 +199,19 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     .filter((entry) => entry.isFile() && /\.mdx?$/.test(entry.name))
     .map((entry) => path.join(entry.parentPath ?? entry.path, entry.name));
   for (const translatedDoc of translatedDocs) {
+    const translatedSource = fs.readFileSync(translatedDoc, 'utf8');
     assert.doesNotMatch(
-      fs.readFileSync(translatedDoc, 'utf8'),
+      translatedSource,
       /(?:href=["']|\]\()\/hardware(?:\/|["')])/,
       `${path.relative(docsRoot, translatedDoc)} contains an English-only Hardware link`,
     );
+    if (locale === 'zh-Hant') {
+      assert.doesNotMatch(
+        translatedSource,
+        /Bluetooth 水槽/,
+        `${path.relative(docsRoot, translatedDoc)} mistranslates an audio sink as a water sink`,
+      );
+    }
   }
 }
 
