@@ -31,7 +31,7 @@ Modalix BSPは、Modalix DevKit、Modalix Early Accessキット、およびModal
 - **ルートファイルシステムを置き換えるか拡張する** — 独自のアプリケーション、ライブラリ、またはシステムサービスを組み込む。
 - **ローカル環境でリリースを再現する** — 監査または変更のために、DevKit に搭載されているのと同じイメージを再構築します。
 
-カスタムイメージを作成したら、それをデバイスに書き込んでください。 DevKit 以下のいずれかの方法を使用 [ファームウェアのアップデート](/ja/hardware/getting-started/firmware-update).
+カスタムイメージをビルドした後、[ファームウェアのアップデート](/ja/hardware/getting-started/firmware-update)に記載されているいずれかの方法を使用して、DevKit に書き込みます。
 
 ## リポジトリ
 

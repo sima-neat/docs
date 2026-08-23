@@ -383,6 +383,32 @@ assert.ok(
   ).includes('소스 레이어: [swsoc-simaai-elxr-doc]'),
   'Korean BSP translation must preserve the source repository identifier',
 );
+const japaneseNetworkSource = fs.readFileSync(
+  path.join(
+    docsRoot,
+    'i18n/ja/docusaurus-plugin-content-docs/current/getting-started/standalone-mode/network.mdx',
+  ),
+  'utf8',
+);
+assert.match(japaneseNetworkSource, /バージョン 2\.0 以前にのみ適用されます[^]*?\n:::\n\n1\./);
+assert.match(japaneseNetworkSource, /   :::warning\n   このファイル[^]*?\n   :::/);
+assert.match(
+  fs.readFileSync(
+    path.join(docsRoot, 'i18n/ja/docusaurus-plugin-content-docs/current/reference/bsp.md'),
+    'utf8',
+  ),
+  /いずれかの方法を使用して、DevKit に書き込みます/,
+);
+assert.match(
+  fs.readFileSync(
+    path.join(
+      docsRoot,
+      'i18n/zh-Hant/docusaurus-plugin-content-docs/current/getting-started/pcie-mode/hardware-preparation.mdx',
+    ),
+    'utf8',
+  ),
+  /\[Modalix PCIe 卡\]\(\/zh-Hant\/hardware\/devkit\/modalix-pcie-card\)/,
+);
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);
