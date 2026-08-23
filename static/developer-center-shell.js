@@ -62,6 +62,15 @@
     return `${siteRoot.replace(/\/+$/, '')}${pathname}`;
   }
 
+  function withoutSiteRoot(pathname, siteRoot = '/') {
+    const normalizedRoot = siteRoot.replace(/\/+$/, '');
+    if (!normalizedRoot || normalizedRoot === '/') return pathname;
+    if (pathname === normalizedRoot) return '/';
+    return pathname.startsWith(`${normalizedRoot}/`)
+      ? pathname.slice(normalizedRoot.length)
+      : pathname;
+  }
+
   function decodeCookieEntry(entry) {
     if (!entry) return null;
     try {
@@ -707,7 +716,7 @@
     };
   }
 
-  function mountLanguagePicker(root, manifest, currentLocale) {
+  function mountLanguagePicker(root, manifest, currentLocale, siteRoot = '/') {
     const picker = root.querySelector('[data-developer-center-language]');
     const button = picker?.querySelector('[data-developer-center-language-button]');
     const menu = picker?.querySelector('[data-developer-center-language-menu]');
@@ -765,7 +774,8 @@
       window.dispatchEvent(
         new CustomEvent('developer-center-language-change', {detail: {locale}}),
       );
-      const destination = localizedPath(window.location.pathname, locale, manifest);
+      const routePath = withoutSiteRoot(window.location.pathname, siteRoot);
+      const destination = withSiteRoot(localizedPath(routePath, locale, manifest), siteRoot);
       if (destination !== window.location.pathname) {
         window.location.assign(`${destination}${window.location.search}${window.location.hash}`);
         return;
@@ -895,7 +905,7 @@
       render(target, manifest, options);
     });
     const cleanupSearch = mountSearch(target, manifest, locale);
-    const cleanupLanguagePicker = mountLanguagePicker(target, manifest, locale);
+    const cleanupLanguagePicker = mountLanguagePicker(target, manifest, locale, siteRoot);
     target.__developerCenterShellCleanup = () => {
       cleanupSearch();
       cleanupLanguagePicker();

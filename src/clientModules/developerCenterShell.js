@@ -80,7 +80,8 @@ function syncNativeNavbarLocale() {
 
   nativeNavbar()?.querySelectorAll('a.navbar__link[href]').forEach((link) => {
     const pathname = new URL(link.href, window.location.href).pathname;
-    const section = developerCenterShell.activeSectionForPath(pathname);
+    const routePath = developerCenterShell.withoutSiteRoot(pathname, SITE_ROOT);
+    const section = developerCenterShell.activeSectionForPath(routePath);
     if (!['hardware', 'software'].includes(section)) {
       return;
     }
