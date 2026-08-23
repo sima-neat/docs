@@ -675,6 +675,9 @@ assert.match(
   /onLanguageChange[\s\S]*syncLocalizedFooterCopy\(\)[\s\S]*renderPreferences\(\)[\s\S]*renderBanner\(\)/,
 );
 assert.doesNotMatch(rootThemeSource, /WIP_DEADLINE|WipBanner|wip-banner/);
+assert.doesNotMatch(rootThemeSource, /localePrefix/);
+assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/getting-started"\)/);
+assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/devkit\/modalix-devkit"\)/);
 assert.doesNotMatch(localDeveloperCenterSource, /curl[^\n]+\|\s*grep -Fq/);
 assert.match(localDeveloperCenterSource, /response="\$\(curl[\s\S]*grep -Fq[\s\S]*<<<"\$\{response\}"/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
