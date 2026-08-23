@@ -409,6 +409,15 @@ assert.match(
   ),
   /\[Modalix PCIe 卡\]\(\/zh-Hant\/hardware\/devkit\/modalix-pcie-card\)/,
 );
+const ukrainianBluetoothSource = fs.readFileSync(
+  path.join(
+    docsRoot,
+    'i18n/uk/docusaurus-plugin-content-docs/current/reference/tech-notes/bluetooth.mdx',
+  ),
+  'utf8',
+);
+assert.match(ukrainianBluetoothSource, /приймач A2DP/);
+assert.doesNotMatch(ukrainianBluetoothSource, /джерело A2DP/);
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);
