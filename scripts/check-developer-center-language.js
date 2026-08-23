@@ -189,6 +189,8 @@ assert.match(
 assert.doesNotMatch(landingSource, /if \(supported\.has\(routeLocale\)\) return routeLocale/);
 assert.match(landingSource, /Ignore malformed cookie values and fall back to local storage/);
 assert.match(landingSource, /window\.location\.replace\(/);
+assert.match(landingSource, /const siteRoot = useBaseUrl\('\/'\)/);
+assert.match(landingSource, /`\$\{siteRoot\}\$\{preferredLocale\}\//);
 assert.match(
   landingSource,
   /routeLocale === developerCenterShell\.DEFAULT_LOCALE\s*&& preferredLocale !== developerCenterShell\.DEFAULT_LOCALE/,
@@ -199,7 +201,8 @@ assert.match(landingSource, /addEventListener\('developer-center-language-change
 assert.match(landingSource, /action\.key === 'hardware'/);
 assert.match(landingSource, /action\.key === 'software'/);
 assert.doesNotMatch(landingSource, /@docusaurus\/Link/);
-assert.match(landingSource, /<a className=\{className\} href=\{localizedActionHref\(action, locale\)\}>/);
+assert.match(landingSource, /const href = useBaseUrl\(localizedActionHref\(action, locale\)\)/);
+assert.match(landingSource, /<a className=\{className\} href=\{href\}>/);
 for (const locale of shellConfig.SUPPORTED_LOCALES) {
   assert.match(hardwareRootSource, new RegExp(`(?:\\b${locale.code}|["']${locale.code}["'])\\s*:`));
 }

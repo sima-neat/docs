@@ -49,8 +49,9 @@ function localizedActionHref(action, locale) {
 
 function PortalButton({action, label, locale}) {
   const className = clsx(styles.portalButton, styles[action.tone]);
+  const href = useBaseUrl(localizedActionHref(action, locale));
   return (
-    <a className={className} href={localizedActionHref(action, locale)}>
+    <a className={className} href={href}>
       {label}
     </a>
   );
@@ -62,6 +63,7 @@ export default function Home() {
     ? i18n.currentLocale
     : developerCenterShell.DEFAULT_LOCALE;
   const [locale, setLocale] = useState(routeLocale);
+  const siteRoot = useBaseUrl('/');
   const quickStartHref = useBaseUrl('/tools/qsg/index.html');
 
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function Home() {
       && preferredLocale !== developerCenterShell.DEFAULT_LOCALE
     ) {
       window.location.replace(
-        `/${preferredLocale}/${window.location.search}${window.location.hash}`,
+        `${siteRoot}${preferredLocale}/${window.location.search}${window.location.hash}`,
       );
       return undefined;
     }
@@ -84,7 +86,7 @@ export default function Home() {
     };
     window.addEventListener('developer-center-language-change', onLanguageChange);
     return () => window.removeEventListener('developer-center-language-change', onLanguageChange);
-  }, [routeLocale]);
+  }, [routeLocale, siteRoot]);
 
   const copy = developerCenterShell.SHELL_TRANSLATIONS[locale]
     || developerCenterShell.SHELL_TRANSLATIONS.en;
