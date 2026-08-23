@@ -69,6 +69,10 @@
     return `${siteRoot.replace(/\/+$/, '')}${pathname}`;
   }
 
+  function isAbsoluteUrl(href) {
+    return /^[a-z][a-z\d+.-]*:/i.test(href) || href.startsWith('//');
+  }
+
   function withoutSiteRoot(pathname, siteRoot = '/') {
     const normalizedRoot = siteRoot.replace(/\/+$/, '');
     if (!normalizedRoot || normalizedRoot === '/') return pathname;
@@ -867,7 +871,7 @@
       const routeHref = ['hardware', 'software'].includes(item.key)
         ? localizedPath(item.href, locale, manifest)
         : item.href;
-      const href = item.external ? routeHref : withSiteRoot(routeHref, siteRoot);
+      const href = isAbsoluteUrl(routeHref) ? routeHref : withSiteRoot(routeHref, siteRoot);
       const label = shellCopy.navItems[item.key] || item.label;
       return `<a class="navbar__item navbar__link${activeClass}" data-developer-center-section="${escapeHtml(item.key)}" href="${escapeHtml(href)}"${targetAttr}>${escapeHtml(label)}${externalIcon}</a>`;
     };

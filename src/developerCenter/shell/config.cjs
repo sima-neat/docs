@@ -304,6 +304,10 @@ function withSiteRoot(href, siteRoot = '') {
   return `${siteRoot.replace(/\/+$/, '')}${href}`;
 }
 
+function isAbsoluteUrl(href) {
+  return /^[a-z][a-z\d+.-]*:/i.test(href) || href.startsWith('//');
+}
+
 function withoutSiteRoot(pathname, siteRoot = '') {
   const normalizedRoot = siteRoot.replace(/\/+$/, '');
   if (!normalizedRoot || normalizedRoot === '/') {
@@ -331,7 +335,7 @@ function deploymentSiteRoot(baseUrl = '/', locale = DEFAULT_LOCALE) {
 function navbarItems(siteRoot = '') {
   return [...routeItems, ...externalItems].map((item) => ({
     ...item,
-    href: item.external ? item.href : withSiteRoot(item.href, siteRoot),
+    href: isAbsoluteUrl(item.href) ? item.href : withSiteRoot(item.href, siteRoot),
   }));
 }
 

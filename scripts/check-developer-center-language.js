@@ -203,6 +203,9 @@ assert.equal(localizedPath('/ja', 'ko', manifest), '/ko');
 assert.equal(shellConfig.activeSectionForPath('/ja/hardware/getting-started/'), 'hardware');
 assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 'software');
 assert.equal(shellConfig.withSiteRoot('/ja/hardware', '/docs/'), '/docs/ja/hardware');
+const rootedNavbarItems = shellConfig.navbarItems('/docs/');
+assert.equal(rootedNavbarItems.find((item) => item.key === 'hardware').href, '/docs/hardware');
+assert.equal(rootedNavbarItems.find((item) => item.key === 'models').href, 'https://huggingface.co/simaai');
 assert.equal(shellConfig.deploymentSiteRoot('/zh-Hant/', 'zh-Hant'), '/');
 assert.equal(shellConfig.deploymentSiteRoot('/docs/zh-Hant/', 'zh-Hant'), '/docs/');
 assert.equal(shellConfig.deploymentSiteRoot('/docs/', 'en'), '/docs/');
@@ -699,6 +702,10 @@ assert.doesNotMatch(localDeveloperCenterSource, /curl[^\n]+\|\s*grep -Fq/);
 assert.match(localDeveloperCenterSource, /response="\$\(curl[\s\S]*grep -Fq[\s\S]*<<<"\$\{response\}"/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
 assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
+assert.match(
+  shellSource,
+  /const href = isAbsoluteUrl\(routeHref\) \? routeHref : withSiteRoot\(routeHref, siteRoot\)/,
+);
 assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);
 assert.match(
   shellSource,
