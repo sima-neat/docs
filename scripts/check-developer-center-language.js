@@ -384,7 +384,13 @@ assert.match(
   /aria-label="\$\{escapeHtml\(shellCopy\.themeToggleLabel\)\}" title="\$\{escapeHtml\(shellCopy\.themeToggleLabel\)\}"/,
 );
 assert.match(mobileSearchSource, /useDocusaurusContext\(\)/);
-assert.match(mobileSearchSource, /SHELL_TRANSLATIONS\[i18n\.currentLocale\]/);
+assert.match(mobileSearchSource, /const \[locale, setLocale\] = useState\(routeLocale\)/);
+assert.match(mobileSearchSource, /SHELL_TRANSLATIONS\[locale\]/);
+assert.match(mobileSearchSource, /setLocale\(routeLocale\)/);
+assert.match(
+  mobileSearchSource,
+  /addEventListener\("developer-center-language-change", onLanguageChange\)/,
+);
 assert.match(mobileSearchSource, /aria-label=\{searchCopy\.placeholder\}/);
 assert.match(mobileSearchSource, /aria-label=\{searchCopy\.close\}/);
 assert.doesNotMatch(mobileSearchSource, /aria-label="(?:Search Developer Center|Close search)"/);

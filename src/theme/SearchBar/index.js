@@ -15,10 +15,25 @@ export default function SearchBar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
   const {i18n} = useDocusaurusContext();
+  const routeLocale = developerCenterShell.SHELL_TRANSLATIONS[i18n.currentLocale]
+    ? i18n.currentLocale
+    : developerCenterShell.DEFAULT_LOCALE;
+  const [locale, setLocale] = useState(routeLocale);
   const searchCopy = (
-    developerCenterShell.SHELL_TRANSLATIONS[i18n.currentLocale]
+    developerCenterShell.SHELL_TRANSLATIONS[locale]
     || developerCenterShell.SHELL_TRANSLATIONS.en
   ).search;
+
+  useEffect(() => setLocale(routeLocale), [routeLocale]);
+  useEffect(() => {
+    const onLanguageChange = (event) => {
+      if (developerCenterShell.SHELL_TRANSLATIONS[event?.detail?.locale]) {
+        setLocale(event.detail.locale);
+      }
+    };
+    window.addEventListener("developer-center-language-change", onLanguageChange);
+    return () => window.removeEventListener("developer-center-language-change", onLanguageChange);
+  }, []);
 
   const focusShellSearch = useCallback(() => {
     document.getElementById(SHELL_INPUT_ID)?.focus();
