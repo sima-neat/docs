@@ -531,7 +531,7 @@
                       const source = normalizeSource(hit.source, hit.url || hit.route);
                       const section = hitSection(hit, source);
                       return `
-                        <a class="developer-center-search-result" href="${escapeHtml(hitRoute(hit))}">
+                        <a class="developer-center-search-result" href="${escapeHtml(withSiteRoot(hitRoute(hit), state.siteRoot))}">
                           <span class="developer-center-search-title">${sanitizeHighlighted(hitTitle(hit))}</span>
                           <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source))}</span>
                           <span class="developer-center-search-snippet">${sanitizeHighlighted(hitSnippet(hit))}</span>
@@ -639,7 +639,7 @@
     root.querySelector('[data-developer-center-search-input]')?.focus();
   }
 
-  function mountSearch(root, manifest, locale) {
+  function mountSearch(root, manifest, locale, siteRoot = '/') {
     const search = manifest.search || DEFAULT_MANIFEST.search;
 
     const state = {
@@ -651,6 +651,7 @@
       query: '',
       requestId: 0,
       searchConfigured: isSearchConfigured(search),
+      siteRoot,
       timer: 0,
     };
     const input = root.querySelector('[data-developer-center-search-input]');
@@ -904,7 +905,7 @@
       applyTheme(current === 'light' ? 'dark' : 'light', manifest);
       render(target, manifest, options);
     });
-    const cleanupSearch = mountSearch(target, manifest, locale);
+    const cleanupSearch = mountSearch(target, manifest, locale, siteRoot);
     const cleanupLanguagePicker = mountLanguagePicker(target, manifest, locale, siteRoot);
     target.__developerCenterShellCleanup = () => {
       cleanupSearch();

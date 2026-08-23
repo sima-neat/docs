@@ -59,6 +59,12 @@ const currentDevKitPositioning = {
   'zh-Hant': ['評估 MLSoC Modalix', '建置邊緣 AI 應用程式'],
   uk: ['оцінювання MLSoC Modalix', 'створення периферійних застосунків ШІ'],
 };
+const pcieTabLabels = {
+  ko: ['인터페이스', '주요 기능'],
+  ja: ['インターフェース', '主な機能'],
+  'zh-Hant': ['介面', '主要功能'],
+  uk: ['Інтерфейси', 'Основні функції'],
+};
 const sidebarTranslationKeys = [
   'sidebar.systemDocs.category.Getting Started',
   'sidebar.systemDocs.link.Quick Start Guide',
@@ -200,6 +206,9 @@ assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
 assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
+assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);
+assert.match(shellSource, /withSiteRoot\(hitRoute\(hit\), state\.siteRoot\)/);
+assert.match(shellSource, /mountSearch\(target, manifest, locale, siteRoot\)/);
 assert.match(shellSource, /const routePath = withoutSiteRoot\(window\.location\.pathname, siteRoot\)/);
 assert.match(shellSource, /withSiteRoot\(localizedPath\(routePath, locale, manifest\), siteRoot\)/);
 assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
@@ -275,6 +284,16 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     path.join(translatedDocsRoot, 'devkit/modalix-ea-kit.mdx'),
     'utf8',
   );
+  const modalixPcieSource = fs.readFileSync(
+    path.join(translatedDocsRoot, 'devkit/modalix-pcie-card.mdx'),
+    'utf8',
+  );
+  for (const tabLabel of pcieTabLabels[locale]) {
+    assert.ok(
+      modalixPcieSource.includes(`label="${tabLabel}"`),
+      `${locale} leaves a Modalix PCIe tab label untranslated`,
+    );
+  }
   for (const positioningFragment of currentDevKitPositioning[locale]) {
     assert.ok(
       modalixDevKitSource.includes(positioningFragment),
