@@ -307,6 +307,9 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     );
     assert.match(networkSource, /:::note[\s\S]*?\n:::\n\n1\./);
     assert.doesNotMatch(networkSource, /^:::경고$/m, 'ko translates a Docusaurus directive keyword');
+    assert.doesNotMatch(translatedCorpus, /Bluetooth 세면대/, 'ko translates an audio sink as a washbasin');
+    assert.doesNotMatch(translatedCorpus, /컴퓨터 비전 부서/, 'ko translates a hardware unit as a department');
+    assert.match(translatedCorpus, /컴퓨터 비전 유닛\(CVU\)/);
   }
   for (const translatedDoc of translatedDocs) {
     const translatedSource = fs.readFileSync(translatedDoc, 'utf8');
