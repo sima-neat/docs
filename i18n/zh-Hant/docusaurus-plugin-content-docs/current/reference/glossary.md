@@ -11,7 +11,7 @@ sidebar_position: 3
 ## 矽晶與運算
 
 **CVU**
-：**電腦視覺單元 (Computer Vision Unit)。** 這是晶片上的加速器，專門用於處理傳統的視覺工作負載（濾鏡、轉換、影像處理核心）。MLSoC Modalix 整合了一個 Synopsys EV74 CVU，其運作頻率為 750 MHz，並具有 16 位元的 GOPS 運算能力。
+：**電腦視覺單元 (Computer Vision Unit)。** 這是晶片上的加速器，專門用於處理傳統的視覺工作負載（濾鏡、轉換、影像處理核心）。MLSoC Modalix 整合了一個 Synopsys EV74 CVU，運算效能為 750 16 位元 GOPS。
 
 **ISP**
 ：**影像訊號處理器 (Image Signal Processor)。** 這是晶片上的模組，用於將原始相機感測器輸出（拜耳陣列、單色等）轉換為可用的影像。MLSoC Modalix 使用一個 ARM C-71 ISP，其運作頻率為 1.2 GHz。

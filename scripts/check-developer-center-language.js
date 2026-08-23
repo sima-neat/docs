@@ -43,6 +43,12 @@ const expectedSidebarMessages = {
   'zh-Hant': ['開始使用', '快速入門指南', 'DevKit 型號', '工具', '參考資料', '技術說明'],
   uk: ['Початок роботи', 'Посібник зі швидкого старту', 'Варіанти DevKit', 'Інструменти', 'Довідкові матеріали', 'Технічні нотатки'],
 };
+const earlyAccessConstraints = {
+  ko: ['레거시', '기존 Early Access 고객'],
+  ja: ['レガシー', '既存の Early Access のお客様'],
+  'zh-Hant': ['舊版', '現有搶先體驗客戶'],
+  uk: ['застарілий', 'наявних клієнтів програми раннього доступу'],
+};
 const sidebarTranslationKeys = [
   'sidebar.systemDocs.category.Getting Started',
   'sidebar.systemDocs.link.Quick Start Guide',
@@ -243,6 +249,27 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   const translatedDocs = fs.readdirSync(translatedDocsRoot, {recursive: true, withFileTypes: true})
     .filter((entry) => entry.isFile() && /\.mdx?$/.test(entry.name))
     .map((entry) => path.join(entry.parentPath ?? entry.path, entry.name));
+  const modalixDevKitSource = fs.readFileSync(
+    path.join(translatedDocsRoot, 'devkit/modalix-devkit.mdx'),
+    'utf8',
+  );
+  const modalixEarlyAccessSource = fs.readFileSync(
+    path.join(translatedDocsRoot, 'devkit/modalix-ea-kit.mdx'),
+    'utf8',
+  );
+  assert.doesNotMatch(modalixDevKitSource, /Dhrystone/i, `${locale} adds an unsupported Dhrystone claim`);
+  assert.doesNotMatch(modalixEarlyAccessSource, /Dhrystone/i, `${locale} adds an unsupported Dhrystone claim`);
+  for (const constraint of earlyAccessConstraints[locale]) {
+    assert.ok(
+      modalixEarlyAccessSource.includes(constraint),
+      `${locale} does not preserve the Early Access kit's legacy/customer constraint`,
+    );
+  }
+  if (locale === 'zh-Hant') {
+    const glossarySource = fs.readFileSync(path.join(translatedDocsRoot, 'reference/glossary.md'), 'utf8');
+    assert.doesNotMatch(glossarySource, /750 MHz/, 'zh-Hant converts GOPS throughput into MHz');
+    assert.match(glossarySource, /750 16 位元 GOPS/);
+  }
   for (const translatedDoc of translatedDocs) {
     const translatedSource = fs.readFileSync(translatedDoc, 'utf8');
     assert.doesNotMatch(
