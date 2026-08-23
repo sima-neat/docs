@@ -102,7 +102,10 @@ export default function Home() {
             <p className={styles.kicker}>{copy.landing.kicker}</p>
             <h1>{copy.landing.title}</h1>
             <p className={styles.summary}>{copy.landing.summary}</p>
-            <div className={styles.actions} aria-label={copy.landing.sectionsLabel}>
+            <div
+              className={styles.actions}
+              aria-label={copy.landing.sectionsLabel}
+              data-developer-center-sections>
               {actions.map((action) => (
                 <PortalButton
                   key={action.key}

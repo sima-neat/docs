@@ -35,6 +35,10 @@ const shellClientSource = fs.readFileSync(
   path.join(docsRoot, 'src/clientModules/developerCenterShell.js'),
   'utf8',
 );
+const analyticsConsentSource = fs.readFileSync(
+  path.join(docsRoot, 'src/clientModules/analyticsConsent.js'),
+  'utf8',
+);
 const shellNavigationSource = fs.readFileSync(
   path.join(docsRoot, 'src/developerCenter/shell/navigation.js'),
   'utf8',
@@ -345,6 +349,39 @@ assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
+assert.match(landingSource, /data-developer-center-sections/);
+assert.match(analyticsConsentSource, /closest\('\[data-developer-center-sections\]'\)/);
+assert.doesNotMatch(analyticsConsentSource, /closest\('\[aria-label="Documentation sections"\]'\)/);
+assert.match(analyticsConsentSource, /function consentCopy\(\)/);
+assert.match(analyticsConsentSource, /withoutSiteRoot\([\s\S]*siteConfig\.baseUrl/);
+for (const localizedConsentPhrase of [
+  '쿠키 환경설정',
+  'Cookie の設定',
+  'Cookie 偏好設定',
+  'Налаштування файлів cookie',
+]) {
+  assert.ok(
+    analyticsConsentSource.includes(localizedConsentPhrase),
+    `Cookie consent is missing localized copy: ${localizedConsentPhrase}`,
+  );
+}
+const consentCopyMatch = analyticsConsentSource.match(/const CONSENT_COPY = (\{[\s\S]*?\n\});/);
+assert.ok(consentCopyMatch, 'Cookie consent copy map is missing');
+const consentTranslations = vm.runInNewContext(`(${consentCopyMatch[1]})`);
+const consentFields = [
+  'preferencesLabel', 'preferencesEyebrow', 'settingsTitle', 'settingsText',
+  'analytics', 'analyticsDescription', 'collectedTitle', 'collectedText',
+  'choicesTitle', 'preferencesChoices', 'bannerChoices', 'privacyNote',
+  'save', 'reject', 'noticeLabel', 'privacy', 'bannerTitle', 'bannerText',
+  'accept', 'preferencesLink',
+];
+for (const locale of manifest.language.locales) {
+  assert.deepEqual(
+    Object.keys(consentTranslations[locale.code]),
+    consentFields,
+    `Cookie consent copy is incomplete for ${locale.code}`,
+  );
+}
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
 assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
 assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);
@@ -497,6 +534,7 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     assert.doesNotMatch(translatedCorpus, /港口/, 'zh-Hant translates a hardware port as a maritime harbor');
     assert.doesNotMatch(translatedCorpus, /建立人脈/, 'zh-Hant translates networking as relationship-building');
     assert.doesNotMatch(translatedCorpus, /USB 隨機存取記憶體/, 'zh-Hant translates a USB drive as RAM');
+    assert.doesNotMatch(translatedCorpus, /Connectech 擴充板/, 'zh-Hant translates a carrier board as an expansion board');
     assert.match(translatedCorpus, /USB 磁碟/);
     assert.match(translatedCorpus, /2 個 2 通道 MIPI CSI/);
     assert.match(translatedCorpus, /4 個 4 通道 MIPI CSI/);
