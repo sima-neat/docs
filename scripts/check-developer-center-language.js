@@ -526,9 +526,14 @@ assert.match(
   ),
   /板卡重新啟動[^]*若要修改板卡的靜態 IP 位址/,
 );
-assert.doesNotMatch(landingSource, /copy\.navItems\.quickstart/);
-assert.doesNotMatch(landingSource, /tools\/qsg\/index\.html/);
-assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
+assert.match(
+  landingSource,
+  /const quickStartHref = useBaseUrl\('\/tools\/qsg\/index\.html'\)/,
+);
+assert.match(
+  landingSource,
+  /href=\{quickStartHref\}[\s\S]*\{copy\.navItems\.quickstart\}/,
+);
 assert.match(landingSource, /data-developer-center-sections/);
 assert.match(analyticsConsentSource, /closest\('\[data-developer-center-sections\]'\)/);
 assert.doesNotMatch(analyticsConsentSource, /closest\('\[aria-label="Documentation sections"\]'\)/);
