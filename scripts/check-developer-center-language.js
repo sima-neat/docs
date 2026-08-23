@@ -171,6 +171,8 @@ assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale
 assert.match(shellClientSource, /function syncNativeNavbarLocale\(\)/);
 assert.match(shellClientSource, /withoutSiteRoot\(pathname, SITE_ROOT\)/);
 assert.match(shellClientSource, /function watchNativeSectionNavigation\(\)/);
+assert.match(shellClientSource, /function syncLocalizedContentLinks\(\)/);
+assert.match(shellClientSource, /data-developer-center-base-rooted/);
 assert.match(shellClientSource, /event\.stopImmediatePropagation\(\)/);
 assert.match(shellClientSource, /siteRoot: SITE_ROOT/);
 assert.match(shellClientSource, /developer-center-language-change/);

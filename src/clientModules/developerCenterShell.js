@@ -10,6 +10,7 @@ const SITE_ROOT = siteConfig.baseUrl || '/';
 let navbarMediaQuery;
 let mobileLanguagePickerBound = false;
 let nativeSectionNavigationBound = false;
+let localizedContentNavigationBound = false;
 
 function currentRoutePath() {
   return developerCenterShell.withoutSiteRoot(window.location.pathname, SITE_ROOT);
@@ -132,6 +133,62 @@ function watchNativeSectionNavigation() {
   nativeSectionNavigationBound = true;
 }
 
+function isLocalizedHardwarePath(pathname) {
+  return /^\/(?:ko|ja|zh-Hant|uk)\/hardware(?:\/|$)/.test(pathname);
+}
+
+function syncLocalizedContentLinks() {
+  if (SITE_ROOT === '/') {
+    return;
+  }
+
+  document.querySelectorAll('main a[href]').forEach((link) => {
+    const url = new URL(link.href, window.location.href);
+    if (url.origin !== window.location.origin || url.pathname.startsWith(SITE_ROOT)) {
+      return;
+    }
+    if (!isLocalizedHardwarePath(url.pathname)) {
+      return;
+    }
+
+    link.setAttribute(
+      'href',
+      `${developerCenterShell.withSiteRoot(url.pathname, SITE_ROOT)}${url.search}${url.hash}`,
+    );
+    link.dataset.developerCenterBaseRooted = 'true';
+  });
+}
+
+function watchLocalizedContentNavigation() {
+  if (localizedContentNavigationBound || SITE_ROOT === '/') {
+    return;
+  }
+
+  document.addEventListener('click', (event) => {
+    if (
+      event.defaultPrevented
+      || event.button !== 0
+      || event.altKey
+      || event.ctrlKey
+      || event.metaKey
+      || event.shiftKey
+    ) {
+      return;
+    }
+
+    const link = event.target.closest('a[data-developer-center-base-rooted="true"]');
+    if (!link || (link.target && link.target !== '_self')) {
+      return;
+    }
+
+    const url = new URL(link.href, window.location.href);
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`);
+  }, {capture: true});
+  localizedContentNavigationBound = true;
+}
+
 function syncNativeNavbarVisibility() {
   const navbar = nativeNavbar();
   if (!navbar) {
@@ -218,9 +275,11 @@ async function mountShell() {
   document.documentElement.classList.add('developer-center-shell-active');
   syncNativeNavbarVisibility();
   syncNativeNavbarLocale();
+  syncLocalizedContentLinks();
   watchNativeNavbarVisibility();
   watchMobileLanguagePicker();
   watchNativeSectionNavigation();
+  watchLocalizedContentNavigation();
 }
 
 function scheduleMount() {
