@@ -206,6 +206,10 @@ for (const locale of manifest.language.locales) {
   const translation = manifest.language.translations[locale.code];
   assert.ok(translation.brand, `${locale.code} is missing the shell brand translation`);
   assert.ok(translation.homeLabel, `${locale.code} is missing the shell home-label translation`);
+  assert.ok(
+    translation.externalLinkLabel,
+    `${locale.code} is missing the external-link announcement`,
+  );
   assert.deepEqual(
     Object.keys(translation.landing),
     ['kicker', 'title', 'summary', 'sectionsLabel'],
@@ -353,6 +357,14 @@ assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /escapeHtml\(shellCopy\.brand\).*escapeHtml\(shellCopy\.homeLabel\)/);
 assert.doesNotMatch(shellSource, /escapeHtml\(shellCopy\.brand\)\}\s+home/);
+assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.externalLinkLabel\)\}"/);
+assert.ok(
+  fs.readFileSync(
+    path.join(docsRoot, 'i18n/ko/docusaurus-plugin-content-docs/current/reference/bsp.md'),
+    'utf8',
+  ).includes('소스 레이어: [swsoc-simaai-elxr-doc]'),
+  'Korean BSP translation must preserve the source repository identifier',
+);
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);

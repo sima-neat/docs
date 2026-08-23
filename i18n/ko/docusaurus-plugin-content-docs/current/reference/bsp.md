@@ -18,7 +18,9 @@ SiMa.ai BSP에는 다음이 포함됩니다.
 
 ## Modalix BSP
 
-그 Modalix BSP는 다음 대상을 지향합니다. Modalix DevKit, Modalix 얼리 액세스 키트 및 Modalix PCIe 카드입니다. 이 카드는 다음을 기반으로 제작되었습니다. [eLxr](https://elxr.org/), Debian-에서 파생된 배포. 사용자 공간은 다음을 사용하여 관리됩니다. `apt`따라서 맞춤 설정 Modalix 이미지는 패키징과 더 가깝습니다. Debian 코딩보다 소프트웨어 Yocto 레시피입니다. 기존 레시피를 변환하려면 Yocto DevKit ~로 eLxr참조: [다음으로 변환 eLxr](./tech-notes/elxr-conversion)소스 레이어: [swsoc-simaai-elxr-문서](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
+Modalix BSP는 Modalix DevKit, Modalix Early Access 키트 및 Modalix PCIe 카드를 대상으로 합니다. 이 BSP는 Debian 기반 배포판인 [eLxr](https://elxr.org/)를 기반으로 빌드됩니다. 사용자 공간은 `apt`로 관리되므로 Modalix 이미지를 사용자 지정하는 작업은 Yocto 레시피를 작성하는 것보다 Debian 소프트웨어를 패키징하는 방식에 더 가깝습니다. 기존 Yocto DevKit을 eLxr로 변환하려면 [eLxr로 변환](./tech-notes/elxr-conversion)을 참조하세요.
+
+소스 레이어: [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
 
 ## BSP 소스 코드를 활용하여 할 수 있는 작업은 무엇인가요?
 
