@@ -418,3 +418,4 @@ jobs:
             aws cloudfront create-invalidation \
               --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
               --paths "/*"
+          fi

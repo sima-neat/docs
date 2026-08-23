@@ -333,6 +333,11 @@ assert.ok(
   'Vulcan does not synchronize Algolia before publishing the localized client',
 );
 assert.match(
+  vulcanWorkflowSource.slice(sitePublishIndex),
+  /if \[\[ -n "\$\{SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-\}" \]\]; then[\s\S]*aws cloudfront create-invalidation[\s\S]*--paths "\/\*"\s+fi/,
+  'Vulcan leaves the optional CloudFront invalidation conditional unterminated',
+);
+assert.match(
   docusaurusConfigSource,
   /preferred=window\.localStorage\.getItem\(\$\{JSON\.stringify\(developerCenterShell\.LOCALE_KEY\)\}\)/,
 );
@@ -520,7 +525,8 @@ assert.match(
   ),
   /板卡重新啟動[^]*若要修改板卡的靜態 IP 位址/,
 );
-assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
+assert.doesNotMatch(landingSource, /copy\.navItems\.quickstart/);
+assert.doesNotMatch(landingSource, /tools\/qsg\/index\.html/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);
 assert.match(analyticsConsentSource, /closest\('\[data-developer-center-sections\]'\)/);
