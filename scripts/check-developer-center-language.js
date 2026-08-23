@@ -16,6 +16,7 @@ const landingSource = fs.readFileSync(
   path.join(docsRoot, 'src/pages/index.jsx'),
   'utf8',
 );
+const i18nReadmeSource = fs.readFileSync(path.join(docsRoot, 'i18n/README.md'), 'utf8');
 const docusaurusConfigSource = fs.readFileSync(
   path.join(docsRoot, 'docusaurus.config.js'),
   'utf8',
@@ -54,6 +55,12 @@ const context = {window: {}};
 vm.runInNewContext(shellSource, context);
 
 const {localeFromPath, localizedPath} = context.window.DeveloperCenterShell;
+for (const [, sourcePath] of i18nReadmeSource.matchAll(/--source\s+(\S+)/g)) {
+  assert.ok(
+    fs.existsSync(path.join(docsRoot, sourcePath)),
+    `i18n/README.md references missing translation source ${sourcePath}`,
+  );
+}
 assert.equal(localeFromPath('/', manifest), 'en');
 assert.equal(localeFromPath('/ja/', manifest), 'ja');
 assert.equal(localeFromPath('/zh-Hant', manifest), 'zh-Hant');

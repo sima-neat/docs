@@ -38,7 +38,7 @@ Preview one page without writing files:
 ```bash
 npm run translate:i18n -- \
   --locale zh-Hant \
-  --source docs/getting-started/setup-devkit.md \
+  --source docs/getting-started/setup-serial.mdx \
   --ssh-host macstudio \
   --model translategemma:27b
 ```
