@@ -501,6 +501,11 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
       'uk translates a hardware unit as an organizational subdivision',
     );
     assert.doesNotMatch(translatedCorpus, /Налагодження зв’язків/, 'uk mistranslates networking');
+    assert.doesNotMatch(
+      translatedCorpus,
+      /встановлюється на материнську плату|інтеграції з материнською платою|апаратного забезпечення материнської плати SoM|модульної обчислювальної системи на материнській платі/,
+      'uk translates carrier or generic boards as motherboards',
+    );
     assert.doesNotMatch(modalixDevKitSource, /через основну плату/);
     assert.doesNotMatch(
       modalixDevKitSource,
@@ -528,6 +533,9 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     assert.doesNotMatch(networkSource, /^:::경고$/m, 'ko translates a Docusaurus directive keyword');
     assert.doesNotMatch(translatedCorpus, /Bluetooth 세면대/, 'ko translates an audio sink as a washbasin');
     assert.doesNotMatch(translatedCorpus, /컴퓨터 비전 부서/, 'ko translates a hardware unit as a department');
+    assert.doesNotMatch(translatedCorpus, /\d+차선 MIPI/, 'ko translates a MIPI lane as a traffic lane');
+    assert.match(localizedIndexSource, /2개의 2레인 MIPI CSI/);
+    assert.match(localizedIndexSource, /4개의 4레인 MIPI CSI/);
     assert.match(translatedCorpus, /컴퓨터 비전 유닛\(CVU\)/);
   }
   for (const translatedDoc of translatedDocs) {
