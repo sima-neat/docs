@@ -28,6 +28,10 @@ const shellNavigationSource = fs.readFileSync(
   path.join(docsRoot, 'src/developerCenter/shell/navigation.js'),
   'utf8',
 );
+const shellThemeSource = fs.readFileSync(
+  path.join(docsRoot, 'src/developerCenter/shell/theme.js'),
+  'utf8',
+);
 const manifest = JSON.parse(
   fs.readFileSync(path.join(docsRoot, 'static/developer-center-shell.json'), 'utf8'),
 );
@@ -125,7 +129,10 @@ assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
+assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
+assert.match(shellSource, /catch \(_\) \{\s*return null;\s*\}/);
 assert.match(shellNavigationSource, /withLocalePrefixFromPath/);
+assert.match(shellThemeSource, /function decodeCookieEntry\(entry\)/);
 assert.match(shellSource, /placeholder="\$\{escapeHtml\(shellCopy\.search\.placeholder/);
 assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.search\.clear\)\}"/);
 assert.match(
@@ -141,6 +148,7 @@ assert.match(
   /routeLocale !== developerCenterShell\.DEFAULT_LOCALE\s*&& supported\.has\(routeLocale\)/,
 );
 assert.doesNotMatch(landingSource, /if \(supported\.has\(routeLocale\)\) return routeLocale/);
+assert.match(landingSource, /Ignore malformed cookie values and fall back to local storage/);
 assert.match(landingSource, /useDocusaurusContext\(\)/);
 assert.match(landingSource, /setLocale\(readLocalePreference\(routeLocale\)\)/);
 assert.match(landingSource, /addEventListener\('developer-center-language-change'/);

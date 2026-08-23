@@ -54,6 +54,15 @@
     return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
   }
 
+  function decodeCookieEntry(entry) {
+    if (!entry) return null;
+    try {
+      return decodeURIComponent(entry.split('=').slice(1).join('='));
+    } catch (_) {
+      return null;
+    }
+  }
+
   function cookieDomain() {
     const {hostname} = window.location;
     if (hostname === 'localhost' || /^[\d.]+$/.test(hostname)) {
@@ -70,7 +79,7 @@
     const entry = document.cookie
       .split('; ')
       .find((cookie) => cookie.startsWith(`${cookieName}=`));
-    return normalizeTheme(entry ? decodeURIComponent(entry.split('=').slice(1).join('=')) : null);
+    return normalizeTheme(decodeCookieEntry(entry));
   }
 
   function readStoredTheme(keys) {
@@ -149,10 +158,7 @@
     const entry = document.cookie
       .split('; ')
       .find((cookie) => cookie.startsWith(`${cookieName}=`));
-    return normalizeLocale(
-      entry ? decodeURIComponent(entry.split('=').slice(1).join('=')) : null,
-      manifest,
-    );
+    return normalizeLocale(decodeCookieEntry(entry), manifest);
   }
 
   function readStoredLocale(manifest) {

@@ -20,9 +20,14 @@ function readLocalePreference(routeLocale) {
   const cookie = document.cookie
     .split('; ')
     .find((entry) => entry.startsWith(`${developerCenterShell.LOCALE_COOKIE}=`));
-  const cookieLocale = cookie
-    ? decodeURIComponent(cookie.split('=').slice(1).join('='))
-    : '';
+  let cookieLocale = '';
+  try {
+    cookieLocale = cookie
+      ? decodeURIComponent(cookie.split('=').slice(1).join('='))
+      : '';
+  } catch (_) {
+    // Ignore malformed cookie values and fall back to local storage.
+  }
   if (supported.has(cookieLocale)) return cookieLocale;
 
   try {
