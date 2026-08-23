@@ -21,6 +21,10 @@ const docusaurusConfigSource = fs.readFileSync(
   path.join(docsRoot, 'docusaurus.config.js'),
   'utf8',
 );
+const vulcanWorkflowSource = fs.readFileSync(
+  path.join(docsRoot, '.github/workflows/vulcan-docs.yml'),
+  'utf8',
+);
 const shellClientSource = fs.readFileSync(
   path.join(docsRoot, 'src/clientModules/developerCenterShell.js'),
   'utf8',
@@ -174,6 +178,11 @@ assert.match(
 );
 assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
 assert.match(
+  vulcanWorkflowSource,
+  /npm run fetch:serial-tool\s+npm run check:i18n-complete\s+npm --ignore-scripts run build/,
+  'Vulcan deployment bypasses the translation completeness check',
+);
+assert.match(
   docusaurusConfigSource,
   /preferred=window\.localStorage\.getItem\(\$\{JSON\.stringify\(developerCenterShell\.LOCALE_KEY\)\}\)/,
 );
@@ -284,6 +293,10 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     const glossarySource = fs.readFileSync(path.join(translatedDocsRoot, 'reference/glossary.md'), 'utf8');
     assert.doesNotMatch(glossarySource, /750 MHz/, 'zh-Hant converts GOPS throughput into MHz');
     assert.match(glossarySource, /750 16 位元 GOPS/);
+    assert.doesNotMatch(translatedCorpus, /條紋/, 'zh-Hant translates a MIPI lane as a visual stripe');
+    assert.doesNotMatch(translatedCorpus, /港口/, 'zh-Hant translates a hardware port as a maritime harbor');
+    assert.match(translatedCorpus, /2 個 2 通道 MIPI CSI/);
+    assert.match(translatedCorpus, /4 個 4 通道 MIPI CSI/);
   }
   if (locale === 'ja') {
     assert.doesNotMatch(translatedCorpus, /750\s*MHz/, 'ja converts GOPS throughput into MHz');

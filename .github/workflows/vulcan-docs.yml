@@ -240,6 +240,7 @@ jobs:
         run: |
           set -euo pipefail
           npm run fetch:serial-tool
+          npm run check:i18n-complete
           npm --ignore-scripts run build
           npm run build:agent-raw
           test -f build/index.html
