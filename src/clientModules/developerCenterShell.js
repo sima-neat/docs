@@ -64,6 +64,27 @@ function nativeNavbar() {
   return document.querySelector('nav.navbar');
 }
 
+function syncNativeNavbarLocale() {
+  const shell = window.DeveloperCenterShell;
+  const locale = shell?.localeFromPath?.(window.location.pathname);
+  if (!locale) {
+    return;
+  }
+
+  nativeNavbar()?.querySelectorAll('a.navbar__link[href]').forEach((link) => {
+    const pathname = new URL(link.href, window.location.href).pathname;
+    const section = developerCenterShell.activeSectionForPath(pathname);
+    if (!['hardware', 'software'].includes(section)) {
+      return;
+    }
+
+    link.setAttribute(
+      'href',
+      shell.localizedPath(developerCenterShell.SECTION_ROUTES[section], locale),
+    );
+  });
+}
+
 function syncNativeNavbarVisibility() {
   const navbar = nativeNavbar();
   if (!navbar) {
@@ -144,6 +165,7 @@ async function mountShell() {
   await window.DeveloperCenterShell?.mount(root, {active: activeSection()});
   document.documentElement.classList.add('developer-center-shell-active');
   syncNativeNavbarVisibility();
+  syncNativeNavbarLocale();
   watchNativeNavbarVisibility();
   watchMobileLanguagePicker();
 }

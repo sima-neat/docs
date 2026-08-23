@@ -77,6 +77,9 @@ assert.ok(
   shellCookieWrites.some((value) => value.startsWith(`${shellConfig.LOCALE_COOKIE}=ja;`)),
   'one-argument shell locale persistence did not write the locale cookie',
 );
+assert.equal(context.window.DeveloperCenterShell.localeFromPath('/ja/hardware/getting-started/'), 'ja');
+assert.equal(context.window.DeveloperCenterShell.localizedPath('/hardware', 'ja'), '/ja/hardware');
+assert.equal(context.window.DeveloperCenterShell.localizedPath('/software', 'ja'), '/software/ja');
 for (const [, sourcePath] of i18nReadmeSource.matchAll(/--source\s+(\S+)/g)) {
   assert.ok(
     fs.existsSync(path.join(docsRoot, sourcePath)),
@@ -160,6 +163,7 @@ assert.match(
 assert.match(docusaurusConfigSource, /parts\.length===0&&preferred!==/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale\)/);
+assert.match(shellClientSource, /function syncNativeNavbarLocale\(\)/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);

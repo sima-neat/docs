@@ -187,7 +187,7 @@
     document.cookie = `${config.cookie}=${encodeURIComponent(locale)}; Path=/; Max-Age=31536000; SameSite=Lax${securePart}${domainPart}`;
   }
 
-  function localeFromPath(pathname, manifest) {
+  function localeFromPath(pathname, manifest = activeManifest) {
     const defaultLocale = languageConfig(manifest).defaultLocale;
     const segments = pathname.split('/').filter(Boolean);
     const hardwareSegment = normalizePath(manifest.routes?.hardware || '/hardware')
@@ -209,7 +209,7 @@
     return defaultLocale;
   }
 
-  function localizedPath(pathname, targetLocale, manifest) {
+  function localizedPath(pathname, targetLocale, manifest = activeManifest) {
     const locale = normalizeLocale(targetLocale, manifest);
     if (!locale) return pathname;
 
