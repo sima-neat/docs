@@ -578,14 +578,17 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
     stale_ids = sorted(existing_ids - desired_ids)
 
     print(f"[algolia-index] existing {SOURCE} records={len(existing_ids)} stale={len(stale_ids)}")
-    for start in range(0, len(stale_ids), args.batch_size):
-        chunk = stale_ids[start : start + args.batch_size]
-        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
-
     print(f"[algolia-index] uploading {len(records)} {SOURCE} records...")
     for start in range(0, len(records), args.batch_size):
         chunk = records[start : start + args.batch_size]
         client.batch([{"action": "addObject", "body": record} for record in chunk])
+
+    # Wait for every replacement record to be published before removing stale
+    # object IDs. This keeps the existing index intact if an upload fails.
+    print(f"[algolia-index] deleting {len(stale_ids)} stale {SOURCE} records...")
+    for start in range(0, len(stale_ids), args.batch_size):
+        chunk = stale_ids[start : start + args.batch_size]
+        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
 
 
 def main() -> int:

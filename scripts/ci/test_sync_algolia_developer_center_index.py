@@ -7,6 +7,8 @@ import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
+from unittest import mock
 
 
 SCRIPT = Path(__file__).with_name("sync_algolia_developer_center_index.py")
@@ -180,6 +182,57 @@ class LocalizedRecordTests(unittest.TestCase):
             ["software-legacy", "examples-legacy"],
         )
         self.assertIn("language", client.assert_payload["attributesToRetrieve"])
+
+    def test_sync_uploads_replacements_before_deleting_stale_records(self) -> None:
+        client = mock.Mock()
+        client.browse_untagged_cross_source_object_ids.return_value = []
+        client.browse_source_object_ids.return_value = ["hardware:legacy"]
+        args = SimpleNamespace(
+            app_id="app",
+            api_key="key",
+            index_name="docs",
+            batch_size=100,
+        )
+        records = [{"objectID": "hardware:replacement", "source": MODULE.SOURCE}]
+
+        with mock.patch.object(MODULE, "AlgoliaClient", return_value=client):
+            MODULE.sync_records(args, records)
+
+        self.assertEqual(
+            client.batch.call_args_list,
+            [
+                mock.call([{"action": "addObject", "body": records[0]}]),
+                mock.call(
+                    [
+                        {
+                            "action": "deleteObject",
+                            "body": {"objectID": "hardware:legacy"},
+                        }
+                    ]
+                ),
+            ],
+        )
+
+    def test_sync_preserves_stale_records_when_replacement_upload_fails(self) -> None:
+        client = mock.Mock()
+        client.browse_untagged_cross_source_object_ids.return_value = []
+        client.browse_source_object_ids.return_value = ["hardware:legacy"]
+        client.batch.side_effect = RuntimeError("upload failed")
+        args = SimpleNamespace(
+            app_id="app",
+            api_key="key",
+            index_name="docs",
+            batch_size=100,
+        )
+        records = [{"objectID": "hardware:replacement", "source": MODULE.SOURCE}]
+
+        with mock.patch.object(MODULE, "AlgoliaClient", return_value=client):
+            with self.assertRaisesRegex(RuntimeError, "upload failed"):
+                MODULE.sync_records(args, records)
+
+        client.batch.assert_called_once_with(
+            [{"action": "addObject", "body": records[0]}]
+        )
 
 
 if __name__ == "__main__":
