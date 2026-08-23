@@ -64,7 +64,6 @@ export default function Home() {
     : developerCenterShell.DEFAULT_LOCALE;
   const [locale, setLocale] = useState(routeLocale);
   const siteRoot = useBaseUrl('/');
-  const quickStartHref = useBaseUrl('/tools/qsg/index.html');
 
   useEffect(() => {
     const preferredLocale = readLocalePreference(routeLocale);
@@ -115,14 +114,6 @@ export default function Home() {
                 />
               ))}
             </div>
-            <a
-              className={styles.quickStart}
-              href={quickStartHref}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {copy.navItems.quickstart}
-            </a>
           </div>
         </section>
       </main>

@@ -83,6 +83,13 @@ const expectedSidebarMessages = {
   'zh-Hant': ['開始使用', '快速入門指南', '獨立模式', 'PCIe 模式', '韌體更新', 'DevKit 型號', '工具', '參考資料', '技術說明'],
   uk: ['Початок роботи', 'Посібник зі швидкого старту', 'Автономний режим', 'Режим PCIe', 'Оновлення прошивки', 'Варіанти DevKit', 'Інструменти', 'Довідкові матеріали', 'Технічні нотатки'],
 };
+const expectedBannerQuickStartLabels = {
+  en: 'Quick Start',
+  ko: '빠른 시작',
+  ja: 'クイックスタート',
+  'zh-Hant': '快速入門',
+  uk: 'Швидкий старт',
+};
 const earlyAccessConstraints = {
   ko: ['레거시', '기존 Early Access 고객'],
   ja: ['レガシー', '既存の Early Access のお客様'],
@@ -321,6 +328,16 @@ assert.match(
   /name: Install shared i18n tooling[\s\S]*sima-cli" neat install i18n[\s\S]*sima-i18n" --version[\s\S]*npm run check:i18n-complete/,
   'Vulcan deployment invokes the translation check without installing its CLI',
 );
+assert.match(
+  vulcanWorkflowSource,
+  /curl -fsSL https:\/\/artifacts\.neat\.sima\.ai\/sima-cli\/linux-mac\.sh \| bash/,
+  'Vulcan deployment does not use the official sima-cli installer',
+);
+assert.doesNotMatch(
+  vulcanWorkflowSource,
+  /artifacts\.sima-neat\.com/,
+  'Vulcan deployment still references the retired sima-neat.com artifact host',
+);
 const algoliaPublishIndex = vulcanWorkflowSource.indexOf('- name: Publish Algolia hardware records');
 const sitePublishIndex = vulcanWorkflowSource.indexOf('- name: Publish site to S3');
 assert.ok(algoliaPublishIndex >= 0, 'Vulcan deployment is missing the Algolia publish step');
@@ -526,14 +543,9 @@ assert.match(
   ),
   /板卡重新啟動[^]*若要修改板卡的靜態 IP 位址/,
 );
-assert.match(
-  landingSource,
-  /const quickStartHref = useBaseUrl\('\/tools\/qsg\/index\.html'\)/,
-);
-assert.match(
-  landingSource,
-  /href=\{quickStartHref\}[\s\S]*\{copy\.navItems\.quickstart\}/,
-);
+assert.doesNotMatch(landingSource, /copy\.navItems\.quickstart/);
+assert.doesNotMatch(landingSource, /tools\/qsg\/index\.html/);
+assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);
 assert.match(analyticsConsentSource, /closest\('\[data-developer-center-sections\]'\)/);
 assert.doesNotMatch(analyticsConsentSource, /closest\('\[aria-label="Documentation sections"\]'\)/);
@@ -635,6 +647,14 @@ assert.match(shellSource, /addEventListener\('developer-center-language-change',
 assert.match(shellSource, /localizedPath,\s*writeLocale,/);
 assert.match(hardwareRootSource, /function useShellLocale\(\)/);
 assert.match(hardwareRootSource, /addEventListener\("developer-center-language-change"/);
+assert.match(hardwareRootSource, /href=\{quickStartHref\}/);
+assert.match(hardwareRootSource, /\{copy\.quickStart\}/);
+for (const [locale, label] of Object.entries(expectedBannerQuickStartLabels)) {
+  assert.ok(
+    hardwareRootSource.includes(`quickStart: "${label}"`),
+    `${locale} Hardware banner Quick Start label is missing`,
+  );
+}
 assert.match(landingSource, /function readLocalePreference\(routeLocale\)/);
 assert.match(
   landingSource,
