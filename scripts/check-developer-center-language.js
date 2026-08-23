@@ -283,6 +283,11 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
         /Bluetooth 水槽/,
         `${path.relative(docsRoot, translatedDoc)} mistranslates an audio sink as a water sink`,
       );
+      assert.doesNotMatch(
+        translatedSource,
+        /750\s*(?:MHz|兆赫)/,
+        `${path.relative(docsRoot, translatedDoc)} converts GOPS throughput into a clock frequency`,
+      );
     }
   }
 }
