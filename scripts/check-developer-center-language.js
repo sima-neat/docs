@@ -205,6 +205,7 @@ assert.deepEqual(
 for (const locale of manifest.language.locales) {
   const translation = manifest.language.translations[locale.code];
   assert.ok(translation.brand, `${locale.code} is missing the shell brand translation`);
+  assert.ok(translation.homeLabel, `${locale.code} is missing the shell home-label translation`);
   assert.deepEqual(
     Object.keys(translation.landing),
     ['kicker', 'title', 'summary', 'sectionsLabel'],
@@ -350,6 +351,8 @@ assert.match(shellClientSource, /event\.stopImmediatePropagation\(\)/);
 assert.match(shellClientSource, /siteRoot: SITE_ROOT/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
+assert.match(shellSource, /escapeHtml\(shellCopy\.brand\).*escapeHtml\(shellCopy\.homeLabel\)/);
+assert.doesNotMatch(shellSource, /escapeHtml\(shellCopy\.brand\)\}\s+home/);
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);

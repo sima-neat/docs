@@ -26,6 +26,7 @@ const SUPPORTED_LOCALES = [
 const SHELL_TRANSLATIONS = {
   en: {
     brand: 'Developer Portal',
+    homeLabel: 'Home',
     landing: {
       kicker: 'Developer Center',
       title: 'Open, Simple, Performant, Neat!',
@@ -58,6 +59,7 @@ const SHELL_TRANSLATIONS = {
   },
   ko: {
     brand: '개발자 포털',
+    homeLabel: '홈',
     landing: {
       kicker: '개발자 센터',
       title: '개방적이고, 단순하며, 뛰어난 성능의 Neat!',
@@ -90,6 +92,7 @@ const SHELL_TRANSLATIONS = {
   },
   ja: {
     brand: '開発者ポータル',
+    homeLabel: 'ホーム',
     landing: {
       kicker: 'デベロッパーセンター',
       title: 'オープン、シンプル、高性能、Neat！',
@@ -122,6 +125,7 @@ const SHELL_TRANSLATIONS = {
   },
   'zh-Hant': {
     brand: '開發者入口網站',
+    homeLabel: '首頁',
     landing: {
       kicker: '開發者中心',
       title: '開放、簡單、高效能、Neat！',
@@ -154,6 +158,7 @@ const SHELL_TRANSLATIONS = {
   },
   uk: {
     brand: 'Портал розробника',
+    homeLabel: 'Головна сторінка',
     landing: {
       kicker: 'Центр розробника',
       title: 'Відкрито, просто, продуктивно, Neat!',
