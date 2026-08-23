@@ -27,7 +27,13 @@ function normalizeHardwareBreadcrumbHome() {
   document
     .querySelectorAll('.theme-doc-breadcrumbs a[aria-label="Home page"]')
     .forEach((link) => {
-      link.setAttribute('href', shellConfig.SECTION_ROUTES.hardware);
+      link.setAttribute(
+        'href',
+        shellConfig.withLocalePrefixFromPath(
+          shellConfig.SECTION_ROUTES.hardware,
+          window.location.pathname,
+        ),
+      );
     });
 }
 

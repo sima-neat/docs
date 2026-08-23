@@ -187,6 +187,18 @@ function withoutLocalePrefix(pathname) {
   return normalized;
 }
 
+function withLocalePrefixFromPath(destination, pathname) {
+  const segments = normalizePath(pathname).split('/').filter(Boolean);
+  const routeLocale = SUPPORTED_LOCALES.find(
+    (locale) => locale.code !== DEFAULT_LOCALE && locale.code === segments[0],
+  );
+  if (!routeLocale) {
+    return destination;
+  }
+
+  return `/${routeLocale.code}${destination}`;
+}
+
 function isCloudFrontRoutedPath(pathname) {
   const normalized = normalizePath(pathname);
   return routeItems.some((item) => normalizePath(item.href) === normalized);
@@ -242,5 +254,6 @@ module.exports = {
   navbarItems,
   normalizePath,
   withoutLocalePrefix,
+  withLocalePrefixFromPath,
   routeItems,
 };

@@ -24,6 +24,10 @@ const shellClientSource = fs.readFileSync(
   path.join(docsRoot, 'src/clientModules/developerCenterShell.js'),
   'utf8',
 );
+const shellNavigationSource = fs.readFileSync(
+  path.join(docsRoot, 'src/developerCenter/shell/navigation.js'),
+  'utf8',
+);
 const manifest = JSON.parse(
   fs.readFileSync(path.join(docsRoot, 'static/developer-center-shell.json'), 'utf8'),
 );
@@ -75,6 +79,11 @@ assert.equal(localizedPath('/ja', 'ko', manifest), '/ko');
 
 assert.equal(shellConfig.activeSectionForPath('/ja/hardware/getting-started/'), 'hardware');
 assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 'software');
+assert.equal(shellConfig.withLocalePrefixFromPath('/hardware', '/hardware/getting-started/'), '/hardware');
+assert.equal(
+  shellConfig.withLocalePrefixFromPath('/hardware', '/ja/hardware/getting-started/'),
+  '/ja/hardware',
+);
 assert.deepEqual(
   manifest.language.locales.map(({label}) => label),
   ['English', '한국어', '日本語', '繁體中文', 'Українська'],
@@ -115,6 +124,8 @@ assert.match(docusaurusConfigSource, /var preferred=m\?decodeURIComponent\(m\[1\
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
+assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
+assert.match(shellNavigationSource, /withLocalePrefixFromPath/);
 assert.match(shellSource, /placeholder="\$\{escapeHtml\(shellCopy\.search\.placeholder/);
 assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.search\.clear\)\}"/);
 assert.match(

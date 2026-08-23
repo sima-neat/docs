@@ -853,7 +853,7 @@
         <header class="navbar dev-center-navbar">
           <div class="navbar__inner">
             <div class="navbar__items">
-              <a class="navbar__brand" href="/" aria-label="${escapeHtml(shellCopy.brand)} home">
+              <a class="navbar__brand" href="${escapeHtml(localizedPath('/', locale, manifest))}" aria-label="${escapeHtml(shellCopy.brand)} home">
                 <span class="navbar__logo"><img src="/img/sima-logo.png" alt="" /></span>
                 <span class="navbar__title">${escapeHtml(shellCopy.brand)}</span>
               </a>
