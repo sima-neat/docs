@@ -57,7 +57,7 @@ Modalix SoM을 사용자 정의 보드에 통합하는 데 필요한 핵심 참�
 | --- | --- | --- |
 | **Modalix 카메라 및 ISP 튜닝 가이드** | 특정 카메라 센서에 맞게 Modalix 이미지 신호 프로세서를 조정하는 절차 — 보정, 노출, 화이트 밸런스 및 이미지 품질 파이프라인. 센서가 연결되고 인식된 후 이미지 품질을 미세 조정하는 데 사용합니다. | *SiMa.ai 담당자에게 문의하세요.* |
 
-> MIPI CSI-2 카메라를 DevKit에 물리적으로 연결하고 사용하려면 먼저 [ MIPI 카메라 인터페이스](/ko/hardware/getting-started/standalone-mode/mipi-camera-interfaces)를 참조하십시오.
+> MIPI CSI-2 카메라를 DevKit에 물리적으로 연결하고 사용하려면 먼저 [ MIPI 카메라 인터페이스](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)를 참조하십시오.
 
 ## 전력 및 열 설계 계획
 

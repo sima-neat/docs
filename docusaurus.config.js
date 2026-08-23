@@ -3,6 +3,8 @@
 const lightCodeTheme = require('prism-react-renderer').themes.github;
 const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 const developerCenterShell = require('./src/developerCenter/shell/config.cjs');
+const localizeHardwareLinks = require('./src/remark/localizeHardwareLinks.cjs');
+const substituteVersions = require('./src/remark/substituteVersions.cjs');
 
 const url = process.env.SYSDOC_URL || 'https://sysdoc.neat.sima.ai';
 const baseUrl = process.env.SYSDOC_BASE_URL || '/';
@@ -125,11 +127,11 @@ const config = {
           routeBasePath: 'hardware',
           // Substitute %platform_version% (and any other key in src/versions.cjs) at build
           // time, including inside fenced code blocks. See src/remark/substituteVersions.cjs.
-          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
+          remarkPlugins: [substituteVersions, localizeHardwareLinks],
         },
         pages: {
           // src/pages/agents.md (served at /agents) uses the same %key% tokens.
-          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
+          remarkPlugins: [substituteVersions],
         },
         blog: false,
         theme: {

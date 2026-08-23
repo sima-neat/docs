@@ -87,7 +87,7 @@ sidebar_position: 3
 ## デプロイ
 
 **PCIe モード**
-：Modalix PCIe カードをホストマシンに接続するデプロイメントアーキテクチャです。ホストマシンがI/Oとオーケストレーションを処理し、カードが推論を処理します。[PCIe モード](/ja/hardware/getting-started/pcie-mode) を参照してください。
+：Modalix PCIe カードをホストマシンに接続するデプロイメントアーキテクチャです。ホストマシンがI/Oとオーケストレーションを処理し、カードが推論を処理します。[PCIe モード](/hardware/getting-started/pcie-mode) を参照してください。
 
 **スタンドアロンモード**
-：Modalix DevKit または Modalix SoMベースのシステムが、独立したデバイスとして動作し、ローカルでセンサーデータを処理し、ネットワーク経由で結果を出力するデプロイメントアーキテクチャです。[スタンドアロンモード](/ja/hardware/getting-started/standalone-mode) を参照してください。
+：Modalix DevKit または Modalix SoMベースのシステムが、独立したデバイスとして動作し、ローカルでセンサーデータを処理し、ネットワーク経由で結果を出力するデプロイメントアーキテクチャです。[スタンドアロンモード](/hardware/getting-started/standalone-mode) を参照してください。

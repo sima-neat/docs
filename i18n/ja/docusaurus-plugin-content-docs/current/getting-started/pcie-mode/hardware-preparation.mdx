@@ -30,7 +30,7 @@ sidebar_position: 1
 6. カードのシリアルポート/UARTコネクタをホストに接続し、起動およびデバッグを行います。
 7. このPCIeカードには、ネットワークに直接接続するための物理的なイーサネットポートも搭載されています。
 
-PCIeカードのインターフェース、スイッチ、コネクタの詳細については、[「Modalix PCIeカード」](/ja/hardware/devkit/modalix-pcie-card) を参照してください。
+PCIeカードのインターフェース、スイッチ、コネクタの詳細については、[「Modalix PCIeカード」](/hardware/devkit/modalix-pcie-card) を参照してください。
 
 :::note
 まれに、ホストが再起動されたときに、ドライバーが自動的にロードされないようにしたい場合があります。自動ロードを無効にするには、`/etc/modprobe.d/blacklist.conf` を作成または編集し、`blacklist sima_mla_drv` を追加します。次に、`update-initramfs` を実行し、ホストを再起動します。再起動後、`insmod` または `modprobe` を使用して、ドライバーを手動でロードします。

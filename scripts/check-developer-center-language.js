@@ -63,6 +63,7 @@ const translationSources = JSON.parse(
   fs.readFileSync(path.join(docsRoot, 'i18n/translation-sources.json'), 'utf8'),
 );
 const shellConfig = require('../src/developerCenter/shell/config.cjs');
+const localizeHardwareLinks = require('../src/remark/localizeHardwareLinks.cjs');
 
 for (const [locale, sources] of Object.entries(translationSources)) {
   for (const [sourcePath, expectedHash] of Object.entries(sources)) {
@@ -320,6 +321,52 @@ for (const documentationRoot of documentationRoots) {
   }
 }
 assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
+assert.ok(
+  docusaurusConfig.presets[0][1].docs.remarkPlugins.includes(localizeHardwareLinks),
+  'Hardware docs do not localize source-identical links during compilation',
+);
+assert.equal(
+  localizeHardwareLinks.localeForFile({
+    path: path.join(
+      docsRoot,
+      'i18n/zh-Hant/docusaurus-plugin-content-docs/current/index.mdx',
+    ),
+  }),
+  'zh-Hant',
+);
+assert.equal(
+  localizeHardwareLinks.localizedHardwareUrl(
+    '/hardware/getting-started/standalone-mode/mipi-camera-interfaces#connector',
+    'zh-Hant',
+  ),
+  '/zh-Hant/hardware/getting-started/standalone-mode/mipi-camera-interfaces#connector',
+);
+assert.equal(
+  localizeHardwareLinks.localizedHardwareUrl('/software/tutorials/run-mipi-camera-model', 'zh-Hant'),
+  '/software/tutorials/run-mipi-camera-model',
+);
+const localizedLinkTree = {
+  type: 'root',
+  children: [
+    {type: 'link', url: '/hardware/reference/bsp', children: []},
+    {
+      type: 'mdxJsxFlowElement',
+      attributes: [{type: 'mdxJsxAttribute', name: 'href', value: '/hardware/devkit'}],
+      children: [],
+    },
+  ],
+};
+localizeHardwareLinks()(localizedLinkTree, {
+  path: path.join(
+    docsRoot,
+    'i18n/zh-Hant/docusaurus-plugin-content-docs/current/reference/bsp.md',
+  ),
+});
+assert.equal(localizedLinkTree.children[0].url, '/zh-Hant/hardware/reference/bsp');
+assert.equal(
+  localizedLinkTree.children[1].attributes[0].value,
+  '/zh-Hant/hardware/devkit',
+);
 assert.match(
   vulcanWorkflowSource,
   /npm run fetch:serial-tool\s+npm run check:i18n-complete\s+npm --ignore-scripts run build/,
@@ -327,8 +374,13 @@ assert.match(
 );
 assert.match(
   vulcanWorkflowSource,
-  /name: Install shared i18n tooling[\s\S]*sima-cli" neat install i18n[\s\S]*sima-i18n" --version[\s\S]*npm run check:i18n-complete/,
+  /name: Install shared i18n tooling[\s\S]*i18n_prefix="\$\{RUNNER_TEMP\}\/sima-i18n"[\s\S]*NPM_CONFIG_PREFIX="\$\{i18n_prefix\}"[\s\S]*sima-cli" neat install i18n[\s\S]*GITHUB_PATH[\s\S]*i18n_prefix\}\/bin\/sima-i18n" --version[\s\S]*npm run check:i18n-complete/,
   'Vulcan deployment invokes the translation check without installing its CLI',
+);
+assert.doesNotMatch(
+  vulcanWorkflowSource,
+  /\.sima-cli\/\.venv\/bin\/sima-i18n/,
+  'Vulcan assumes the Node-based sima-i18n CLI is installed in the Python venv',
 );
 assert.match(
   vulcanWorkflowSource,
@@ -459,7 +511,7 @@ assert.match(
     ),
     'utf8',
   ),
-  /\[Modalix PCIe 卡\]\(\/zh-Hant\/hardware\/devkit\/modalix-pcie-card\)/,
+  /\[Modalix PCIe 卡\]\(\/hardware\/devkit\/modalix-pcie-card\)/,
 );
 const ukrainianBluetoothSource = fs.readFileSync(
   path.join(
@@ -855,8 +907,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     const translatedSource = fs.readFileSync(translatedDoc, 'utf8');
     assert.doesNotMatch(
       translatedSource,
-      /(?:href=["']|\]\()\/hardware(?:\/|["')])/,
-      `${path.relative(docsRoot, translatedDoc)} contains an English-only Hardware link`,
+      new RegExp(`(?:href=["']|\\]\\()/${locale}/hardware(?:/|["')])`),
+      `${path.relative(docsRoot, translatedDoc)} hard-codes a localized Hardware link`,
     );
     if (locale === 'zh-Hant') {
       assert.doesNotMatch(

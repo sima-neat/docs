@@ -13,8 +13,8 @@ import TabItem from '@theme/TabItem';
 
 在繼續之前，請確認主機可以透過網路存取 DevKit。請參閱：
 
-- [獨立模式網路設定](/zh-Hant/hardware/getting-started/standalone-mode/network)
-- [PCIe 模式虛擬網路設定](/zh-Hant/hardware/getting-started/pcie-mode/virtual-network)
+- [獨立模式網路設定](/hardware/getting-started/standalone-mode/network)
+- [PCIe 模式虛擬網路設定](/hardware/getting-started/pcie-mode/virtual-network)
 
 <Tabs groupId="sima-cli-source">
 <TabItem value="from-devkit" label="從 DevKit" default>
@@ -61,5 +61,5 @@ sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} h
 </Tabs>
 
 :::note
-若要**降級** DevKit 或安裝**非最新版本**的建置（例如，預發布的 `develop` 建置或內部工程映像），請改用 [網路啟動恢復](/zh-Hant/hardware/getting-started/firmware-update/net-boot)。它會從主機上的 TFTP 伺服器啟動 DevKit，並直接將目標映像閃存到 eMMC。
+若要**降級** DevKit 或安裝**非最新版本**的建置（例如，預發布的 `develop` 建置或內部工程映像），請改用 [網路啟動恢復](/hardware/getting-started/firmware-update/net-boot)。它會從主機上的 TFTP 伺服器啟動 DevKit，並直接將目標映像閃存到 eMMC。
 :::

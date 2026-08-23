@@ -30,7 +30,7 @@ sidebar_position: 1
 6. 카드의 시리얼/UART 커넥터를 호스트에 연결하여 시스템을 부팅하고 디버깅합니다.
 7. PCIe 카드는 네트워크에 직접 연결할 수 있는 물리적인 이더넷 포트도 갖추고 있습니다.
 
-PCIe 카드 인터페이스, 스위치 및 커넥터에 대한 자세한 내용은 [ Modalix PCIe 카드](/ko/hardware/devkit/modalix-pcie-card)를 참조하십시오.
+PCIe 카드 인터페이스, 스위치 및 커넥터에 대한 자세한 내용은 [ Modalix PCIe 카드](/hardware/devkit/modalix-pcie-card)를 참조하십시오.
 
 :::note
 드물게 호스트가 재부팅될 때 드라이버가 자동으로 로드되지 않도록 하려는 경우가 있을 수 있습니다. 자동 로드를 비활성화하려면 `/etc/modprobe.d/blacklist.conf` 파일을 생성하거나 편집하고 `blacklist sima_mla_drv`를 추가합니다. 그런 다음 `update-initramfs`를 실행하고 호스트를 재부팅합니다. 재부팅 후에는 `insmod` 또는 `modprobe`를 사용하여 드라이버를 수동으로 로드합니다.

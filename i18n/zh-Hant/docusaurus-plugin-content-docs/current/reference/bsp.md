@@ -31,7 +31,7 @@ Modalix BSP 的目標是 Modalix DevKit、Modalix 早期版本套件，以及 Mo
 - **替換或擴充根檔案系統** — 將您自己的應用程式、函式庫或系統服務整合進去。
 - **在本地重新建立發布版本** — 重新建立與 DevKit 上所發布的映像完全相同的映像，以便進行審核或修改。
 
-在您建立自訂映像檔後，請使用 [韌體更新](/zh-Hant/hardware/getting-started/firmware-update) 中的其中一種方法，將其燒錄到 DevKit 上。
+在您建立自訂映像檔後，請使用 [韌體更新](/hardware/getting-started/firmware-update) 中的其中一種方法，將其燒錄到 DevKit 上。
 
 ## 儲存庫
 

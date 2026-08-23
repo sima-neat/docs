@@ -13,7 +13,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 :::note
 eLxrプラットフォームは、SDK **2.0.0** 以降のバージョンから、**Modalix DevKit** で利用できます。
 
-eLxr への変換には、tRoot の更新と eMMC の再フラッシュが必要であり、これらは [Net Boot Recovery](/ja/hardware/getting-started/firmware-update/net-boot) によって行われます。
+eLxr への変換には、tRoot の更新と eMMC の再フラッシュが必要であり、これらは [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) によって行われます。
 :::
 
 **eLxr** プラットフォームは、従来の Yocto 環境に代わり、SiMa.ai DevKit のデフォルトのランタイムとして機能します。このプラットフォームは、以下の機能を提供します。
@@ -48,7 +48,7 @@ eLxr に変換する前に、DevKit を最新の **tRoot** イメージに更新
 
 この更新により、tRoot（信頼されたルート）が eLxr と互換性を持つようになります。
 
-ホストのIPアドレスを静的IPアドレス `192.168.1.10` に設定し、DevKit が `192.168.1.20` でアクセスできるようにします（[ ネットワーク設定 ](/ja/hardware/getting-started/standalone-mode/network) を参照）。
+ホストのIPアドレスを静的IPアドレス `192.168.1.10` に設定し、DevKit が `192.168.1.20` でアクセスできるようにします（[ ネットワーク設定 ](/hardware/getting-started/standalone-mode/network) を参照）。
 
 <img src={useBaseUrl('/img/media/host-cli.png')} alt="ホストマシンで実行" width="55" style={{float: 'left', marginRight: '8px'}} />
 
@@ -63,7 +63,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>手順2：Netboot を使用して eLxr eMMC にイメージを書き込み、フラッシュを実行します。</strong></summary>
 
-変換の残りの手順では、[ネットワークブートによる復旧](/ja/hardware/getting-started/firmware-update/net-boot)に記載されている標準の TFTP ネットブートおよびフラッシュ手順を使用します。以下に示す eLxr 固有の値を使用して、その手順に従ってください。
+変換の残りの手順では、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)に記載されている標準の TFTP ネットブートおよびフラッシュ手順を使用します。以下に示す eLxr 固有の値を使用して、その手順に従ってください。
 
 - **手順2（TFTPサーバーの起動）：** `--boardtype modalix --fwtype elxr -v %platform_version%` を使用します。
 - **ステップ3（U-Bootの設定）：** `boot`を実行する前に、`boot_targets=net`に加えて、`cpio_name=simaai-image-palette-modalix.cpio.gz`を設定します。
@@ -87,7 +87,7 @@ DevKitでeLxrを実行している状態で、Palette Neat SDKをインストー
 <details open>
 <summary><strong>Yoctoに戻す（オプション）</strong></summary>
 
-Yoctoに戻すには、`--fwtype yocto`を指定して、[ネットワークブートによる復旧](/ja/hardware/getting-started/firmware-update/net-boot)を再度実行します。Yoctoターゲットの場合、`cpio_name` U-Boot変数は必要ありません。`setenv boot_targets net`、`saveenv`、`boot`のみを実行します。
+Yoctoに戻すには、`--fwtype yocto`を指定して、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)を再度実行します。Yoctoターゲットの場合、`cpio_name` U-Boot変数は必要ありません。`setenv boot_targets net`、`saveenv`、`boot`のみを実行します。
 
 :::note
 Yocto に戻して変換する際に、**tRoot の最小バージョン要件はありません**。したがって、上記のステップ 1 は省略できます。
@@ -100,5 +100,5 @@ eLxr に変換した後、シリアルコンソールに NFS 関連のエラー�
 ## 要約
 
 1. 最新の **tRoot** イメージ（バージョン 2.0.0 以上）に更新してください。
-2. [Net Boot Recovery](/ja/hardware/getting-started/firmware-update/net-boot)の手順に従い、`--fwtype elxr`とeLxr `cpio_name`を使用して、eLxrをeMMCに書き込みます。
+2. [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)の手順に従い、`--fwtype elxr`とeLxr `cpio_name`を使用して、eLxrをeMMCに書き込みます。
 3. Neat SDKをインストールし、[NEATドキュメント](https://developer.sima.ai/software)を参照して、アプリを試してみてください。

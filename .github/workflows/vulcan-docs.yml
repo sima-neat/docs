@@ -109,9 +109,11 @@ jobs:
         run: |
           set -euo pipefail
           curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
-          echo "${HOME}/.sima-cli/.venv/bin" >> "${GITHUB_PATH}"
-          "${HOME}/.sima-cli/.venv/bin/sima-cli" neat install i18n
-          "${HOME}/.sima-cli/.venv/bin/sima-i18n" --version
+          i18n_prefix="${RUNNER_TEMP}/sima-i18n"
+          NPM_CONFIG_PREFIX="${i18n_prefix}" \
+            "${HOME}/.sima-cli/.venv/bin/sima-cli" neat install i18n
+          echo "${i18n_prefix}/bin" >> "${GITHUB_PATH}"
+          "${i18n_prefix}/bin/sima-i18n" --version
 
       - name: Configure AWS credentials for Vulcan config
         uses: aws-actions/configure-aws-credentials@v6

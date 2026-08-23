@@ -13,8 +13,8 @@ import TabItem from '@theme/TabItem';
 
 Перш ніж продовжити, переконайтеся, що хост-машина може отримати доступ до комплекту розробки через мережу. Див.:
 
-- [Налаштування мережі в автономному режимі](/uk/hardware/getting-started/standalone-mode/network)
-- [Налаштування віртуальної мережі в режимі PCIe](/uk/hardware/getting-started/pcie-mode/virtual-network)
+- [Налаштування мережі в автономному режимі](/hardware/getting-started/standalone-mode/network)
+- [Налаштування віртуальної мережі в режимі PCIe](/hardware/getting-started/pcie-mode/virtual-network)
 
 <Tabs groupId="sima-cli-source">
 <TabItem value="from-devkit" label="З комплекту розробки" default>
@@ -61,5 +61,5 @@ sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} h
 </Tabs>
 
 :::note
-Щоб **знизити версію** комплекту розробки або встановити збірку, яка **не є останньою версією** (наприклад, попередню версію `develop` або внутрішній інженерний образ), використовуйте [відновлення через Net Boot](/uk/hardware/getting-started/firmware-update/net-boot) замість цього. Він завантажує комплект розробки з TFTP-сервера на хост-машині та безпосередньо записує цільовий образ в eMMC.
+Щоб **знизити версію** комплекту розробки або встановити збірку, яка **не є останньою версією** (наприклад, попередню версію `develop` або внутрішній інженерний образ), використовуйте [відновлення через Net Boot](/hardware/getting-started/firmware-update/net-boot) замість цього. Він завантажує комплект розробки з TFTP-сервера на хост-машині та безпосередньо записує цільовий образ в eMMC.
 :::
