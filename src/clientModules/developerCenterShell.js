@@ -9,6 +9,7 @@ const SITE_ROOT = siteConfig.baseUrl || '/';
 
 let navbarMediaQuery;
 let mobileLanguagePickerBound = false;
+let nativeNavbarLocaleBound = false;
 let nativeSectionNavigationBound = false;
 let localizedContentNavigationBound = false;
 
@@ -72,9 +73,9 @@ function nativeNavbar() {
   return document.querySelector('nav.navbar');
 }
 
-function syncNativeNavbarLocale() {
+function syncNativeNavbarLocale(selectedLocale) {
   const shell = window.DeveloperCenterShell;
-  const locale = shell?.localeFromPath?.(currentRoutePath());
+  const locale = selectedLocale || shell?.localeFromPath?.(currentRoutePath());
   if (!locale) {
     return;
   }
@@ -116,6 +117,21 @@ function syncNativeNavbarLocale() {
       );
     }
   });
+}
+
+function watchNativeNavbarLocale() {
+  if (nativeNavbarLocaleBound) {
+    return;
+  }
+
+  window.addEventListener('developer-center-language-change', (event) => {
+    const locale = event?.detail?.locale;
+    if (!developerCenterShell.SHELL_TRANSLATIONS[locale]) {
+      return;
+    }
+    syncNativeNavbarLocale(locale);
+  });
+  nativeNavbarLocaleBound = true;
 }
 
 function watchNativeSectionNavigation() {
@@ -299,6 +315,7 @@ async function mountShell() {
   syncLocalizedContentLinks();
   watchNativeNavbarVisibility();
   watchMobileLanguagePicker();
+  watchNativeNavbarLocale();
   watchNativeSectionNavigation();
   watchLocalizedContentNavigation();
 }

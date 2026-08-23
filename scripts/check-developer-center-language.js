@@ -362,7 +362,11 @@ assert.equal(landingRedirect('/ja/', 'ja'), null);
 assert.match(docusaurusConfigSource, /var baseParts=\$\{JSON\.stringify\(baseUrl\.split\('\/'\)\.filter\(Boolean\)\)\}/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale\)/);
-assert.match(shellClientSource, /function syncNativeNavbarLocale\(\)/);
+assert.match(shellClientSource, /function syncNativeNavbarLocale\(selectedLocale\)/);
+assert.match(
+  shellClientSource,
+  /const locale = selectedLocale \|\| shell\?\.localeFromPath\?\.\(currentRoutePath\(\)\)/,
+);
 assert.match(shellClientSource, /SHELL_TRANSLATIONS\[locale\]\?\.navItems/);
 assert.match(shellClientSource, /textNode\.nodeValue = navCopy\[key\]/);
 assert.match(shellClientSource, /navbarItems\(\)\.find/);
@@ -370,6 +374,11 @@ assert.match(shellClientSource, /withoutLocalePrefix\(routePath\)/);
 assert.match(shellClientSource, /const key = configuredItem\?\.key \|\| section/);
 assert.match(shellClientSource, /withoutSiteRoot\(pathname, SITE_ROOT\)/);
 assert.match(shellClientSource, /function watchNativeSectionNavigation\(\)/);
+assert.match(shellClientSource, /function watchNativeNavbarLocale\(\)/);
+assert.match(
+  shellClientSource,
+  /addEventListener\('developer-center-language-change',[\s\S]*syncNativeNavbarLocale\(locale\)/,
+);
 assert.match(shellClientSource, /function syncLocalizedContentLinks\(\)/);
 assert.match(shellClientSource, /data-developer-center-base-rooted/);
 assert.match(shellClientSource, /event\.stopImmediatePropagation\(\)/);
