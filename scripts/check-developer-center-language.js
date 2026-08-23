@@ -472,6 +472,26 @@ for (const [locale, targetCopy] of Object.entries(localizedNfsTargets)) {
     `${locale} NFS procedure does not identify Modalix as the execution target`,
   );
 }
+const traditionalChineseExtraDocsSource = fs.readFileSync(
+  path.join(
+    docsRoot,
+    'i18n/zh-Hant/docusaurus-plugin-content-docs/current/reference/extra-docs.md',
+  ),
+  'utf8',
+);
+assert.match(traditionalChineseExtraDocsSource, /系統模組（SoM）產品簡介/);
+assert.match(traditionalChineseExtraDocsSource, /系統模組（SoM）資料手冊/);
+assert.doesNotMatch(traditionalChineseExtraDocsSource, /系統晶片（SoM）/);
+assert.match(
+  fs.readFileSync(
+    path.join(
+      docsRoot,
+      'i18n/zh-Hant/docusaurus-plugin-content-docs/current/getting-started/standalone-mode/network.mdx',
+    ),
+    'utf8',
+  ),
+  /板卡重新啟動[^]*若要修改板卡的靜態 IP 位址/,
+);
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);
@@ -525,6 +545,11 @@ assert.match(
 );
 assert.match(shellSource, /mountSearch\(target, manifest, locale, siteRoot\)/);
 assert.match(shellSource, /const searchCopy = state\.copy/);
+assert.match(
+  shellSource,
+  /const topLevelLabels = \[source, sourceLabel\(source\), searchCopy\.sources\[source\]\]/,
+);
+assert.match(shellSource, /topLevelLabels\.includes\(section\) \? searchCopy\.overview/);
 assert.match(shellSource, /sources: \{\.\.\.english\.search\.sources, \.\.\.localized\.search\.sources\}/);
 assert.match(shellSource, /searchCopy\.sources\[source\.key\]/);
 assert.match(shellSource, /searchCopy\.filtersLabel/);

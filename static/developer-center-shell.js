@@ -361,7 +361,8 @@
   }
 
   function displaySectionLabel(section, source, searchCopy) {
-    return section === sourceLabel(source) ? searchCopy.overview : section;
+    const topLevelLabels = [source, sourceLabel(source), searchCopy.sources[source]];
+    return topLevelLabels.includes(section) ? searchCopy.overview : section;
   }
 
   function filterKey(source, section) {

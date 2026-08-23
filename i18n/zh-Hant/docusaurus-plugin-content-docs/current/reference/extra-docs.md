@@ -23,7 +23,7 @@ sidebar_position: 4
 | 檔案 | 描述 | 下載 |
 | --- | --- | --- |
 | **Modalix 系統晶片（SoC）產品簡介** | 以下是對 MLSoC Modalix 矽晶片的概觀，其中包含機器學習加速器 (MLA)、影像訊號處理器 (ISP)、電腦視覺單元 (CVU)、視訊編解碼器和 I/O 等元件，並提供其主要效能和功耗資料。首先快速瀏覽，以評估 Modalix 是否適合您的工作負載。 | [下載 PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
-| **Modalix 系統晶片（SoM）產品簡介** | 以下是關於 Modalix 系統模組的簡要介紹——這是一種將 SoC 與 LPDDR5、電源以及板對板連接器整合在一起的模組，用於產品整合。當您打算設計一個基於系統模組 (SoM) 的客製化設計，而不是使用完整的 DevKit 時，請從這裡開始。 | [下載 PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoM-Product-Brief_05.3.pdf) |
+| **Modalix 系統模組（SoM）產品簡介** | 以下是關於 Modalix 系統模組的簡要介紹——這是一種將 SoC 與 LPDDR5、電源以及板對板連接器整合在一起的模組，用於產品整合。當您打算設計一個基於系統模組 (SoM) 的客製化設計，而不是使用完整的 DevKit 時，請從這裡開始。 | [下載 PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoM-Product-Brief_05.3.pdf) |
 | **Modalix 系統模組 (SoM) DevKit 3.0 產品簡介** | 以下是關於 DevKit 的功能、介面和外觀尺寸的摘要。請使用此資訊確認該套件是否符合您在訂購前對評估和原型設計的需求。 | [下載 PDF](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) |
 | **Modalix PCIe HHHL 硬體參考資料** | 針對半高/半長（HHHL）Modalix PCIe卡的硬體參考資料——包括連接器和電源細節、機械尺寸，以及主機整合需求。請查閱此資料，以評估該卡是否適用於主機連接的推理系統。 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_Modalix_PHHHL_Manual_Rev1.00_2-21-2026.pdf) |
 
@@ -34,9 +34,9 @@ sidebar_position: 4
 | 檔案 | 描述 | 下載 |
 | --- | --- | --- |
 | **Modalix 系統模組載板硬體參考** | 設計基於 Modalix 系統模組 (SoM) 的載板時，以下是主要設計指南：連接器引腳設定、介面對應、電源供應和參考連接。在開始自訂板設計時，請先閱讀此指南。 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
-| **Modalix 系統晶片（SoM）資料手冊** | SoM 的詳細電氣、機械和熱特性規格，包括：連接器引腳設定、電源排序、電流消耗和工作限制。這是制定板級設計決策的權威參考資料。 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
+| **Modalix 系統模組（SoM）資料手冊** | SoM 的詳細電氣、機械和熱特性規格，包括：連接器引腳設定、電源排序、電流消耗和工作限制。這是制定板級設計決策的權威參考資料。 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
 | **Modalix 系統單晶片（SoC）資料手冊** | 關於 MLSoC Modalix 晶片的詳細電氣、機械和熱規格——包括引腳功能、電源軌、訊號時序和工作限制。當您在矽晶層級進行設計，而不是以預先整合的系統模組 (SoM) 為基礎時，這些資訊是必要的。 | *請聯絡您的SiMa.ai聯絡人* |
-| **載板模組（SoM）啟動指南** | 一份逐步操作的手冊，說明如何為新組裝的載板供電並進行驗證，從啟動電源供應開始，到啟動系統單晶片（SoM），並包含檢查點和常見的啟動問題，以便您留意。 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
+| **系統模組（SoM）載板啟動指南** | 一份逐步操作的手冊，說明如何為新組裝的載板供電並進行驗證，從啟動電源供應開始，到啟動系統模組（SoM），並包含檢查點和常見的啟動問題，以便您留意。 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
 
 ## 晶片植入板設計
 
@@ -65,4 +65,4 @@ SiMa.ai 提供一份專門的系統模組（SoM）散熱設計指南，用於設
 
 | 檔案 | 描述 | 下載 |
 | --- | --- | --- |
-| **Modalix 系統晶片（SoM）散熱設計指南** | 這是一份專門用於設計 Modalix 系統模組 (SoM) 散熱解決方案的參考資料，內容包括：功率耗散和散熱預算、建議的散熱片和氣流設定、結溫管理，以及測量和驗證程序。當設計客製化板或外殼的散熱系統時，這將是主要的參考指南。 | *請聯絡您的SiMa.ai聯絡人* |
+| **Modalix 系統模組（SoM）散熱設計指南** | 這是一份專門用於設計 Modalix 系統模組 (SoM) 散熱解決方案的參考資料，內容包括：功率耗散和散熱預算、建議的散熱片和氣流設定、結溫管理，以及測量和驗證程序。當設計客製化板或外殼的散熱系統時，這將是主要的參考指南。 | *請聯絡您的SiMa.ai聯絡人* |

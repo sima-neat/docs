@@ -144,8 +144,8 @@ modalix:~$ sudo nmcli connection up end0-static
    sima:~$ boot
    ```
 
-5. 主機板重新啟動，並在第一次和第二次乙太網路埠上使用 `192.168.1.20` 和 `192.168.2.20`。
-6. 若要修改主機板的靜態 IP 位址，請在裝置啟動後使用 `vi` 編輯網路檔案。
+5. 板卡重新啟動，並在第一個和第二個乙太網路埠上使用 `192.168.1.20` 和 `192.168.2.20`。
+6. 若要修改板卡的靜態 IP 位址，請在裝置啟動後使用 `vi` 編輯網路檔案。
 
    ```console
    modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
