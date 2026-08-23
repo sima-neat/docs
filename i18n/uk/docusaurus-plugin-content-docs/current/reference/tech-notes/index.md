@@ -9,6 +9,6 @@ sidebar_position: 1
 Використовуйте ці сторінки для отримання інструкцій, специфічних для певної платформи, для розширених налаштувань та інформації про відомі обмеження:
 
 - [Налаштування NFS](./nfs.mdx)
-- [Перетворіть у формат eLxr](./elxr-conversion.mdx)
-- [Налаштування Bluetooth на Modalix Сума DevKit](./bluetooth.mdx)
-- [Встановити ROS 2 на Modalix Сума DevKit](./ros2.mdx)
+- [Перехід на eLxr](./elxr-conversion.mdx)
+- [Налаштування Bluetooth на Modalix SoM DevKit](./bluetooth.mdx)
+- [Встановлення ROS 2 на Modalix SoM DevKit](./ros2.mdx)
