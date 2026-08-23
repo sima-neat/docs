@@ -118,7 +118,7 @@ export default function Home() {
               target="_blank"
               rel="noreferrer"
             >
-              Quick Start Guide
+              {copy.navItems.quickstart}
             </a>
           </div>
         </section>

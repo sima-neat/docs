@@ -48,6 +48,7 @@ const SHELL_TRANSLATIONS = {
       error: 'Search failed.',
     },
     navItems: {
+      quickstart: 'Quick Start Guide',
       hardware: 'Hardware',
       software: 'Software',
       examples: 'Examples',
@@ -79,6 +80,7 @@ const SHELL_TRANSLATIONS = {
       error: '검색에 실패했습니다.',
     },
     navItems: {
+      quickstart: '빠른 시작 가이드',
       hardware: '하드웨어',
       software: '소프트웨어',
       examples: '예제',
@@ -110,6 +112,7 @@ const SHELL_TRANSLATIONS = {
       error: '検索に失敗しました。',
     },
     navItems: {
+      quickstart: 'クイックスタートガイド',
       hardware: 'ハードウェア',
       software: 'ソフトウェア',
       examples: '使用例',
@@ -141,6 +144,7 @@ const SHELL_TRANSLATIONS = {
       error: '搜尋失敗。',
     },
     navItems: {
+      quickstart: '快速入門指南',
       hardware: '硬體',
       software: '軟體',
       examples: '範例',
@@ -172,6 +176,7 @@ const SHELL_TRANSLATIONS = {
       error: 'Не вдалося виконати пошук.',
     },
     navItems: {
+      quickstart: 'Посібник зі швидкого старту',
       hardware: 'Апаратне забезпечення',
       software: 'Програмне забезпечення',
       examples: 'Приклади',

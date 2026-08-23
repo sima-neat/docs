@@ -231,7 +231,7 @@ for (const locale of manifest.language.locales) {
   }
   assert.deepEqual(
     Object.keys(translation.navItems),
-    ['hardware', 'software', 'examples', 'models', 'community'],
+    ['quickstart', 'hardware', 'software', 'examples', 'models', 'community'],
   );
   const pickerTranslation = manifest.language.pickerTranslations[locale.code];
   assert.deepEqual(
@@ -343,6 +343,8 @@ assert.match(shellClientSource, /event\.stopImmediatePropagation\(\)/);
 assert.match(shellClientSource, /siteRoot: SITE_ROOT/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
+assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
+assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
 assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
 assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);
@@ -494,6 +496,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     assert.doesNotMatch(translatedCorpus, /條紋/, 'zh-Hant translates a MIPI lane as a visual stripe');
     assert.doesNotMatch(translatedCorpus, /港口/, 'zh-Hant translates a hardware port as a maritime harbor');
     assert.doesNotMatch(translatedCorpus, /建立人脈/, 'zh-Hant translates networking as relationship-building');
+    assert.doesNotMatch(translatedCorpus, /USB 隨機存取記憶體/, 'zh-Hant translates a USB drive as RAM');
+    assert.match(translatedCorpus, /USB 磁碟/);
     assert.match(translatedCorpus, /2 個 2 通道 MIPI CSI/);
     assert.match(translatedCorpus, /4 個 4 通道 MIPI CSI/);
     assert.doesNotMatch(localizedIndexSource, /應用程式的 ID/);
