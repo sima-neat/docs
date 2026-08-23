@@ -132,8 +132,9 @@ modalix:~$ sudo nmcli connection up end0-static
 
 :::note
 이 절차는 DevKit 펌웨어 버전 2.0 이하에만 적용됩니다. 버전 2.1 이상에서는 Linux 측 구성을 사용하십시오. U-Boot에서 네트워크를 구성하면 펌웨어 업그레이드 시에도 네트워크 설정이 유지됩니다.
+:::
 
-1. UART 및 [ 직렬 터미널을 통해 DevKit에 연결합니다(](/ko/hardware/getting-started/setup-serial)).
+1. UART 및 [직렬 터미널](/ko/hardware/getting-started/setup-serial)을 통해 DevKit에 연결합니다.
 2. DevKit를 재부팅합니다.
 3. 메시지 `Hit any key to stop autoboot`가 표시되면 아무 키나 눌러 U-Boot로 들어갑니다.
 4. 고정 IP로 전환하려면 다음 명령을 입력합니다.
@@ -150,7 +151,7 @@ modalix:~$ sudo nmcli connection up end0-static
    modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
    ```
 
-   :::경고
+   :::warning
    이 파일은 펌웨어 버전 2.0 이하에서만 존재합니다. 버전 2.1 이상에서는 NetworkManager 프로필로 대체되었으므로, **Linux 셸의 네트워크 설정** 탭에 설명된 대로 `nmcli`를 사용하여 정적 IP를 수정하십시오.
    :::
 

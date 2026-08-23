@@ -49,6 +49,12 @@ const earlyAccessConstraints = {
   'zh-Hant': ['舊版', '現有搶先體驗客戶'],
   uk: ['застарілий', 'наявних клієнтів програми раннього доступу'],
 };
+const currentDevKitPositioning = {
+  ko: ['MLSoC Modalix를 평가', '엣지 AI 애플리케이션을 구축'],
+  ja: ['MLSoC Modalix の評価', 'エッジ AI アプリケーションの構築'],
+  'zh-Hant': ['評估 MLSoC Modalix', '建置邊緣 AI 應用程式'],
+  uk: ['оцінювання MLSoC Modalix', 'створення периферійних застосунків ШІ'],
+};
 const sidebarTranslationKeys = [
   'sidebar.systemDocs.category.Getting Started',
   'sidebar.systemDocs.link.Quick Start Guide',
@@ -260,6 +266,12 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     path.join(translatedDocsRoot, 'devkit/modalix-ea-kit.mdx'),
     'utf8',
   );
+  for (const positioningFragment of currentDevKitPositioning[locale]) {
+    assert.ok(
+      modalixDevKitSource.includes(positioningFragment),
+      `${locale} does not preserve the current Modalix DevKit positioning`,
+    );
+  }
   assert.doesNotMatch(modalixDevKitSource, /Dhrystone/i, `${locale} adds an unsupported Dhrystone claim`);
   assert.doesNotMatch(modalixEarlyAccessSource, /Dhrystone/i, `${locale} adds an unsupported Dhrystone claim`);
   for (const constraint of earlyAccessConstraints[locale]) {
@@ -287,6 +299,14 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
       (translatedCorpus.match(/750 16-бітних GOPS/g) || []).length >= 6,
       'uk does not consistently preserve the canonical CVU throughput unit',
     );
+  }
+  if (locale === 'ko') {
+    const networkSource = fs.readFileSync(
+      path.join(translatedDocsRoot, 'getting-started/standalone-mode/network.mdx'),
+      'utf8',
+    );
+    assert.match(networkSource, /:::note[\s\S]*?\n:::\n\n1\./);
+    assert.doesNotMatch(networkSource, /^:::경고$/m, 'ko translates a Docusaurus directive keyword');
   }
   for (const translatedDoc of translatedDocs) {
     const translatedSource = fs.readFileSync(translatedDoc, 'utf8');
