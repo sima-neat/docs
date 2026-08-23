@@ -76,21 +76,69 @@ class LocalizedRecordTests(unittest.TestCase):
 
             def request(self, method: str, path: str, payload: dict | None = None) -> dict:
                 self.calls.append((method, path, payload))
-                if method == "GET":
+                if method == "GET" and path.endswith("/settings"):
                     return {"attributesForFaceting": ["source"]}
-                return {}
+                if method == "PUT":
+                    return {"taskID": 42}
+                return {"status": "published"}
 
         client = RecordingClient()
         client.ensure_language_filter()
 
         self.assertEqual(
-            client.calls[-1],
+            client.calls[-2],
             (
                 "PUT",
                 "/1/indexes/docs/settings",
                 {"attributesForFaceting": ["source", "filterOnly(language)"]},
             ),
         )
+        self.assertEqual(
+            client.calls[-1],
+            ("GET", "/1/indexes/docs/task/42", None),
+        )
+
+    def test_waits_until_algolia_task_is_published(self) -> None:
+        class TaskClient(MODULE.AlgoliaClient):
+            def __init__(self) -> None:
+                self.index = "docs"
+                self.statuses = iter(["notPublished", "published"])
+                self.calls = []
+
+            def request(self, method: str, path: str, payload: dict | None = None) -> dict:
+                self.calls.append((method, path, payload))
+                return {"status": next(self.statuses)}
+
+        client = TaskClient()
+        client.wait_for_task(123, timeout_seconds=1, poll_interval_seconds=0)
+
+        self.assertEqual(
+            client.calls,
+            [
+                ("GET", "/1/indexes/docs/task/123", None),
+                ("GET", "/1/indexes/docs/task/123", None),
+            ],
+        )
+
+    def test_batch_waits_for_algolia_task(self) -> None:
+        class BatchClient(MODULE.AlgoliaClient):
+            def __init__(self) -> None:
+                self.index = "docs"
+                self.waited_for = None
+
+            def post(self, path: str, payload: dict) -> dict:
+                self.batch_call = (path, payload)
+                return {"taskID": 84}
+
+            def wait_for_task(self, task_id, **kwargs) -> None:
+                self.waited_for = task_id
+
+        client = BatchClient()
+        requests = [{"action": "deleteObject", "body": {"objectID": "stale"}}]
+        client.batch(requests)
+
+        self.assertEqual(client.batch_call, ("/1/indexes/docs/batch", {"requests": requests}))
+        self.assertEqual(client.waited_for, 84)
 
     def test_finds_only_untagged_legacy_cross_source_records(self) -> None:
         class BrowseClient(MODULE.AlgoliaClient):

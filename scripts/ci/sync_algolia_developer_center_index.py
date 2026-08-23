@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -34,6 +35,8 @@ SECTION_LABELS = {
 I18N_DOCS_SUBDIR = Path("docusaurus-plugin-content-docs/current")
 DEFAULT_MAX_RECORD_BYTES = 9_500
 DEFAULT_BATCH_SIZE = 500
+DEFAULT_TASK_TIMEOUT_SECONDS = 300
+DEFAULT_TASK_POLL_INTERVAL_SECONDS = 1
 SKIP_PARTS = {"build", "node_modules", ".git"}
 EXTENSIONS = {".md", ".mdx"}
 
@@ -345,8 +348,40 @@ class AlgoliaClient:
         attributes = list(settings.get("attributesForFaceting") or [])
         configured = any(re.fullmatch(r"(?:(?:filterOnly|searchable)\()?language\)?", item) for item in attributes)
         if not configured:
-            self.request("PUT", path, {"attributesForFaceting": [*attributes, "filterOnly(language)"]})
+            result = self.request(
+                "PUT",
+                path,
+                {"attributesForFaceting": [*attributes, "filterOnly(language)"]},
+            )
+            self.wait_for_task(result.get("taskID"))
             print("[algolia-index] configured filterOnly(language)")
+
+    def wait_for_task(
+        self,
+        task_id: int | str | None,
+        timeout_seconds: float = DEFAULT_TASK_TIMEOUT_SECONDS,
+        poll_interval_seconds: float = DEFAULT_TASK_POLL_INTERVAL_SECONDS,
+    ) -> None:
+        if task_id is None:
+            raise SystemExit("Algolia mutation response did not include a taskID")
+
+        path = f"/1/indexes/{self.index}/task/{urllib.parse.quote(str(task_id), safe='')}"
+        deadline = time.monotonic() + timeout_seconds
+        while True:
+            result = self.request("GET", path)
+            status = result.get("status")
+            if status == "published":
+                print(f"[algolia-index] taskID={task_id} status=published")
+                return
+            if status != "notPublished":
+                raise SystemExit(
+                    f"Algolia task {task_id} returned unexpected status: {status!r}"
+                )
+            if time.monotonic() >= deadline:
+                raise SystemExit(
+                    f"Timed out waiting {timeout_seconds:g}s for Algolia task {task_id}"
+                )
+            time.sleep(poll_interval_seconds)
 
     def browse_source_object_ids(self, source: str) -> list[str]:
         object_ids: list[str] = []
@@ -407,6 +442,7 @@ class AlgoliaClient:
             return
         result = self.post(f"/1/indexes/{self.index}/batch", {"requests": requests})
         print(f"[algolia-index] taskID={result.get('taskID')} requests={len(requests)}")
+        self.wait_for_task(result.get("taskID"))
 
 
 def url_is_accessible(url: str, timeout: float) -> bool | None:

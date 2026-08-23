@@ -357,6 +357,10 @@ assert.match(analyticsConsentSource, /closest\('\[data-developer-center-sections
 assert.doesNotMatch(analyticsConsentSource, /closest\('\[aria-label="Documentation sections"\]'\)/);
 assert.match(analyticsConsentSource, /function consentCopy\(\)/);
 assert.match(analyticsConsentSource, /withoutSiteRoot\([\s\S]*siteConfig\.baseUrl/);
+assert.match(
+  analyticsConsentSource,
+  /function sectionFromPath[\s\S]*withoutSiteRoot[\s\S]*SUPPORTED_LOCALES\.some[\s\S]*parts\.shift\(\)/,
+);
 for (const localizedConsentPhrase of [
   '쿠키 환경설정',
   'Cookie の設定',

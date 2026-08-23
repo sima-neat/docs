@@ -128,7 +128,14 @@ function pagePath() {
 }
 
 function sectionFromPath(pathname) {
-  const parts = pathname.split('/').filter(Boolean);
+  const routePath = developerCenterShell.withoutSiteRoot(
+    pathname,
+    siteConfig.baseUrl || '/',
+  );
+  const parts = routePath.split('/').filter(Boolean);
+  if (developerCenterShell.SUPPORTED_LOCALES.some(({code}) => code === parts[0])) {
+    parts.shift();
+  }
   return parts[0] || 'home';
 }
 
