@@ -1,14 +1,10 @@
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useState} from "react";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import useBaseUrl from "@docusaurus/useBaseUrl";
 import {useLocation} from "@docusaurus/router";
 
-// 11:59:59 PM Pacific (PDT, UTC-7) on Jun 15, 2026. The WIP banner auto-hides
-// once the viewer's clock passes this instant.
-const WIP_DEADLINE = Date.parse("2026-06-15T23:59:59-07:00");
 const LOCALIZED_UI = {
   en: {
-    wip: "🚧 This documentation site is a work in progress — content is incomplete and may change.",
     hardwareDocs: "Hardware documentation",
     gettingStarted: "Getting Started",
     devkitVariants: "DevKit Variants",
@@ -19,7 +15,6 @@ const LOCALIZED_UI = {
     buyDevkit: "Buy Your DevKit",
   },
   ko: {
-    wip: "🚧 이 문서 사이트는 작업 중입니다 — 콘텐츠가 불완전하며 변경될 수 있습니다.",
     hardwareDocs: "하드웨어 문서",
     gettingStarted: "시작하기",
     devkitVariants: "DevKit 변형",
@@ -30,7 +25,6 @@ const LOCALIZED_UI = {
     buyDevkit: "DevKit 구매",
   },
   ja: {
-    wip: "🚧 このドキュメントサイトは作成中です — 内容は不完全で、変更される可能性があります。",
     hardwareDocs: "ハードウェアドキュメント",
     gettingStarted: "はじめに",
     devkitVariants: "DevKit バリエーション",
@@ -41,7 +35,6 @@ const LOCALIZED_UI = {
     buyDevkit: "DevKit を購入",
   },
   "zh-Hant": {
-    wip: "🚧 此文件網站仍在建置中 — 內容尚未完整，可能會有所變更。",
     hardwareDocs: "硬體文件",
     gettingStarted: "開始使用",
     devkitVariants: "DevKit 型號",
@@ -52,7 +45,6 @@ const LOCALIZED_UI = {
     buyDevkit: "購買 DevKit",
   },
   uk: {
-    wip: "🚧 Цей сайт документації перебуває в розробці — вміст неповний і може змінюватися.",
     hardwareDocs: "Документація апаратного забезпечення",
     gettingStarted: "Початок роботи",
     devkitVariants: "Варіанти DevKit",
@@ -78,44 +70,6 @@ function useShellLocale() {
   }, []);
 
   return locale;
-}
-
-function WipBanner() {
-  const ref = useRef(null);
-  const [visible, setVisible] = useState(true);
-  const locale = useShellLocale();
-  const copy = LOCALIZED_UI[locale] || LOCALIZED_UI.en;
-
-  useEffect(() => {
-    // Hide once the viewer's clock passes the deadline.
-    if (Date.now() >= WIP_DEADLINE) {
-      setVisible(false);
-      return undefined;
-    }
-    // Publish the banner's height so the fixed bars and content below it are
-    // pushed down by exactly the right amount (--wip-offset, default 0).
-    const root = document.documentElement;
-    const syncOffset = () => {
-      if (ref.current) {
-        root.style.setProperty("--wip-offset", `${ref.current.offsetHeight}px`);
-      }
-    };
-    syncOffset();
-    window.addEventListener("resize", syncOffset);
-    return () => {
-      window.removeEventListener("resize", syncOffset);
-      root.style.removeProperty("--wip-offset");
-    };
-  }, [copy.wip]);
-
-  if (!visible) {
-    return null;
-  }
-  return (
-    <div ref={ref} className="wip-banner" role="status">
-      {copy.wip}
-    </div>
-  );
 }
 
 function HardwareSubnav() {

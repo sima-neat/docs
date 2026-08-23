@@ -69,6 +69,7 @@ let gtagLoaded = false;
 let lastTrackedLocation = '';
 let preferenceLinksBound = false;
 let initialized = false;
+let selectedConsentLocale = null;
 
 const deniedConsent = {
   ad_personalization: 'denied',
@@ -92,7 +93,10 @@ function activeLocale() {
     siteConfig.baseUrl || '/',
   );
   const routeLocale = routePath.split('/').filter(Boolean)[0];
-  return CONSENT_COPY[routeLocale] ? routeLocale : developerCenterShell.DEFAULT_LOCALE;
+  if (routeLocale !== developerCenterShell.DEFAULT_LOCALE && CONSENT_COPY[routeLocale]) {
+    return routeLocale;
+  }
+  return selectedConsentLocale || developerCenterShell.DEFAULT_LOCALE;
 }
 
 function consentCopy() {
@@ -422,11 +426,7 @@ function renderBanner() {
   document.body.appendChild(banner);
 }
 
-function bindPreferenceLinks() {
-  if (preferenceLinksBound) {
-    return;
-  }
-  preferenceLinksBound = true;
+function syncLocalizedFooterCopy() {
   const copy = consentCopy();
   document.querySelectorAll('[data-cookie-preferences]').forEach((link) => {
     link.textContent = copy.preferencesLink;
@@ -434,6 +434,14 @@ function bindPreferenceLinks() {
   document.querySelectorAll('[data-documentation-feedback]').forEach((link) => {
     link.textContent = copy.feedbackLink;
   });
+}
+
+function bindPreferenceLinks() {
+  syncLocalizedFooterCopy();
+  if (preferenceLinksBound) {
+    return;
+  }
+  preferenceLinksBound = true;
 
   document.addEventListener(
     'click',
@@ -448,11 +456,33 @@ function bindPreferenceLinks() {
   );
 }
 
+function onLanguageChange(event) {
+  const locale = event?.detail?.locale;
+  if (!CONSENT_COPY[locale]) {
+    return;
+  }
+  selectedConsentLocale = locale;
+  syncLocalizedFooterCopy();
+
+  const preferencesOpen = Boolean(document.querySelector('.cookie-consent--panel'));
+  const bannerOpen = Boolean(document.querySelector('.cookie-consent--banner'));
+  if (!preferencesOpen && !bannerOpen) {
+    return;
+  }
+  closeConsentUi();
+  if (preferencesOpen) {
+    renderPreferences();
+  } else {
+    renderBanner();
+  }
+}
+
 function initConsent() {
   if (initialized) {
     return;
   }
   initialized = true;
+  window.addEventListener('developer-center-language-change', onLanguageChange);
 
   ensureGtag();
   window.developerCenterTrack = trackEvent;

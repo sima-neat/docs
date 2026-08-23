@@ -47,6 +47,7 @@ const mobileSearchSource = fs.readFileSync(
   path.join(docsRoot, 'src/theme/SearchBar/index.js'),
   'utf8',
 );
+const rootThemeSource = fs.readFileSync(path.join(docsRoot, 'src/theme/Root.js'), 'utf8');
 const shellNavigationSource = fs.readFileSync(
   path.join(docsRoot, 'src/developerCenter/shell/navigation.js'),
   'utf8',
@@ -546,6 +547,20 @@ for (const locale of manifest.language.locales) {
 assert.match(docusaurusConfigSource, /data-documentation-feedback/);
 assert.match(analyticsConsentSource, /\[data-documentation-feedback\]/);
 assert.match(analyticsConsentSource, /link\.textContent = copy\.feedbackLink/);
+assert.match(analyticsConsentSource, /let selectedConsentLocale = null/);
+assert.match(
+  analyticsConsentSource,
+  /return selectedConsentLocale \|\| developerCenterShell\.DEFAULT_LOCALE/,
+);
+assert.match(
+  analyticsConsentSource,
+  /addEventListener\('developer-center-language-change', onLanguageChange\)/,
+);
+assert.match(
+  analyticsConsentSource,
+  /onLanguageChange[\s\S]*syncLocalizedFooterCopy\(\)[\s\S]*renderPreferences\(\)[\s\S]*renderBanner\(\)/,
+);
+assert.doesNotMatch(rootThemeSource, /WIP_DEADLINE|WipBanner|wip-banner/);
 assert.doesNotMatch(localDeveloperCenterSource, /curl[^\n]+\|\s*grep -Fq/);
 assert.match(localDeveloperCenterSource, /response="\$\(curl[\s\S]*grep -Fq[\s\S]*<<<"\$\{response\}"/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
