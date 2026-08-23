@@ -87,7 +87,7 @@ sidebar_position: 3
 ## 部署
 
 **PCIe 模式**
-：一種部署架構，其中 Modalix PCIe 卡插入主機。主機處理 I/O 和協調；卡處理推論。請參閱 [PCIe 模式](/hardware/getting-started/pcie-mode)。
+：一種部署架構，其中 Modalix PCIe 卡插入主機。主機處理 I/O 和協調；卡處理推論。請參閱 [PCIe 模式](/zh-Hant/hardware/getting-started/pcie-mode)。
 
 **獨立模式**
-：一種部署架構，其中 Modalix DevKit 或 Modalix 基於 SoM 的系統作為一個獨立的設備運行，本地處理感測器資料並通過網絡發送結果。請參閱 [獨立模式](/hardware/getting-started/standalone-mode)。
+：一種部署架構，其中 Modalix DevKit 或 Modalix 基於 SoM 的系統作為一個獨立的設備運行，本地處理感測器資料並通過網絡發送結果。請參閱 [獨立模式](/zh-Hant/hardware/getting-started/standalone-mode)。

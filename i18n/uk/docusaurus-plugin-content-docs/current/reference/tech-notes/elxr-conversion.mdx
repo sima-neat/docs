@@ -11,7 +11,7 @@ sidebar_position: 3
 :::note
 Платформа eLxr доступна, починаючи з SDK **2.0.0** і пізніших версій, на **Modalix DevKit**.
 
-Для переходу на eLxr потрібне оновлення tRoot і повторне програмування eMMC, що здійснюється за допомогою [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+Для переходу на eLxr потрібне оновлення tRoot і повторне програмування eMMC, що здійснюється за допомогою [Net Boot Recovery](/uk/hardware/getting-started/firmware-update/net-boot).
 :::
 
 Платформа **eLxr** замінює застаріле середовище **Yocto** як стандартне середовище виконання для **SiMa.ai DevKit**. Вона забезпечує:
@@ -46,7 +46,7 @@ DISTRO = eLxr
 
 Це оновлення робить tRoot (надійний корінь) сумісним із eLxr.
 
-За умови, що хост має статичну IP-адресу `192.168.1.10`, а до DevKit можна отримати доступ за адресою `192.168.1.20` (див. [налаштування мережі](/hardware/getting-started/standalone-mode/network)):
+За умови, що хост має статичну IP-адресу `192.168.1.10`, а до DevKit можна отримати доступ за адресою `192.168.1.20` (див. [налаштування мережі](/uk/hardware/getting-started/standalone-mode/network)):
 
 <img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
@@ -61,7 +61,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>Крок 2. Завантажте eLxr через мережу (Netboot) та прошийте eMMC</strong></summary>.
 
-Решту процесу перетворення виконайте за стандартною процедурою TFTP netboot + flash, описаною в [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Дотримуйтесь цієї процедури, використовуючи наведені нижче значення, специфічні для eLxr:
+Решту процесу перетворення виконайте за стандартною процедурою TFTP netboot + flash, описаною в [Net Boot Recovery](/uk/hardware/getting-started/firmware-update/net-boot). Дотримуйтесь цієї процедури, використовуючи наведені нижче значення, специфічні для eLxr:
 
 - **Крок 2 (Запуск TFTP-сервера):** використовуйте `--boardtype modalix --fwtype elxr -v %platform_version%`.
 - **Крок 3 (Налаштування U-Boot):** встановіть `cpio_name=simaai-image-palette-modalix.cpio.gz`, на додаток до `boot_targets=net`, перед запуском `boot`.
@@ -85,7 +85,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>Повернутися до Yocto (Необов’язково)</strong></summary>
 
-Щоб повернутися до Yocto, дотримуйтесь [Відновлення за допомогою мережевої завантажувальної системи.](/hardware/getting-started/firmware-update/net-boot) знову з `--fwtype yocto`. `cpio_name` U-Boot змінна не є обов’язковою для Yocto цілі — лише `setenv boot_targets net`, `saveenv`, `boot`.
+Щоб повернутися до Yocto, дотримуйтесь [Відновлення за допомогою мережевої завантажувальної системи.](/uk/hardware/getting-started/firmware-update/net-boot) знову з `--fwtype yocto`. `cpio_name` U-Boot змінна не є обов’язковою для Yocto цілі — лише `setenv boot_targets net`, `saveenv`, `boot`.
 
 :::note
 Під час повернення до Yocto **немає жодних мінімальних вимог до версії tRoot**, тому крок 1, описаний вище, можна пропустити.
@@ -98,5 +98,5 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 ## Підсумок.
 
 1. Оновіть до останньої версії образу **tRoot** (≥ 2.0.0).
-2. Виконайте [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot), використовуючи `--fwtype elxr` та eLxr `cpio_name`, щоб прошити eLxr на eMMC.
+2. Виконайте [Net Boot Recovery](/uk/hardware/getting-started/firmware-update/net-boot), використовуючи `--fwtype elxr` та eLxr `cpio_name`, щоб прошити eLxr на eMMC.
 3. Встановіть Neat SDK і спробуйте використовувати додатки за допомогою [документації NEAT](https://developer.sima.ai/software).

@@ -45,7 +45,11 @@ const sidebarTranslationKeys = [
 const context = {window: {}};
 vm.runInNewContext(shellSource, context);
 
-const {localizedPath} = context.window.DeveloperCenterShell;
+const {localeFromPath, localizedPath} = context.window.DeveloperCenterShell;
+assert.equal(localeFromPath('/', manifest), 'en');
+assert.equal(localeFromPath('/ja/', manifest), 'ja');
+assert.equal(localeFromPath('/zh-Hant', manifest), 'zh-Hant');
+assert.equal(localeFromPath('/ja/hardware/getting-started/', manifest), 'ja');
 assert.equal(localizedPath('/hardware/getting-started/', 'ja', manifest), '/ja/hardware/getting-started/');
 assert.equal(
   localizedPath('/zh-Hant/hardware/getting-started/', 'ja', manifest),
@@ -64,6 +68,10 @@ assert.equal(
   '/software/getting-started/',
 );
 assert.equal(localizedPath('/examples/', 'ko', manifest), '/examples/');
+assert.equal(localizedPath('/', 'ja', manifest), '/ja/');
+assert.equal(localizedPath('/ja/', 'ko', manifest), '/ko/');
+assert.equal(localizedPath('/ja/', 'en', manifest), '/');
+assert.equal(localizedPath('/ja', 'ko', manifest), '/ko');
 
 assert.equal(shellConfig.activeSectionForPath('/ja/hardware/getting-started/'), 'hardware');
 assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 'software');
@@ -139,6 +147,24 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     messages,
     `${locale} Hardware sidebar translations are incomplete`,
   );
+
+  const translatedDocsRoot = path.join(
+    docsRoot,
+    'i18n',
+    locale,
+    'docusaurus-plugin-content-docs',
+    'current',
+  );
+  const translatedDocs = fs.readdirSync(translatedDocsRoot, {recursive: true, withFileTypes: true})
+    .filter((entry) => entry.isFile() && /\.mdx?$/.test(entry.name))
+    .map((entry) => path.join(entry.path, entry.name));
+  for (const translatedDoc of translatedDocs) {
+    assert.doesNotMatch(
+      fs.readFileSync(translatedDoc, 'utf8'),
+      /(?:href=["']|\]\()\/hardware(?:\/|["')])/,
+      `${path.relative(docsRoot, translatedDoc)} contains an English-only Hardware link`,
+    );
+  }
 }
 
 console.log('Developer Center language checks passed.');

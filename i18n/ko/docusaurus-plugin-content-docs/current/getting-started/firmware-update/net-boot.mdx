@@ -12,7 +12,7 @@ sidebar_position: 2
 - 최신 버전이 아닌 빌드를 설치해야 합니다(예: 사전 릴리스 `develop` 빌드 또는 내부 엔지니어링 이미지).
 - 손상된 부트 로더 또는 파일 시스템이 있는 보드를 복구해야 하는데, SD 카드가 없습니다.
 - 새 보드를 도입하려 하시는데, 내부 저장 장치의 마모를 줄이고 싶으신 것 같습니다.
-- 현재 Modalix DevKit을 Yocto Linux에서 eLxr로, 또는 eLxr에서 다시 Yocto Linux로 변환하고 있습니다. 변환에 필요한 구체적인 요구 사항은 [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion)를 참조하십시오.
+- 현재 Modalix DevKit을 Yocto Linux에서 eLxr로, 또는 eLxr에서 다시 Yocto Linux로 변환하고 있습니다. 변환에 필요한 구체적인 요구 사항은 [eLxr로 변환](/ko/hardware/reference/tech-notes/elxr-conversion)를 참조하십시오.
 
 `sima-cli bootimg`와 함께 `--netboot` 옵션을 사용합니다. 그러면 대상 보드에 대한 부트 이미지를 다운로드하고 호스트에 내장된 TFTP 서버에서 해당 이미지를 제공합니다. 그런 다음 U-Boot에서 DevKit을 구성하여 해당 TFTP 서버에서 부팅하고 새 이미지를 eMMC에 플래시합니다.
 
@@ -38,7 +38,7 @@ sidebar_position: 2
    sima-user@sima-user-machine:~$ sima-cli serial
    ```
 
-3. DevKit에서 네트워크 인터페이스를 기본 정적 IP 주소인 **192.168.1.20**으로 구성합니다. 구성 방법은 [독립 모드 네트워크 설정](/hardware/getting-started/standalone-mode/network)을 따르십시오.
+3. DevKit에서 네트워크 인터페이스를 기본 정적 IP 주소인 **192.168.1.20**으로 구성합니다. 구성 방법은 [독립 모드 네트워크 설정](/ko/hardware/getting-started/standalone-mode/network)을 따르십시오.
 
 </details>
 

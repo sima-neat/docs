@@ -12,7 +12,7 @@ sidebar_position: 2
 - 您需要安裝一個**不是最新版本**的建構版本（例如，預發布版本）。 `develop` 建立或使用內部工程映像檔。
 - 您需要修復一個損壞了啟動程式或檔案系統的板子，但沒有可用的 SD 卡。
 - 您正在更換新的主機板，並且希望避免內部儲存裝置過度使用。
-- 您正在將一個 Modalix DevKit 從 Yocto Linux 轉換為 eLxr，或者從 eLxr 轉換回 Yocto Linux。請參閱 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion)，以了解轉換所需的特定先決條件。
+- 您正在將一個 Modalix DevKit 從 Yocto Linux 轉換為 eLxr，或者從 eLxr 轉換回 Yocto Linux。請參閱 [轉換為 eLxr](/zh-Hant/hardware/reference/tech-notes/elxr-conversion)，以了解轉換所需的特定先決條件。
 
 使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像，並從主機上的內建 TFTP 伺服器提供該映像。然後，您可以在 U-Boot 中設定 DevKit，以便從該 TFTP 伺服器啟動，並將新的映像刷入 eMMC。
 
@@ -38,7 +38,7 @@ sidebar_position: 2
    sima-user@sima-user-machine:~$ sima-cli serial
    ```
 
-3. 在 DevKit 上，按照 [獨立模式網路設定](/hardware/getting-started/standalone-mode/network) 的步驟，將網路介面設定為預設的靜態 IP 位址 **192.168.1.20**。
+3. 在 DevKit 上，按照 [獨立模式網路設定](/zh-Hant/hardware/getting-started/standalone-mode/network) 的步驟，將網路介面設定為預設的靜態 IP 位址 **192.168.1.20**。
 
 </details>
 

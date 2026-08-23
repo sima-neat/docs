@@ -87,7 +87,7 @@ sidebar_position: 3
 ## 배포
 
 **PCIe 모드**
-: Modalix PCIe 카드를 호스트 장치에 연결하여 배포하는 아키텍처입니다. 호스트 장치는 I/O 및 오케스트레이션을 처리하고, 카드는 추론을 처리합니다. [PCIe 모드](/hardware/getting-started/pcie-mode)를 참조하십시오.
+: Modalix PCIe 카드를 호스트 장치에 연결하여 배포하는 아키텍처입니다. 호스트 장치는 I/O 및 오케스트레이션을 처리하고, 카드는 추론을 처리합니다. [PCIe 모드](/ko/hardware/getting-started/pcie-mode)를 참조하십시오.
 
 **독립 실행 모드**
-: Modalix DevKit 또는 Modalix SoM 기반 시스템이 독립적인 장치로 실행되어 센서 데이터를 로컬에서 처리하고 결과를 네트워크를 통해 전송하는 배포 아키텍처입니다. [독립 실행 모드](/hardware/getting-started/standalone-mode)를 참조하십시오.
+: Modalix DevKit 또는 Modalix SoM 기반 시스템이 독립적인 장치로 실행되어 센서 데이터를 로컬에서 처리하고 결과를 네트워크를 통해 전송하는 배포 아키텍처입니다. [독립 실행 모드](/ko/hardware/getting-started/standalone-mode)를 참조하십시오.

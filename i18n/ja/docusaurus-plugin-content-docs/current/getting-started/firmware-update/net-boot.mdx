@@ -12,7 +12,7 @@ sidebar_position: 2
 - 最新リリース版**ではない**ビルドをインストールする必要があります（たとえば、プレリリース版の`develop`ビルドや、社内向けのエンジニアリングイメージなど）。
 - 破損したブートローダーまたはファイルシステムを持つボードを復旧する必要があり、SDカードが利用できません。
 - 新しい基板を導入するにあたり、内部ストレージデバイスの摩耗を避けたいと考えているのですね。
-- あなたは、Yocto LinuxのModalix DevKitをeLxrに変換するか、またはeLxrからYocto Linuxに戻しています。変換に特有の前提条件については、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)を参照してください。
+- あなたは、Yocto LinuxのModalix DevKitをeLxrに変換するか、またはeLxrからYocto Linuxに戻しています。変換に特有の前提条件については、[eLxr に変換](/ja/hardware/reference/tech-notes/elxr-conversion)を参照してください。
 
 `sima-cli bootimg`と組み合わせて、`--netboot`オプションを使用します。これにより、ターゲットボード用のブートイメージがダウンロードされ、ホスト上の組み込みTFTPサーバーから提供されます。次に、U-BootでDevKitを構成し、そのTFTPサーバーからブートするように設定し、新しいイメージをeMMCに書き込みます。
 
@@ -38,7 +38,7 @@ sidebar_position: 2
    sima-user@sima-user-machine:~$ sima-cli serial
    ```
 
-3. DevKitで、ネットワークインターフェースをデフォルトの固定IPアドレス**192.168.1.20**に設定します。設定方法は、[スタンドアロンモードネットワーク設定](/hardware/getting-started/standalone-mode/network)の手順に従ってください。
+3. DevKitで、ネットワークインターフェースをデフォルトの固定IPアドレス**192.168.1.20**に設定します。設定方法は、[スタンドアロンモードネットワーク設定](/ja/hardware/getting-started/standalone-mode/network)の手順に従ってください。
 
 </details>
 

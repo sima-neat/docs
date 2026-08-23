@@ -57,7 +57,7 @@ sidebar_position: 4
 | --- | --- | --- |
 | **Modalix 相機與影像訊號處理器（ISP）調校指南** | 調整 Modalix 影像訊號處理器，使其與特定相機感測器配合的程序——包括校準、曝光、白平衡，以及影像品質管線。在感測器已連接並完成列舉後，使用這些程序來調整影像品質。 | *請聯絡您的SiMa.ai聯絡人* |
 
-> 若要先在 DevKit 上實體連接並啟用 MIPI CSI-2 攝影機，請參閱 [ MIPI 攝影機介面 ](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)。
+> 若要先在 DevKit 上實體連接並啟用 MIPI CSI-2 攝影機，請參閱 [ MIPI 攝影機介面 ](/zh-Hant/hardware/getting-started/standalone-mode/mipi-camera-interfaces)。
 
 ## 規劃電力和散熱設計
 

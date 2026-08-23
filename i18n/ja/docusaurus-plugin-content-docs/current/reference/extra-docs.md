@@ -57,7 +57,7 @@ DevKit を初めてご利用ですか？こちらから始めてください。�
 | --- | --- | --- |
 | **Modalix カメラおよび ISP の調整ガイド** | 特定のカメラセンサーに合わせて、Modalix イメージ信号プロセッサを調整するための手順：キャリブレーション、露出、ホワイトバランス、および画像品質のパイプライン。センサーの配線と認識が完了した後、これらを使用して画像品質を微調整してください。 | *担当のSiMa.aiにご連絡ください。* |
 
-> まず、DevKit 上の MIPI CSI-2 カメラを物理的に接続して使用できるようにするには、[ MIPI カメラインターフェース ](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) を参照してください。
+> まず、DevKit 上の MIPI CSI-2 カメラを物理的に接続して使用できるようにするには、[ MIPI カメラインターフェース ](/ja/hardware/getting-started/standalone-mode/mipi-camera-interfaces) を参照してください。
 
 ## 電力および熱設計を計画する。
 

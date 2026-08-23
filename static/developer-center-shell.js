@@ -192,8 +192,9 @@
       .filter(Boolean)
       .at(-1);
 
-    if (segments[1] === hardwareSegment && normalizeLocale(segments[0], manifest)) {
-      return segments[0];
+    const leadingLocale = normalizeLocale(segments[0], manifest);
+    if (leadingLocale && (segments.length === 1 || segments[1] === hardwareSegment)) {
+      return leadingLocale;
     }
     if (segments[0] === hardwareSegment || segments[0] === softwareSegment) {
       return normalizeLocale(segments[1], manifest) || defaultLocale;
@@ -232,7 +233,14 @@
       localeIndex = sectionIndex + 1;
     }
 
-    if (sectionIndex < 0) return pathname;
+    if (sectionIndex < 0) {
+      const landingLocale = segments.length === 1
+        ? normalizeLocale(segments[0], manifest)
+        : null;
+      if (segments.length > 1 || (segments.length === 1 && !landingLocale)) return pathname;
+      if (locale === defaultLocale) return '/';
+      return `/${locale}${trailingSlash || pathname === '/' ? '/' : ''}`;
+    }
     if (localeIndex >= 0) {
       segments.splice(localeIndex, 1);
       if (localeIndex < sectionIndex) sectionIndex -= 1;
@@ -946,6 +954,7 @@
   window.DeveloperCenterShell = {
     mount,
     applyTheme,
+    localeFromPath,
     localizedPath,
   };
 })();

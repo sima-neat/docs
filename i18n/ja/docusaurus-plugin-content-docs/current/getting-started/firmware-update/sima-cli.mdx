@@ -13,8 +13,8 @@ DevKit が実行中で、ネットワーク経由でアクセスできる場合�
 
 続行する前に、ホストがネットワーク経由で DevKit にアクセスできることを確認してください。以下を参照してください。
 
-- [スタンドアロンモードのネットワーク設定](/hardware/getting-started/standalone-mode/network)
-- [PCIe モードの仮想ネットワーク設定](/hardware/getting-started/pcie-mode/virtual-network)
+- [スタンドアロンモードのネットワーク設定](/ja/hardware/getting-started/standalone-mode/network)
+- [PCIe モードの仮想ネットワーク設定](/ja/hardware/getting-started/pcie-mode/virtual-network)
 
 <Tabs groupId="sima-cli-source">
 <TabItem value="from-devkit" label="DevKit から" default>
@@ -61,5 +61,5 @@ sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} h
 </Tabs>
 
 :::note
-DevKit を **ダウングレード** するか、**最新リリースではない**ビルド (例: プレリリース版の `develop` ビルドまたは内部エンジニアリングイメージ) をインストールするには、代わりに [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) を使用してください。これにより、DevKit がホスト上の TFTP サーバーから起動し、ターゲットイメージが eMMC に直接フラッシュされます。
+DevKit を **ダウングレード** するか、**最新リリースではない**ビルド (例: プレリリース版の `develop` ビルドまたは内部エンジニアリングイメージ) をインストールするには、代わりに [Net Boot Recovery](/ja/hardware/getting-started/firmware-update/net-boot) を使用してください。これにより、DevKit がホスト上の TFTP サーバーから起動し、ターゲットイメージが eMMC に直接フラッシュされます。
 :::
