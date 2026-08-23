@@ -245,6 +245,17 @@ assert.match(
   /name: Install shared i18n tooling[\s\S]*sima-cli" neat install i18n[\s\S]*sima-i18n" --version[\s\S]*npm run check:i18n-complete/,
   'Vulcan deployment invokes the translation check without installing its CLI',
 );
+const algoliaPublishIndex = vulcanWorkflowSource.indexOf('- name: Publish Algolia hardware records');
+const sitePublishIndex = vulcanWorkflowSource.indexOf('- name: Publish site to S3');
+assert.ok(algoliaPublishIndex >= 0, 'Vulcan deployment is missing the Algolia publish step');
+assert.ok(
+  sitePublishIndex > algoliaPublishIndex,
+  'Vulcan publishes the localized client before its Algolia records and facets',
+);
+assert.ok(
+  vulcanWorkflowSource.slice(algoliaPublishIndex, sitePublishIndex).includes('--sync'),
+  'Vulcan does not synchronize Algolia before publishing the localized client',
+);
 assert.match(
   docusaurusConfigSource,
   /preferred=window\.localStorage\.getItem\(\$\{JSON\.stringify\(developerCenterShell\.LOCALE_KEY\)\}\)/,

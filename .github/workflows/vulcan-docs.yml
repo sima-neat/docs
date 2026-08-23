@@ -326,38 +326,6 @@ jobs:
           name: vulcan-sysdoc-algolia-hardware
           path: _algolia
 
-      - name: Publish site to S3
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          bucket="${SYSDOC_BUCKET:-sima-neat-sysdoc-${{ needs.resolve-target.outputs.deploy_environment }}}"
-          if [[ -z "${bucket}" ]]; then
-            echo "Missing sysdoc bucket. Set VULCAN_SYSDOC_BUCKET for ${{ needs.resolve-target.outputs.deploy_environment }}." >&2
-            exit 1
-          fi
-
-          s3_args=()
-          if [[ -n "${SYSDOC_KMS_KEY_ID:-}" ]]; then
-            s3_args+=(--sse aws:kms --sse-kms-key-id "${SYSDOC_KMS_KEY_ID}")
-          fi
-
-          aws s3 sync _site/ "s3://${bucket}/" \
-            --delete \
-            --exclude "software/*" \
-            --exclude "examples/*" \
-            "${s3_args[@]}"
-
-          if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then
-            # Fire-and-forget, as before this PR. No blocking wait is needed: the dead-link prune
-            # skips this deploy's own ('hardware') source, so it never probes the content we just
-            # synced. The only URLs it probes are cross-source (software/examples), which this
-            # deploy does not change — so CloudFront propagation timing can't affect them.
-            aws cloudfront create-invalidation \
-              --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
-              --paths "/*"
-          fi
-
       - name: Publish Algolia hardware records
         shell: bash
         run: |
@@ -412,7 +380,7 @@ jobs:
             --index-name "${index_name}" \
             --sync
 
-          # Post-deploy: prune CROSS-SOURCE records (software/examples) whose URL is no longer
+          # Prune CROSS-SOURCE records (software/examples) whose URL is no longer
           # reachable on the live site. It skips this deploy's own 'hardware' source — those are
           # already reconciled deterministically by the --sync above, so there is no need to probe
           # just-deployed (possibly not-yet-propagated) content. Fails safe: skips, never deletes,
@@ -423,3 +391,30 @@ jobs:
             --api-key "${write_api_key}" \
             --index-name "${index_name}" \
             --prune-dead-links
+
+      - name: Publish site to S3
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bucket="${SYSDOC_BUCKET:-sima-neat-sysdoc-${{ needs.resolve-target.outputs.deploy_environment }}}"
+          if [[ -z "${bucket}" ]]; then
+            echo "Missing sysdoc bucket. Set VULCAN_SYSDOC_BUCKET for ${{ needs.resolve-target.outputs.deploy_environment }}." >&2
+            exit 1
+          fi
+
+          s3_args=()
+          if [[ -n "${SYSDOC_KMS_KEY_ID:-}" ]]; then
+            s3_args+=(--sse aws:kms --sse-kms-key-id "${SYSDOC_KMS_KEY_ID}")
+          fi
+
+          aws s3 sync _site/ "s3://${bucket}/" \
+            --delete \
+            --exclude "software/*" \
+            --exclude "examples/*" \
+            "${s3_args[@]}"
+
+          if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then
+            aws cloudfront create-invalidation \
+              --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
+              --paths "/*"
