@@ -159,7 +159,7 @@ class LocalizedRecordTests(unittest.TestCase):
         self.assertEqual(client.batch_call, ("/1/indexes/docs/batch", {"requests": requests}))
         self.assertEqual(client.waited_for, 84)
 
-    def test_finds_only_untagged_legacy_cross_source_records(self) -> None:
+    def test_finds_all_untagged_legacy_records(self) -> None:
         class BrowseClient(MODULE.AlgoliaClient):
             def __init__(self) -> None:
                 self.index = "docs"
@@ -178,14 +178,14 @@ class LocalizedRecordTests(unittest.TestCase):
         client = BrowseClient()
 
         self.assertEqual(
-            client.browse_untagged_cross_source_object_ids(),
-            ["software-legacy", "examples-legacy"],
+            client.browse_untagged_object_ids(),
+            ["software-legacy", "examples-legacy", "hardware-legacy"],
         )
         self.assertIn("language", client.assert_payload["attributesToRetrieve"])
 
     def test_sync_uploads_replacements_before_deleting_stale_records(self) -> None:
         client = mock.Mock()
-        client.browse_untagged_cross_source_object_ids.return_value = []
+        client.browse_untagged_object_ids.return_value = []
         client.browse_source_object_ids.return_value = ["hardware:legacy"]
         args = SimpleNamespace(
             app_id="app",
@@ -215,7 +215,7 @@ class LocalizedRecordTests(unittest.TestCase):
 
     def test_sync_preserves_stale_records_when_replacement_upload_fails(self) -> None:
         client = mock.Mock()
-        client.browse_untagged_cross_source_object_ids.return_value = []
+        client.browse_untagged_object_ids.return_value = []
         client.browse_source_object_ids.return_value = ["hardware:legacy"]
         client.batch.side_effect = RuntimeError("upload failed")
         args = SimpleNamespace(
@@ -234,16 +234,25 @@ class LocalizedRecordTests(unittest.TestCase):
             [{"action": "addObject", "body": records[0]}]
         )
 
-    def test_configures_language_facet_without_browsing_or_syncing(self) -> None:
+    def test_configures_language_facet_and_backfills_legacy_records(self) -> None:
         client = mock.Mock()
-        args = SimpleNamespace(app_id="app", api_key="key", index_name="docs")
+        client.browse_untagged_object_ids.return_value = ["hardware:legacy"]
+        args = SimpleNamespace(app_id="app", api_key="key", index_name="docs", batch_size=100)
 
         with mock.patch.object(MODULE, "AlgoliaClient", return_value=client):
             MODULE.configure_language_facet(args)
 
         client.ensure_language_filter.assert_called_once_with()
+        client.browse_untagged_object_ids.assert_called_once_with()
+        client.batch.assert_called_once_with(
+            [
+                {
+                    "action": "partialUpdateObject",
+                    "body": {"objectID": "hardware:legacy", "language": MODULE.DEFAULT_LOCALE},
+                }
+            ]
+        )
         client.browse_source_object_ids.assert_not_called()
-        client.batch.assert_not_called()
 
 
 if __name__ == "__main__":

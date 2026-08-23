@@ -19,7 +19,6 @@ from pathlib import Path
 
 
 SOURCE = "hardware"
-LEGACY_CROSS_SOURCES = {"software", "examples"}
 DEFAULT_LOCALE = "en"
 SECTION_LABELS = {
     "en": {"hardware": "Hardware", "references": "References", "tools": "Tools"},
@@ -409,8 +408,8 @@ class AlgoliaClient:
                 return object_ids
             payload = {"cursor": cursor}
 
-    def browse_untagged_cross_source_object_ids(self) -> list[str]:
-        """Find legacy records that predate the shared index language facet."""
+    def browse_untagged_object_ids(self) -> list[str]:
+        """Find records that predate the shared index language facet."""
         object_ids: list[str] = []
         payload = {
             "query": "",
@@ -420,12 +419,7 @@ class AlgoliaClient:
         while True:
             result = self.post(f"/1/indexes/{self.index}/browse", payload)
             for hit in result.get("hits", []):
-                source = str(hit.get("source") or "").lower()
-                if (
-                    source in LEGACY_CROSS_SOURCES
-                    and not hit.get("language")
-                    and hit.get("objectID")
-                ):
+                if not hit.get("language") and hit.get("objectID"):
                     object_ids.append(hit["objectID"])
             cursor = result.get("cursor")
             if not cursor:
@@ -565,19 +559,7 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
     client.ensure_language_filter()
-    legacy_ids = client.browse_untagged_cross_source_object_ids()
-    print(f"[algolia-index] legacy cross-source records to tag as English={len(legacy_ids)}")
-    for start in range(0, len(legacy_ids), args.batch_size):
-        chunk = legacy_ids[start : start + args.batch_size]
-        client.batch(
-            [
-                {
-                    "action": "partialUpdateObject",
-                    "body": {"objectID": object_id, "language": DEFAULT_LOCALE},
-                }
-                for object_id in chunk
-            ]
-        )
+    backfill_legacy_language(client, args.batch_size)
     desired_ids = {record["objectID"] for record in records}
     existing_ids = set(client.browse_source_object_ids(SOURCE))
     stale_ids = sorted(existing_ids - desired_ids)
@@ -596,6 +578,22 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
         client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
 
 
+def backfill_legacy_language(client: AlgoliaClient, batch_size: int) -> None:
+    legacy_ids = client.browse_untagged_object_ids()
+    print(f"[algolia-index] legacy records to tag as English={len(legacy_ids)}")
+    for start in range(0, len(legacy_ids), batch_size):
+        chunk = legacy_ids[start : start + batch_size]
+        client.batch(
+            [
+                {
+                    "action": "partialUpdateObject",
+                    "body": {"objectID": object_id, "language": DEFAULT_LOCALE},
+                }
+                for object_id in chunk
+            ]
+        )
+
+
 def configure_language_facet(args: argparse.Namespace) -> None:
     if not args.app_id or not args.api_key or not args.index_name:
         raise SystemExit(
@@ -605,6 +603,7 @@ def configure_language_facet(args: argparse.Namespace) -> None:
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
     client.ensure_language_filter()
+    backfill_legacy_language(client, args.batch_size)
 
 
 def main() -> int:

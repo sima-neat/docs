@@ -31,6 +31,10 @@ const vulcanWorkflowSource = fs.readFileSync(
   path.join(docsRoot, '.github/workflows/vulcan-docs.yml'),
   'utf8',
 );
+const algoliaSyncSource = fs.readFileSync(
+  path.join(docsRoot, 'scripts/ci/sync_algolia_developer_center_index.py'),
+  'utf8',
+);
 const localDeveloperCenterSource = fs.readFileSync(
   path.join(docsRoot, 'scripts/start-local-developer-center.sh'),
   'utf8',
@@ -421,6 +425,11 @@ assert.ok(
     .slice(algoliaFacetIndex, sitePublishIndex)
     .includes('--configure-language-facet-only'),
   'Vulcan does not configure the Algolia language facet before publishing the client',
+);
+assert.match(
+  algoliaSyncSource,
+  /def configure_language_facet[\s\S]*ensure_language_filter\(\)[\s\S]*backfill_legacy_language/,
+  'Facet-only setup does not backfill legacy records before the localized client is published',
 );
 assert.ok(
   vulcanWorkflowSource.slice(sitePublishIndex, algoliaPublishIndex).includes('aws s3 sync'),
