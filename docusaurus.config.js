@@ -36,8 +36,16 @@ const languageBootstrapScript = `(function(){try{
   if(supported.indexOf(preferred)===-1){try{preferred=window.localStorage.getItem(${JSON.stringify(developerCenterShell.LOCALE_KEY)})}catch(e){}}
   if(supported.indexOf(preferred)===-1)return;
   var parts=window.location.pathname.split('/').filter(Boolean);
-  if(parts.length===0&&preferred!==${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)}){
-    window.location.replace('/'+preferred+'/'+window.location.search+window.location.hash);
+  var baseParts=${JSON.stringify(baseUrl.split('/').filter(Boolean))};
+  var routeParts=parts.slice(0,baseParts.length).join('/')===baseParts.join('/')?parts.slice(baseParts.length):parts;
+  var landingLocale=routeParts.length===0?${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)}:(routeParts.length===1&&supported.indexOf(routeParts[0])>0?routeParts[0]:null);
+  if(landingLocale!==null){
+    if(landingLocale===preferred)return;
+    var destinationParts=baseParts.slice();
+    if(preferred!==${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)})destinationParts.push(preferred);
+    var destination='/'+destinationParts.join('/');
+    if(destination!=='/')destination+='/'
+    window.location.replace(destination+window.location.search+window.location.hash);
     return;
   }
   var hardwareIndex=parts.indexOf('hardware');

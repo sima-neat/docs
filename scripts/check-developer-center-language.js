@@ -26,6 +26,7 @@ const docusaurusConfigSource = fs.readFileSync(
   path.join(docsRoot, 'docusaurus.config.js'),
   'utf8',
 );
+const docusaurusConfig = require('../docusaurus.config.js');
 const vulcanWorkflowSource = fs.readFileSync(
   path.join(docsRoot, '.github/workflows/vulcan-docs.yml'),
   'utf8',
@@ -304,10 +305,36 @@ assert.match(
   docusaurusConfigSource,
   /preferred=window\.localStorage\.getItem\(\$\{JSON\.stringify\(developerCenterShell\.LOCALE_KEY\)\}\)/,
 );
-assert.match(docusaurusConfigSource, /parts\.length===0&&preferred!==/);
+const languageBootstrapScript = docusaurusConfig.headTags[1].innerHTML;
+function landingRedirect(pathname, preferred) {
+  let destination = null;
+  vm.runInNewContext(languageBootstrapScript, {
+    document: {cookie: `${shellConfig.LOCALE_COOKIE}=${encodeURIComponent(preferred)}`},
+    window: {
+      localStorage: {getItem: () => null},
+      location: {
+        pathname,
+        search: '',
+        hash: '',
+        replace(value) {
+          destination = value;
+        },
+      },
+    },
+  });
+  return destination;
+}
+assert.equal(landingRedirect('/ja/', 'en'), '/');
+assert.equal(landingRedirect('/ja/', 'ko'), '/ko/');
+assert.equal(landingRedirect('/', 'ja'), '/ja/');
+assert.equal(landingRedirect('/ja/', 'ja'), null);
+assert.match(docusaurusConfigSource, /var baseParts=\$\{JSON\.stringify\(baseUrl\.split\('\/'\)\.filter\(Boolean\)\)\}/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale\)/);
 assert.match(shellClientSource, /function syncNativeNavbarLocale\(\)/);
+assert.match(shellClientSource, /SHELL_TRANSLATIONS\[locale\]\?\.navItems/);
+assert.match(shellClientSource, /textNode\.nodeValue = navCopy\[key\]/);
+assert.match(shellClientSource, /externalItems\.find/);
 assert.match(shellClientSource, /withoutSiteRoot\(pathname, SITE_ROOT\)/);
 assert.match(shellClientSource, /function watchNativeSectionNavigation\(\)/);
 assert.match(shellClientSource, /function syncLocalizedContentLinks\(\)/);

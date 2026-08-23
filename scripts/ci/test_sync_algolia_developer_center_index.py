@@ -17,6 +17,22 @@ SPEC.loader.exec_module(MODULE)
 
 
 class LocalizedRecordTests(unittest.TestCase):
+    def test_localizes_section_metadata(self) -> None:
+        docs_dir = Path("/tmp/docs")
+
+        self.assertEqual(
+            MODULE.section_for_path(docs_dir / "reference/bsp.md", docs_dir, "ja"),
+            "リファレンス",
+        )
+        self.assertEqual(
+            MODULE.section_for_path(docs_dir / "tools/serial.mdx", docs_dir, "ko"),
+            "도구",
+        )
+        self.assertEqual(
+            MODULE.section_for_path(docs_dir / "index.mdx", docs_dir, "uk"),
+            "Апаратне забезпечення",
+        )
+
     def test_generates_language_specific_records_and_routes(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

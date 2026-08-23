@@ -20,6 +20,17 @@ from pathlib import Path
 SOURCE = "hardware"
 LEGACY_CROSS_SOURCES = {"software", "examples"}
 DEFAULT_LOCALE = "en"
+SECTION_LABELS = {
+    "en": {"hardware": "Hardware", "references": "References", "tools": "Tools"},
+    "ko": {"hardware": "하드웨어", "references": "참조", "tools": "도구"},
+    "ja": {"hardware": "ハードウェア", "references": "リファレンス", "tools": "ツール"},
+    "zh-Hant": {"hardware": "硬體", "references": "參考資料", "tools": "工具"},
+    "uk": {
+        "hardware": "Апаратне забезпечення",
+        "references": "Довідкові матеріали",
+        "tools": "Інструменти",
+    },
+}
 I18N_DOCS_SUBDIR = Path("docusaurus-plugin-content-docs/current")
 DEFAULT_MAX_RECORD_BYTES = 9_500
 DEFAULT_BATCH_SIZE = 500
@@ -130,15 +141,16 @@ def title_from_markdown(path: Path, text: str) -> str:
     return path.stem.replace("-", " ").replace("_", " ").title()
 
 
-def section_for_path(path: Path, docs_dir: Path) -> str:
+def section_for_path(path: Path, docs_dir: Path, language: str = DEFAULT_LOCALE) -> str:
     rel = path.relative_to(docs_dir).as_posix()
+    labels = SECTION_LABELS.get(language, SECTION_LABELS[DEFAULT_LOCALE])
     if rel.startswith("hardware/"):
-        return "Hardware"
+        return labels["hardware"]
     if rel.startswith("reference/"):
-        return "References"
+        return labels["references"]
     if rel.startswith("tools/"):
-        return "Tools"
-    return "Hardware"
+        return labels["tools"]
+    return labels["hardware"]
 
 
 def route_for_path(path: Path, docs_dir: Path, site_base_url: str, language: str = DEFAULT_LOCALE) -> str:
@@ -233,7 +245,7 @@ def generate_records(
                 (
                     path,
                     rel,
-                    section_for_path(path, language_docs_dir),
+                    section_for_path(path, language_docs_dir, language),
                     route_for_path(path, language_docs_dir, site_base_url, language),
                 )
             )

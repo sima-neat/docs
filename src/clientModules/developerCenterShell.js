@@ -79,21 +79,37 @@ function syncNativeNavbarLocale() {
     return;
   }
 
+  const navCopy = developerCenterShell.SHELL_TRANSLATIONS[locale]?.navItems || {};
   nativeNavbar()?.querySelectorAll('a.navbar__link[href]').forEach((link) => {
     const pathname = new URL(link.href, window.location.href).pathname;
     const routePath = developerCenterShell.withoutSiteRoot(pathname, SITE_ROOT);
     const section = developerCenterShell.activeSectionForPath(routePath);
-    if (!['hardware', 'software'].includes(section)) {
-      return;
+    const absoluteHref = new URL(link.href, window.location.href);
+    const externalItem = developerCenterShell.externalItems.find((item) => {
+      const itemHref = new URL(item.href);
+      return itemHref.origin === absoluteHref.origin && itemHref.pathname === absoluteHref.pathname;
+    });
+    const key = externalItem?.key || section;
+
+    if (navCopy[key]) {
+      const textNode = Array.from(link.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);
+      if (textNode) {
+        textNode.nodeValue = navCopy[key];
+      } else {
+        link.insertBefore(document.createTextNode(navCopy[key]), link.firstChild);
+      }
+      link.dataset.developerCenterSection = key;
     }
 
-    link.setAttribute(
-      'href',
-      developerCenterShell.withSiteRoot(
-        shell.localizedPath(developerCenterShell.SECTION_ROUTES[section], locale),
-        SITE_ROOT,
-      ),
-    );
+    if (['hardware', 'software'].includes(section)) {
+      link.setAttribute(
+        'href',
+        developerCenterShell.withSiteRoot(
+          shell.localizedPath(developerCenterShell.SECTION_ROUTES[section], locale),
+          SITE_ROOT,
+        ),
+      );
+    }
   });
 }
 
