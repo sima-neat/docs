@@ -68,6 +68,23 @@ class LocalizedRecordTests(unittest.TestCase):
             self.assertEqual(by_language["ja"]["route"], "/ja/hardware/guide")
             self.assertNotEqual(by_language["en"]["objectID"], by_language["ja"]["objectID"])
 
+    def test_generated_routes_exclude_deployment_base_path(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs_dir = root / "docs"
+            docs_dir.mkdir()
+            (docs_dir / "guide.md").write_text("# Guide\nEnglish body.\n", encoding="utf-8")
+
+            records, _ = MODULE.generate_records(
+                docs_dir,
+                "https://build.neat.sima.ai/docs/",
+                MODULE.DEFAULT_MAX_RECORD_BYTES,
+                root / "i18n",
+            )
+
+            self.assertEqual(records[0]["url"], "https://build.neat.sima.ai/docs/hardware/guide")
+            self.assertEqual(records[0]["route"], "/hardware/guide")
+
     def test_language_filter_setting_preserves_existing_facets(self) -> None:
         class RecordingClient(MODULE.AlgoliaClient):
             def __init__(self) -> None:

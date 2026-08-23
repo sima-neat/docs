@@ -552,7 +552,7 @@
                       const source = normalizeSource(hit.source, hit.url || hit.route);
                       const section = hitSection(hit, source);
                       return `
-                        <a class="developer-center-search-result" href="${escapeHtml(withSiteRoot(hitRoute(hit), state.siteRoot))}">
+                        <a class="developer-center-search-result" href="${escapeHtml(withSiteRoot(withoutSiteRoot(hitRoute(hit), state.siteRoot), state.siteRoot))}">
                           <span class="developer-center-search-title">${sanitizeHighlighted(hitTitle(hit))}</span>
                           <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source, searchCopy))}</span>
                           <span class="developer-center-search-snippet">${sanitizeHighlighted(hitSnippet(hit))}</span>

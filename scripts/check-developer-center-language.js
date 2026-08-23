@@ -395,7 +395,10 @@ for (const locale of manifest.language.locales) {
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
 assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
 assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);
-assert.match(shellSource, /withSiteRoot\(hitRoute\(hit\), state\.siteRoot\)/);
+assert.match(
+  shellSource,
+  /withSiteRoot\(withoutSiteRoot\(hitRoute\(hit\), state\.siteRoot\), state\.siteRoot\)/,
+);
 assert.match(shellSource, /mountSearch\(target, manifest, locale, siteRoot\)/);
 assert.match(shellSource, /const searchCopy = state\.copy/);
 assert.match(shellSource, /sources: \{\.\.\.english\.search\.sources, \.\.\.localized\.search\.sources\}/);

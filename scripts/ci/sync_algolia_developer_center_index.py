@@ -173,6 +173,14 @@ def route_for_path(path: Path, docs_dir: Path, site_base_url: str, language: str
     return f"{site_base_url.rstrip('/')}{route}"
 
 
+def route_relative_to_site_base(url: str, site_base_url: str) -> str:
+    route = urllib.parse.urlparse(url).path or "/"
+    site_base_path = urllib.parse.urlparse(site_base_url).path.rstrip("/")
+    if site_base_path and (route == site_base_path or route.startswith(f"{site_base_path}/")):
+        route = route[len(site_base_path) :] or "/"
+    return route
+
+
 def record_size(record: dict) -> int:
     return len(json.dumps(record, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
@@ -277,7 +285,7 @@ def generate_records(
                 continue
 
             title = title_from_markdown(path, raw)
-            route = urllib.parse.urlparse(url).path or "/hardware"
+            route = route_relative_to_site_base(url, site_base_url)
             record_key = f"{language}:{rel}"
             record = {
                 "objectID": f"{SOURCE}:{hashlib.sha1(record_key.encode('utf-8')).hexdigest()}",
