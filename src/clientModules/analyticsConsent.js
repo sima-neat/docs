@@ -1,6 +1,12 @@
 import ExecutionEnvironment from '@docusaurus/ExecutionEnvironment';
 import siteConfig from '@generated/docusaurus.config';
+import docusaurusI18n from '@generated/i18n';
 import developerCenterShell from '../developerCenter/shell/config.cjs';
+
+const SITE_ROOT = developerCenterShell.deploymentSiteRoot(
+  siteConfig.baseUrl || '/',
+  docusaurusI18n.currentLocale,
+);
 
 const CONSENT_KEY = 'sima-developer-center-cookie-consent';
 const CONSENT_VERSION = 1;
@@ -90,7 +96,7 @@ function getAnalyticsConfig() {
 function activeLocale() {
   const routePath = developerCenterShell.withoutSiteRoot(
     window.location.pathname,
-    siteConfig.baseUrl || '/',
+    SITE_ROOT,
   );
   const routeLocale = routePath.split('/').filter(Boolean)[0];
   if (routeLocale !== developerCenterShell.DEFAULT_LOCALE && CONSENT_COPY[routeLocale]) {
@@ -134,7 +140,7 @@ function pagePath() {
 function sectionFromPath(pathname) {
   const routePath = developerCenterShell.withoutSiteRoot(
     pathname,
-    siteConfig.baseUrl || '/',
+    SITE_ROOT,
   );
   const parts = routePath.split('/').filter(Boolean);
   if (developerCenterShell.SUPPORTED_LOCALES.some(({code}) => code === parts[0])) {

@@ -47,9 +47,12 @@ function localizedActionHref(action, locale) {
   return action.href;
 }
 
-function PortalButton({action, label, locale}) {
+function PortalButton({action, label, locale, siteRoot}) {
   const className = clsx(styles.portalButton, styles[action.tone]);
-  const href = useBaseUrl(localizedActionHref(action, locale));
+  const href = developerCenterShell.withSiteRoot(
+    localizedActionHref(action, locale),
+    siteRoot,
+  );
   return (
     <a className={className} href={href}>
       {label}
@@ -63,7 +66,8 @@ export default function Home() {
     ? i18n.currentLocale
     : developerCenterShell.DEFAULT_LOCALE;
   const [locale, setLocale] = useState(routeLocale);
-  const siteRoot = useBaseUrl('/');
+  const docusaurusBaseUrl = useBaseUrl('/');
+  const siteRoot = developerCenterShell.deploymentSiteRoot(docusaurusBaseUrl, routeLocale);
 
   useEffect(() => {
     const preferredLocale = readLocalePreference(routeLocale);
@@ -111,6 +115,7 @@ export default function Home() {
                   action={action}
                   label={copy.navItems[action.key] || action.label}
                   locale={locale}
+                  siteRoot={siteRoot}
                 />
               ))}
             </div>

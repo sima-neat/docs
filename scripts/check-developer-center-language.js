@@ -199,6 +199,21 @@ assert.equal(localizedPath('/ja', 'ko', manifest), '/ko');
 assert.equal(shellConfig.activeSectionForPath('/ja/hardware/getting-started/'), 'hardware');
 assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 'software');
 assert.equal(shellConfig.withSiteRoot('/ja/hardware', '/docs/'), '/docs/ja/hardware');
+assert.equal(shellConfig.deploymentSiteRoot('/zh-Hant/', 'zh-Hant'), '/');
+assert.equal(shellConfig.deploymentSiteRoot('/docs/zh-Hant/', 'zh-Hant'), '/docs/');
+assert.equal(shellConfig.deploymentSiteRoot('/docs/', 'en'), '/docs/');
+const traditionalChineseSiteRoot = shellConfig.deploymentSiteRoot('/zh-Hant/', 'zh-Hant');
+assert.equal(
+  shellConfig.withSiteRoot(localizedPath('/software', 'zh-Hant', manifest), traditionalChineseSiteRoot),
+  '/software/zh-Hant',
+);
+assert.equal(
+  shellConfig.withSiteRoot(
+    localizedPath('/zh-Hant/hardware/getting-started/', 'ja', manifest),
+    traditionalChineseSiteRoot,
+  ),
+  '/ja/hardware/getting-started/',
+);
 assert.equal(
   shellConfig.withoutSiteRoot('/docs/ja/hardware/getting-started/', '/docs/'),
   '/ja/hardware/getting-started/',
@@ -444,6 +459,12 @@ assert.match(
   /const locale = selectedLocale[\s\S]*\|\| docusaurusI18n\.currentLocale[\s\S]*\|\| shell\?\.localeFromPath/,
 );
 assert.match(shellClientSource, /import docusaurusI18n from '@generated\/i18n'/);
+assert.match(shellClientSource, /const ASSET_ROOT = siteConfig\.baseUrl \|\| '\/'/);
+assert.match(
+  shellClientSource,
+  /const SITE_ROOT = developerCenterShell\.deploymentSiteRoot\([\s\S]*docusaurusI18n\.currentLocale/,
+);
+assert.doesNotMatch(shellClientSource, /const SITE_ROOT = siteConfig\.baseUrl/);
 assert.match(shellClientSource, /SHELL_TRANSLATIONS\[locale\]\?\.navItems/);
 assert.match(shellClientSource, /textNode\.nodeValue = navCopy\[key\]/);
 assert.match(shellClientSource, /navbarItems\(\)\.find/);
@@ -604,7 +625,7 @@ assert.match(landingSource, /data-developer-center-sections/);
 assert.match(analyticsConsentSource, /closest\('\[data-developer-center-sections\]'\)/);
 assert.doesNotMatch(analyticsConsentSource, /closest\('\[aria-label="Documentation sections"\]'\)/);
 assert.match(analyticsConsentSource, /function consentCopy\(\)/);
-assert.match(analyticsConsentSource, /withoutSiteRoot\([\s\S]*siteConfig\.baseUrl/);
+assert.match(analyticsConsentSource, /withoutSiteRoot\([\s\S]*SITE_ROOT/);
 assert.match(
   analyticsConsentSource,
   /function sectionFromPath[\s\S]*withoutSiteRoot[\s\S]*SUPPORTED_LOCALES\.some[\s\S]*parts\.shift\(\)/,
@@ -687,6 +708,8 @@ assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
 assert.match(shellSource, /catch \(_\) \{\s*return null;\s*\}/);
 assert.match(shellNavigationSource, /withLocalePrefixFromPath/);
 assert.match(shellNavigationSource, /@generated\/docusaurus\.config/);
+assert.match(shellNavigationSource, /@generated\/i18n/);
+assert.match(shellNavigationSource, /deploymentSiteRoot/);
 assert.match(shellNavigationSource, /withoutSiteRoot\(window\.location\.pathname\)/);
 assert.match(shellNavigationSource, /shellConfig\.withSiteRoot\([\s\S]*SITE_ROOT/);
 assert.match(shellNavigationSource, /isCloudFrontRoutedPath\(routePath\)/);
@@ -717,7 +740,8 @@ assert.match(
 assert.doesNotMatch(landingSource, /if \(supported\.has\(routeLocale\)\) return routeLocale/);
 assert.match(landingSource, /Ignore malformed cookie values and fall back to local storage/);
 assert.match(landingSource, /window\.location\.replace\(/);
-assert.match(landingSource, /const siteRoot = useBaseUrl\('\/'\)/);
+assert.match(landingSource, /const docusaurusBaseUrl = useBaseUrl\('\/'\)/);
+assert.match(landingSource, /deploymentSiteRoot\(docusaurusBaseUrl, routeLocale\)/);
 assert.match(landingSource, /`\$\{siteRoot\}\$\{preferredLocale\}\//);
 assert.match(
   landingSource,
@@ -729,7 +753,10 @@ assert.match(landingSource, /addEventListener\('developer-center-language-change
 assert.match(landingSource, /action\.key === 'hardware'/);
 assert.match(landingSource, /action\.key === 'software'/);
 assert.doesNotMatch(landingSource, /@docusaurus\/Link/);
-assert.match(landingSource, /const href = useBaseUrl\(localizedActionHref\(action, locale\)\)/);
+assert.match(
+  landingSource,
+  /withSiteRoot\([\s\S]*localizedActionHref\(action, locale\)[\s\S]*siteRoot/,
+);
 assert.match(landingSource, /<a className=\{className\} href=\{href\}>/);
 assert.match(gettingStartedSource, /import useBaseUrl from '@docusaurus\/useBaseUrl'/);
 assert.match(gettingStartedSource, /href=\{useBaseUrl\('\/tools\/qsg\/index\.html'\)\}/);

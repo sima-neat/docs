@@ -317,6 +317,17 @@ function withoutSiteRoot(pathname, siteRoot = '') {
     : pathname;
 }
 
+function deploymentSiteRoot(baseUrl = '/', locale = DEFAULT_LOCALE) {
+  const segments = String(baseUrl || '/').split('/').filter(Boolean);
+  const localizedBuild = SUPPORTED_LOCALES.some(
+    ({code}) => code !== DEFAULT_LOCALE && code === locale,
+  );
+  if (localizedBuild && segments.at(-1) === locale) {
+    segments.pop();
+  }
+  return segments.length > 0 ? `/${segments.join('/')}/` : '/';
+}
+
 function navbarItems(siteRoot = '') {
   return [...routeItems, ...externalItems].map((item) => ({
     ...item,
@@ -345,6 +356,7 @@ module.exports = {
   SHELL_TRANSLATIONS,
   LANGUAGE_PICKER_TRANSLATIONS,
   activeSectionForPath,
+  deploymentSiteRoot,
   docusaurusNavbarItems,
   externalItems,
   isCloudFrontRoutedPath,

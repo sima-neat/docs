@@ -1,7 +1,11 @@
 import shellConfig from './config.cjs';
 import siteConfig from '@generated/docusaurus.config';
+import docusaurusI18n from '@generated/i18n';
 
-const SITE_ROOT = siteConfig.baseUrl || '/';
+const SITE_ROOT = shellConfig.deploymentSiteRoot(
+  siteConfig.baseUrl || '/',
+  docusaurusI18n.currentLocale,
+);
 
 function withoutSiteRoot(pathname) {
   return shellConfig.withoutSiteRoot(pathname, SITE_ROOT);

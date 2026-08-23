@@ -6,7 +6,11 @@ const SHELL_ROOT_ID = 'developer-center-shell-root';
 const SHELL_SCRIPT_ID = 'developer-center-shell-script';
 const SHELL_STYLESHEET_ID = 'developer-center-shell-stylesheet';
 const DESKTOP_NAV_QUERY = '(min-width: 997px)';
-const SITE_ROOT = siteConfig.baseUrl || '/';
+const ASSET_ROOT = siteConfig.baseUrl || '/';
+const SITE_ROOT = developerCenterShell.deploymentSiteRoot(
+  ASSET_ROOT,
+  docusaurusI18n.currentLocale,
+);
 
 let navbarMediaQuery;
 let mobileLanguagePickerBound = false;
@@ -34,7 +38,7 @@ function loadStylesheet() {
   const link = document.createElement('link');
   link.id = SHELL_STYLESHEET_ID;
   link.rel = 'stylesheet';
-  link.href = developerCenterShell.withSiteRoot('/developer-center-shell.css', SITE_ROOT);
+  link.href = developerCenterShell.withSiteRoot('/developer-center-shell.css', ASSET_ROOT);
   document.head.appendChild(link);
 }
 
@@ -54,7 +58,7 @@ function loadScript() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.id = SHELL_SCRIPT_ID;
-    script.src = developerCenterShell.withSiteRoot('/developer-center-shell.js', SITE_ROOT);
+    script.src = developerCenterShell.withSiteRoot('/developer-center-shell.js', ASSET_ROOT);
     script.async = true;
     script.addEventListener('load', resolve, {once: true});
     script.addEventListener('error', reject, {once: true});
