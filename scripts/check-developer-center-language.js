@@ -124,7 +124,11 @@ assert.match(
   /index\.languageFacet \? \{facetFilters: \[`language:\$\{locale\}`\]\} : \{\}/,
 );
 assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
-assert.match(docusaurusConfigSource, /var preferred=m\?decodeURIComponent\(m\[1\]\):null/);
+assert.match(
+  docusaurusConfigSource,
+  /preferred=window\.localStorage\.getItem\(\$\{JSON\.stringify\(developerCenterShell\.LOCALE_KEY\)\}\)/,
+);
+assert.match(docusaurusConfigSource, /parts\.length===0&&preferred!==/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
@@ -149,8 +153,13 @@ assert.match(
 );
 assert.doesNotMatch(landingSource, /if \(supported\.has\(routeLocale\)\) return routeLocale/);
 assert.match(landingSource, /Ignore malformed cookie values and fall back to local storage/);
+assert.match(landingSource, /window\.location\.replace\(/);
+assert.match(
+  landingSource,
+  /routeLocale === developerCenterShell\.DEFAULT_LOCALE\s*&& preferredLocale !== developerCenterShell\.DEFAULT_LOCALE/,
+);
 assert.match(landingSource, /useDocusaurusContext\(\)/);
-assert.match(landingSource, /setLocale\(readLocalePreference\(routeLocale\)\)/);
+assert.match(landingSource, /setLocale\(preferredLocale\)/);
 assert.match(landingSource, /addEventListener\('developer-center-language-change'/);
 assert.match(landingSource, /action\.key === 'hardware'/);
 assert.match(landingSource, /action\.key === 'software'/);

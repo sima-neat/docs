@@ -31,9 +31,15 @@ const themeBootstrapScript = `(function(){try{
 const languageBootstrapScript = `(function(){try{
   var supported=${JSON.stringify(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code))};
   var m=document.cookie.match(/(?:^|; )${developerCenterShell.LOCALE_COOKIE}=([^;]*)/);
-  var preferred=m?decodeURIComponent(m[1]):null;
+  var preferred=null;
+  if(m){try{preferred=decodeURIComponent(m[1])}catch(e){}}
+  if(supported.indexOf(preferred)===-1){try{preferred=window.localStorage.getItem(${JSON.stringify(developerCenterShell.LOCALE_KEY)})}catch(e){}}
   if(supported.indexOf(preferred)===-1)return;
   var parts=window.location.pathname.split('/').filter(Boolean);
+  if(parts.length===0&&preferred!==${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)}){
+    window.location.replace('/'+preferred+'/'+window.location.search+window.location.hash);
+    return;
+  }
   var hardwareIndex=parts.indexOf('hardware');
   if(hardwareIndex<0)return;
   var localeIndex=hardwareIndex>0&&supported.indexOf(parts[hardwareIndex-1])>0?hardwareIndex-1:-1;

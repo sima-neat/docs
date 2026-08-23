@@ -65,7 +65,18 @@ export default function Home() {
   const quickStartHref = useBaseUrl('/tools/qsg/index.html');
 
   useEffect(() => {
-    setLocale(readLocalePreference(routeLocale));
+    const preferredLocale = readLocalePreference(routeLocale);
+    if (
+      routeLocale === developerCenterShell.DEFAULT_LOCALE
+      && preferredLocale !== developerCenterShell.DEFAULT_LOCALE
+    ) {
+      window.location.replace(
+        `/${preferredLocale}/${window.location.search}${window.location.hash}`,
+      );
+      return undefined;
+    }
+
+    setLocale(preferredLocale);
     const onLanguageChange = (event) => {
       if (developerCenterShell.SHELL_TRANSLATIONS[event?.detail?.locale]) {
         setLocale(event.detail.locale);
