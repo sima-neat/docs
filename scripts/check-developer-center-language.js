@@ -39,6 +39,10 @@ const analyticsConsentSource = fs.readFileSync(
   path.join(docsRoot, 'src/clientModules/analyticsConsent.js'),
   'utf8',
 );
+const mobileSearchSource = fs.readFileSync(
+  path.join(docsRoot, 'src/theme/SearchBar/index.js'),
+  'utf8',
+);
 const shellNavigationSource = fs.readFileSync(
   path.join(docsRoot, 'src/developerCenter/shell/navigation.js'),
   'utf8',
@@ -218,7 +222,7 @@ for (const locale of manifest.language.locales) {
   assert.deepEqual(
     Object.keys(translation.search),
     [
-      'label', 'placeholder', 'clear', 'sources', 'overview', 'filtersLabel',
+      'label', 'placeholder', 'clear', 'close', 'sources', 'overview', 'filtersLabel',
       'resultsLabel', 'searching', 'unavailable', 'prompt', 'noMatches',
       'noSectionMatches', 'error',
     ],
@@ -358,6 +362,11 @@ assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /escapeHtml\(shellCopy\.brand\).*escapeHtml\(shellCopy\.homeLabel\)/);
 assert.doesNotMatch(shellSource, /escapeHtml\(shellCopy\.brand\)\}\s+home/);
 assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.externalLinkLabel\)\}"/);
+assert.match(mobileSearchSource, /useDocusaurusContext\(\)/);
+assert.match(mobileSearchSource, /SHELL_TRANSLATIONS\[i18n\.currentLocale\]/);
+assert.match(mobileSearchSource, /aria-label=\{searchCopy\.placeholder\}/);
+assert.match(mobileSearchSource, /aria-label=\{searchCopy\.close\}/);
+assert.doesNotMatch(mobileSearchSource, /aria-label="(?:Search Developer Center|Close search)"/);
 assert.ok(
   fs.readFileSync(
     path.join(docsRoot, 'i18n/ko/docusaurus-plugin-content-docs/current/reference/bsp.md'),
