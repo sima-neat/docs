@@ -137,6 +137,7 @@ assert.match(
 );
 assert.match(docusaurusConfigSource, /parts\.length===0&&preferred!==/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
+assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale\)/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
@@ -151,6 +152,7 @@ assert.match(
   /render\(target, manifest, \{\.\.\.options, locale\}\)/,
 );
 assert.match(shellSource, /addEventListener\('developer-center-language-change', onLanguageChange\)/);
+assert.match(shellSource, /localizedPath,\s*writeLocale,/);
 assert.match(hardwareRootSource, /function useShellLocale\(\)/);
 assert.match(hardwareRootSource, /addEventListener\("developer-center-language-change"/);
 assert.match(landingSource, /function readLocalePreference\(routeLocale\)/);

@@ -109,6 +109,7 @@ function watchMobileLanguagePicker() {
       return;
     }
 
+    window.DeveloperCenterShell?.writeLocale?.(locale);
     window.dispatchEvent(
       new CustomEvent('developer-center-language-change', {detail: {locale}}),
     );
