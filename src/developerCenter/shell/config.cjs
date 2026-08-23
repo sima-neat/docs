@@ -181,6 +181,14 @@ const SHELL_TRANSLATIONS = {
   },
 };
 
+const LANGUAGE_PICKER_TRANSLATIONS = {
+  en: {heading: 'Documentation language', menuLabel: 'Select documentation language', currentLabel: 'Documentation language'},
+  ko: {heading: '문서 언어', menuLabel: '문서 언어 선택', currentLabel: '문서 언어'},
+  ja: {heading: 'ドキュメントの言語', menuLabel: 'ドキュメントの言語を選択', currentLabel: 'ドキュメントの言語'},
+  'zh-Hant': {heading: '文件語言', menuLabel: '選擇文件語言', currentLabel: '文件語言'},
+  uk: {heading: 'Мова документації', menuLabel: 'Виберіть мову документації', currentLabel: 'Мова документації'},
+};
+
 const routeItems = [
   {
     key: 'hardware',
@@ -310,6 +318,7 @@ module.exports = {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
   SHELL_TRANSLATIONS,
+  LANGUAGE_PICKER_TRANSLATIONS,
   activeSectionForPath,
   docusaurusNavbarItems,
   externalItems,

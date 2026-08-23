@@ -168,6 +168,10 @@ assert.deepEqual(
   ['🇺🇸', '🇰🇷', '🇯🇵', '🇹🇼', '🇺🇦'],
 );
 assert.deepEqual(manifest.language.translations, shellConfig.SHELL_TRANSLATIONS);
+assert.deepEqual(
+  manifest.language.pickerTranslations,
+  shellConfig.LANGUAGE_PICKER_TRANSLATIONS,
+);
 for (const locale of manifest.language.locales) {
   const translation = manifest.language.translations[locale.code];
   assert.ok(translation.brand, `${locale.code} is missing the shell brand translation`);
@@ -206,6 +210,17 @@ for (const locale of manifest.language.locales) {
     Object.keys(translation.navItems),
     ['hardware', 'software', 'examples', 'models', 'community'],
   );
+  const pickerTranslation = manifest.language.pickerTranslations[locale.code];
+  assert.deepEqual(
+    Object.keys(pickerTranslation),
+    ['heading', 'menuLabel', 'currentLabel'],
+    `${locale.code} is missing language-picker translations`,
+  );
+  if (locale.code !== 'en') {
+    for (const pickerValue of Object.values(pickerTranslation)) {
+      assert.ok(shellSource.includes(pickerValue), `${locale.code} is missing fallback picker copy`);
+    }
+  }
 }
 
 assert.match(shellSource, /aria-haspopup="menu"/);
@@ -253,6 +268,12 @@ assert.match(shellSource, /searchCopy\.sources\[source\.key\]/);
 assert.match(shellSource, /searchCopy\.filtersLabel/);
 assert.match(shellSource, /searchCopy\.resultsLabel/);
 assert.match(shellSource, /state\.error = state\.copy\.error/);
+assert.match(shellSource, /languagePicker: \{\.\.\.englishPicker, \.\.\.localizedPicker\}/);
+assert.match(shellSource, /escapeHtml\(languageCopy\.menuLabel\)/);
+assert.match(shellSource, /escapeHtml\(languageCopy\.heading\)/);
+assert.doesNotMatch(shellSource, /aria-label="Documentation language:/);
+assert.doesNotMatch(shellSource, /aria-label="Select documentation language"/);
+assert.doesNotMatch(shellSource, />Documentation language<\/div>/);
 assert.match(shellSource, /const routePath = withoutSiteRoot\(window\.location\.pathname, siteRoot\)/);
 assert.match(shellSource, /withSiteRoot\(localizedPath\(routePath, locale, manifest\), siteRoot\)/);
 assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
@@ -372,10 +393,21 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     assert.doesNotMatch(translatedCorpus, /建立人脈/, 'zh-Hant translates networking as relationship-building');
     assert.match(translatedCorpus, /2 個 2 通道 MIPI CSI/);
     assert.match(translatedCorpus, /4 個 4 通道 MIPI CSI/);
+    assert.doesNotMatch(localizedIndexSource, /應用程式的 ID/);
+    assert.match(
+      localizedIndexSource,
+      /\[NEAT 應用程式\]\(https:\/\/developer\.sima\.ai\/software\)/,
+    );
   }
   if (locale === 'ja') {
     assert.doesNotMatch(translatedCorpus, /750\s*MHz/, 'ja converts GOPS throughput into MHz');
     assert.match(translatedCorpus, /750 16ビット GOPS/);
+    const elxrConversionSource = fs.readFileSync(
+      path.join(translatedDocsRoot, 'reference/tech-notes/elxr-conversion.mdx'),
+      'utf8',
+    );
+    assert.doesNotMatch(elxrConversionSource, /こちらをクリック/);
+    assert.match(elxrConversionSource, /\*\*DevKit の電源を入れ直します\*\*/);
   }
   if (locale === 'uk') {
     assert.doesNotMatch(

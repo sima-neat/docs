@@ -30,6 +30,13 @@
         'zh-Hant': {brand: '開發者入口網站', landing: {kicker: '開發者中心', title: '開放、簡單、高效能、Neat！', summary: '瞭解如何運用 SiMa.ai 技術打造實體 AI。探索硬體介面、軟體工具，以及建置高效能 AI 應用程式的最佳實務。', sectionsLabel: '文件區段'}, search: {label: '搜尋', placeholder: '搜尋開發者中心', clear: '清除搜尋', sources: {all: '全部', hardware: '硬體', software: '軟體', examples: '範例'}, overview: '概覽', filtersLabel: '搜尋結果篩選條件', resultsLabel: '搜尋結果', searching: '搜尋中...', unavailable: '此本機建置無法使用搜尋功能。', prompt: '搜尋硬體、軟體、API 和範例。', noMatches: '找不到相符結果。', noSectionMatches: '此區段中找不到相符結果。', error: '搜尋失敗。'}, navItems: {hardware: '硬體', software: '軟體', examples: '範例', models: '模型', community: '社群'}},
         uk: {brand: 'Портал розробника', landing: {kicker: 'Центр розробника', title: 'Відкрито, просто, продуктивно, Neat!', summary: 'Дізнайтеся, як створювати фізичний ШІ за допомогою технологій SiMa.ai. Ознайомтеся з апаратними інтерфейсами, програмними інструментами та найкращими практиками створення високопродуктивних застосунків ШІ.', sectionsLabel: 'Розділи документації'}, search: {label: 'Пошук', placeholder: 'Пошук у Центрі розробника', clear: 'Очистити пошук', sources: {all: 'Усі', hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади'}, overview: 'Огляд', filtersLabel: 'Фільтри результатів пошуку', resultsLabel: 'Результати пошуку', searching: 'Пошук...', unavailable: 'Пошук недоступний у цій локальній збірці.', prompt: 'Шукайте в апаратній документації, програмному забезпеченні, API та прикладах.', noMatches: 'Збігів не знайдено.', noSectionMatches: 'У цьому розділі збігів не знайдено.', error: 'Не вдалося виконати пошук.'}, navItems: {hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади', models: 'Моделі', community: 'Спільнота'}},
       },
+      pickerTranslations: {
+        en: {heading: 'Documentation language', menuLabel: 'Select documentation language', currentLabel: 'Documentation language'},
+        ko: {heading: '문서 언어', menuLabel: '문서 언어 선택', currentLabel: '문서 언어'},
+        ja: {heading: 'ドキュメントの言語', menuLabel: 'ドキュメントの言語を選択', currentLabel: 'ドキュメントの言語'},
+        'zh-Hant': {heading: '文件語言', menuLabel: '選擇文件語言', currentLabel: '文件語言'},
+        uk: {heading: 'Мова документації', menuLabel: 'Виберіть мову документації', currentLabel: 'Мова документації'},
+      },
     },
     runtimeConfig: '/developer-center-runtime.json',
     search: null,
@@ -158,9 +165,13 @@
   }
 
   function shellTranslations(manifest, locale) {
-    const translations = languageConfig(manifest).translations || DEFAULT_MANIFEST.language.translations;
+    const config = languageConfig(manifest);
+    const translations = config.translations || DEFAULT_MANIFEST.language.translations;
     const english = translations.en || DEFAULT_MANIFEST.language.translations.en;
     const localized = translations[locale] || english;
+    const pickerTranslations = config.pickerTranslations || DEFAULT_MANIFEST.language.pickerTranslations;
+    const englishPicker = pickerTranslations.en || DEFAULT_MANIFEST.language.pickerTranslations.en;
+    const localizedPicker = pickerTranslations[locale] || englishPicker;
     return {
       ...english,
       ...localized,
@@ -170,6 +181,7 @@
         ...localized.search,
         sources: {...english.search.sources, ...localized.search.sources},
       },
+      languagePicker: {...englishPicker, ...localizedPicker},
       navItems: {...english.navItems, ...localized.navItems},
     };
   }
@@ -795,7 +807,8 @@
       currentLocale = locale;
       const selected = languageConfig(manifest).locales.find((item) => item.code === locale);
       picker.querySelector('[data-developer-center-language-code]').textContent = selected.shortLabel;
-      button.setAttribute('aria-label', `Documentation language: ${selected.label}`);
+      const pickerCopy = shellTranslations(manifest, locale).languagePicker;
+      button.setAttribute('aria-label', `${pickerCopy.currentLabel}: ${selected.label}`);
       options.forEach((option) => {
         const active = option.dataset.locale === locale;
         option.setAttribute('aria-checked', String(active));
@@ -830,6 +843,7 @@
       (item) => item.code === locale,
     );
     const shellCopy = shellTranslations(manifest, locale);
+    const languageCopy = shellCopy.languagePicker;
     const navItems = manifest.navItems || DEFAULT_MANIFEST.navItems;
     const search = manifest.search || DEFAULT_MANIFEST.search;
     const searchOptions = search || {};
@@ -875,12 +889,12 @@
       .join('');
     const languageMarkup = `
       <div class="developer-center-language" data-developer-center-language>
-        <button class="developer-center-language-button" type="button" aria-label="Documentation language: ${escapeHtml(selectedLocale.label)}" aria-haspopup="menu" aria-expanded="false" aria-controls="developer-center-language-menu" data-developer-center-language-button>
+        <button class="developer-center-language-button" type="button" aria-label="${escapeHtml(languageCopy.currentLabel)}: ${escapeHtml(selectedLocale.label)}" aria-haspopup="menu" aria-expanded="false" aria-controls="developer-center-language-menu" data-developer-center-language-button>
           <svg class="developer-center-language-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a15.7 15.7 0 0 0-1.4-3.4A8.1 8.1 0 0 1 18.9 8ZM12 4c.8 1 1.5 2.4 1.8 4h-3.6c.3-1.6 1-3 1.8-4ZM4.3 14a7.7 7.7 0 0 1 0-4H8a17.6 17.6 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.2.8 2.3 1.4 3.4A8.1 8.1 0 0 1 5.1 16ZM8.2 8H5.1a8.1 8.1 0 0 1 4.5-3.4A15.7 15.7 0 0 0 8.2 8Zm3.8 12c-.8-1-1.5-2.4-1.8-4h3.6c-.3 1.6-1 3-1.8 4Zm2.2-6H9.8a15.5 15.5 0 0 1 0-4h4.4a15.5 15.5 0 0 1 0 4Zm.2 5.4c.6-1 1.1-2.2 1.4-3.4h3.1a8.1 8.1 0 0 1-4.5 3.4Zm1.6-5.4a17.6 17.6 0 0 0 0-4h3.7a7.7 7.7 0 0 1 0 4H16Z"></path></svg>
           <span class="developer-center-language-code" data-developer-center-language-code>${escapeHtml(selectedLocale.shortLabel)}</span>
         </button>
-        <div id="developer-center-language-menu" class="developer-center-language-menu" role="menu" aria-label="Select documentation language" data-developer-center-language-menu hidden>
-          <div class="developer-center-language-heading" role="presentation">Documentation language</div>
+        <div id="developer-center-language-menu" class="developer-center-language-menu" role="menu" aria-label="${escapeHtml(languageCopy.menuLabel)}" data-developer-center-language-menu hidden>
+          <div class="developer-center-language-heading" role="presentation">${escapeHtml(languageCopy.heading)}</div>
           ${languageOptions}
         </div>
       </div>`;
