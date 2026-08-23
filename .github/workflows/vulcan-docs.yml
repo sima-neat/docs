@@ -327,6 +327,58 @@ jobs:
           name: vulcan-sysdoc-algolia-hardware
           path: _algolia
 
+      - name: Configure Algolia language facet
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          publish_config="_algolia/publish.json"
+          if [[ ! -f "${publish_config}" ]]; then
+            echo "Missing Algolia publish config; skipping language facet configuration."
+            exit 0
+          fi
+
+          readarray -t algolia_values < <(python3 - <<'PY'
+          import json
+
+          with open("_algolia/publish.json", encoding="utf-8") as handle:
+              config = json.load(handle)
+
+          values = [
+              config.get("app_id") or "",
+              config.get("index_name") or "",
+              config.get("write_api_key_secret_arn") or "",
+          ]
+          print("\n".join(values))
+          PY
+          )
+
+          app_id="${algolia_values[0]:-}"
+          index_name="${algolia_values[1]:-}"
+          write_key_secret_arn="${algolia_values[2]:-}"
+
+          if [[ -z "${app_id}" && -z "${index_name}" && -z "${write_key_secret_arn}" ]]; then
+            echo "No Algolia config for this Vulcan environment; skipping language facet configuration."
+            exit 0
+          fi
+
+          if [[ -z "${app_id}" || -z "${index_name}" || -z "${write_key_secret_arn}" ]]; then
+            echo "Incomplete Algolia config; app_id, index_name, and write_api_key_secret_arn are required." >&2
+            exit 1
+          fi
+
+          write_api_key="$(aws secretsmanager get-secret-value \
+            --secret-id "${write_key_secret_arn}" \
+            --query SecretString \
+            --output text)"
+
+          python3 scripts/ci/sync_algolia_developer_center_index.py \
+            --site-base-url "${SYSDOC_URL}" \
+            --app-id "${app_id}" \
+            --api-key "${write_api_key}" \
+            --index-name "${index_name}" \
+            --configure-language-facet-only
+
       - name: Publish site to S3
         shell: bash
         run: |

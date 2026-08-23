@@ -234,6 +234,17 @@ class LocalizedRecordTests(unittest.TestCase):
             [{"action": "addObject", "body": records[0]}]
         )
 
+    def test_configures_language_facet_without_browsing_or_syncing(self) -> None:
+        client = mock.Mock()
+        args = SimpleNamespace(app_id="app", api_key="key", index_name="docs")
+
+        with mock.patch.object(MODULE, "AlgoliaClient", return_value=client):
+            MODULE.configure_language_facet(args)
+
+        client.ensure_language_filter.assert_called_once_with()
+        client.browse_source_object_ids.assert_not_called()
+        client.batch.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -408,11 +408,19 @@ assert.doesNotMatch(
   'Vulcan deployment still references the retired sima-neat.com artifact host',
 );
 const algoliaPublishIndex = vulcanWorkflowSource.indexOf('- name: Publish Algolia hardware records');
+const algoliaFacetIndex = vulcanWorkflowSource.indexOf('- name: Configure Algolia language facet');
 const sitePublishIndex = vulcanWorkflowSource.indexOf('- name: Publish site to S3');
 assert.ok(algoliaPublishIndex >= 0, 'Vulcan deployment is missing the Algolia publish step');
+assert.ok(algoliaFacetIndex >= 0, 'Vulcan deployment is missing the Algolia language facet step');
 assert.ok(
-  sitePublishIndex >= 0 && sitePublishIndex < algoliaPublishIndex,
-  'Vulcan replaces Algolia records before confirming the localized site upload',
+  algoliaFacetIndex < sitePublishIndex && sitePublishIndex < algoliaPublishIndex,
+  'Vulcan must configure the language facet before site publication and sync records afterward',
+);
+assert.ok(
+  vulcanWorkflowSource
+    .slice(algoliaFacetIndex, sitePublishIndex)
+    .includes('--configure-language-facet-only'),
+  'Vulcan does not configure the Algolia language facet before publishing the client',
 );
 assert.ok(
   vulcanWorkflowSource.slice(sitePublishIndex, algoliaPublishIndex).includes('aws s3 sync'),

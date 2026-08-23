@@ -71,6 +71,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--generate-only", action="store_true", help="Only generate records; do not upload.")
     parser.add_argument("--sync", action="store_true", help="Upload records and remove stale records for this source.")
     parser.add_argument(
+        "--configure-language-facet-only",
+        action="store_true",
+        help="Configure the shared index language facet without generating or syncing records.",
+    )
+    parser.add_argument(
         "--prune-dead-links",
         action="store_true",
         help="Browse every record in the shared index, HEAD-check each URL, and delete records whose URL is not reachable (HTTP 200). Runs independently of generation/sync.",
@@ -591,6 +596,17 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
         client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
 
 
+def configure_language_facet(args: argparse.Namespace) -> None:
+    if not args.app_id or not args.api_key or not args.index_name:
+        raise SystemExit(
+            "--app-id, --api-key, and --index-name are required for "
+            "--configure-language-facet-only"
+        )
+
+    client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
+    client.ensure_language_filter()
+
+
 def main() -> int:
     args = parse_args()
     if args.batch_size < 1:
@@ -600,6 +616,10 @@ def main() -> int:
 
     if args.prune_dead_links:
         prune_dead_links(args)
+        return 0
+
+    if args.configure_language_facet_only:
+        configure_language_facet(args)
         return 0
 
     if not args.generate_only and not args.sync:
