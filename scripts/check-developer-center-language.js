@@ -31,6 +31,10 @@ const vulcanWorkflowSource = fs.readFileSync(
   path.join(docsRoot, '.github/workflows/vulcan-docs.yml'),
   'utf8',
 );
+const localDeveloperCenterSource = fs.readFileSync(
+  path.join(docsRoot, 'scripts/start-local-developer-center.sh'),
+  'utf8',
+);
 const shellClientSource = fs.readFileSync(
   path.join(docsRoot, 'src/clientModules/developerCenterShell.js'),
   'utf8',
@@ -214,6 +218,7 @@ for (const locale of manifest.language.locales) {
     translation.externalLinkLabel,
     `${locale.code} is missing the external-link announcement`,
   );
+  assert.ok(translation.themeToggleLabel, `${locale.code} is missing the theme-toggle label`);
   assert.deepEqual(
     Object.keys(translation.landing),
     ['kicker', 'title', 'summary', 'sectionsLabel'],
@@ -362,6 +367,10 @@ assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /escapeHtml\(shellCopy\.brand\).*escapeHtml\(shellCopy\.homeLabel\)/);
 assert.doesNotMatch(shellSource, /escapeHtml\(shellCopy\.brand\)\}\s+home/);
 assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.externalLinkLabel\)\}"/);
+assert.match(
+  shellSource,
+  /aria-label="\$\{escapeHtml\(shellCopy\.themeToggleLabel\)\}" title="\$\{escapeHtml\(shellCopy\.themeToggleLabel\)\}"/,
+);
 assert.match(mobileSearchSource, /useDocusaurusContext\(\)/);
 assert.match(mobileSearchSource, /SHELL_TRANSLATIONS\[i18n\.currentLocale\]/);
 assert.match(mobileSearchSource, /aria-label=\{searchCopy\.placeholder\}/);
@@ -404,7 +413,7 @@ const consentFields = [
   'analytics', 'analyticsDescription', 'collectedTitle', 'collectedText',
   'choicesTitle', 'preferencesChoices', 'bannerChoices', 'privacyNote',
   'save', 'reject', 'noticeLabel', 'privacy', 'bannerTitle', 'bannerText',
-  'accept', 'preferencesLink',
+  'accept', 'preferencesLink', 'feedbackLink',
 ];
 for (const locale of manifest.language.locales) {
   assert.deepEqual(
@@ -413,6 +422,11 @@ for (const locale of manifest.language.locales) {
     `Cookie consent copy is incomplete for ${locale.code}`,
   );
 }
+assert.match(docusaurusConfigSource, /data-documentation-feedback/);
+assert.match(analyticsConsentSource, /\[data-documentation-feedback\]/);
+assert.match(analyticsConsentSource, /link\.textContent = copy\.feedbackLink/);
+assert.doesNotMatch(localDeveloperCenterSource, /curl[^\n]+\|\s*grep -Fq/);
+assert.match(localDeveloperCenterSource, /response="\$\(curl[\s\S]*grep -Fq[\s\S]*<<<"\$\{response\}"/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
 assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
 assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);

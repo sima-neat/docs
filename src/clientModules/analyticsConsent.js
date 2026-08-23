@@ -17,7 +17,7 @@ const CONSENT_COPY = {
     bannerChoices: 'You can accept or reject optional analytics now and reopen these settings later.',
     privacyNote: 'Global Privacy Control is respected by keeping marketing disabled.', save: 'Save settings', reject: 'Reject optional analytics',
     noticeLabel: 'Cookie notice', privacy: 'Privacy', bannerTitle: 'Help improve the Developer Center',
-    bannerText: 'We use optional Google Analytics cookies to understand aggregate site usage. The Developer Center works without them.', accept: 'Accept analytics', preferencesLink: 'Cookie preferences',
+    bannerText: 'We use optional Google Analytics cookies to understand aggregate site usage. The Developer Center works without them.', accept: 'Accept analytics', preferencesLink: 'Cookie preferences', feedbackLink: 'Documentation feedback',
   },
   ko: {
     preferencesLabel: '쿠키 환경설정', preferencesEyebrow: '개인정보 보호 설정', settingsTitle: '쿠키 설정',
@@ -28,7 +28,7 @@ const CONSENT_COPY = {
     bannerChoices: '지금 선택적 분석을 허용하거나 거부하고 나중에 이 설정을 다시 열 수 있습니다.',
     privacyNote: '마케팅을 비활성화하여 Global Privacy Control을 준수합니다.', save: '설정 저장', reject: '선택적 분석 거부',
     noticeLabel: '쿠키 알림', privacy: '개인정보 보호', bannerTitle: '개발자 센터 개선에 참여해 주세요',
-    bannerText: '집계된 사이트 사용 현황을 이해하기 위해 선택적 Google Analytics 쿠키를 사용합니다. 쿠키를 허용하지 않아도 개발자 센터는 작동합니다.', accept: '분석 허용', preferencesLink: '쿠키 환경설정',
+    bannerText: '집계된 사이트 사용 현황을 이해하기 위해 선택적 Google Analytics 쿠키를 사용합니다. 쿠키를 허용하지 않아도 개발자 센터는 작동합니다.', accept: '분석 허용', preferencesLink: '쿠키 환경설정', feedbackLink: '문서 피드백',
   },
   ja: {
     preferencesLabel: 'Cookie の設定', preferencesEyebrow: 'プライバシー設定', settingsTitle: 'Cookie 設定',
@@ -39,7 +39,7 @@ const CONSENT_COPY = {
     bannerChoices: '任意の分析を今すぐ許可または拒否し、後で設定を再度開けます。',
     privacyNote: 'マーケティングを無効にすることで Global Privacy Control を尊重します。', save: '設定を保存', reject: '任意の分析を拒否',
     noticeLabel: 'Cookie に関するお知らせ', privacy: 'プライバシー', bannerTitle: 'デベロッパーセンターの改善にご協力ください',
-    bannerText: 'サイト利用状況の集計を把握するため、任意の Google Analytics Cookie を使用します。許可しなくてもデベロッパーセンターは動作します。', accept: '分析を許可', preferencesLink: 'Cookie の設定',
+    bannerText: 'サイト利用状況の集計を把握するため、任意の Google Analytics Cookie を使用します。許可しなくてもデベロッパーセンターは動作します。', accept: '分析を許可', preferencesLink: 'Cookie の設定', feedbackLink: 'ドキュメントのフィードバック',
   },
   'zh-Hant': {
     preferencesLabel: 'Cookie 偏好設定', preferencesEyebrow: '隱私權偏好設定', settingsTitle: 'Cookie 設定',
@@ -50,7 +50,7 @@ const CONSENT_COPY = {
     bannerChoices: '您現在可以接受或拒絕選用的分析功能，稍後也可重新開啟這些設定。',
     privacyNote: '我們會停用行銷功能，以尊重全域隱私控制 (GPC)。', save: '儲存設定', reject: '拒絕選用分析',
     noticeLabel: 'Cookie 通知', privacy: '隱私權', bannerTitle: '協助改善開發者中心',
-    bannerText: '我們使用選用的 Google Analytics Cookie 來瞭解彙總的網站使用情況。即使不允許，開發者中心仍可正常運作。', accept: '接受分析', preferencesLink: 'Cookie 偏好設定',
+    bannerText: '我們使用選用的 Google Analytics Cookie 來瞭解彙總的網站使用情況。即使不允許，開發者中心仍可正常運作。', accept: '接受分析', preferencesLink: 'Cookie 偏好設定', feedbackLink: '文件意見回饋',
   },
   uk: {
     preferencesLabel: 'Налаштування файлів cookie', preferencesEyebrow: 'Налаштування конфіденційності', settingsTitle: 'Налаштування файлів cookie',
@@ -61,7 +61,7 @@ const CONSENT_COPY = {
     bannerChoices: 'Ви можете зараз дозволити або відхилити необов’язкову аналітику й повернутися до цих налаштувань пізніше.',
     privacyNote: 'Глобальний контроль конфіденційності враховується завдяки вимкненню маркетингу.', save: 'Зберегти налаштування', reject: 'Відхилити необов’язкову аналітику',
     noticeLabel: 'Повідомлення про файли cookie', privacy: 'Конфіденційність', bannerTitle: 'Допоможіть покращити Центр розробника',
-    bannerText: 'Ми використовуємо необов’язкові файли cookie Google Analytics, щоб розуміти сукупне використання сайту. Центр розробника працює і без них.', accept: 'Дозволити аналітику', preferencesLink: 'Налаштування файлів cookie',
+    bannerText: 'Ми використовуємо необов’язкові файли cookie Google Analytics, щоб розуміти сукупне використання сайту. Центр розробника працює і без них.', accept: 'Дозволити аналітику', preferencesLink: 'Налаштування файлів cookie', feedbackLink: 'Відгук про документацію',
   },
 };
 
@@ -430,6 +430,9 @@ function bindPreferenceLinks() {
   const copy = consentCopy();
   document.querySelectorAll('[data-cookie-preferences]').forEach((link) => {
     link.textContent = copy.preferencesLink;
+  });
+  document.querySelectorAll('[data-documentation-feedback]').forEach((link) => {
+    link.textContent = copy.feedbackLink;
   });
 
   document.addEventListener(

@@ -28,6 +28,7 @@ const SHELL_TRANSLATIONS = {
     brand: 'Developer Portal',
     homeLabel: 'Home',
     externalLinkLabel: 'Opens in new tab',
+    themeToggleLabel: 'Switch between dark and light mode',
     landing: {
       kicker: 'Developer Center',
       title: 'Open, Simple, Performant, Neat!',
@@ -63,6 +64,7 @@ const SHELL_TRANSLATIONS = {
     brand: '개발자 포털',
     homeLabel: '홈',
     externalLinkLabel: '새 탭에서 열림',
+    themeToggleLabel: '다크 모드와 라이트 모드 전환',
     landing: {
       kicker: '개발자 센터',
       title: '개방적이고, 단순하며, 뛰어난 성능의 Neat!',
@@ -98,6 +100,7 @@ const SHELL_TRANSLATIONS = {
     brand: '開発者ポータル',
     homeLabel: 'ホーム',
     externalLinkLabel: '新しいタブで開きます',
+    themeToggleLabel: 'ダークモードとライトモードを切り替える',
     landing: {
       kicker: 'デベロッパーセンター',
       title: 'オープン、シンプル、高性能、Neat！',
@@ -133,6 +136,7 @@ const SHELL_TRANSLATIONS = {
     brand: '開發者入口網站',
     homeLabel: '首頁',
     externalLinkLabel: '在新分頁中開啟',
+    themeToggleLabel: '切換深色與淺色模式',
     landing: {
       kicker: '開發者中心',
       title: '開放、簡單、高效能、Neat！',
@@ -168,6 +172,7 @@ const SHELL_TRANSLATIONS = {
     brand: 'Портал розробника',
     homeLabel: 'Головна сторінка',
     externalLinkLabel: 'Відкривається в новій вкладці',
+    themeToggleLabel: 'Перемкнути між темною та світлою темами',
     landing: {
       kicker: 'Центр розробника',
       title: 'Відкрито, просто, продуктивно, Neat!',

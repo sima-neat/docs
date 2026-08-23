@@ -210,6 +210,7 @@ wait_for_content() {
   local expected=$3
   local pid=$4
   local output_log=$5
+  local response
 
   for _ in {1..40}; do
     if ! kill -0 "${pid}" 2>/dev/null; then
@@ -217,8 +218,10 @@ wait_for_content() {
       tail -50 "${output_log}" >&2 || true
       return 1
     fi
-    if curl --fail --silent "${url}" | grep -Fq "${expected}"; then
-      return 0
+    if response="$(curl --fail --silent "${url}")"; then
+      if grep -Fq "${expected}" <<<"${response}"; then
+        return 0
+      fi
     fi
     sleep 0.25
   done
