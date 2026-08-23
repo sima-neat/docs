@@ -29,7 +29,7 @@ sima@modalix:~$ ip a | grep inet
 ```
 
 <Tabs groupId="network-method">
-<TabItem value="linux-shell" label="Network Setup in the Linux Shell" default>
+<TabItem value="linux-shell" label="Налаштування мережі в оболонці Linux" default>
 
 :::note
 Якщо ви хочете перемикатися між статичною та DHCP-конфігурацією без перезавантаження пристрою, дотримуйтесь цих інструкцій.
@@ -81,7 +81,7 @@ modalix:~$ sudo nmcli connection up end0-static
 Замініть `192.168.1.20/24` на потрібну адресу та префікс. NetworkManager зберігає профілі в каталозі `/etc/NetworkManager/system-connections/`; застарілий файл `/etc/systemd/network/20-end0-static.network`, який використовувався у версіях 2.0 і раніше, більше не існує.
 
 </TabItem>
-<TabItem value="auto-config" label="Share a Host Network Connection">
+<TabItem value="auto-config" label="Спільний доступ до мережевого підключення хоста">
 
 :::note
 - Використовуйте цей параметр, коли DevKit не може безпосередньо під’єднатися до мережі розробника.
@@ -128,7 +128,7 @@ modalix:~$ sudo nmcli connection up end0-static
 5. Якщо ви не можете виконати команду ping або підключитися до DevKit за допомогою SSH, скористайтеся методом налаштування статичної IP-адреси.
 
 </TabItem>
-<TabItem value="uboot" label="Network Setup in the U-Boot Shell">
+<TabItem value="uboot" label="Налаштування мережі в оболонці U-Boot">
 
 :::note
 Ця процедура застосовується лише до версії програмного забезпечення DevKit 2.0 або більш ранньої. Для версії 2.1 і новіших використовуйте конфігурацію в середовищі Linux. Налаштування мережі в U-Boot зберігає параметри мережі під час оновлень програмного забезпечення.

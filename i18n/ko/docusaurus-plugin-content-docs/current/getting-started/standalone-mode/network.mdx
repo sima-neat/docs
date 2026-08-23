@@ -29,7 +29,7 @@ sima@modalix:~$ ip a | grep inet
 ```
 
 <Tabs groupId="network-method">
-<TabItem value="linux-shell" label="Network Setup in the Linux Shell" default>
+<TabItem value="linux-shell" label="Linux 셸에서 네트워크 설정" default>
 
 :::note
 장치를 재부팅하지 않고 정적 IP와 DHCP 간에 전환하려면 다음 지침을 따르세요.
@@ -81,7 +81,7 @@ modalix:~$ sudo nmcli connection up end0-static
 원하는 주소와 접두사를 사용하여 `192.168.1.20/24`를 대체하십시오. NetworkManager는 프로필을 `/etc/NetworkManager/system-connections/`에 저장합니다. 2.0 버전 이하에서 사용되던 기존 `/etc/systemd/network/20-end0-static.network` 파일은 더 이상 존재하지 않습니다.
 
 </TabItem>
-<TabItem value="auto-config" label="Share a Host Network Connection">
+<TabItem value="auto-config" label="호스트 네트워크 연결 공유">
 
 :::note
 - DevKit이 개발자 네트워크에 직접 연결할 수 없을 때 이 옵션을 사용합니다.
@@ -128,7 +128,7 @@ modalix:~$ sudo nmcli connection up end0-static
 5. DevKit에 핑을 보내거나 SSH로 접속할 수 없는 경우, 정적 IP 구성 방법을 사용하십시오.
 
 </TabItem>
-<TabItem value="uboot" label="Network Setup in the U-Boot Shell">
+<TabItem value="uboot" label="U-Boot 셸에서 네트워크 설정">
 
 :::note
 이 절차는 DevKit 펌웨어 버전 2.0 이하에만 적용됩니다. 버전 2.1 이상에서는 Linux 측 구성을 사용하십시오. U-Boot에서 네트워크를 구성하면 펌웨어 업그레이드 시에도 네트워크 설정이 유지됩니다.

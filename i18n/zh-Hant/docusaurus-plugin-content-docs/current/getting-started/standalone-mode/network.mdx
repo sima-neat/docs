@@ -29,7 +29,7 @@ sima@modalix:~$ ip a | grep inet
 ```
 
 <Tabs groupId="network-method">
-<TabItem value="linux-shell" label="Network Setup in the Linux Shell" default>
+<TabItem value="linux-shell" label="Linux Shell 中的網路設定" default>
 
 :::note
 如果您想在不重新啟動設備的情況下切換靜態 IP 和 DHCP，請遵循以下說明。
@@ -81,7 +81,7 @@ modalix:~$ sudo nmcli connection up end0-static
 將「`192.168.1.20/24`」替換為您想要的地址和前綴。NetworkManager 會將設定檔儲存在「`/etc/NetworkManager/system-connections/`」中；2.0 版本及更早版本中的舊版「`/etc/systemd/network/20-end0-static.network`」檔案不再存在。
 
 </TabItem>
-<TabItem value="auto-config" label="Share a Host Network Connection">
+<TabItem value="auto-config" label="共用主機網路連線">
 
 :::note
 - 當開發套件無法直接連接到開發人員網路時，請使用此選項。
@@ -128,7 +128,7 @@ modalix:~$ sudo nmcli connection up end0-static
 5. 如果您無法透過 ping 或 SSH 連接到 DevKit，請使用靜態 IP 設定方法。
 
 </TabItem>
-<TabItem value="uboot" label="Network Setup in the U-Boot Shell">
+<TabItem value="uboot" label="U-Boot Shell 中的網路設定">
 
 :::note
 此程序僅適用於 DevKit 韌體 2.0 或更早版本。對於 2.1 或更高版本，請使用 Linux 端的配置。在 U-Boot 中配置網路可讓網路設定在韌體升級期間保留。

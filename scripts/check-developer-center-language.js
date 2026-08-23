@@ -65,6 +65,18 @@ const pcieTabLabels = {
   'zh-Hant': ['介面', '主要功能'],
   uk: ['Інтерфейси', 'Основні функції'],
 };
+const networkTabLabels = {
+  ko: ['Linux 셸에서 네트워크 설정', '호스트 네트워크 연결 공유', 'U-Boot 셸에서 네트워크 설정'],
+  ja: ['Linux シェルでのネットワーク設定', 'ホストのネットワーク接続を共有', 'U-Boot シェルでのネットワーク設定'],
+  'zh-Hant': ['Linux Shell 中的網路設定', '共用主機網路連線', 'U-Boot Shell 中的網路設定'],
+  uk: ['Налаштування мережі в оболонці Linux', 'Спільний доступ до мережевого підключення хоста', 'Налаштування мережі в оболонці U-Boot'],
+};
+const modeTabLabels = {
+  ko: ['독립 실행형 모드', 'PCIe 모드'],
+  ja: ['スタンドアロンモード', 'PCIe モード'],
+  'zh-Hant': ['獨立模式', 'PCIe 模式'],
+  uk: ['Автономний режим', 'Режим PCIe'],
+};
 const sidebarTranslationKeys = [
   'sidebar.systemDocs.category.Getting Started',
   'sidebar.systemDocs.link.Quick Start Guide',
@@ -166,9 +178,30 @@ for (const locale of manifest.language.locales) {
   );
   assert.deepEqual(
     Object.keys(translation.search),
-    ['label', 'placeholder', 'clear'],
+    [
+      'label', 'placeholder', 'clear', 'sources', 'overview', 'filtersLabel',
+      'resultsLabel', 'searching', 'unavailable', 'prompt', 'noMatches',
+      'noSectionMatches', 'error',
+    ],
     `${locale.code} is missing search translations`,
   );
+  assert.deepEqual(Object.keys(translation.search.sources), ['all', 'hardware', 'software', 'examples']);
+  if (locale.code !== 'en') {
+    for (const searchValue of [
+      ...Object.values(translation.search.sources),
+      translation.search.overview,
+      translation.search.filtersLabel,
+      translation.search.resultsLabel,
+      translation.search.searching,
+      translation.search.unavailable,
+      translation.search.prompt,
+      translation.search.noMatches,
+      translation.search.noSectionMatches,
+      translation.search.error,
+    ]) {
+      assert.ok(shellSource.includes(searchValue), `${locale.code} is missing fallback search copy`);
+    }
+  }
   assert.deepEqual(
     Object.keys(translation.navItems),
     ['hardware', 'software', 'examples', 'models', 'community'],
@@ -187,6 +220,11 @@ assert.match(
   vulcanWorkflowSource,
   /npm run fetch:serial-tool\s+npm run check:i18n-complete\s+npm --ignore-scripts run build/,
   'Vulcan deployment bypasses the translation completeness check',
+);
+assert.match(
+  vulcanWorkflowSource,
+  /name: Install shared i18n tooling[\s\S]*sima-cli" neat install i18n[\s\S]*sima-i18n" --version[\s\S]*npm run check:i18n-complete/,
+  'Vulcan deployment invokes the translation check without installing its CLI',
 );
 assert.match(
   docusaurusConfigSource,
@@ -209,6 +247,12 @@ assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
 assert.match(shellSource, /function mountSearch\(root, manifest, locale, siteRoot = '\/'\)/);
 assert.match(shellSource, /withSiteRoot\(hitRoute\(hit\), state\.siteRoot\)/);
 assert.match(shellSource, /mountSearch\(target, manifest, locale, siteRoot\)/);
+assert.match(shellSource, /const searchCopy = state\.copy/);
+assert.match(shellSource, /sources: \{\.\.\.english\.search\.sources, \.\.\.localized\.search\.sources\}/);
+assert.match(shellSource, /searchCopy\.sources\[source\.key\]/);
+assert.match(shellSource, /searchCopy\.filtersLabel/);
+assert.match(shellSource, /searchCopy\.resultsLabel/);
+assert.match(shellSource, /state\.error = state\.copy\.error/);
 assert.match(shellSource, /const routePath = withoutSiteRoot\(window\.location\.pathname, siteRoot\)/);
 assert.match(shellSource, /withSiteRoot\(localizedPath\(routePath, locale, manifest\), siteRoot\)/);
 assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
@@ -276,6 +320,17 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   const translatedCorpus = translatedDocs
     .map((translatedDoc) => fs.readFileSync(translatedDoc, 'utf8'))
     .join('\n');
+  const localizedIndexSource = fs.readFileSync(path.join(translatedDocsRoot, 'index.mdx'), 'utf8');
+  const networkSource = fs.readFileSync(
+    path.join(translatedDocsRoot, 'getting-started/standalone-mode/network.mdx'),
+    'utf8',
+  );
+  for (const tabLabel of networkTabLabels[locale]) {
+    assert.ok(networkSource.includes(`label="${tabLabel}"`), `${locale} leaves a network tab untranslated`);
+  }
+  for (const tabLabel of modeTabLabels[locale]) {
+    assert.ok(localizedIndexSource.includes(`label="${tabLabel}"`), `${locale} leaves a mode tab untranslated`);
+  }
   const modalixDevKitSource = fs.readFileSync(
     path.join(translatedDocsRoot, 'devkit/modalix-devkit.mdx'),
     'utf8',
@@ -337,6 +392,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
       /Підрозділ комп’ютерного зору/,
       'uk translates a hardware unit as an organizational subdivision',
     );
+    assert.doesNotMatch(translatedCorpus, /Налагодження зв’язків/, 'uk mistranslates networking');
+    assert.doesNotMatch(modalixDevKitSource, /через основну плату/);
     const mipiCameraSource = fs.readFileSync(
       path.join(translatedDocsRoot, 'getting-started/standalone-mode/mipi-camera-interfaces.mdx'),
       'utf8',
@@ -348,10 +405,6 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     );
   }
   if (locale === 'ko') {
-    const networkSource = fs.readFileSync(
-      path.join(translatedDocsRoot, 'getting-started/standalone-mode/network.mdx'),
-      'utf8',
-    );
     assert.match(networkSource, /:::note[\s\S]*?\n:::\n\n1\./);
     assert.doesNotMatch(networkSource, /^:::경고$/m, 'ko translates a Docusaurus directive keyword');
     assert.doesNotMatch(translatedCorpus, /Bluetooth 세면대/, 'ko translates an audio sink as a washbasin');

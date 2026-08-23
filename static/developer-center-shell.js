@@ -24,11 +24,11 @@
         {code: 'uk', shortLabel: '🇺🇦', label: 'Українська', htmlLang: 'uk-UA'},
       ],
       translations: {
-        en: {brand: 'Developer Portal', landing: {kicker: 'Developer Center', title: 'Open, Simple, Performant, Neat!', summary: 'Learn how to build physical AI with SiMa.ai technology. Explore hardware interfaces, software tools, and best practices for building high-performance AI applications.', sectionsLabel: 'Documentation sections'}, search: {label: 'Search', placeholder: 'Search Developer Center', clear: 'Clear search'}, navItems: {hardware: 'Hardware', software: 'Software', examples: 'Examples', models: 'Models', community: 'Community'}},
-        ko: {brand: '개발자 포털', landing: {kicker: '개발자 센터', title: '개방적이고, 단순하며, 뛰어난 성능의 Neat!', summary: 'SiMa.ai 기술로 피지컬 AI를 구축하는 방법을 알아보세요. 하드웨어 인터페이스, 소프트웨어 도구, 고성능 AI 애플리케이션 구축을 위한 모범 사례를 살펴보세요.', sectionsLabel: '문서 섹션'}, search: {label: '검색', placeholder: '개발자 센터 검색', clear: '검색 지우기'}, navItems: {hardware: '하드웨어', software: '소프트웨어', examples: '예제', models: '모델', community: '커뮤니티'}},
-        ja: {brand: '開発者ポータル', landing: {kicker: 'デベロッパーセンター', title: 'オープン、シンプル、高性能、Neat！', summary: 'SiMa.ai のテクノロジーを使用してフィジカル AI を構築する方法を学びましょう。ハードウェアインターフェース、ソフトウェアツール、高性能 AI アプリケーションを構築するためのベストプラクティスをご覧ください。', sectionsLabel: 'ドキュメントセクション'}, search: {label: '検索', placeholder: 'デベロッパーセンターを検索', clear: '検索をクリア'}, navItems: {hardware: 'ハードウェア', software: 'ソフトウェア', examples: '使用例', models: 'モデル', community: 'コミュニティ'}},
-        'zh-Hant': {brand: '開發者入口網站', landing: {kicker: '開發者中心', title: '開放、簡單、高效能、Neat！', summary: '瞭解如何運用 SiMa.ai 技術打造實體 AI。探索硬體介面、軟體工具，以及建置高效能 AI 應用程式的最佳實務。', sectionsLabel: '文件區段'}, search: {label: '搜尋', placeholder: '搜尋開發者中心', clear: '清除搜尋'}, navItems: {hardware: '硬體', software: '軟體', examples: '範例', models: '模型', community: '社群'}},
-        uk: {brand: 'Портал розробника', landing: {kicker: 'Центр розробника', title: 'Відкрито, просто, продуктивно, Neat!', summary: 'Дізнайтеся, як створювати фізичний ШІ за допомогою технологій SiMa.ai. Ознайомтеся з апаратними інтерфейсами, програмними інструментами та найкращими практиками створення високопродуктивних застосунків ШІ.', sectionsLabel: 'Розділи документації'}, search: {label: 'Пошук', placeholder: 'Пошук у Центрі розробника', clear: 'Очистити пошук'}, navItems: {hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади', models: 'Моделі', community: 'Спільнота'}},
+        en: {brand: 'Developer Portal', landing: {kicker: 'Developer Center', title: 'Open, Simple, Performant, Neat!', summary: 'Learn how to build physical AI with SiMa.ai technology. Explore hardware interfaces, software tools, and best practices for building high-performance AI applications.', sectionsLabel: 'Documentation sections'}, search: {label: 'Search', placeholder: 'Search Developer Center', clear: 'Clear search', sources: {all: 'All', hardware: 'Hardware', software: 'Software', examples: 'Examples'}, overview: 'Overview', filtersLabel: 'Search result filters', resultsLabel: 'Search results', searching: 'Searching...', unavailable: 'Search is unavailable in this local build.', prompt: 'Search hardware, software, APIs, and examples.', noMatches: 'No matches found.', noSectionMatches: 'No matches in this section.', error: 'Search failed.'}, navItems: {hardware: 'Hardware', software: 'Software', examples: 'Examples', models: 'Models', community: 'Community'}},
+        ko: {brand: '개발자 포털', landing: {kicker: '개발자 센터', title: '개방적이고, 단순하며, 뛰어난 성능의 Neat!', summary: 'SiMa.ai 기술로 피지컬 AI를 구축하는 방법을 알아보세요. 하드웨어 인터페이스, 소프트웨어 도구, 고성능 AI 애플리케이션 구축을 위한 모범 사례를 살펴보세요.', sectionsLabel: '문서 섹션'}, search: {label: '검색', placeholder: '개발자 센터 검색', clear: '검색 지우기', sources: {all: '전체', hardware: '하드웨어', software: '소프트웨어', examples: '예제'}, overview: '개요', filtersLabel: '검색 결과 필터', resultsLabel: '검색 결과', searching: '검색 중...', unavailable: '이 로컬 빌드에서는 검색을 사용할 수 없습니다.', prompt: '하드웨어, 소프트웨어, API 및 예제를 검색하세요.', noMatches: '일치하는 결과가 없습니다.', noSectionMatches: '이 섹션에는 일치하는 결과가 없습니다.', error: '검색에 실패했습니다.'}, navItems: {hardware: '하드웨어', software: '소프트웨어', examples: '예제', models: '모델', community: '커뮤니티'}},
+        ja: {brand: '開発者ポータル', landing: {kicker: 'デベロッパーセンター', title: 'オープン、シンプル、高性能、Neat！', summary: 'SiMa.ai のテクノロジーを使用してフィジカル AI を構築する方法を学びましょう。ハードウェアインターフェース、ソフトウェアツール、高性能 AI アプリケーションを構築するためのベストプラクティスをご覧ください。', sectionsLabel: 'ドキュメントセクション'}, search: {label: '検索', placeholder: 'デベロッパーセンターを検索', clear: '検索をクリア', sources: {all: 'すべて', hardware: 'ハードウェア', software: 'ソフトウェア', examples: '使用例'}, overview: '概要', filtersLabel: '検索結果フィルター', resultsLabel: '検索結果', searching: '検索中...', unavailable: 'このローカルビルドでは検索を利用できません。', prompt: 'ハードウェア、ソフトウェア、API、使用例を検索します。', noMatches: '一致する結果がありません。', noSectionMatches: 'このセクションには一致する結果がありません。', error: '検索に失敗しました。'}, navItems: {hardware: 'ハードウェア', software: 'ソフトウェア', examples: '使用例', models: 'モデル', community: 'コミュニティ'}},
+        'zh-Hant': {brand: '開發者入口網站', landing: {kicker: '開發者中心', title: '開放、簡單、高效能、Neat！', summary: '瞭解如何運用 SiMa.ai 技術打造實體 AI。探索硬體介面、軟體工具，以及建置高效能 AI 應用程式的最佳實務。', sectionsLabel: '文件區段'}, search: {label: '搜尋', placeholder: '搜尋開發者中心', clear: '清除搜尋', sources: {all: '全部', hardware: '硬體', software: '軟體', examples: '範例'}, overview: '概覽', filtersLabel: '搜尋結果篩選條件', resultsLabel: '搜尋結果', searching: '搜尋中...', unavailable: '此本機建置無法使用搜尋功能。', prompt: '搜尋硬體、軟體、API 和範例。', noMatches: '找不到相符結果。', noSectionMatches: '此區段中找不到相符結果。', error: '搜尋失敗。'}, navItems: {hardware: '硬體', software: '軟體', examples: '範例', models: '模型', community: '社群'}},
+        uk: {brand: 'Портал розробника', landing: {kicker: 'Центр розробника', title: 'Відкрито, просто, продуктивно, Neat!', summary: 'Дізнайтеся, як створювати фізичний ШІ за допомогою технологій SiMa.ai. Ознайомтеся з апаратними інтерфейсами, програмними інструментами та найкращими практиками створення високопродуктивних застосунків ШІ.', sectionsLabel: 'Розділи документації'}, search: {label: 'Пошук', placeholder: 'Пошук у Центрі розробника', clear: 'Очистити пошук', sources: {all: 'Усі', hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади'}, overview: 'Огляд', filtersLabel: 'Фільтри результатів пошуку', resultsLabel: 'Результати пошуку', searching: 'Пошук...', unavailable: 'Пошук недоступний у цій локальній збірці.', prompt: 'Шукайте в апаратній документації, програмному забезпеченні, API та прикладах.', noMatches: 'Збігів не знайдено.', noSectionMatches: 'У цьому розділі збігів не знайдено.', error: 'Не вдалося виконати пошук.'}, navItems: {hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади', models: 'Моделі', community: 'Спільнота'}},
       },
     },
     runtimeConfig: '/developer-center-runtime.json',
@@ -165,7 +165,11 @@
       ...english,
       ...localized,
       landing: {...english.landing, ...localized.landing},
-      search: {...english.search, ...localized.search},
+      search: {
+        ...english.search,
+        ...localized.search,
+        sources: {...english.search.sources, ...localized.search.sources},
+      },
       navItems: {...english.navItems, ...localized.navItems},
     };
   }
@@ -344,8 +348,8 @@
     return hit.section || hit.category || hit.hierarchy?.lvl1 || sourceLabel(source);
   }
 
-  function displaySectionLabel(section, source) {
-    return section === sourceLabel(source) ? 'Overview' : section;
+  function displaySectionLabel(section, source, searchCopy) {
+    return section === sourceLabel(source) ? searchCopy.overview : section;
   }
 
   function filterKey(source, section) {
@@ -444,6 +448,7 @@
   function renderSearchResults(root, state) {
     const panel = root.querySelector('[data-developer-center-search-panel]');
     if (!panel) return;
+    const searchCopy = state.copy;
 
     const sourceCounts = new Map(SEARCH_SOURCES.map((source) => [source.key, 0]));
     const categoryCounts = new Map();
@@ -479,7 +484,11 @@
     };
     const sourceTree = SEARCH_SOURCES.map((source) => {
       if (source.key === 'all') {
-        return filterButton({key: 'all', label: 'All', count: sourceCounts.get('all') || 0});
+        return filterButton({
+          key: 'all',
+          label: searchCopy.sources.all,
+          count: sourceCounts.get('all') || 0,
+        });
       }
 
       const sourceCount = sourceCounts.get(source.key) || 0;
@@ -489,7 +498,7 @@
         .map(([key, count]) =>
           filterButton({
             key,
-            label: displaySectionLabel(key.slice(source.key.length + 1), source.key),
+            label: displaySectionLabel(key.slice(source.key.length + 1), source.key, searchCopy),
             count,
             className: ' developer-center-search-filter-sub',
           }),
@@ -500,7 +509,7 @@
         <div class="developer-center-search-filter-group">
           ${filterButton({
             key: source.key,
-            label: source.label,
+            label: searchCopy.sources[source.key],
             count: sourceCount,
             className: ' developer-center-search-filter-source',
           })}
@@ -510,20 +519,20 @@
 
     let content = '';
     if (state.loading) {
-      content = '<div class="developer-center-search-status">Searching...</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.searching)}</div>`;
     } else if (state.error) {
       content = `<div class="developer-center-search-status developer-center-search-error">${escapeHtml(state.error)}</div>`;
     } else if (state.searchConfigured === false) {
-      content = '<div class="developer-center-search-status">Search is unavailable in this local build.</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.unavailable)}</div>`;
     } else if (!state.query.trim()) {
-      content = '<div class="developer-center-search-status">Search hardware, software, APIs, and examples.</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.prompt)}</div>`;
     } else if (state.hits.length === 0) {
-      content = '<div class="developer-center-search-status">No matches found.</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.noMatches)}</div>`;
     } else {
       content = `
         <div class="developer-center-search-layout">
-          <aside class="developer-center-search-filters" aria-label="Search result filters">${sourceTree}</aside>
-          <section class="developer-center-search-results" aria-label="Search results">
+          <aside class="developer-center-search-filters" aria-label="${escapeHtml(searchCopy.filtersLabel)}">${sourceTree}</aside>
+          <section class="developer-center-search-results" aria-label="${escapeHtml(searchCopy.resultsLabel)}">
             ${
               visibleHits.length
                 ? visibleHits
@@ -533,12 +542,12 @@
                       return `
                         <a class="developer-center-search-result" href="${escapeHtml(withSiteRoot(hitRoute(hit), state.siteRoot))}">
                           <span class="developer-center-search-title">${sanitizeHighlighted(hitTitle(hit))}</span>
-                          <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source))}</span>
+                          <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source, searchCopy))}</span>
                           <span class="developer-center-search-snippet">${sanitizeHighlighted(hitSnippet(hit))}</span>
                         </a>`;
                     })
                     .join('')
-                : '<div class="developer-center-search-status">No matches in this section.</div>'
+                : `<div class="developer-center-search-status">${escapeHtml(searchCopy.noSectionMatches)}</div>`
             }
           </section>
         </div>`;
@@ -623,7 +632,7 @@
       if (requestId !== state.requestId) return;
       state.hits = [];
       state.loading = false;
-      state.error = err?.message || 'Search request failed.';
+      state.error = state.copy.error;
       renderSearchResults(root, state);
     }
   }
@@ -644,6 +653,7 @@
 
     const state = {
       activeFilter: 'all',
+      copy: shellTranslations(manifest, locale).search,
       error: '',
       hits: [],
       loading: false,
