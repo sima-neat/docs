@@ -85,11 +85,16 @@ function syncNativeNavbarLocale() {
     const routePath = developerCenterShell.withoutSiteRoot(pathname, SITE_ROOT);
     const section = developerCenterShell.activeSectionForPath(routePath);
     const absoluteHref = new URL(link.href, window.location.href);
-    const externalItem = developerCenterShell.externalItems.find((item) => {
-      const itemHref = new URL(item.href);
-      return itemHref.origin === absoluteHref.origin && itemHref.pathname === absoluteHref.pathname;
+    const configuredItem = developerCenterShell.navbarItems().find((item) => {
+      if (item.external) {
+        const itemHref = new URL(item.href);
+        return itemHref.origin === absoluteHref.origin && itemHref.pathname === absoluteHref.pathname;
+      }
+      return developerCenterShell.normalizePath(
+        developerCenterShell.withoutLocalePrefix(routePath),
+      ) === developerCenterShell.normalizePath(item.href);
     });
-    const key = externalItem?.key || section;
+    const key = configuredItem?.key || section;
 
     if (navCopy[key]) {
       const textNode = Array.from(link.childNodes).find((node) => node.nodeType === Node.TEXT_NODE);

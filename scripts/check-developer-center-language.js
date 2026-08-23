@@ -364,7 +364,9 @@ assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale
 assert.match(shellClientSource, /function syncNativeNavbarLocale\(\)/);
 assert.match(shellClientSource, /SHELL_TRANSLATIONS\[locale\]\?\.navItems/);
 assert.match(shellClientSource, /textNode\.nodeValue = navCopy\[key\]/);
-assert.match(shellClientSource, /externalItems\.find/);
+assert.match(shellClientSource, /navbarItems\(\)\.find/);
+assert.match(shellClientSource, /withoutLocalePrefix\(routePath\)/);
+assert.match(shellClientSource, /const key = configuredItem\?\.key \|\| section/);
 assert.match(shellClientSource, /withoutSiteRoot\(pathname, SITE_ROOT\)/);
 assert.match(shellClientSource, /function watchNativeSectionNavigation\(\)/);
 assert.match(shellClientSource, /function syncLocalizedContentLinks\(\)/);
@@ -453,6 +455,16 @@ assert.match(
     'utf8',
   ),
   /以下に示す eLxr 固有の値を使用して、その手順に従ってください/,
+);
+assert.match(
+  fs.readFileSync(
+    path.join(
+      docsRoot,
+      'i18n/ja/docusaurus-plugin-content-docs/current/reference/tech-notes/elxr-conversion.mdx',
+    ),
+    'utf8',
+  ),
+  /\*\*Yocto ベースの DevKit\*\*/,
 );
 const localizedNfsTargets = {
   ja: 'Modalix 上で次の手順を実行します',
