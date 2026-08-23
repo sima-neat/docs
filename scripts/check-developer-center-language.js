@@ -418,6 +418,51 @@ const ukrainianBluetoothSource = fs.readFileSync(
 );
 assert.match(ukrainianBluetoothSource, /приймач A2DP/);
 assert.doesNotMatch(ukrainianBluetoothSource, /джерело A2DP/);
+assert.match(
+  fs.readFileSync(
+    path.join(
+      docsRoot,
+      'i18n/ko/docusaurus-plugin-content-docs/current/reference/tech-notes/bluetooth.mdx',
+    ),
+    'utf8',
+  ),
+  /eLxr 런타임에서 실행되는 SDK 릴리스 \*\*2\.1\.0\*\* 이상/,
+);
+assert.match(
+  fs.readFileSync(
+    path.join(docsRoot, 'i18n/ja/docusaurus-plugin-content-docs/current/reference/tech-notes/ros2.mdx'),
+    'utf8',
+  ),
+  /eLxr ランタイム上で動作する SDK リリース \*\*2\.1\.0\*\* 以降/,
+);
+assert.match(
+  fs.readFileSync(
+    path.join(
+      docsRoot,
+      'i18n/ja/docusaurus-plugin-content-docs/current/reference/tech-notes/elxr-conversion.mdx',
+    ),
+    'utf8',
+  ),
+  /以下に示す eLxr 固有の値を使用して、その手順に従ってください/,
+);
+const localizedNfsTargets = {
+  ja: 'Modalix 上で次の手順を実行します',
+  ko: 'Modalix에서 다음 단계를 수행하세요',
+  'zh-Hant': 'Modalix 上執行以下步驟',
+  uk: 'наведені нижче дії на пристрої Modalix',
+};
+for (const [locale, targetCopy] of Object.entries(localizedNfsTargets)) {
+  assert.ok(
+    fs.readFileSync(
+      path.join(
+        docsRoot,
+        `i18n/${locale}/docusaurus-plugin-content-docs/current/reference/tech-notes/nfs.mdx`,
+      ),
+      'utf8',
+    ).includes(targetCopy),
+    `${locale} NFS procedure does not identify Modalix as the execution target`,
+  );
+}
 assert.match(landingSource, /\{copy\.navItems\.quickstart\}/);
 assert.doesNotMatch(landingSource, />\s*Quick Start Guide\s*</);
 assert.match(landingSource, /data-developer-center-sections/);

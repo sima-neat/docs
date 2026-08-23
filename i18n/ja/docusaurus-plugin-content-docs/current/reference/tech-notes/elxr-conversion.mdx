@@ -63,7 +63,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>手順2：Netboot を使用して eLxr eMMC にイメージを書き込み、フラッシュを実行します。</strong></summary>
 
-変換の残りの部分は、標準の TFTP ネットワークブートとフラッシュ手順を使用します。詳細は、次のドキュメントを参照してください。 [ネットワークブートによる復旧](/ja/hardware/getting-started/firmware-update/net-boot)その手順に従って、 eLxr以下に具体的な値を記載します。
+変換の残りの手順では、[ネットワークブートによる復旧](/ja/hardware/getting-started/firmware-update/net-boot)に記載されている標準の TFTP ネットブートおよびフラッシュ手順を使用します。以下に示す eLxr 固有の値を使用して、その手順に従ってください。
 
 - **手順2（TFTPサーバーの起動）：** `--boardtype modalix --fwtype elxr -v %platform_version%` を使用します。
 - **ステップ3（U-Bootの設定）：** `boot`を実行する前に、`boot_targets=net`に加えて、`cpio_name=simaai-image-palette-modalix.cpio.gz`を設定します。
