@@ -4,6 +4,8 @@ description: "Modalix DevKit를 시작하고, 독립 실행 모드 또는 PCIe �
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # 시작하기
 
 처음 Modalix DevKit을 설정하거나 기존 DevKit을 개발 환경으로 준비할 때 여기서 시작하세요.
@@ -13,7 +15,7 @@ sidebar_position: 1
     <h2>처음 설정</h2>
     <p>DevKit을 개봉하고 필요한 케이블을 연결한 후, 부팅 및 복구를 위해 직렬 액세스를 사용할 수 있도록 합니다.</p>
     <ul class="overview-link-list">
-      <li><a class="overview-link-card" href="/tools/qsg/index.html"><strong>DevKit 3.0 빠른 시작 가이드</strong><span>대화형 첫 실행 하드웨어 안내를 따릅니다.</span></a></li>
+      <li><a class="overview-link-card" href={useBaseUrl('/tools/qsg/index.html')}><strong>DevKit 3.0 빠른 시작 가이드</strong><span>대화형 첫 실행 하드웨어 안내를 따릅니다.</span></a></li>
       <li><a class="overview-link-card" href="/ko/hardware/getting-started/setup-serial"><strong>직렬 연결 구성</strong><span>DevKit 콘솔에 Windows, macOS, Linux 또는 브라우저에서 연결합니다.</span></a></li>
     </ul>
   </section>

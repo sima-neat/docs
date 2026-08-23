@@ -4,6 +4,8 @@ description: "從這裡開始啟動 Modalix DevKit，選擇獨立模式或 PCIe 
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # 開始使用
 
 當您首次啟動 Modalix DevKit 或準備現有的 DevKit 進行開發時，請從這裡開始。
@@ -13,7 +15,7 @@ sidebar_position: 1
     <h2>首次設定</h2>
     <p>從包裝盒中取出 DevKit，連接所需的電纜，並確保在啟動和恢復過程中可以存取序列埠。</p>
     <ul class="overview-link-list">
-      <li><a class="overview-link-card" href="/tools/qsg/index.html"><strong>DevKit 3.0 快速入門指南</strong><span>按照互動式的首次啟動硬體逐步說明進行操作。</span></a></li>
+      <li><a class="overview-link-card" href={useBaseUrl('/tools/qsg/index.html')}><strong>DevKit 3.0 快速入門指南</strong><span>按照互動式的首次啟動硬體逐步說明進行操作。</span></a></li>
       <li><a class="overview-link-card" href="/zh-Hant/hardware/getting-started/setup-serial"><strong>設定序列埠連線</strong><span>從 Windows、macOS、Linux 或瀏覽器連接到 DevKit 主控台。</span></a></li>
     </ul>
   </section>

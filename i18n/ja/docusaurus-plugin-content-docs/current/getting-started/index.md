@@ -4,6 +4,8 @@ description: "Modalix DevKit のセットアップはここから開始します
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # はじめに
 
 Modalix DevKitを初めてセットアップする場合、または既存のDevKitを開発用に準備する場合は、ここから開始してください。
@@ -13,7 +15,7 @@ Modalix DevKitを初めてセットアップする場合、または既存のDev
     <h2>初回セットアップ</h2>
     <p>DevKitの箱から取り出し、必要なケーブルを接続し、起動およびリカバリのためにシリアルアクセスを有効にしておきます。</p>
     <ul class="overview-link-list">
-      <li><a class="overview-link-card" href="/tools/qsg/index.html"><strong>DevKit 3.0クイックスタートガイド</strong><span>インタラクティブな初回起動時のハードウェアウォークスルーに従ってください。</span></a></li>
+      <li><a class="overview-link-card" href={useBaseUrl('/tools/qsg/index.html')}><strong>DevKit 3.0クイックスタートガイド</strong><span>インタラクティブな初回起動時のハードウェアウォークスルーに従ってください。</span></a></li>
       <li><a class="overview-link-card" href="/ja/hardware/getting-started/setup-serial"><strong>シリアル接続の設定</strong><span>DevKitコンソールに、Windows、macOS、Linux、またはブラウザから接続します。</span></a></li>
     </ul>
   </section>

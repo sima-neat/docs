@@ -16,6 +16,10 @@ const landingSource = fs.readFileSync(
   path.join(docsRoot, 'src/pages/index.jsx'),
   'utf8',
 );
+const gettingStartedSource = fs.readFileSync(
+  path.join(docsRoot, 'docs/getting-started/index.md'),
+  'utf8',
+);
 const i18nReadmeSource = fs.readFileSync(path.join(docsRoot, 'i18n/README.md'), 'utf8');
 const docusaurusConfigSource = fs.readFileSync(
   path.join(docsRoot, 'docusaurus.config.js'),
@@ -279,6 +283,10 @@ assert.match(shellSource, /withSiteRoot\(localizedPath\(routePath, locale, manif
 assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
 assert.match(shellSource, /catch \(_\) \{\s*return null;\s*\}/);
 assert.match(shellNavigationSource, /withLocalePrefixFromPath/);
+assert.match(shellNavigationSource, /@generated\/docusaurus\.config/);
+assert.match(shellNavigationSource, /withoutSiteRoot\(window\.location\.pathname\)/);
+assert.match(shellNavigationSource, /shellConfig\.withSiteRoot\([\s\S]*SITE_ROOT/);
+assert.match(shellNavigationSource, /isCloudFrontRoutedPath\(routePath\)/);
 assert.match(shellThemeSource, /function decodeCookieEntry\(entry\)/);
 assert.match(shellSource, /placeholder="\$\{escapeHtml\(shellCopy\.search\.placeholder/);
 assert.match(shellSource, /aria-label="\$\{escapeHtml\(shellCopy\.search\.clear\)\}"/);
@@ -312,6 +320,9 @@ assert.match(landingSource, /action\.key === 'software'/);
 assert.doesNotMatch(landingSource, /@docusaurus\/Link/);
 assert.match(landingSource, /const href = useBaseUrl\(localizedActionHref\(action, locale\)\)/);
 assert.match(landingSource, /<a className=\{className\} href=\{href\}>/);
+assert.match(gettingStartedSource, /import useBaseUrl from '@docusaurus\/useBaseUrl'/);
+assert.match(gettingStartedSource, /href=\{useBaseUrl\('\/tools\/qsg\/index\.html'\)\}/);
+assert.doesNotMatch(gettingStartedSource, /href="\/tools\/qsg\/index\.html"/);
 for (const locale of shellConfig.SUPPORTED_LOCALES) {
   assert.match(hardwareRootSource, new RegExp(`(?:\\b${locale.code}|["']${locale.code}["'])\\s*:`));
 }
@@ -342,6 +353,16 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     .map((translatedDoc) => fs.readFileSync(translatedDoc, 'utf8'))
     .join('\n');
   const localizedIndexSource = fs.readFileSync(path.join(translatedDocsRoot, 'index.mdx'), 'utf8');
+  const localizedGettingStartedSource = fs.readFileSync(
+    path.join(translatedDocsRoot, 'getting-started/index.md'),
+    'utf8',
+  );
+  assert.match(localizedGettingStartedSource, /import useBaseUrl from '@docusaurus\/useBaseUrl'/);
+  assert.match(
+    localizedGettingStartedSource,
+    /href=\{useBaseUrl\('\/tools\/qsg\/index\.html'\)\}/,
+  );
+  assert.doesNotMatch(localizedGettingStartedSource, /href="\/tools\/qsg\/index\.html"/);
   const networkSource = fs.readFileSync(
     path.join(translatedDocsRoot, 'getting-started/standalone-mode/network.mdx'),
     'utf8',

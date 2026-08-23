@@ -4,6 +4,8 @@ description: Start here to bring up a Modalix DevKit, choose standalone or PCIe 
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Getting Started
 
 Start here when bringing up a Modalix DevKit for the first time or preparing an existing DevKit for development.
@@ -13,7 +15,7 @@ Start here when bringing up a Modalix DevKit for the first time or preparing an 
     <h2>First-Time Setup</h2>
     <p>Unbox the DevKit, connect the required cables, and keep serial access available for bring-up and recovery.</p>
     <ul class="overview-link-list">
-      <li><a class="overview-link-card" href="/tools/qsg/index.html"><strong>DevKit 3.0 Quick Start Guide</strong><span>Follow the interactive first-run hardware walkthrough.</span></a></li>
+      <li><a class="overview-link-card" href={useBaseUrl('/tools/qsg/index.html')}><strong>DevKit 3.0 Quick Start Guide</strong><span>Follow the interactive first-run hardware walkthrough.</span></a></li>
       <li><a class="overview-link-card" href="/hardware/getting-started/setup-serial"><strong>Configure Serial Connection</strong><span>Connect to the DevKit console from Windows, macOS, Linux, or a browser.</span></a></li>
     </ul>
   </section>
