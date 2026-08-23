@@ -107,7 +107,7 @@ Agent registered
 [bluetooth]# connect AA:BB:CC:DD:EE:FF
 ```
 
-그 후 `connect` 보고서 `Connection successful`이제 장치가 아래 오디오 라우팅 단계로 준비되었습니다.
+`connect` 명령이 `Connection successful`을 표시하면 장치가 아래 오디오 라우팅 단계를 진행할 준비가 된 것입니다.
 
 </details>
 
@@ -129,7 +129,7 @@ sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
 <details open>
 <summary><strong>6단계. Bluetooth 출력 장치로 오디오 라우팅</strong></summary>
 
-~을 사용하여 Bluetooth 4단계에서 페어링 및 연결된 오디오 장치를 나열하고 사용 가능한 PipeWire/PulseAudio 출력 장치를 표시합니다.
+4단계에서 Bluetooth 오디오 장치를 페어링하고 연결한 후, 사용 가능한 PipeWire/PulseAudio 출력 장치(싱크)를 나열합니다.
 
 ```console
 sima@modalix:~$ pactl list short sinks
