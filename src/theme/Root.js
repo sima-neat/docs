@@ -120,33 +120,35 @@ function WipBanner() {
 
 function HardwareSubnav() {
   const location = useLocation();
+  const {i18n} = useDocusaurusContext();
   const locale = useShellLocale();
   const copy = LOCALIZED_UI[locale] || LOCALIZED_UI.en;
-  const hardwareBase = useBaseUrl("/hardware");
-  const gettingStartedBase = useBaseUrl("/hardware/getting-started");
-  const devkitBase = useBaseUrl("/hardware/devkit");
-  const toolsBase = useBaseUrl("/hardware/tools");
-  const referenceBase = useBaseUrl("/hardware/reference");
+  const localePrefix = i18n.currentLocale === i18n.defaultLocale ? "" : `/${i18n.currentLocale}`;
+  const hardwareBase = useBaseUrl(`${localePrefix}/hardware`);
+  const gettingStartedBase = useBaseUrl(`${localePrefix}/hardware/getting-started`);
+  const devkitBase = useBaseUrl(`${localePrefix}/hardware/devkit`);
+  const toolsBase = useBaseUrl(`${localePrefix}/hardware/tools`);
+  const referenceBase = useBaseUrl(`${localePrefix}/hardware/reference`);
 
   const links = [
     {
       label: copy.gettingStarted,
-      href: useBaseUrl("/hardware/getting-started"),
+      href: useBaseUrl(`${localePrefix}/hardware/getting-started`),
       active: location.pathname.includes(gettingStartedBase),
     },
     {
       label: copy.devkitVariants,
-      href: useBaseUrl("/hardware/devkit/modalix-devkit"),
+      href: useBaseUrl(`${localePrefix}/hardware/devkit/modalix-devkit`),
       active: location.pathname.includes(devkitBase),
     },
     {
       label: copy.tools,
-      href: useBaseUrl("/hardware/tools/web-serial-console"),
+      href: useBaseUrl(`${localePrefix}/hardware/tools/web-serial-console`),
       active: location.pathname.includes(toolsBase),
     },
     {
       label: copy.references,
-      href: useBaseUrl("/hardware/reference/bsp"),
+      href: useBaseUrl(`${localePrefix}/hardware/reference/bsp`),
       active: location.pathname.includes(referenceBase),
     },
   ];

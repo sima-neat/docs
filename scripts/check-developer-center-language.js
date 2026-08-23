@@ -157,7 +157,7 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   );
   const translatedDocs = fs.readdirSync(translatedDocsRoot, {recursive: true, withFileTypes: true})
     .filter((entry) => entry.isFile() && /\.mdx?$/.test(entry.name))
-    .map((entry) => path.join(entry.path, entry.name));
+    .map((entry) => path.join(entry.parentPath ?? entry.path, entry.name));
   for (const translatedDoc of translatedDocs) {
     assert.doesNotMatch(
       fs.readFileSync(translatedDoc, 'utf8'),
