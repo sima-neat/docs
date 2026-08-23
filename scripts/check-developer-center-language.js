@@ -249,6 +249,9 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   const translatedDocs = fs.readdirSync(translatedDocsRoot, {recursive: true, withFileTypes: true})
     .filter((entry) => entry.isFile() && /\.mdx?$/.test(entry.name))
     .map((entry) => path.join(entry.parentPath ?? entry.path, entry.name));
+  const translatedCorpus = translatedDocs
+    .map((translatedDoc) => fs.readFileSync(translatedDoc, 'utf8'))
+    .join('\n');
   const modalixDevKitSource = fs.readFileSync(
     path.join(translatedDocsRoot, 'devkit/modalix-devkit.mdx'),
     'utf8',
@@ -269,6 +272,21 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     const glossarySource = fs.readFileSync(path.join(translatedDocsRoot, 'reference/glossary.md'), 'utf8');
     assert.doesNotMatch(glossarySource, /750 MHz/, 'zh-Hant converts GOPS throughput into MHz');
     assert.match(glossarySource, /750 16 位元 GOPS/);
+  }
+  if (locale === 'ja') {
+    assert.doesNotMatch(translatedCorpus, /750\s*MHz/, 'ja converts GOPS throughput into MHz');
+    assert.match(translatedCorpus, /750 16ビット GOPS/);
+  }
+  if (locale === 'uk') {
+    assert.doesNotMatch(
+      translatedCorpus,
+      /750[^\n|.]*операцій[^\n|.]*секунду/i,
+      'uk drops the giga scale from GOPS throughput',
+    );
+    assert.ok(
+      (translatedCorpus.match(/750 16-бітних GOPS/g) || []).length >= 6,
+      'uk does not consistently preserve the canonical CVU throughput unit',
+    );
   }
   for (const translatedDoc of translatedDocs) {
     const translatedSource = fs.readFileSync(translatedDoc, 'utf8');
