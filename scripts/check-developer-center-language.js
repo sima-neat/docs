@@ -136,6 +136,11 @@ assert.match(shellSource, /addEventListener\('developer-center-language-change',
 assert.match(hardwareRootSource, /function useShellLocale\(\)/);
 assert.match(hardwareRootSource, /addEventListener\("developer-center-language-change"/);
 assert.match(landingSource, /function readLocalePreference\(routeLocale\)/);
+assert.match(
+  landingSource,
+  /routeLocale !== developerCenterShell\.DEFAULT_LOCALE\s*&& supported\.has\(routeLocale\)/,
+);
+assert.doesNotMatch(landingSource, /if \(supported\.has\(routeLocale\)\) return routeLocale/);
 assert.match(landingSource, /useDocusaurusContext\(\)/);
 assert.match(landingSource, /setLocale\(readLocalePreference\(routeLocale\)\)/);
 assert.match(landingSource, /addEventListener\('developer-center-language-change'/);

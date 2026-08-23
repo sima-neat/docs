@@ -10,7 +10,12 @@ const actions = developerCenterShell.navbarItems();
 
 function readLocalePreference(routeLocale) {
   const supported = new Set(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code));
-  if (supported.has(routeLocale)) return routeLocale;
+  if (
+    routeLocale !== developerCenterShell.DEFAULT_LOCALE
+    && supported.has(routeLocale)
+  ) {
+    return routeLocale;
+  }
 
   const cookie = document.cookie
     .split('; ')
