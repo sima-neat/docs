@@ -115,6 +115,11 @@ assert.equal(localizedPath('/ja', 'ko', manifest), '/ko');
 
 assert.equal(shellConfig.activeSectionForPath('/ja/hardware/getting-started/'), 'hardware');
 assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 'software');
+assert.equal(shellConfig.withSiteRoot('/ja/hardware', '/docs/'), '/docs/ja/hardware');
+assert.equal(
+  shellConfig.withoutSiteRoot('/docs/ja/hardware/getting-started/', '/docs/'),
+  '/ja/hardware/getting-started/',
+);
 assert.equal(shellConfig.withLocalePrefixFromPath('/hardware', '/hardware/getting-started/'), '/hardware');
 assert.equal(
   shellConfig.withLocalePrefixFromPath('/hardware', '/ja/hardware/getting-started/'),
@@ -164,9 +169,13 @@ assert.match(docusaurusConfigSource, /parts\.length===0&&preferred!==/);
 assert.match(shellClientSource, /\.navbar-sidebar a\[lang\]/);
 assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale\)/);
 assert.match(shellClientSource, /function syncNativeNavbarLocale\(\)/);
+assert.match(shellClientSource, /function watchNativeSectionNavigation\(\)/);
+assert.match(shellClientSource, /event\.stopImmediatePropagation\(\)/);
+assert.match(shellClientSource, /siteRoot: SITE_ROOT/);
 assert.match(shellClientSource, /developer-center-language-change/);
 assert.match(shellSource, /shellCopy\.navItems\[item\.key\]/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
+assert.match(shellSource, /withSiteRoot\('\/img\/sima-logo\.png', siteRoot\)/);
 assert.match(shellSource, /function decodeCookieEntry\(entry\)/);
 assert.match(shellSource, /catch \(_\) \{\s*return null;\s*\}/);
 assert.match(shellNavigationSource, /withLocalePrefixFromPath/);

@@ -55,6 +55,13 @@
     return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
   }
 
+  function withSiteRoot(pathname, siteRoot = '/') {
+    if (!pathname.startsWith('/') || !siteRoot || siteRoot === '/') {
+      return pathname;
+    }
+    return `${siteRoot.replace(/\/+$/, '')}${pathname}`;
+  }
+
   function decodeCookieEntry(entry) {
     if (!entry) return null;
     try {
@@ -805,6 +812,7 @@
     const navItems = manifest.navItems || DEFAULT_MANIFEST.navItems;
     const search = manifest.search || DEFAULT_MANIFEST.search;
     const searchOptions = search || {};
+    const siteRoot = options.siteRoot || '/';
     const searchMarkup = `
         <div class="developer-center-search" role="search">
           <label class="developer-center-search-label" for="developer-center-search-input">${escapeHtml(shellCopy.search.label)}</label>
@@ -821,9 +829,10 @@
       const externalIcon = item.external
         ? '<svg width="13.5" height="13.5" viewBox="0 0 24 24" aria-label="(opens in new tab)" class="iconExternalLink"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"></path></svg>'
         : '';
-      const href = ['hardware', 'software'].includes(item.key)
+      const routeHref = ['hardware', 'software'].includes(item.key)
         ? localizedPath(item.href, locale, manifest)
         : item.href;
+      const href = item.external ? routeHref : withSiteRoot(routeHref, siteRoot);
       const label = shellCopy.navItems[item.key] || item.label;
       return `<a class="navbar__item navbar__link${activeClass}" data-developer-center-section="${escapeHtml(item.key)}" href="${escapeHtml(href)}"${targetAttr}>${escapeHtml(label)}${externalIcon}</a>`;
     };
@@ -860,8 +869,8 @@
         <header class="navbar dev-center-navbar">
           <div class="navbar__inner">
             <div class="navbar__items">
-              <a class="navbar__brand" href="${escapeHtml(localizedPath('/', locale, manifest))}" aria-label="${escapeHtml(shellCopy.brand)} home">
-                <span class="navbar__logo"><img src="/img/sima-logo.png" alt="" /></span>
+              <a class="navbar__brand" href="${escapeHtml(withSiteRoot(localizedPath('/', locale, manifest), siteRoot))}" aria-label="${escapeHtml(shellCopy.brand)} home">
+                <span class="navbar__logo"><img src="${escapeHtml(withSiteRoot('/img/sima-logo.png', siteRoot))}" alt="" /></span>
                 <span class="navbar__title">${escapeHtml(shellCopy.brand)}</span>
               </a>
               <div class="navbar__items navbar__items--desktop">${desktopItems}</div>
@@ -927,10 +936,12 @@
     };
   }
 
-  async function loadManifest() {
-    const manifest = await fetchJson('/developer-center-shell.json');
+  async function loadManifest(siteRoot = '/') {
+    const manifest = await fetchJson(withSiteRoot('/developer-center-shell.json', siteRoot));
     const runtimePath = manifest?.runtimeConfig || DEFAULT_MANIFEST.runtimeConfig;
-    const runtimeConfig = runtimePath ? await fetchJson(runtimePath, {warn: false}) : null;
+    const runtimeConfig = runtimePath
+      ? await fetchJson(withSiteRoot(runtimePath, siteRoot), {warn: false})
+      : null;
     return mergeManifest(manifest, runtimeConfig);
   }
 
@@ -941,7 +952,7 @@
         : targetOrSelector;
     if (!target) return;
 
-    const manifest = await loadManifest();
+    const manifest = await loadManifest(options.siteRoot);
     activeManifest = manifest;
     applyTheme(initialTheme(manifest), manifest);
     render(target, manifest, options);

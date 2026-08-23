@@ -221,6 +221,19 @@ function withSiteRoot(href, siteRoot = '') {
   return `${siteRoot.replace(/\/+$/, '')}${href}`;
 }
 
+function withoutSiteRoot(pathname, siteRoot = '') {
+  const normalizedRoot = siteRoot.replace(/\/+$/, '');
+  if (!normalizedRoot || normalizedRoot === '/') {
+    return pathname;
+  }
+  if (pathname === normalizedRoot) {
+    return '/';
+  }
+  return pathname.startsWith(`${normalizedRoot}/`)
+    ? pathname.slice(normalizedRoot.length)
+    : pathname;
+}
+
 function navbarItems(siteRoot = '') {
   return [...routeItems, ...externalItems].map((item) => ({
     ...item,
@@ -254,6 +267,8 @@ module.exports = {
   navbarItems,
   normalizePath,
   withoutLocalePrefix,
+  withoutSiteRoot,
   withLocalePrefixFromPath,
+  withSiteRoot,
   routeItems,
 };

@@ -1,12 +1,19 @@
 import developerCenterShell from '../developerCenter/shell/config.cjs';
+import siteConfig from '@generated/docusaurus.config';
 
 const SHELL_ROOT_ID = 'developer-center-shell-root';
 const SHELL_SCRIPT_ID = 'developer-center-shell-script';
 const SHELL_STYLESHEET_ID = 'developer-center-shell-stylesheet';
 const DESKTOP_NAV_QUERY = '(min-width: 997px)';
+const SITE_ROOT = siteConfig.baseUrl || '/';
 
 let navbarMediaQuery;
 let mobileLanguagePickerBound = false;
+let nativeSectionNavigationBound = false;
+
+function currentRoutePath() {
+  return developerCenterShell.withoutSiteRoot(window.location.pathname, SITE_ROOT);
+}
 
 function desktopNavMediaQuery() {
   if (!navbarMediaQuery && typeof window !== 'undefined' && typeof window.matchMedia === 'function') {
@@ -24,7 +31,7 @@ function loadStylesheet() {
   const link = document.createElement('link');
   link.id = SHELL_STYLESHEET_ID;
   link.rel = 'stylesheet';
-  link.href = '/developer-center-shell.css';
+  link.href = developerCenterShell.withSiteRoot('/developer-center-shell.css', SITE_ROOT);
   document.head.appendChild(link);
 }
 
@@ -44,7 +51,7 @@ function loadScript() {
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
     script.id = SHELL_SCRIPT_ID;
-    script.src = '/developer-center-shell.js';
+    script.src = developerCenterShell.withSiteRoot('/developer-center-shell.js', SITE_ROOT);
     script.async = true;
     script.addEventListener('load', resolve, {once: true});
     script.addEventListener('error', reject, {once: true});
@@ -53,7 +60,7 @@ function loadScript() {
 }
 
 function activeSection() {
-  const path = window.location.pathname;
+  const path = currentRoutePath();
   if (path.startsWith('/software') || /^\/(?:ko|ja|zh-Hant|uk)\/software(?:\/|$)/.test(path)) return 'software';
   if (path.startsWith('/examples')) return 'examples';
   if (path.startsWith('/hardware') || /^\/(?:ko|ja|zh-Hant|uk)\/hardware(?:\/|$)/.test(path)) return 'hardware';
@@ -66,7 +73,7 @@ function nativeNavbar() {
 
 function syncNativeNavbarLocale() {
   const shell = window.DeveloperCenterShell;
-  const locale = shell?.localeFromPath?.(window.location.pathname);
+  const locale = shell?.localeFromPath?.(currentRoutePath());
   if (!locale) {
     return;
   }
@@ -80,9 +87,48 @@ function syncNativeNavbarLocale() {
 
     link.setAttribute(
       'href',
-      shell.localizedPath(developerCenterShell.SECTION_ROUTES[section], locale),
+      developerCenterShell.withSiteRoot(
+        shell.localizedPath(developerCenterShell.SECTION_ROUTES[section], locale),
+        SITE_ROOT,
+      ),
     );
   });
+}
+
+function watchNativeSectionNavigation() {
+  if (nativeSectionNavigationBound) {
+    return;
+  }
+
+  document.addEventListener('click', (event) => {
+    if (
+      event.defaultPrevented
+      || event.button !== 0
+      || event.altKey
+      || event.ctrlKey
+      || event.metaKey
+      || event.shiftKey
+    ) {
+      return;
+    }
+
+    const link = event.target.closest('nav.navbar a.navbar__link[href]');
+    if (!link || (link.target && link.target !== '_self')) {
+      return;
+    }
+
+    const url = new URL(link.href, window.location.href);
+    const routePath = developerCenterShell.withoutSiteRoot(url.pathname, SITE_ROOT);
+    const section = developerCenterShell.activeSectionForPath(routePath);
+    if (!['hardware', 'software'].includes(section)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.location.assign(`${url.pathname}${url.search}${url.hash}`);
+  }, {capture: true});
+  nativeSectionNavigationBound = true;
 }
 
 function syncNativeNavbarVisibility() {
@@ -162,12 +208,18 @@ async function mountShell() {
   await loadScript();
 
   const root = ensureRoot();
-  await window.DeveloperCenterShell?.mount(root, {active: activeSection()});
+  const routeLocale = window.DeveloperCenterShell?.localeFromPath?.(currentRoutePath());
+  await window.DeveloperCenterShell?.mount(root, {
+    active: activeSection(),
+    locale: routeLocale === developerCenterShell.DEFAULT_LOCALE ? undefined : routeLocale,
+    siteRoot: SITE_ROOT,
+  });
   document.documentElement.classList.add('developer-center-shell-active');
   syncNativeNavbarVisibility();
   syncNativeNavbarLocale();
   watchNativeNavbarVisibility();
   watchMobileLanguagePicker();
+  watchNativeSectionNavigation();
 }
 
 function scheduleMount() {
