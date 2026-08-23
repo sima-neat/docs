@@ -794,28 +794,21 @@
       const locale = normalizeLocale(event.currentTarget.dataset.locale, manifest);
       if (!locale) return;
       writeLocale(locale, manifest);
-      window.dispatchEvent(
-        new CustomEvent('developer-center-language-change', {detail: {locale}}),
-      );
       const routePath = withoutSiteRoot(window.location.pathname, siteRoot);
       const destination = withSiteRoot(localizedPath(routePath, locale, manifest), siteRoot);
+      const languageChangeEvent = new CustomEvent(
+        'developer-center-language-change',
+        {detail: {locale}},
+      );
       if (destination !== window.location.pathname) {
+        window.dispatchEvent(languageChangeEvent);
         window.location.assign(`${destination}${window.location.search}${window.location.hash}`);
         return;
       }
 
-      currentLocale = locale;
-      const selected = languageConfig(manifest).locales.find((item) => item.code === locale);
-      picker.querySelector('[data-developer-center-language-code]').textContent = selected.shortLabel;
-      const pickerCopy = shellTranslations(manifest, locale).languagePicker;
-      button.setAttribute('aria-label', `${pickerCopy.currentLabel}: ${selected.label}`);
-      options.forEach((option) => {
-        const active = option.dataset.locale === locale;
-        option.setAttribute('aria-checked', String(active));
-        option.classList.toggle('developer-center-language-option-active', active);
-      });
-      setOpen(false);
-      button.focus();
+      // The mount-level listener handles no-navigation routes (for example
+      // /agents) by rebuilding all locale-dependent shell and search state.
+      window.dispatchEvent(languageChangeEvent);
     }
 
     button.addEventListener('click', onButtonClick);

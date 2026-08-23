@@ -272,6 +272,15 @@ assert.match(shellSource, /role="menuitemradio"/);
 assert.match(shellSource, /developer-center-language-change/);
 assert.match(
   shellSource,
+  /onLanguageChange[\s\S]*render\(target, manifest, \{\.\.\.options, locale\}\)/,
+);
+assert.match(
+  shellSource,
+  /no-navigation routes[\s\S]*window\.dispatchEvent\(languageChangeEvent\)/,
+);
+assert.doesNotMatch(shellSource, /currentLocale = locale/);
+assert.match(
+  shellSource,
   /index\.languageFacet \? \{facetFilters: \[`language:\$\{locale\}`\]\} : \{\}/,
 );
 const documentationRoots = [
