@@ -326,6 +326,34 @@ jobs:
           name: vulcan-sysdoc-algolia-hardware
           path: _algolia
 
+      - name: Publish site to S3
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bucket="${SYSDOC_BUCKET:-sima-neat-sysdoc-${{ needs.resolve-target.outputs.deploy_environment }}}"
+          if [[ -z "${bucket}" ]]; then
+            echo "Missing sysdoc bucket. Set VULCAN_SYSDOC_BUCKET for ${{ needs.resolve-target.outputs.deploy_environment }}." >&2
+            exit 1
+          fi
+
+          s3_args=()
+          if [[ -n "${SYSDOC_KMS_KEY_ID:-}" ]]; then
+            s3_args+=(--sse aws:kms --sse-kms-key-id "${SYSDOC_KMS_KEY_ID}")
+          fi
+
+          aws s3 sync _site/ "s3://${bucket}/" \
+            --delete \
+            --exclude "software/*" \
+            --exclude "examples/*" \
+            "${s3_args[@]}"
+
+          if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then
+            aws cloudfront create-invalidation \
+              --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
+              --paths "/*"
+          fi
+
       - name: Publish Algolia hardware records
         shell: bash
         run: |
@@ -391,31 +419,3 @@ jobs:
             --api-key "${write_api_key}" \
             --index-name "${index_name}" \
             --prune-dead-links
-
-      - name: Publish site to S3
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          bucket="${SYSDOC_BUCKET:-sima-neat-sysdoc-${{ needs.resolve-target.outputs.deploy_environment }}}"
-          if [[ -z "${bucket}" ]]; then
-            echo "Missing sysdoc bucket. Set VULCAN_SYSDOC_BUCKET for ${{ needs.resolve-target.outputs.deploy_environment }}." >&2
-            exit 1
-          fi
-
-          s3_args=()
-          if [[ -n "${SYSDOC_KMS_KEY_ID:-}" ]]; then
-            s3_args+=(--sse aws:kms --sse-kms-key-id "${SYSDOC_KMS_KEY_ID}")
-          fi
-
-          aws s3 sync _site/ "s3://${bucket}/" \
-            --delete \
-            --exclude "software/*" \
-            --exclude "examples/*" \
-            "${s3_args[@]}"
-
-          if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then
-            aws cloudfront create-invalidation \
-              --distribution-id "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID}" \
-              --paths "/*"
-          fi

@@ -325,12 +325,12 @@ const algoliaPublishIndex = vulcanWorkflowSource.indexOf('- name: Publish Algoli
 const sitePublishIndex = vulcanWorkflowSource.indexOf('- name: Publish site to S3');
 assert.ok(algoliaPublishIndex >= 0, 'Vulcan deployment is missing the Algolia publish step');
 assert.ok(
-  sitePublishIndex > algoliaPublishIndex,
-  'Vulcan publishes the localized client before its Algolia records and facets',
+  sitePublishIndex >= 0 && sitePublishIndex < algoliaPublishIndex,
+  'Vulcan replaces Algolia records before confirming the localized site upload',
 );
 assert.ok(
-  vulcanWorkflowSource.slice(algoliaPublishIndex, sitePublishIndex).includes('--sync'),
-  'Vulcan does not synchronize Algolia before publishing the localized client',
+  vulcanWorkflowSource.slice(sitePublishIndex, algoliaPublishIndex).includes('aws s3 sync'),
+  'Vulcan does not publish the localized site before synchronizing Algolia',
 );
 assert.match(
   vulcanWorkflowSource.slice(sitePublishIndex),
@@ -370,8 +370,9 @@ assert.match(shellClientSource, /DeveloperCenterShell\?\.writeLocale\?\.\(locale
 assert.match(shellClientSource, /function syncNativeNavbarLocale\(selectedLocale\)/);
 assert.match(
   shellClientSource,
-  /const locale = selectedLocale \|\| shell\?\.localeFromPath\?\.\(currentRoutePath\(\)\)/,
+  /const locale = selectedLocale[\s\S]*\|\| docusaurusI18n\.currentLocale[\s\S]*\|\| shell\?\.localeFromPath/,
 );
+assert.match(shellClientSource, /import docusaurusI18n from '@generated\/i18n'/);
 assert.match(shellClientSource, /SHELL_TRANSLATIONS\[locale\]\?\.navItems/);
 assert.match(shellClientSource, /textNode\.nodeValue = navCopy\[key\]/);
 assert.match(shellClientSource, /navbarItems\(\)\.find/);

@@ -1,5 +1,6 @@
 import developerCenterShell from '../developerCenter/shell/config.cjs';
 import siteConfig from '@generated/docusaurus.config';
+import docusaurusI18n from '@generated/i18n';
 
 const SHELL_ROOT_ID = 'developer-center-shell-root';
 const SHELL_SCRIPT_ID = 'developer-center-shell-script';
@@ -75,7 +76,9 @@ function nativeNavbar() {
 
 function syncNativeNavbarLocale(selectedLocale) {
   const shell = window.DeveloperCenterShell;
-  const locale = selectedLocale || shell?.localeFromPath?.(currentRoutePath());
+  const locale = selectedLocale
+    || docusaurusI18n.currentLocale
+    || shell?.localeFromPath?.(currentRoutePath());
   if (!locale) {
     return;
   }
@@ -303,7 +306,8 @@ async function mountShell() {
   await loadScript();
 
   const root = ensureRoot();
-  const routeLocale = window.DeveloperCenterShell?.localeFromPath?.(currentRoutePath());
+  const routeLocale = docusaurusI18n.currentLocale
+    || window.DeveloperCenterShell?.localeFromPath?.(currentRoutePath());
   await window.DeveloperCenterShell?.mount(root, {
     active: activeSection(),
     locale: routeLocale === developerCenterShell.DEFAULT_LOCALE ? undefined : routeLocale,
