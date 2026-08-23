@@ -273,6 +273,12 @@
     }
 
     if (sectionIndex < 0) {
+      const leadingLocale = normalizeLocale(segments[0], manifest);
+      if (segments.length > 1 && leadingLocale) {
+        segments.shift();
+        if (locale !== defaultLocale) segments.unshift(locale);
+        return `/${segments.join('/')}${trailingSlash ? '/' : ''}`;
+      }
       const landingLocale = segments.length === 1
         ? normalizeLocale(segments[0], manifest)
         : null;

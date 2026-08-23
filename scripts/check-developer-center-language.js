@@ -188,6 +188,8 @@ assert.equal(
   '/software/getting-started/',
 );
 assert.equal(localizedPath('/examples/', 'ko', manifest), '/examples/');
+assert.equal(localizedPath('/ja/agents', 'en', manifest), '/agents');
+assert.equal(localizedPath('/ja/agents/', 'ko', manifest), '/ko/agents/');
 assert.equal(localizedPath('/', 'ja', manifest), '/ja/');
 assert.equal(localizedPath('/ja/', 'ko', manifest), '/ko/');
 assert.equal(localizedPath('/ja/', 'en', manifest), '/');
