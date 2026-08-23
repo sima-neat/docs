@@ -4,6 +4,8 @@ description: 安裝 Modalix PCIe 卡驅動程式並驗證 PCIe 偵測。
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -69,7 +71,7 @@ C:\Users\sima> sima-cli install drivers/windows
 
 檢查 Windows 裝置管理員中是否有 SiMa AI 裝置。
 
-<img src="/img/devkit/windows-device.jpg" alt="Windows 裝置管理員顯示 SiMa AI 裝置" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/windows-device.jpg')} alt="Windows 裝置管理員顯示 SiMa AI 裝置" style={{width: '80%', display: 'block', margin: '0 auto'}} />
 
 :::note
 驅動程式安裝後，在進行驗證之前，請重新啟動主機機器。

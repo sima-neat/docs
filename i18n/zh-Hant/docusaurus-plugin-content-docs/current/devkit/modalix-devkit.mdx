@@ -4,6 +4,8 @@ description: "用於評估 MLSoC Modalix 及建置邊緣 AI 應用程式的 Moda
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -14,7 +16,7 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="interfaces" label="介面" default>
 
-<img src="/img/devkit/modalix-devkit.png" alt="SiMa.ai Modalix SoM 介面" style={{width: '60%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="SiMa.ai Modalix SoM 介面" style={{width: '60%', display: 'block', margin: '0 auto'}} />
 
 | 介面 | 描述 |
 | --- | --- |
@@ -60,9 +62,9 @@ import TabItem from '@theme/TabItem';
   <tbody>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>圖片</th>
-      <td><img src="/img/media/modalix-devkit-blue.png" alt="版本 1" width="80%" /></td>
-      <td><img src="/img/media/modalix-devkit-white.png" alt="版本 2" width="80%" /></td>
-      <td><img src="/img/media/modalix-devkit-blue.png" alt="版本 3" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="版本 1" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-white.png')} alt="版本 2" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="版本 3" width="80%" /></td>
     </tr>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>錶殼顏色</th>

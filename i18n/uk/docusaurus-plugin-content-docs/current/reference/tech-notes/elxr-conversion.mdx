@@ -4,6 +4,8 @@ description: "Перетворіть наявний SiMa.ai Yocto DevKit на eL
 sidebar_position: 3
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Перетворіть на eLxr.
 
 Використовуйте цей посібник, щоб перетворити наявний SiMa.ai **Yocto-based DevKit** у середовище виконання **eLxr**, і за потреби повернутися до Yocto.
@@ -48,7 +50,7 @@ DISTRO = eLxr
 
 За умови, що хост має статичну IP-адресу `192.168.1.10`, а до DevKit можна отримати доступ за адресою `192.168.1.20` (див. [налаштування мережі](/uk/hardware/getting-started/standalone-mode/network)):
 
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+<img src={useBaseUrl('/img/media/host-cli.png')} alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
 sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only

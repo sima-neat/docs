@@ -4,6 +4,8 @@ description: "Комплект розробника Modalix для оцінюв�
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -14,7 +16,7 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="interfaces" label="Інтерфейси" default>
 
-<img src="/img/devkit/modalix-devkit.png" alt="SiMa.ai Modalix Інтерфейси SoM." style={{width: '60%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="SiMa.ai Modalix Інтерфейси SoM." style={{width: '60%', display: 'block', margin: '0 auto'}} />
 
 | Інтерфейс | Опис |
 | --- | --- |
@@ -45,7 +47,7 @@ import TabItem from '@theme/TabItem';
 | Мережа | 1 порт 10GigE доступний через плату-носій. |
 
 </TabItem>
-<TabItem value="revisions" label="Редагування">
+<TabItem value="revisions" label="Ревізії">
 
 <table>
   <colgroup>
@@ -55,21 +57,21 @@ import TabItem from '@theme/TabItem';
     <col />
   </colgroup>
   <thead>
-    <tr><th>Перегляд</th><th>1</th><th>2</th><th>3</th></tr>
+    <tr><th>Ревізія</th><th>1</th><th>2</th><th>3</th></tr>
   </thead>
   <tbody>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Зображення</th>
-      <td><img src="/img/media/modalix-devkit-blue.png" alt="Версія 1" width="80%" /></td>
-      <td><img src="/img/media/modalix-devkit-white.png" alt="Версія 2" width="80%" /></td>
-      <td><img src="/img/media/modalix-devkit-blue.png" alt="Версія 3" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="Версія 1" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-white.png')} alt="Версія 2" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="Версія 3" width="80%" /></td>
     </tr>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Колір корпусу</th>
       <td>Синій</td><td>Білий</td><td>Синій</td>
     </tr>
     <tr>
-      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Основна плата</th>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Плата-носій</th>
       <td>Waveshare</td><td>Seeed Studio</td><td>Waveshare</td>
     </tr>
     <tr>
@@ -85,10 +87,10 @@ import TabItem from '@theme/TabItem';
       <td>SNXXX</td><td>SNXXX-S</td><td>SNXXX</td>
     </tr>
     <tr>
-      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Перегляд SoM</th>
-      <td>1 (Без наклейки, лише основна плата для розробників)</td>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Ревізія SoM</th>
+      <td>1 (Без наклейки, лише плата-носій для розробників)</td>
       <td>1 (Без наклейки, лише плата DevKit).</td>
-      <td><a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf">2</a> (Наклейка, сумісна з материнськими платами сторонніх виробників)</td>
+      <td><a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf">2</a> (Наклейка, сумісна з платами-носіями сторонніх виробників)</td>
     </tr>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>Наявність</th>

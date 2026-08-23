@@ -18,6 +18,7 @@ from pathlib import Path
 
 
 SOURCE = "hardware"
+LEGACY_CROSS_SOURCES = {"software", "examples"}
 DEFAULT_LOCALE = "en"
 I18N_DOCS_SUBDIR = Path("docusaurus-plugin-content-docs/current")
 DEFAULT_MAX_RECORD_BYTES = 9_500
@@ -348,6 +349,29 @@ class AlgoliaClient:
                 return object_ids
             payload = {"cursor": cursor}
 
+    def browse_untagged_cross_source_object_ids(self) -> list[str]:
+        """Find legacy records that predate the shared index language facet."""
+        object_ids: list[str] = []
+        payload = {
+            "query": "",
+            "attributesToRetrieve": ["objectID", "source", "language"],
+            "hitsPerPage": 1000,
+        }
+        while True:
+            result = self.post(f"/1/indexes/{self.index}/browse", payload)
+            for hit in result.get("hits", []):
+                source = str(hit.get("source") or "").lower()
+                if (
+                    source in LEGACY_CROSS_SOURCES
+                    and not hit.get("language")
+                    and hit.get("objectID")
+                ):
+                    object_ids.append(hit["objectID"])
+            cursor = result.get("cursor")
+            if not cursor:
+                return object_ids
+            payload = {"cursor": cursor}
+
     def browse_all_records(self) -> list[dict]:
         """Return every record in the shared index (all sources) with its objectID, url, and source."""
         records: list[dict] = []
@@ -480,6 +504,19 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
     client.ensure_language_filter()
+    legacy_ids = client.browse_untagged_cross_source_object_ids()
+    print(f"[algolia-index] legacy cross-source records to tag as English={len(legacy_ids)}")
+    for start in range(0, len(legacy_ids), args.batch_size):
+        chunk = legacy_ids[start : start + args.batch_size]
+        client.batch(
+            [
+                {
+                    "action": "partialUpdateObject",
+                    "body": {"objectID": object_id, "language": DEFAULT_LOCALE},
+                }
+                for object_id in chunk
+            ]
+        )
     desired_ids = {record["objectID"] for record in records}
     existing_ids = set(client.browse_source_object_ids(SOURCE))
     stale_ids = sorted(existing_ids - desired_ids)

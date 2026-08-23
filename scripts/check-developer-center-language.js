@@ -234,6 +234,32 @@ assert.match(
   shellSource,
   /index\.languageFacet \? \{facetFilters: \[`language:\$\{locale\}`\]\} : \{\}/,
 );
+const documentationRoots = [
+  path.join(docsRoot, 'docs'),
+  ...manifest.language.locales
+    .filter(({code}) => code !== manifest.language.defaultLocale)
+    .map(({code}) =>
+      path.join(docsRoot, 'i18n', code, 'docusaurus-plugin-content-docs', 'current'),
+    ),
+];
+for (const documentationRoot of documentationRoots) {
+  for (const entry of fs.readdirSync(documentationRoot, {recursive: true})) {
+    if (!/\.mdx?$/.test(entry)) continue;
+    const source = fs.readFileSync(path.join(documentationRoot, entry), 'utf8');
+    assert.doesNotMatch(
+      source,
+      /src="\/img\//,
+      `${path.join(documentationRoot, entry)} contains an image that ignores the base URL`,
+    );
+    if (source.includes("src={useBaseUrl('/img/")) {
+      assert.match(
+        source,
+        /import useBaseUrl from '@docusaurus\/useBaseUrl';/,
+        `${path.join(documentationRoot, entry)} uses useBaseUrl without importing it`,
+      );
+    }
+  }
+}
 assert.match(docusaurusConfigSource, /type: 'localeDropdown'/);
 assert.match(
   vulcanWorkflowSource,
@@ -458,6 +484,17 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     );
     assert.doesNotMatch(translatedCorpus, /Налагодження зв’язків/, 'uk mistranslates networking');
     assert.doesNotMatch(modalixDevKitSource, /через основну плату/);
+    assert.doesNotMatch(
+      modalixDevKitSource,
+      /label="Редагування"|>Перегляд(?:<| SoM)|Основна плата|материнськими платами/,
+      'uk uses editing, view, or motherboard terminology for hardware revisions and carrier boards',
+    );
+    assert.match(modalixDevKitSource, /label="Ревізії"/);
+    assert.match(modalixDevKitSource, />Ревізія SoM</);
+    assert.ok(
+      (modalixDevKitSource.match(/плат(?:а|и|і|ами)-носі(?:й|я|ї|ями)/gi) || []).length >= 3,
+      'uk does not consistently identify the Modalix DevKit carrier board',
+    );
     const mipiCameraSource = fs.readFileSync(
       path.join(translatedDocsRoot, 'getting-started/standalone-mode/mipi-camera-interfaces.mdx'),
       'utf8',

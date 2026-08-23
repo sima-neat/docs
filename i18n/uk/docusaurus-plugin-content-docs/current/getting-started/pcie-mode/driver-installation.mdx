@@ -4,6 +4,8 @@ description: Встановіть драйвери PCIe-карти Modalix і п
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -69,7 +71,7 @@ C:\Users\sima> sima-cli install drivers/windows
 
 Перевірте диспетчер пристроїв Windows на наявність пристрою SiMa AI.
 
-<img src="/img/devkit/windows-device.jpg" alt="Диспетчер пристроїв Windows, що показує пристрій SiMa AI" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/windows-device.jpg')} alt="Диспетчер пристроїв Windows, що показує пристрій SiMa AI" style={{width: '80%', display: 'block', margin: '0 auto'}} />
 
 :::note
 Після встановлення драйвера перед перевіркою перезавантажте хост-комп’ютер.

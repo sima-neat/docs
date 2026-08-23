@@ -76,6 +76,30 @@ class LocalizedRecordTests(unittest.TestCase):
             ),
         )
 
+    def test_finds_only_untagged_legacy_cross_source_records(self) -> None:
+        class BrowseClient(MODULE.AlgoliaClient):
+            def __init__(self) -> None:
+                self.index = "docs"
+
+            def post(self, path: str, payload: dict) -> dict:
+                self.assert_payload = payload
+                return {
+                    "hits": [
+                        {"objectID": "software-legacy", "source": "Software"},
+                        {"objectID": "examples-legacy", "source": "examples", "language": ""},
+                        {"objectID": "software-ja", "source": "software", "language": "ja"},
+                        {"objectID": "hardware-legacy", "source": "hardware"},
+                    ]
+                }
+
+        client = BrowseClient()
+
+        self.assertEqual(
+            client.browse_untagged_cross_source_object_ids(),
+            ["software-legacy", "examples-legacy"],
+        )
+        self.assertIn("language", client.assert_payload["attributesToRetrieve"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -4,6 +4,8 @@ description: "MLSoC Modalix를 평가하고 엣지 AI 애플리케이션을 구�
 sidebar_position: 1
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -14,7 +16,7 @@ import TabItem from '@theme/TabItem';
 <Tabs>
 <TabItem value="interfaces" label="인터페이스" default>
 
-<img src="/img/devkit/modalix-devkit.png" alt="SiMa.ai Modalix SoM 인터페이스" style={{width: '60%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="SiMa.ai Modalix SoM 인터페이스" style={{width: '60%', display: 'block', margin: '0 auto'}} />
 
 | 인터페이스 | 설명 |
 | --- | --- |
@@ -60,9 +62,9 @@ import TabItem from '@theme/TabItem';
   <tbody>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>이미지</th>
-      <td><img src="/img/media/modalix-devkit-blue.png" alt="개정 1" width="80%" /></td>
-      <td><img src="/img/media/modalix-devkit-white.png" alt="개정 2" width="80%" /></td>
-      <td><img src="/img/media/modalix-devkit-blue.png" alt="개정 3" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="개정 1" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-white.png')} alt="개정 2" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="개정 3" width="80%" /></td>
     </tr>
     <tr>
       <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>케이스 색상</th>

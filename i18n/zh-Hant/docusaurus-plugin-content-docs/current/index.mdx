@@ -19,7 +19,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 此整合功能讓您可以在邊緣端執行多模態、生成式和視覺 AI 流程，而無需整合個別的加速器、主機 CPU 和攝影機橋接器。Modalix SoM 將 MLSoC Modalix 包裝起來，以便與載板和產品整合，並且這裡記錄的每個開發套件都使用相同的矽晶片。
 
-<img src="/img/media/modalix-arch.png" alt="Modalix 區塊圖，顯示 PCIe Gen5、10G 以太網、MIPI CSI2、Arm A65、ISP、CVU、視訊編解碼器、MLA、LPDDR5、NoC 和系統區塊" style={{width: '100%', maxWidth: '760px', display: 'block', margin: '1.5rem auto'}} />
+<img src={useBaseUrl('/img/media/modalix-arch.png')} alt="Modalix 區塊圖，顯示 PCIe Gen5、10G 以太網、MIPI CSI2、Arm A65、ISP、CVU、視訊編解碼器、MLA、LPDDR5、NoC 和系統區塊" style={{width: '100%', maxWidth: '760px', display: 'block', margin: '1.5rem auto'}} />
 
 ## DevKit 作品集
 
@@ -27,17 +27,17 @@ SiMa.ai 提供基於 MLSoC Modalix 的開發套件和 PCIe 產品，適用於邊
 
 <div className="card-grid">
   <a className="card devkit-card" href="/zh-Hant/hardware/devkit/modalix-devkit">
-    <img src="/img/media/modalix-devkit-no-label.png" alt="Modalix DevKit" />
+    <img src={useBaseUrl('/img/media/modalix-devkit-no-label.png')} alt="Modalix DevKit" />
     <h4>Modalix 開發套件</h4>
     <p>用於評估 MLSoC Modalix 並在 Modalix SoM 上構建應用程式的當前開發套件。</p>
   </a>
   <a className="card devkit-card" href="/zh-Hant/hardware/devkit/modalix-pcie-card">
-    <img src="/img/media/modalix-ea-pcie.jpg" alt="Modalix PCIe Card" />
+    <img src={useBaseUrl('/img/media/modalix-ea-pcie.jpg')} alt="Modalix PCIe Card" />
     <h4>Modalix PCIe 擴充卡</h4>
     <p>專為可擴展的邊緣運算系統設計的半高/半長 (HHHL) 擴充卡。</p>
   </a>
   <a className="card devkit-card" href="/zh-Hant/hardware/devkit/modalix-ea-kit">
-    <img src="/img/media/modalix-ea-kit.png" alt="Modalix Early Access DevKit" />
+    <img src={useBaseUrl('/img/media/modalix-ea-kit.png')} alt="Modalix Early Access DevKit" />
     <h4>Modalix 早期存取開發套件</h4>
     <p>為現有早期存取客戶提供的舊版開發套件。</p>
   </a>

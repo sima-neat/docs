@@ -4,6 +4,8 @@ description: "將現有的 SiMa.ai，以 Yocto 為基礎的 DevKit 轉換為 eLx
 sidebar_position: 3
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # 轉換為 eLxr
 
 請使用本指南，將現有的 SiMa.ai **Yocto 架構的 DevKit** 轉換為 **eLxr 執行階段環境**，並在需要時切換回 Yocto。
@@ -48,7 +50,7 @@ DISTRO = eLxr
 
 當主機使用靜態 IP 位址 `192.168.1.10`，且 DevKit 可透過 `192.168.1.20` 存取時（請參閱 [網路設定](/zh-Hant/hardware/getting-started/standalone-mode/network)）：
 
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+<img src={useBaseUrl('/img/media/host-cli.png')} alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
 sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only

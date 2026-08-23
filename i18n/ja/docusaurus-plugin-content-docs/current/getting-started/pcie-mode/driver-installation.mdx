@@ -4,6 +4,8 @@ description: Modalix PCIeカードのドライバーをインストールし、P
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -69,7 +71,7 @@ C:\Users\sima> sima-cli install drivers/windows
 
 WindowsデバイスマネージャーでSiMa AIデバイスを確認します。
 
-<img src="/img/devkit/windows-device.jpg" alt="WindowsデバイスマネージャーにSiMa AIデバイスが表示されている" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/windows-device.jpg')} alt="WindowsデバイスマネージャーにSiMa AIデバイスが表示されている" style={{width: '80%', display: 'block', margin: '0 auto'}} />
 
 :::note
 ドライバーのインストール後、検証する前にホストマシンを再起動してください。

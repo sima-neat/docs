@@ -4,6 +4,8 @@ description: "기존의 SiMa.ai 기반 Yocto DevKit를 eLxr로 변환하고, 필
 sidebar_position: 3
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # eLxr로 변환합니다.
 
 이 가이드를 사용하여 기존의 SiMa.ai 기반 Yocto **DevKit**를 **eLxr** 런타임 환경으로 변환하고, 필요에 따라 Yocto로 되돌립니다.
@@ -48,7 +50,7 @@ eLxr로 변환하기 전에 DevKit을 최신 **tRoot** 이미지로 업데이트
 
 호스트가 고정 IP 주소 `192.168.1.10`으로 설정되고 DevKit이 `192.168.1.20`에서 액세스 가능한 상태인지 확인하십시오([ 네트워크 설정 ](/ko/hardware/getting-started/standalone-mode/network) 참조).
 
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+<img src={useBaseUrl('/img/media/host-cli.png')} alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
 sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
