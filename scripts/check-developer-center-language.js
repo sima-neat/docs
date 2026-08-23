@@ -1,4 +1,5 @@
 const assert = require('node:assert');
+const crypto = require('node:crypto');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
@@ -44,7 +45,24 @@ const shellThemeSource = fs.readFileSync(
 const manifest = JSON.parse(
   fs.readFileSync(path.join(docsRoot, 'static/developer-center-shell.json'), 'utf8'),
 );
+const translationSources = JSON.parse(
+  fs.readFileSync(path.join(docsRoot, 'i18n/translation-sources.json'), 'utf8'),
+);
 const shellConfig = require('../src/developerCenter/shell/config.cjs');
+
+for (const [locale, sources] of Object.entries(translationSources)) {
+  for (const [sourcePath, expectedHash] of Object.entries(sources)) {
+    const actualHash = crypto
+      .createHash('sha256')
+      .update(fs.readFileSync(path.join(docsRoot, sourcePath)))
+      .digest('hex');
+    assert.equal(
+      actualHash,
+      expectedHash,
+      `${locale} translation source hash is stale for ${sourcePath}`,
+    );
+  }
+}
 const expectedSidebarMessages = {
   ko: ['시작하기', '빠른 시작 가이드', 'DevKit 변형', '도구', '참조', '기술 노트'],
   ja: ['はじめに', 'クイックスタートガイド', 'DevKit バリエーション', 'ツール', 'リファレンス', '技術ノート'],
