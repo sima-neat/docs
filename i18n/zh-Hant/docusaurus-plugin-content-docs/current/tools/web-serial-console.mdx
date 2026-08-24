@@ -23,6 +23,26 @@ Web Serial API 僅適用於基於 Chromium 的瀏覽器：
 Firefox 和 Safari 不支援 Web Serial API，因此無法與此工具搭配使用。
 :::
 
+### Linux：`dialout` 群組存取權限
+
+在 Linux 上，`/dev/ttyUSB0` 等序列裝置由 `root:dialout` 擁有，模式為 `crw-rw----`。新使用者帳戶預設不在 `dialout` 群組中，因此即使 `lsusb` 和 `dmesg` 顯示 USB 轉序列埠介面卡，且 `/dev/ttyUSB0` 確實存在，瀏覽器仍無法開啟裝置，**您的 DevKit 也不會出現在序列埠選擇器中**。
+
+將您的使用者加入 `dialout` 群組：
+
+```console
+sudo usermod -aG dialout $USER
+```
+
+接著請**登出後重新登入，或重新開機**，因為群組變更不會套用至目前的工作階段。使用下列指令確認：
+
+```console
+groups | grep dialout
+```
+
+:::note
+此步驟僅適用於 Linux。macOS 和 Windows 不需要此設定。
+:::
+
 ## 開始使用
 
 1. 使用 USB 轉序列埠線，將您的 SiMa.ai DevKit 連接到您的電腦。
