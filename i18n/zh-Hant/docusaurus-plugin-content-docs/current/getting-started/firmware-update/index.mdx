@@ -1,0 +1,47 @@
+---
+title: "韌體更新"
+description: "選擇如何更新、恢復或重新刷寫 Modalix DevKit 的韌體。"
+sidebar_position: 5
+---
+
+# 韌體更新
+
+請保持 DevKit 韌體的最新版本，恢復無法啟動的裝置，或安裝特定的韌體版本。
+
+:::note
+請在繼續操作之前安裝或升級 `sima-cli`。這些指南適用於最新版本的 `sima-cli`。
+:::
+
+:::warning
+將 Modalix DevKit 從 SDK 1.7 升級到 2.0 需要額外的步驟。請參閱 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion) 指南，以了解轉換程序。
+:::
+
+## 作業系統 {#os}
+
+SiMa.ai Modalix DevKit 執行 eLxr Linux，這是一個基於 Debian 的作業系統。於 **2025 年 12 月中旬之後** 出貨的設備預先安裝了 eLxr。較早的 Modalix 設備（於 2025 年 12 月中旬之前出貨）預先安裝了 Yocto，並且可以按照 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion) 文章中的說明轉換為 eLxr。
+
+eLxr 是一個基於 Debian 的作業系統，用於在 Modalix 平台上進行開發。它提供：
+
+- 完整的 Debian 套件管理系統（`apt`）
+- 一個更寬廣的使用者空間環境，用於開發和除錯。
+- 能夠直接在裝置上建立和安裝工具的能力。
+- 無需跨平台編譯，即可實現更快速的迭代。
+- 一個更廣泛的函式庫和框架生態系統
+
+請使用以下韌體更新流程來更新 DevKit，建立可啟動的復原媒體，或透過網路重新燒錄韌體。
+
+:::tip
+如果您的 DevKit 無法連線到網際網路，請使用以主機為基礎的工作流程。使用「網路啟動恢復」功能，從主機啟動並燒錄 eMMC，或使用「建立啟動映像」功能來準備可移除的啟動媒體。主機需要連線到網際網路才能下載韌體映像，除非您已經在本機擁有該映像。
+:::
+
+<div class="overview-link-columns overview-link-columns-single">
+  <section class="overview-link-panel overview-link-panel-recovery">
+    <h2>選擇更新方法</h2>
+    <p>選擇與您的 DevKit 狀態以及您需要安裝的韌體相符的路徑。</p>
+    <ul class="overview-link-list">
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/sima-cli"><strong>使用 sima-cli 更新</strong><span>透過網路更新正在運作的 DevKit。這是目前韌體更新的預設路徑。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/net-boot"><strong>網路啟動恢復</strong><span>使用 TFTP 網路啟動進行降級、預發布版本、損壞系統、eLxr 轉換或 eMMC 閃存。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/boot-image"><strong>建立啟動映像</strong><span>建立可啟動的 SD 卡、USB 磁碟或 NVMe 映像，用於恢復或設定可移除媒體。</span></a></li>
+    </ul>
+  </section>
+</div>

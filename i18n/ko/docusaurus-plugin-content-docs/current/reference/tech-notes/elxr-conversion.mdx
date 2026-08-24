@@ -1,0 +1,104 @@
+---
+title: "eLxr로 변환합니다."
+description: "기존의 SiMa.ai 기반 Yocto DevKit를 eLxr로 변환하고, 필요에 따라 원래 상태로 되돌립니다."
+sidebar_position: 3
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# eLxr로 변환합니다.
+
+이 가이드를 사용하여 기존의 SiMa.ai 기반 Yocto **DevKit**를 **eLxr** 런타임 환경으로 변환하고, 필요에 따라 Yocto로 되돌립니다.
+
+:::note
+eLxr 플랫폼은 SDK **2.0.0** 버전부터 사용 가능하며, **Modalix DevKit**에서 제공됩니다.
+
+eLxr로 변환하려면 tRoot 업데이트와 eMMC 재플래싱이 필요하며, 이는 [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)를 통해 수행됩니다.
+:::
+
+**eLxr** 플랫폼은 기존의 Yocto 환경을 대체하여 SiMa.ai DevKit의 기본 런타임으로 사용됩니다. 이 플랫폼은 다음과 같은 기능을 제공합니다.
+
+- **간소화된 업데이트** — 통합된 루트 파일 시스템 레이아웃과 더 큰 용량의 루트 파일 시스템을 제공합니다.
+- **표준 패키지 관리자** — 지속적인 패키지 관리를 제공하는 Debian 기반의 기본 패키지.
+
+마이그레이션하기 전에 DevKit에 설치된 펌웨어를 확인하세요. 시리얼 또는 SSH를 통해 연결하고 다음 명령을 실행하세요.
+
+```bash
+cat /etc/buildinfo | grep DISTRO
+```
+
+다음 중 하나가 표시되어야 합니다.
+
+```text
+DISTRO = poky
+```
+
+또는
+
+```text
+DISTRO = eLxr
+```
+
+`poky`가 보이면 아래 단계를 따라 마이그레이션하십시오.
+
+<details open>
+<summary> <strong> 1단계: 최신 tRoot로 업데이트 </strong> </summary>
+
+eLxr로 변환하기 전에 DevKit을 최신 **tRoot** 이미지로 업데이트하십시오.
+
+이 업데이트를 통해 tRoot(신뢰할 수 있는 루트)가 eLxr와 호환되도록 합니다.
+
+호스트가 고정 IP 주소 `192.168.1.10`으로 설정되고 DevKit이 `192.168.1.20`에서 액세스 가능한 상태인지 확인하십시오([ 네트워크 설정 ](/hardware/getting-started/standalone-mode/network) 참조).
+
+<img src={useBaseUrl('/img/media/host-cli.png')} alt="호스트 머신에서 실행" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```bash
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
+```
+
+업데이트가 성공적으로 완료되면 변경 사항을 적용하기 위해 **DevKit의 전원을 껐다가 다시 켜십시오.**
+
+</details>
+
+<details open>
+<summary> 단계 2. eLxr 이미지를 넷부팅하고 eMMC에 플래시합니다.<strong> </strong> </summary>
+
+나머지 변환 과정은 [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)에 설명된 표준 TFTP 넷부팅 + 플래시 절차를 사용합니다. 아래에 제시된 eLxr에 특정한 값을 사용하여 해당 절차를 따르십시오.
+
+- **2단계(TFTP 서버 시작):** `--boardtype modalix --fwtype elxr -v %platform_version%`을 사용합니다.
+- **3단계(U-Boot 구성):** `boot`를 실행하기 전에 `boot_targets=net` 외에 `cpio_name=simaai-image-palette-modalix.cpio.gz`를 설정합니다.
+- **4단계(플래시):** `f`를 `netboot>` 프롬프트에 입력합니다.
+
+![연결 다이어그램](/img/tech-notes/conversion-diagram.png)
+
+*연결 다이어그램*
+
+플래싱이 완료되고 DevKit의 전원을 껐다가 다시 켜면 eMMC에서 **eLxr**가 실행됩니다.
+
+</details>
+
+<details open>
+<summary><strong>3단계: NEAT 설치 및 앱 테스트</strong></summary>
+
+DevKit에서 eLxr를 실행하는 동안 Palette Neat SDK를 설치하고 예제 애플리케이션을 실행합니다. 설치 및 앱 테스트에 대한 자세한 내용은 [NEAT 설명서](https://developer.sima.ai/software)를 참조하십시오.
+
+</details>
+
+<details open>
+<summary><strong>Yocto로 되돌리기 (선택 사항)</strong></summary>
+
+Yocto로 다시 전환하려면 `--fwtype yocto`를 사용하여 [네트워크 부트 복구](/hardware/getting-started/firmware-update/net-boot)를 다시 수행합니다. Yocto 대상에는 `cpio_name` U-Boot 변수가 필요하지 않습니다. `setenv boot_targets net`, `saveenv`, `boot`만 사용하면 됩니다.
+
+:::note
+Yocto로 다시 변환할 때 **최소 tRoot 버전 요구 사항은 없습니다**. 따라서 위의 1단계는 건너뛸 수 있습니다.
+
+eLxr로 변환한 후 시리얼 콘솔에 NFS 관련 오류 메시지가 표시되면 안전하게 무시해도 됩니다.
+:::
+
+</details>
+
+## 요약
+
+1. 최신 **tRoot** 이미지(≥ 2.0.0)로 업데이트하세요.
+2. [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)를 수행하고, `--fwtype elxr` 및 eLxr `cpio_name`을 사용하여 eLxr를 eMMC에 플래싱합니다.
+3. Neat SDK를 설치하고 [NEAT 설명서](https://developer.sima.ai/software)를 통해 앱을 사용해 보세요.

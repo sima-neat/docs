@@ -284,7 +284,8 @@ html[data-theme='dark'] {
   }
 
   html.dc-mobile-search-open #developer-center-shell-root .navbar__items:not(.navbar__items--right),
-  html.dc-mobile-search-open #developer-center-shell-root .color-mode-toggle {
+  html.dc-mobile-search-open #developer-center-shell-root .color-mode-toggle,
+  html.dc-mobile-search-open #developer-center-shell-root .developer-center-language {
     display: none !important;
   }
 

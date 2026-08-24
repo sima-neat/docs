@@ -4,6 +4,8 @@ description: Convert an existing SiMa.ai Yocto-based DevKit to eLxr, and revert 
 sidebar_position: 3
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Convert to eLxr
 
 Use this guide to convert an existing SiMa.ai **Yocto-based DevKit** to the **eLxr** runtime environment, and to revert to Yocto when needed.
@@ -48,7 +50,7 @@ This update makes the tRoot (trusted root) compatible with eLxr.
 
 With the host on static IP `192.168.1.10` and the DevKit reachable at `192.168.1.20` (see [network setup](/hardware/getting-started/standalone-mode/network)):
 
-<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+<img src={useBaseUrl('/img/media/host-cli.png')} alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
 sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only

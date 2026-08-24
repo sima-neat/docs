@@ -1,0 +1,127 @@
+---
+title: "MIPI カメラインターフェース"
+description: "MIPIカメラインターフェースをModalix DevKit上で設定します。"
+sidebar_position: 3
+---
+
+# MIPI カメラインターフェース
+
+:::note
+続行する前に、`sima-cli` をインストールまたはアップグレードしてください。このガイドは、最新の `sima-cli` バージョンで使用することを目的としています。
+:::
+
+:::note
+この手順では、最新の`sima-cli`バージョンがインストールされたホストが必要です。また、MIPIのサポートに必要な`.dtbo`ファイルを含む、Modalix DevKitのファームウェアバージョンも必要です。
+:::
+
+**Modalix DevKit** には、カメラ入力用の2つのMIPIインターフェースが含まれています。MIPIポートは、キャリアボードに配置されています。
+
+作業を開始する前に、**Modalix DevKit** の電源を切り、MIPIカメラをMIPIポートのいずれかに接続してください。
+
+ホストから**Modalix DevKit**にシリアルケーブルを接続し、次にDevKitの電源を入れます。
+
+`sima-cli`を使用してシリアルターミナルを開き、3秒のカウントダウン中に任意のキーを押して、U-Bootにアクセスします。
+
+```console
+sima-cli serial -b 115200
+...
+Hit any key to stop autoboot:  0
+sima$
+```
+
+U-Bootで、`dtbos`変数を、適切な**デバイスツリーブロブオーバーレイ**（`.dtbo`ファイル）に設定します。正しいファイルは、**キャリアボード**、**カメラメーカー**、**センサータイプ**、および**カメラポート**によって異なります。その後、環境を保存してオペレーティングシステムを起動します。
+
+ファイル名は、次のパターンに従います。
+
+```text
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+```
+
+お使いのハードウェアに合わせて、各コンポーネントを選択してください。
+
+| コンポーネント | 価値観 | 説明 |
+| --- | --- | --- |
+| キャリアボード | `connectech`, `seeedstudio`, `waveshare` | キャリアボードのモデル |
+| カメラメーカー | `ARDU`, `ECON`, `LI` | Arducam、e-con Systems、またはLeopard Imaging |
+| センサーの種類 | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | カメラセンサーのモデル |
+| ポート | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | カメラに接続されているMIPIポートの番号 |
+
+たとえば、ポート0にLeopard ImagingのIMX477センサーが接続されたConnectechのキャリアボードです。
+
+```console
+sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+```
+
+利用可能なすべての`.dtbo`ファイルのリストは次のとおりです。
+
+```text
+modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
+modalix-som-connectech-ECON-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-IMX678-0CAM.dtbo
+modalix-som-connectech-ECON-IMX678-1CAM.dtbo
+modalix-som-connectech-ECON-IMX678-2CAM.dtbo
+modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-LI-AR0234-0CAM.dtbo
+modalix-som-connectech-LI-AR0234-1CAM.dtbo
+modalix-som-connectech-LI-AR0234-2CAM.dtbo
+modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-OG05C10-0CAM.dtbo
+modalix-som-connectech-LI-OG05C10-1CAM.dtbo
+modalix-som-connectech-LI-OG05C10-2CAM.dtbo
+modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-LI-AR0234-1CAM.dtbo
+modalix-som-waveshare-LI-AR0234-2CAM.dtbo
+modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+```
+
+インターフェースを検証するには、Modalix DevKit をディスプレイに接続し、ログインします。次に、libcamera を使用してカメラの接続を確認します。
+
+1. 利用可能なカメラの一覧：
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. カメラ1で使用できるさまざまなカメラ形式を表示します。
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. カメラ1から画像をキャプチャします。
+
+   ```console
+   sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```

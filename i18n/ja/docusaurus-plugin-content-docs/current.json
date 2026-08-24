@@ -1,0 +1,38 @@
+{
+  "sidebar.systemDocs.category.Getting Started": {
+    "message": "はじめに",
+    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.link.Quick Start Guide": {
+    "message": "クイックスタートガイド",
+    "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.Standalone Mode": {
+    "message": "スタンドアロンモード",
+    "description": "The label for category 'Standalone Mode' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.PCIe Mode": {
+    "message": "PCIe モード",
+    "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Firmware Update": {
+    "message": "ファームウェア更新",
+    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "DevKit バリエーション",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Tools": {
+    "message": "ツール",
+    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.References": {
+    "message": "リファレンス",
+    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Tech Notes": {
+    "message": "技術ノート",
+    "description": "The label for category 'Tech Notes' in sidebar 'systemDocs'"
+  }
+}

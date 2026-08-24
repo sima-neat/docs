@@ -1,0 +1,49 @@
+---
+title: "Modalix の早期アクセス版、DevKit。"
+description: "既存の Early Access のお客様向けのレガシー Modalix 開発キット。"
+sidebar_position: 2
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix の早期アクセス版、DevKit。
+
+**Modalix早期アクセス版DevKit**は、既存の Early Access のお客様向けのレガシー開発キットです。コンピュータービジョン、大規模言語モデル（LLM）、リアルタイムのマルチモーダル処理などのワークロードを Modalix ハードウェア上で評価し、プロトタイプを作成できます。
+
+<Tabs>
+<TabItem value="interfaces" label="インターフェース" default>
+
+<img src={useBaseUrl('/img/devkit/modalix-ea-kit-interfaces.png')} alt="SiMa.ai Modalix 早期アクセス版キットのインターフェース" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+| インターフェース | 説明 |
+| --- | --- |
+| イーサネットポート（eth0、eth1、eth2、eth3） | RJ45、10ギガビットイーサネットのネットワークインターフェース。リモート接続に使用。 |
+| 12V電源（J8） | 12Vの電源アダプターが必要です。付属の電源アダプターを使用して、このポートに接続してください。 |
+| 電源のオン／オフスイッチ | 電源コネクタの隣に、必要に応じてペンを使ってスイッチに触れ、デバイスの電源をオン/オフにしてください。 |
+| COMポートからホストへ | ホストシステムへの接続を通じて、デバッグ作業を容易にします。付属のケーブルにある矢印のマークが、正しい位置に接続されるように、最も左側のピンに接続してください。 |
+| リセットボタン | スタンドアロンモードでのみ利用可能です。これにより、デバイスをリセットして、再起動したり、エラーから復旧したりすることができます。 |
+| MIPI インターフェース（4つ） | カメラ同士を接続するため。 |
+| microSDカードスロット | 追加のストレージとして。 |
+
+製品の詳細については、公式サイトをご覧ください：[SiMa.ai](https://sima.ai/mlsoc/)。
+
+</TabItem>
+<TabItem value="features" label="主な機能">
+
+| 機能 | 詳細 |
+| --- | --- |
+| MLA AIのパフォーマンス | INT8ニューラルネットワーク計算において、1秒あたり50テラ演算を処理可能。また、bf16の精度にも対応。 |
+| 消費電力 | 作業負荷に応じて、8Wから12Wまで。 |
+| アプリケーション処理ユニット（APU） | 最大1.4 GHzで動作する8個のデュアルスレッド [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) コア。 |
+| ビデオエンコーダー | H.264（AVC）、H.265（HEVC）、およびMJPEGの圧縮規格に対応しています。AVCのメイン/ハイプロファイル、HEVCのメインプロファイル、およびMJPEGのベースラインプロファイルをサポートします。エンコーダーは、最大4KP60のレートでH.264/H.265をサポートします。 |
+| ビデオデコーダー | H.264（AVC）、H.265（HEVC）、AV1、およびMJPEGの圧縮規格に対応しています。AVCのメイン/ハイプロファイル、HEVCのメインプロファイル、AV1のメインプロファイル、およびMJPEGのベースラインプロファイルをサポートします。4:2:0ピクセルと8ビットの精度に対応しています。デコーダーは、最大4KP60のレートでH.264/H.265をサポートします。 |
+| コンピュータビジョンユニット（CVU） | 最大で**750の16ビットGOPS**をサポートする、4コアのSynopsys [ARC EV74 ビジョンプロセッサ](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors)。 |
+| メモリ | 64GBのLPDDR5 RAMを搭載し、そのうち10GBはARMコアに、40GBはMLAに割り当てられ、残りはシステム用途に割り当てられます。 |
+| 保存 | 10GBの内蔵eMMCと、追加のストレージ用のmicroSDカードスロット |
+| ネットワーキング | 10ギガビットイーサネットポートを4つ。 |
+
+</TabItem>
+</Tabs>

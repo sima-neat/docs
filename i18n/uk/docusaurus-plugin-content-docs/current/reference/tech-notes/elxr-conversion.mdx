@@ -1,0 +1,104 @@
+---
+title: "Перетворіть на eLxr."
+description: "Перетворіть наявний SiMa.ai Yocto DevKit на eLxr, і за потреби поверніться до попередньої версії."
+sidebar_position: 3
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Перетворіть на eLxr.
+
+Використовуйте цей посібник, щоб перетворити наявний SiMa.ai **DevKit на основі Yocto** у середовище виконання **eLxr**, і за потреби повернутися до Yocto.
+
+:::note
+Платформа eLxr доступна, починаючи з SDK **2.0.0** і пізніших версій, на **Modalix DevKit**.
+
+Для переходу на eLxr потрібне оновлення tRoot і повторне програмування eMMC, що здійснюється за допомогою [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+:::
+
+Платформа **eLxr** замінює застаріле середовище **Yocto** як стандартне середовище виконання для **SiMa.ai DevKit**. Вона забезпечує:
+
+- **Спрощені оновлення** — уніфікована структура кореневої файлової системи з більшим обсягом кореневої файлової системи.
+- **Стандартний менеджер пакетів** — базова платформа, що працює на Debian, із постійною підтримкою керування пакетами.
+
+Перш ніж розпочинати процес перенесення даних, перевірте, яка версія прошивки встановлена на вашому DevKit. Підключіться через послідовний порт або SSH і виконайте команду:
+
+```bash
+cat /etc/buildinfo | grep DISTRO
+```
+
+У вас має відображатися одне з наступного:
+
+```text
+DISTRO = poky
+```
+
+або
+
+```text
+DISTRO = eLxr
+```
+
+Якщо ви бачите `poky`, виконайте наведені нижче дії, щоб здійснити перехід.
+
+<details open>
+<summary><strong>Крок 1. Оновіть до останньої версії tRoot</strong></summary>
+
+Перш ніж переходити на eLxr, оновіть DevKit до останньої версії образу **tRoot**.
+
+Це оновлення робить tRoot (надійний корінь) сумісним із eLxr.
+
+За умови, що хост має статичну IP-адресу `192.168.1.10`, а до DevKit можна отримати доступ за адресою `192.168.1.20` (див. [налаштування мережі](/hardware/getting-started/standalone-mode/network)):
+
+<img src={useBaseUrl('/img/media/host-cli.png')} alt="Виконати на хост-машині" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```bash
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
+```
+
+Після успішного завершення оновлення **вимкніть і знову ввімкніть DevKit**, щоб застосувати зміни.
+
+</details>
+
+<details open>
+<summary><strong>Крок 2. Завантажте eLxr через мережу (Netboot) та прошийте eMMC</strong></summary>.
+
+Решту процесу перетворення виконайте за стандартною процедурою TFTP netboot + flash, описаною в [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Дотримуйтесь цієї процедури, використовуючи наведені нижче значення, специфічні для eLxr:
+
+- **Крок 2 (Запуск TFTP-сервера):** використовуйте `--boardtype modalix --fwtype elxr -v %platform_version%`.
+- **Крок 3 (Налаштування U-Boot):** встановіть `cpio_name=simaai-image-palette-modalix.cpio.gz`, на додаток до `boot_targets=net`, перед запуском `boot`.
+- **Крок 4 (Прошивання):** введіть `f` у командному рядку `netboot>`.
+
+![Схема підключення](/img/tech-notes/conversion-diagram.png)
+
+*Схема підключення*
+
+Після завершення процесу прошивання та перезавантаження пристрою DevKit, він працює **eLxr**з eMMC.
+
+</details>
+
+<details open>
+<summary><strong>Крок 3. Встановіть NEAT і спробуйте запустити програми.</strong></summary>
+
+За допомогою DevKit працює eLxr, встановіть Palette Neat SDK і запустіть наведені приклади застосунків. Дотримуйтесь інструкцій. [Документація NEAT.](https://developer.sima.ai/software) для встановлення та тестування програм.
+
+</details>
+
+<details open>
+<summary><strong>Повернутися до Yocto (Необов’язково)</strong></summary>
+
+Щоб повернутися до Yocto, дотримуйтесь [Відновлення за допомогою мережевої завантажувальної системи.](/hardware/getting-started/firmware-update/net-boot) знову з `--fwtype yocto`. `cpio_name` U-Boot змінна не є обов’язковою для Yocto цілі — лише `setenv boot_targets net`, `saveenv`, `boot`.
+
+:::note
+Під час повернення до Yocto **немає жодних мінімальних вимог до версії tRoot**, тому крок 1, описаний вище, можна пропустити.
+
+Якщо після перетворення на eLxr на послідовному консольному інтерфейсі з’являються повідомлення про помилки, пов’язані з NFS, їх можна безпечно ігнорувати.
+:::
+
+</details>
+
+## Підсумок.
+
+1. Оновіть до останньої версії образу **tRoot** (≥ 2.0.0).
+2. Виконайте [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot), використовуючи `--fwtype elxr` та eLxr `cpio_name`, щоб прошити eLxr на eMMC.
+3. Встановіть Neat SDK і спробуйте використовувати додатки за допомогою [документації NEAT](https://developer.sima.ai/software).

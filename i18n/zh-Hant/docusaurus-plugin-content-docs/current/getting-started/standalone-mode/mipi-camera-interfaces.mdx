@@ -1,0 +1,127 @@
+---
+title: "MIPI 相機介面"
+description: "在 Modalix DevKit 上設定 MIPI 相機介面。"
+sidebar_position: 3
+---
+
+# MIPI 相機介面
+
+:::note
+請在繼續操作之前安裝或升級 `sima-cli`。本指南適用於最新版本的 `sima-cli`。
+:::
+
+:::note
+此程序需要安裝最新版本的 `sima-cli` 的主機。它還需要一個包含用於支援 MIPI 的 `.dtbo` 檔案的 **Modalix DevKit** 韌體版本。
+:::
+
+**Modalix DevKit** 包含兩個用於相機輸入的 MIPI 介面。 MIPI 連接埠位於載板上。
+
+在開始之前，請關閉 **Modalix DevKit** 的電源，並將一個 MIPI 相機連接到其中一個 MIPI 連接埠。
+
+將一條序列線連接到主機和 **Modalix DevKit**，然後開啟 DevKit 的電源。
+
+使用 `sima-cli` 開啟一個序列終端，然後在 3 秒倒數期間按下任意按鍵，以進入 U-Boot。
+
+```console
+sima-cli serial -b 115200
+...
+Hit any key to stop autoboot:  0
+sima$
+```
+
+在 U-Boot 中，將 `dtbos` 變數設定為適當的「裝置樹 Blob 覆疊」(`.dtbo`) 檔案。正確的檔案取決於「載板」、「相機製造商」、「感測器類型」和「相機連接埠」。然後儲存環境並啟動至作業系統。
+
+檔案名稱遵循以下模式：
+
+```text
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+```
+
+根據您的硬體規格，選擇每個元件：
+
+| 組件 | 價值觀 | 描述 |
+| --- | --- | --- |
+| 載板 | `connectech`, `seeedstudio`, `waveshare` | 載板型號 |
+| 相機製造商 | `ARDU`, `ECON`, `LI` | Arducam、e-con Systems 或 Leopard Imaging |
+| 感測器類型 | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | 相機感光元件型號 |
+| 連接埠 | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | 與相機連接的 MIPI 埠號。 |
+
+舉例來說，一個 Connectech 載板，其 Leopard Imaging IMX477 感測器連接到 0 號埠：
+
+```console
+sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+```
+
+完整的可用清單 `.dtbo` 檔案為：
+
+```text
+modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
+modalix-som-connectech-ECON-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-IMX678-0CAM.dtbo
+modalix-som-connectech-ECON-IMX678-1CAM.dtbo
+modalix-som-connectech-ECON-IMX678-2CAM.dtbo
+modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-LI-AR0234-0CAM.dtbo
+modalix-som-connectech-LI-AR0234-1CAM.dtbo
+modalix-som-connectech-LI-AR0234-2CAM.dtbo
+modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-OG05C10-0CAM.dtbo
+modalix-som-connectech-LI-OG05C10-1CAM.dtbo
+modalix-som-connectech-LI-OG05C10-2CAM.dtbo
+modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-LI-AR0234-1CAM.dtbo
+modalix-som-waveshare-LI-AR0234-2CAM.dtbo
+modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+```
+
+為了驗證介面，請將 Modalix DevKit 連接到顯示器，然後登入。接著，使用 libcamera 來驗證相機的連線。
+
+1. 列出可用的相機：
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. 顯示相機 1 的不同相機格式：
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. 從相機 1 擷取一張圖片：
+
+   ```console
+   sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```

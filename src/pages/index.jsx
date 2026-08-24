@@ -1,56 +1,124 @@
+import {useEffect, useState} from 'react';
 import clsx from 'clsx';
 import Layout from '@theme/Layout';
-import Link from '@docusaurus/Link';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import useBaseUrl from '@docusaurus/useBaseUrl';
 import developerCenterShell from '../developerCenter/shell/config.cjs';
 import styles from './index.module.css';
 
 const actions = developerCenterShell.navbarItems();
 
-function PortalButton({action}) {
-  const className = clsx(styles.portalButton, styles[action.tone]);
-  if (action.external) {
-    return (
-      <a className={className} href={action.href}>
-        {action.label}
-      </a>
-    );
+function readLocalePreference(routeLocale) {
+  const supported = new Set(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code));
+  if (
+    routeLocale !== developerCenterShell.DEFAULT_LOCALE
+    && supported.has(routeLocale)
+  ) {
+    return routeLocale;
   }
+
+  const cookie = document.cookie
+    .split('; ')
+    .find((entry) => entry.startsWith(`${developerCenterShell.LOCALE_COOKIE}=`));
+  let cookieLocale = '';
+  try {
+    cookieLocale = cookie
+      ? decodeURIComponent(cookie.split('=').slice(1).join('='))
+      : '';
+  } catch (_) {
+    // Ignore malformed cookie values and fall back to local storage.
+  }
+  if (supported.has(cookieLocale)) return cookieLocale;
+
+  try {
+    const storedLocale = window.localStorage.getItem(developerCenterShell.LOCALE_KEY);
+    if (supported.has(storedLocale)) return storedLocale;
+  } catch (_) {
+    // Restricted storage should not prevent the English landing page rendering.
+  }
+
+  return developerCenterShell.DEFAULT_LOCALE;
+}
+
+function localizedActionHref(action, locale) {
+  if (action.external || locale === developerCenterShell.DEFAULT_LOCALE) return action.href;
+  if (action.key === 'hardware') return `/${locale}${action.href}`;
+  if (action.key === 'software') return `${action.href}/${locale}`;
+  return action.href;
+}
+
+function PortalButton({action, label, locale, siteRoot}) {
+  const className = clsx(styles.portalButton, styles[action.tone]);
+  const href = developerCenterShell.withSiteRoot(
+    localizedActionHref(action, locale),
+    siteRoot,
+  );
   return (
-    <Link className={className} to={action.href}>
-      {action.label}
-    </Link>
+    <a className={className} href={href}>
+      {label}
+    </a>
   );
 }
 
 export default function Home() {
-  const quickStartHref = useBaseUrl('/tools/qsg/index.html');
+  const {i18n} = useDocusaurusContext();
+  const routeLocale = developerCenterShell.SHELL_TRANSLATIONS[i18n.currentLocale]
+    ? i18n.currentLocale
+    : developerCenterShell.DEFAULT_LOCALE;
+  const [locale, setLocale] = useState(routeLocale);
+  const docusaurusBaseUrl = useBaseUrl('/');
+  const siteRoot = developerCenterShell.deploymentSiteRoot(docusaurusBaseUrl, routeLocale);
+
+  useEffect(() => {
+    const preferredLocale = readLocalePreference(routeLocale);
+    if (
+      routeLocale === developerCenterShell.DEFAULT_LOCALE
+      && preferredLocale !== developerCenterShell.DEFAULT_LOCALE
+    ) {
+      window.location.replace(
+        `${siteRoot}${preferredLocale}/${window.location.search}${window.location.hash}`,
+      );
+      return undefined;
+    }
+
+    setLocale(preferredLocale);
+    const onLanguageChange = (event) => {
+      if (developerCenterShell.SHELL_TRANSLATIONS[event?.detail?.locale]) {
+        setLocale(event.detail.locale);
+      }
+    };
+    window.addEventListener('developer-center-language-change', onLanguageChange);
+    return () => window.removeEventListener('developer-center-language-change', onLanguageChange);
+  }, [routeLocale, siteRoot]);
+
+  const copy = developerCenterShell.SHELL_TRANSLATIONS[locale]
+    || developerCenterShell.SHELL_TRANSLATIONS.en;
+
   return (
     <Layout
-      title="Developer Center"
-      description="SiMa.ai Developer Center">
+      title={copy.landing.kicker}
+      description={copy.landing.summary}>
       <main className={styles.pageShell}>
         <section className={styles.hero}>
           <div className={styles.brandPanel}>
             <img className={styles.logo} src="/img/sima-logo.png" alt="SiMa.ai" />
-            <p className={styles.kicker}>Developer Center</p>
-            <h1>Open, Simple, Performant, Neat!</h1>
-            <p className={styles.summary}>
-              Learn how to build physical AI with SiMa.ai technology. Explore hardware interfaces, software tools, and best practices for building high-performance AI applications.
-            </p>
-            <div className={styles.actions} aria-label="Documentation sections">
+            <p className={styles.kicker}>{copy.landing.kicker}</p>
+            <h1>{copy.landing.title}</h1>
+            <p className={styles.summary}>{copy.landing.summary}</p>
+            <div
+              className={styles.actions}
+              aria-label={copy.landing.sectionsLabel}
+              data-developer-center-sections>
               {actions.map((action) => (
-                <PortalButton key={action.label} action={action} />
+                <PortalButton
+                  key={action.key}
+                  action={action}
+                  label={copy.navItems[action.key] || action.label}
+                  locale={locale}
+                  siteRoot={siteRoot}
+                />
               ))}
             </div>
-            <a
-              className={styles.quickStart}
-              href={quickStartHref}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Quick Start Guide
-            </a>
           </div>
         </section>
       </main>

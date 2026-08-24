@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -18,8 +19,23 @@ from pathlib import Path
 
 
 SOURCE = "hardware"
+DEFAULT_LOCALE = "en"
+SECTION_LABELS = {
+    "en": {"hardware": "Hardware", "references": "References", "tools": "Tools"},
+    "ko": {"hardware": "하드웨어", "references": "참조", "tools": "도구"},
+    "ja": {"hardware": "ハードウェア", "references": "リファレンス", "tools": "ツール"},
+    "zh-Hant": {"hardware": "硬體", "references": "參考資料", "tools": "工具"},
+    "uk": {
+        "hardware": "Апаратне забезпечення",
+        "references": "Довідкові матеріали",
+        "tools": "Інструменти",
+    },
+}
+I18N_DOCS_SUBDIR = Path("docusaurus-plugin-content-docs/current")
 DEFAULT_MAX_RECORD_BYTES = 9_500
 DEFAULT_BATCH_SIZE = 500
+DEFAULT_TASK_TIMEOUT_SECONDS = 300
+DEFAULT_TASK_POLL_INTERVAL_SECONDS = 1
 SKIP_PARTS = {"build", "node_modules", ".git"}
 EXTENSIONS = {".md", ".mdx"}
 
@@ -37,6 +53,11 @@ def parse_args() -> argparse.Namespace:
         description="Generate or sync hardware docs records in the shared Developer Center Algolia index.",
     )
     parser.add_argument("--docs-dir", default="docs", help="Docs root directory.")
+    parser.add_argument(
+        "--i18n-dir",
+        default="i18n",
+        help="Docusaurus i18n root containing localized docs (default: i18n).",
+    )
     parser.add_argument("--site-base-url", required=True, help="Public sysdoc base URL.")
     parser.add_argument("--records-json", help="Write generated records to this JSON file.")
     parser.add_argument("--input-records-json", help="Read records from this JSON file instead of generating them.")
@@ -48,6 +69,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-record-bytes", type=int, default=DEFAULT_MAX_RECORD_BYTES)
     parser.add_argument("--generate-only", action="store_true", help="Only generate records; do not upload.")
     parser.add_argument("--sync", action="store_true", help="Upload records and remove stale records for this source.")
+    parser.add_argument(
+        "--configure-language-facet-only",
+        action="store_true",
+        help="Configure the shared index language facet without generating or syncing records.",
+    )
     parser.add_argument(
         "--prune-dead-links",
         action="store_true",
@@ -122,18 +148,19 @@ def title_from_markdown(path: Path, text: str) -> str:
     return path.stem.replace("-", " ").replace("_", " ").title()
 
 
-def section_for_path(path: Path, docs_dir: Path) -> str:
+def section_for_path(path: Path, docs_dir: Path, language: str = DEFAULT_LOCALE) -> str:
     rel = path.relative_to(docs_dir).as_posix()
+    labels = SECTION_LABELS.get(language, SECTION_LABELS[DEFAULT_LOCALE])
     if rel.startswith("hardware/"):
-        return "Hardware"
+        return labels["hardware"]
     if rel.startswith("reference/"):
-        return "References"
+        return labels["references"]
     if rel.startswith("tools/"):
-        return "Tools"
-    return "Hardware"
+        return labels["tools"]
+    return labels["hardware"]
 
 
-def route_for_path(path: Path, docs_dir: Path, site_base_url: str) -> str:
+def route_for_path(path: Path, docs_dir: Path, site_base_url: str, language: str = DEFAULT_LOCALE) -> str:
     rel = path.relative_to(docs_dir).as_posix()
     stem = rel.rsplit(".", 1)[0]
     if stem.endswith("/index"):
@@ -145,7 +172,17 @@ def route_for_path(path: Path, docs_dir: Path, site_base_url: str) -> str:
     route = f"/{stem}".rstrip("/")
     if route == "":
         route = "/hardware"
+    if language != DEFAULT_LOCALE:
+        route = f"/{language}{route}"
     return f"{site_base_url.rstrip('/')}{route}"
+
+
+def route_relative_to_site_base(url: str, site_base_url: str) -> str:
+    route = urllib.parse.urlparse(url).path or "/"
+    site_base_path = urllib.parse.urlparse(site_base_url).path.rstrip("/")
+    if site_base_path and (route == site_base_path or route.startswith(f"{site_base_path}/")):
+        route = route[len(site_base_path) :] or "/"
+    return route
 
 
 def record_size(record: dict) -> int:
@@ -182,62 +219,103 @@ def fit_record(record: dict, max_record_bytes: int) -> tuple[dict, bool]:
     return record, True
 
 
-def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int, versions: dict[str, str]) -> tuple[list[dict], dict]:
+def localized_doc_roots(docs_dir: Path, i18n_dir: Path | None) -> list[tuple[str, Path]]:
+    roots = [(DEFAULT_LOCALE, docs_dir.resolve())]
+    if i18n_dir is None or not i18n_dir.is_dir():
+        return roots
+    for locale_dir in sorted(i18n_dir.iterdir()):
+        localized_docs = locale_dir / I18N_DOCS_SUBDIR
+        if locale_dir.is_dir() and localized_docs.is_dir():
+            roots.append((locale_dir.name, localized_docs.resolve()))
+    return roots
+
+
+def generate_records(
+    docs_dir: Path,
+    site_base_url: str,
+    max_record_bytes: int,
+    i18n_dir: Path | None = None,
+    versions: dict[str, str] | None = None,
+) -> tuple[list[dict], dict]:
     docs_dir = docs_dir.resolve()
+    versions = versions or {}
     records: list[dict] = []
     by_section: dict[str, int] = {}
+    by_language: dict[str, int] = {}
     trimmed = 0
     max_seen = 0
 
-    # (path, rel, section, url) sources: every markdown file under docs/ (served under
-    # /hardware), plus the agent onboarding page which lives in src/pages/ and is served
-    # at the site root (/agents) because it spans the hardware AND software pillars.
-    sources: list[tuple[Path, str, str, str]] = []
-    for path in sorted(docs_dir.rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in EXTENSIONS:
-            continue
-        if any(part in SKIP_PARTS for part in path.relative_to(docs_dir).parts):
-            continue
-        rel = path.relative_to(docs_dir).as_posix()
-        sources.append((path, rel, section_for_path(path, docs_dir), route_for_path(path, docs_dir, site_base_url)))
+    for language, language_docs_dir in localized_doc_roots(docs_dir, i18n_dir):
+        # Every Markdown file under each locale's docs root is served under
+        # /hardware. The English-only agent onboarding page lives in src/pages
+        # and is served at /agents because it spans Hardware and Software.
+        sources: list[tuple[Path, str, str, str]] = []
+        for path in sorted(language_docs_dir.rglob("*")):
+            if not path.is_file() or path.suffix.lower() not in EXTENSIONS:
+                continue
+            if any(part in SKIP_PARTS for part in path.relative_to(language_docs_dir).parts):
+                continue
+            rel = path.relative_to(language_docs_dir).as_posix()
+            sources.append(
+                (
+                    path,
+                    rel,
+                    section_for_path(path, language_docs_dir, language),
+                    route_for_path(path, language_docs_dir, site_base_url, language),
+                )
+            )
 
-    agents_page = docs_dir.parent / "src" / "pages" / "agents.md"
-    if agents_page.is_file():
-        sources.append((agents_page, "src/pages/agents.md", "Agents", f"{site_base_url.rstrip('/')}/agents"))
+        if language == DEFAULT_LOCALE:
+            agents_page = docs_dir.parent / "src" / "pages" / "agents.md"
+            if agents_page.is_file():
+                sources.append(
+                    (
+                        agents_page,
+                        "src/pages/agents.md",
+                        "Agents",
+                        f"{site_base_url.rstrip('/')}/agents",
+                    )
+                )
 
-    for path, rel, section, url in sources:
-        # Substitute %platform_version% (and any other versions.json key) up front so both the
-        # title and the cleaned body carry real values — matching the rendered, remark-processed
-        # page instead of indexing the literal token.
-        raw = substitute_versions(strip_frontmatter(path.read_text(encoding="utf-8")), versions)
-        body = clean_markdown(raw)
-        if not body:
-            continue
+        for path, rel, section, url in sources:
+            # Match the rendered Docusaurus content by substituting version
+            # tokens before deriving both the title and searchable body.
+            raw = substitute_versions(
+                strip_frontmatter(path.read_text(encoding="utf-8")),
+                versions,
+            )
+            body = clean_markdown(raw)
+            if not body:
+                continue
 
-        title = title_from_markdown(path, raw)
-        route = urllib.parse.urlparse(url).path or "/hardware"
-        record = {
-            "objectID": f"{SOURCE}:{hashlib.sha1(rel.encode('utf-8')).hexdigest()}",
-            "source": SOURCE,
-            "url": url,
-            "route": route,
-            "path": rel,
-            "section": section,
-            "category": section,
-            "title": title,
-            "content": body[:20_000],
-            "hierarchy": {"lvl0": section, "lvl1": title},
-        }
-        record, was_trimmed = fit_record(record, max_record_bytes)
-        trimmed += int(was_trimmed)
-        max_seen = max(max_seen, record_size(record))
-        records.append(record)
-        by_section[section] = by_section.get(section, 0) + 1
+            title = title_from_markdown(path, raw)
+            route = route_relative_to_site_base(url, site_base_url)
+            record_key = f"{language}:{rel}"
+            record = {
+                "objectID": f"{SOURCE}:{hashlib.sha1(record_key.encode('utf-8')).hexdigest()}",
+                "source": SOURCE,
+                "language": language,
+                "url": url,
+                "route": route,
+                "path": rel,
+                "section": section,
+                "category": section,
+                "title": title,
+                "content": body[:20_000],
+                "hierarchy": {"lvl0": section, "lvl1": title},
+            }
+            record, was_trimmed = fit_record(record, max_record_bytes)
+            trimmed += int(was_trimmed)
+            max_seen = max(max_seen, record_size(record))
+            records.append(record)
+            by_section[section] = by_section.get(section, 0) + 1
+            by_language[language] = by_language.get(language, 0) + 1
 
     summary = {
         "source": SOURCE,
         "count": len(records),
         "by_section": by_section,
+        "by_language": by_language,
         "trimmed_records": trimmed,
         "max_record_bytes": max_seen,
     }
@@ -256,20 +334,66 @@ class AlgoliaClient:
         }
 
     def post(self, path: str, payload: dict) -> dict:
+        return self.request("POST", path, payload)
+
+    def request(self, method: str, path: str, payload: dict | None = None) -> dict:
         request = urllib.request.Request(
             self.host + path,
-            data=json.dumps(payload).encode("utf-8"),
+            data=json.dumps(payload).encode("utf-8") if payload is not None else None,
             headers=self.headers,
-            method="POST",
+            method=method,
         )
         try:
             with urllib.request.urlopen(request, timeout=45) as response:
                 return json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as error:
             body = error.read().decode("utf-8", errors="replace")
-            if error.code == 404 and path.endswith("/browse"):
+            if error.code == 404 and (
+                path.endswith("/browse") or (method == "GET" and path.endswith("/settings"))
+            ):
                 return {"hits": []}
             raise SystemExit(f"Algolia API error: HTTP {error.code} on {path}\n{body}") from error
+
+    def ensure_language_filter(self) -> None:
+        path = f"/1/indexes/{self.index}/settings"
+        settings = self.request("GET", path)
+        attributes = list(settings.get("attributesForFaceting") or [])
+        configured = any(re.fullmatch(r"(?:(?:filterOnly|searchable)\()?language\)?", item) for item in attributes)
+        if not configured:
+            result = self.request(
+                "PUT",
+                path,
+                {"attributesForFaceting": [*attributes, "filterOnly(language)"]},
+            )
+            self.wait_for_task(result.get("taskID"))
+            print("[algolia-index] configured filterOnly(language)")
+
+    def wait_for_task(
+        self,
+        task_id: int | str | None,
+        timeout_seconds: float = DEFAULT_TASK_TIMEOUT_SECONDS,
+        poll_interval_seconds: float = DEFAULT_TASK_POLL_INTERVAL_SECONDS,
+    ) -> None:
+        if task_id is None:
+            raise SystemExit("Algolia mutation response did not include a taskID")
+
+        path = f"/1/indexes/{self.index}/task/{urllib.parse.quote(str(task_id), safe='')}"
+        deadline = time.monotonic() + timeout_seconds
+        while True:
+            result = self.request("GET", path)
+            status = result.get("status")
+            if status == "published":
+                print(f"[algolia-index] taskID={task_id} status=published")
+                return
+            if status != "notPublished":
+                raise SystemExit(
+                    f"Algolia task {task_id} returned unexpected status: {status!r}"
+                )
+            if time.monotonic() >= deadline:
+                raise SystemExit(
+                    f"Timed out waiting {timeout_seconds:g}s for Algolia task {task_id}"
+                )
+            time.sleep(poll_interval_seconds)
 
     def browse_source_object_ids(self, source: str) -> list[str]:
         object_ids: list[str] = []
@@ -278,6 +402,24 @@ class AlgoliaClient:
             result = self.post(f"/1/indexes/{self.index}/browse", payload)
             for hit in result.get("hits", []):
                 if hit.get("source") == source and hit.get("objectID"):
+                    object_ids.append(hit["objectID"])
+            cursor = result.get("cursor")
+            if not cursor:
+                return object_ids
+            payload = {"cursor": cursor}
+
+    def browse_untagged_object_ids(self) -> list[str]:
+        """Find records that predate the shared index language facet."""
+        object_ids: list[str] = []
+        payload = {
+            "query": "",
+            "attributesToRetrieve": ["objectID", "source", "language"],
+            "hitsPerPage": 1000,
+        }
+        while True:
+            result = self.post(f"/1/indexes/{self.index}/browse", payload)
+            for hit in result.get("hits", []):
+                if not hit.get("language") and hit.get("objectID"):
                     object_ids.append(hit["objectID"])
             cursor = result.get("cursor")
             if not cursor:
@@ -307,6 +449,7 @@ class AlgoliaClient:
             return
         result = self.post(f"/1/indexes/{self.index}/batch", {"requests": requests})
         print(f"[algolia-index] taskID={result.get('taskID')} requests={len(requests)}")
+        self.wait_for_task(result.get("taskID"))
 
 
 def url_is_accessible(url: str, timeout: float) -> bool | None:
@@ -415,19 +558,52 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
         raise SystemExit("--app-id, --api-key, and --index-name are required for --sync")
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
+    client.ensure_language_filter()
+    backfill_legacy_language(client, args.batch_size)
     desired_ids = {record["objectID"] for record in records}
     existing_ids = set(client.browse_source_object_ids(SOURCE))
     stale_ids = sorted(existing_ids - desired_ids)
 
     print(f"[algolia-index] existing {SOURCE} records={len(existing_ids)} stale={len(stale_ids)}")
-    for start in range(0, len(stale_ids), args.batch_size):
-        chunk = stale_ids[start : start + args.batch_size]
-        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
-
     print(f"[algolia-index] uploading {len(records)} {SOURCE} records...")
     for start in range(0, len(records), args.batch_size):
         chunk = records[start : start + args.batch_size]
         client.batch([{"action": "addObject", "body": record} for record in chunk])
+
+    # Wait for every replacement record to be published before removing stale
+    # object IDs. This keeps the existing index intact if an upload fails.
+    print(f"[algolia-index] deleting {len(stale_ids)} stale {SOURCE} records...")
+    for start in range(0, len(stale_ids), args.batch_size):
+        chunk = stale_ids[start : start + args.batch_size]
+        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
+
+
+def backfill_legacy_language(client: AlgoliaClient, batch_size: int) -> None:
+    legacy_ids = client.browse_untagged_object_ids()
+    print(f"[algolia-index] legacy records to tag as English={len(legacy_ids)}")
+    for start in range(0, len(legacy_ids), batch_size):
+        chunk = legacy_ids[start : start + batch_size]
+        client.batch(
+            [
+                {
+                    "action": "partialUpdateObject",
+                    "body": {"objectID": object_id, "language": DEFAULT_LOCALE},
+                }
+                for object_id in chunk
+            ]
+        )
+
+
+def configure_language_facet(args: argparse.Namespace) -> None:
+    if not args.app_id or not args.api_key or not args.index_name:
+        raise SystemExit(
+            "--app-id, --api-key, and --index-name are required for "
+            "--configure-language-facet-only"
+        )
+
+    client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
+    client.ensure_language_filter()
+    backfill_legacy_language(client, args.batch_size)
 
 
 def main() -> int:
@@ -439,6 +615,10 @@ def main() -> int:
 
     if args.prune_dead_links:
         prune_dead_links(args)
+        return 0
+
+    if args.configure_language_facet_only:
+        configure_language_facet(args)
         return 0
 
     if not args.generate_only and not args.sync:
@@ -456,7 +636,13 @@ def main() -> int:
         print("[algolia-index] loaded records:")
     else:
         versions = load_versions(args.versions_json)
-        records, summary = generate_records(Path(args.docs_dir), args.site_base_url, args.max_record_bytes, versions)
+        records, summary = generate_records(
+            Path(args.docs_dir),
+            args.site_base_url,
+            args.max_record_bytes,
+            Path(args.i18n_dir),
+            versions,
+        )
         print("[algolia-index] generated records:")
     print(json.dumps(summary, indent=2))
 

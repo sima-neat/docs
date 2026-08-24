@@ -6,11 +6,20 @@ export function normalizeTheme(value) {
   return VALID_THEMES.has(value) ? value : null;
 }
 
+function decodeCookieEntry(entry) {
+  if (!entry) return null;
+  try {
+    return decodeURIComponent(entry.split('=').slice(1).join('='));
+  } catch (_) {
+    return null;
+  }
+}
+
 export function readCookieTheme() {
   const entry = document.cookie
     .split('; ')
     .find((cookie) => cookie.startsWith(`${shellConfig.THEME_COOKIE}=`));
-  return normalizeTheme(entry ? decodeURIComponent(entry.split('=').slice(1).join('=')) : null);
+  return normalizeTheme(decodeCookieEntry(entry));
 }
 
 export function cookieDomain() {

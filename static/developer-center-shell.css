@@ -156,6 +156,142 @@
   flex: 0 0 auto;
 }
 
+.developer-center-shell .developer-center-language {
+  position: relative;
+  flex: 0 0 auto;
+  margin-right: 0.2rem;
+}
+
+.developer-center-shell .developer-center-language-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-width: 2.6rem;
+  height: 2rem;
+  padding: 0 0.38rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--developer-center-shell-text);
+  cursor: pointer;
+  transition:
+    background 160ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.developer-center-shell .developer-center-language-button:hover,
+.developer-center-shell .developer-center-language-open .developer-center-language-button {
+  background: var(--developer-center-shell-hover);
+}
+
+.developer-center-shell .developer-center-language-button:focus-visible,
+.developer-center-shell .color-mode-toggle-button:focus-visible,
+.developer-center-shell .developer-center-language-option:focus-visible {
+  outline: 2px solid var(--developer-center-shell-accent);
+  outline-offset: 2px;
+}
+
+.developer-center-shell .developer-center-language-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.developer-center-shell .developer-center-language-code {
+  min-width: 1.05rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  text-align: center;
+}
+
+.developer-center-shell .developer-center-language-menu {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 1100;
+  width: 13.5rem;
+  padding: 0.45rem;
+  border: 1px solid var(--developer-center-shell-line);
+  border-radius: 0.7rem;
+  background: var(--developer-center-shell-panel);
+  box-shadow: 0 12px 32px rgba(28, 47, 58, 0.16);
+  transform-origin: top right;
+  animation: developer-center-language-enter 140ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.developer-center-shell .developer-center-language-menu[hidden] {
+  display: none;
+}
+
+.developer-center-shell .developer-center-language-heading {
+  padding: 0.45rem 0.65rem 0.35rem;
+  color: var(--developer-center-shell-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.055em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.developer-center-shell .developer-center-language-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 2.35rem;
+  padding: 0.45rem 0.65rem;
+  border: 0;
+  border-radius: 0.45rem;
+  background: transparent;
+  color: var(--developer-center-shell-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.developer-center-shell .developer-center-language-option:hover,
+.developer-center-shell .developer-center-language-option:focus-visible {
+  background: var(--developer-center-shell-hover);
+}
+
+.developer-center-shell .developer-center-language-option-active {
+  color: var(--developer-center-shell-accent);
+  font-weight: 700;
+}
+
+.developer-center-shell .developer-center-language-check {
+  visibility: hidden;
+  width: 1rem;
+  height: 1rem;
+  flex: 0 0 auto;
+  margin-left: 0.75rem;
+}
+
+.developer-center-shell .developer-center-language-option-active .developer-center-language-check {
+  visibility: visible;
+}
+
+@keyframes developer-center-language-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.3rem) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .developer-center-shell .developer-center-language-menu {
+    animation: none;
+  }
+}
+
 .developer-center-shell .color-mode-toggle-button {
   align-items: center;
   border-radius: 50%;

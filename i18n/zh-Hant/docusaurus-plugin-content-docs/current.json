@@ -1,0 +1,38 @@
+{
+  "sidebar.systemDocs.category.Getting Started": {
+    "message": "開始使用",
+    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.link.Quick Start Guide": {
+    "message": "快速入門指南",
+    "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.Standalone Mode": {
+    "message": "獨立模式",
+    "description": "The label for category 'Standalone Mode' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.PCIe Mode": {
+    "message": "PCIe 模式",
+    "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Firmware Update": {
+    "message": "韌體更新",
+    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "DevKit 型號",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Tools": {
+    "message": "工具",
+    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.References": {
+    "message": "參考資料",
+    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Tech Notes": {
+    "message": "技術說明",
+    "description": "The label for category 'Tech Notes' in sidebar 'systemDocs'"
+  }
+}

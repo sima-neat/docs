@@ -1,0 +1,103 @@
+---
+title: "Modalix DevKit"
+description: "MLSoC Modalix를 평가하고 엣지 AI 애플리케이션을 구축하기 위한 Modalix 개발 키트입니다."
+sidebar_position: 1
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix DevKit
+
+**Modalix DevKit**은 MLSoC Modalix를 평가하고 엣지 AI 애플리케이션을 구축하기 위한 주력 개발 키트입니다. Modalix 하드웨어 가속과 컴퓨터 비전, 대규모 언어 모델(LLM), 멀티모달 파이프라인 등의 워크로드를 개발·테스트·실행하는 데 필요한 소프트웨어 스택을 결합합니다.
+
+<Tabs>
+<TabItem value="interfaces" label="인터페이스" default>
+
+<img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="SiMa.ai Modalix SoM 인터페이스" style={{width: '60%', display: 'block', margin: '0 auto'}} />
+
+| 인터페이스 | 설명 |
+| --- | --- |
+| 이더넷 포트(end0) | RJ45, 1기가비트 이더넷 네트워크 인터페이스를 통해 원격 연결을 지원합니다. |
+| COM 포트에서 호스트로 (USB-C) | 호스트 시스템에 연결하여 디버깅을 용이하게 합니다. |
+| MIPI 인터페이스 (X2) | MIPI 카메라 연결용. [설정](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) |
+| USB 인터페이스(4개) | USB 3.0 인터페이스를 지원하며, 마이크, 스피커 및 USB 비디오 카메라와 호환됩니다. |
+| HDMI 인터페이스(1개) | 외부 디스플레이를 연결하기 위한 HDMI 1.4 포트(최대 4K 해상도, 30Hz, 1080p 해상도, 60Hz). |
+| 내장 저장 장치(eMMC) | 16GB |
+| NVMe | M.2 512GB |
+| USB | 4개의 USB 3.0 포트 |
+
+더 자세한 제품 정보는 공식 웹사이트 [SiMa.ai](https://sima.ai/mlsoc/)에서 확인하십시오.
+
+</TabItem>
+<TabItem value="features" label="주요 기능">
+
+| 기능 | 자세한 내용 |
+| --- | --- |
+| MLA AI 성능 | INT8 신경망 연산에 대해 초당 50테라 연산을 지원합니다. 또한 bf16 정밀도를 지원합니다. |
+| 전력 소비 | 작업량에 따라 8W에서 12W까지. |
+| 애플리케이션 처리 장치(APU) | 8개의 듀얼 스레드 [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) 코어가 최대 1.4GHz로 작동합니다. |
+| 비디오 인코더 | H.264(AVC), H.265(HEVC) 및 MJPEG 압축 표준을 지원합니다. AVC 메인/고급 프로필, HEVC 메인 프로필 및 MJPEG 기본 프로필을 지원합니다. 인코더는 최대 4KP60의 속도로 H.264/H.265를 지원합니다. |
+| 비디오 디코더 | H.264(AVC), H.265(HEVC), AV1 및 MJPEG 압축 표준을 지원합니다. AVC 메인/고 프로필, HEVC 메인 프로필, AV1 메인 프로필 및 MJPEG 베이스라인 프로필을 지원합니다. 4:2:0 픽셀 및 8비트 정밀도를 지원합니다. 디코더는 최대 4KP60의 속도로 H.264/H.265를 지원합니다. |
+| 컴퓨터 비전 유닛(CVU) | 최대 **750개의 16비트 GOPS**를 지원하는 쿼드 코어 Synopsys [ARC EV74 비전 프로세서](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors). |
+| 메모리 | 32GB LPDDR5 RAM을 사용하며, 이 중 6GB는 ARM 코어에, 16GB는 MLA에 할당됩니다. 나머지는 시스템의 다른 부분에 할당됩니다. |
+| 저장 공간 | 추가 저장 공간을 위한 microSD 카드 슬롯이 있는 16GB 내장 eMMC |
+| 네트워킹 | 1개의 10기가비트 이더넷 포트를 캐리어 보드를 통해 사용할 수 있습니다. |
+
+</TabItem>
+<TabItem value="revisions" label="수정 사항">
+
+<table>
+  <colgroup>
+    <col style={{width: '200px'}} />
+    <col />
+    <col />
+    <col />
+  </colgroup>
+  <thead>
+    <tr><th>수정</th><th>1</th><th>2</th><th>3</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>이미지</th>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="개정 1" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-white.png')} alt="개정 2" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="개정 3" width="80%" /></td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>케이스 색상</th>
+      <td>파란색</td><td>흰색</td><td>파란색</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>캐리어 보드</th>
+      <td>웨이브셰어</td><td>씨드 스튜디오</td><td>웨이브셰어</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>MIPI 커넥터 유형</th>
+      <td>22핀</td><td>30핀</td><td>22핀</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>카메라 직렬 인터페이스</th>
+      <td>CSI1/CSI2</td><td>CSI0/CSI2</td><td>CSI1/CSI2</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>일련 번호 형식</th>
+      <td>SNXXX</td><td>SNXXX-S</td><td>SNXXX</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>SoM 수정</th>
+      <td>1(스티커 미포함, 개발 키트용 메인 보드만 해당)</td>
+      <td>1 (스티커 미포함, DevKit 캐리어 보드만 해당)</td>
+      <td><a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf">2</a> (스티커, 타사 캐리어 보드와 호환됨)</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>이용 가능 여부</th>
+      <td>GA</td><td>엔지니어링 샘플</td><td>엔지니어링 샘플</td>
+    </tr>
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>

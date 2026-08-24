@@ -1,0 +1,49 @@
+---
+title: "Modalix 얼리 액세스 DevKit"
+description: "기존 Early Access 고객을 위한 레거시 Modalix 개발 키트입니다."
+sidebar_position: 2
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix 얼리 액세스 DevKit
+
+**Modalix 얼리 액세스 DevKit**은 기존 Early Access 고객을 위한 레거시 개발 키트입니다. 컴퓨터 비전, 대규모 언어 모델(LLM), 실시간 멀티모달 처리와 같은 워크로드를 Modalix 하드웨어에서 평가하고 프로토타이핑할 수 있습니다.
+
+<Tabs>
+<TabItem value="interfaces" label="인터페이스" default>
+
+<img src={useBaseUrl('/img/devkit/modalix-ea-kit-interfaces.png')} alt="SiMa.ai Modalix 얼리 액세스 키트 인터페이스" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+| 인터페이스 | 설명 |
+| --- | --- |
+| 이더넷 포트(eth0, eth1, eth2, eth3) | RJ45, 10기가비트 이더넷 네트워크 인터페이스를 통해 원격 연결을 지원합니다. |
+| 12V 전원(J8) | 12V 전원 어댑터가 필요하며, 제공된 전원 어댑터를 사용하여 이 포트에 연결하십시오. |
+| 전원 켜기/끄기 스위치 | 전원 공급 장치 커넥터 옆에 스위치에 닿을 수 있도록 펜을 사용하여 장치의 전원을 켜거나 끕니다(필요한 경우). |
+| COM 포트를 호스트에 연결 | 호스트 시스템에 연결하여 디버깅을 용이하게 합니다. 제공된 케이블의 화살표 표시가 올바르게 정렬되도록 가장 왼쪽에 있는 핀에 연결되었는지 확인하십시오. |
+| 초기화 버튼 | 독립 실행 모드에서만 사용할 수 있습니다. 장치를 재설정하여 처음 부팅 상태로 되돌리거나 오류로부터 복구할 수 있습니다. |
+| MIPI 인터페이스 (X4) | 카메라 연결용. |
+| 마이크로 SD 카드 슬롯 | 추가 저장 공간을 위해. |
+
+더 자세한 제품 정보는 공식 웹사이트 [SiMa.ai](https://sima.ai/mlsoc/)에서 확인하십시오.
+
+</TabItem>
+<TabItem value="features" label="주요 기능">
+
+| 기능 | 자세한 내용 |
+| --- | --- |
+| MLA AI 성능 | INT8 신경망 연산에 대해 초당 50테라 연산을 지원합니다. 또한 bf16 정밀도를 지원합니다. |
+| 전력 소비 | 작업량에 따라 8W에서 12W까지. |
+| 애플리케이션 처리 장치(APU) | 8개의 듀얼 스레드 [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) 코어가 최대 1.4GHz로 작동합니다. |
+| 비디오 인코더 | H.264(AVC), H.265(HEVC) 및 MJPEG 압축 표준을 지원합니다. AVC 메인/고급 프로필, HEVC 메인 프로필 및 MJPEG 기본 프로필을 지원합니다. 인코더는 최대 4KP60의 속도로 H.264/H.265를 지원합니다. |
+| 비디오 디코더 | H.264(AVC), H.265(HEVC), AV1 및 MJPEG 압축 표준을 지원합니다. AVC 메인/고 프로필, HEVC 메인 프로필, AV1 메인 프로필 및 MJPEG 베이스라인 프로필을 지원합니다. 4:2:0 픽셀 및 8비트 정밀도를 지원합니다. 디코더는 최대 4KP60의 속도로 H.264/H.265를 지원합니다. |
+| 컴퓨터 비전 유닛(CVU) | 최대 **750개의 16비트 GOPS**를 지원하는 쿼드 코어 Synopsys [ARC EV74 비전 프로세서](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors). |
+| 메모리 | 64GB LPDDR5 RAM을 탑재했으며, 이 중 10GB는 ARM 코어에, 40GB는 MLA에 할당되고, 나머지는 시스템 사용을 위해 할당됩니다. |
+| 저장 공간 | 추가 저장 공간을 위한 microSD 카드 슬롯이 있는 10GB 내장 eMMC |
+| 네트워킹 | 4개의 10기가비트 이더넷 포트. |
+
+</TabItem>
+</Tabs>

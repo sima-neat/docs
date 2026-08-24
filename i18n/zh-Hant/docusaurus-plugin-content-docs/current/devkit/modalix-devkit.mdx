@@ -1,0 +1,103 @@
+---
+title: "Modalix DevKit"
+description: "用於評估 MLSoC Modalix 及建置邊緣 AI 應用程式的 Modalix 開發套件。"
+sidebar_position: 1
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix DevKit
+
+**Modalix DevKit** 是用於評估 MLSoC Modalix 及建置邊緣 AI 應用程式的主要開發套件。它將 Modalix 硬體加速與開發、測試及執行工作負載所需的軟體堆疊結合，這些工作負載包括電腦視覺、大型語言模型 (LLM) 及多模態管線。
+
+<Tabs>
+<TabItem value="interfaces" label="介面" default>
+
+<img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="SiMa.ai Modalix SoM 介面" style={{width: '60%', display: 'block', margin: '0 auto'}} />
+
+| 介面 | 描述 |
+| --- | --- |
+| 乙太網路埠 (end0) | RJ45，用於遠端連線的 1GigE 網路介面。 |
+| COM 埠至主機（USB-C） | 透過連接到主機系統，以方便進行除錯。 |
+| MIPI 介面 (X2) | 用於連接 MIPI 攝影機。[設定](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) |
+| USB 介面 (X4) | USB 3.0 介面，支援麥克風、揚聲器和 USB 視訊攝影機。 |
+| HDMI 介面 (1 個) | HDMI 1.4，用於連接外部顯示器（最高解析度為 4K，30 Hz；1080p，60 Hz）。 |
+| 內建儲存空間 (eMMC) | 16GB |
+| NVMe | M.2 512GB |
+| USB | 4 個 USB 3.0 連接埠 |
+
+如需更多產品資訊，請瀏覽官方網站：[SiMa.ai](https://sima.ai/mlsoc/)。
+
+</TabItem>
+<TabItem value="features" label="主要功能">
+
+| 功能 | 詳細資訊 |
+| --- | --- |
+| MLA 人工智慧效能 | 每秒可執行 50 兆次運算，用於 INT8 神經網路運算。同時也支援 bf16 精度。 |
+| 耗電量 | 根據工作量，範圍從 8W 到 12W。 |
+| 應用處理單元 (APU) | 八個雙執行緒 [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) 核心，運作頻率最高達 1.4 GHz。 |
+| 視訊編碼器 | 支援 H.264（AVC）、H.265（HEVC）和 MJPEG 壓縮標準。它支援 AVC 主要/高畫質設定檔、HEVC 主要設定檔和 MJPEG 基本設定檔。編碼器支援高達 4KP60 幀率的 H.264/H.265。 |
+| 視訊解碼器 | 支援 H.264 (AVC)、H.265 (HEVC)、AV1 和 MJPEG 壓縮標準。它支援 AVC 主要/高畫質設定檔、HEVC 主要設定檔、AV1 主要設定檔和 MJPEG 基本設定檔。它支援 4:2:0 像素和 8 位元精確度。解碼器支援高達 4KP60 幀率的 H.264/H.265。 |
+| 電腦視覺單元 (CVU) | 四核心 Synopsys [ARC EV74 視覺處理器](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors)，支援高達 **750 個 16 位元的 GOPS**。 |
+| 記憶體 | 32GB LPDDR5 記憶體，其中 6GB 分配給 ARM 核心，16GB 分配給 MLA。其餘則分配給系統的其他部分。 |
+| 儲存 | 內建 16GB eMMC 儲存空間，並配備 microSD 卡插槽，可擴充儲存空間。 |
+| 網路 | 透過載板提供 1 個 10GigE 連接埠。 |
+
+</TabItem>
+<TabItem value="revisions" label="修訂版本">
+
+<table>
+  <colgroup>
+    <col style={{width: '200px'}} />
+    <col />
+    <col />
+    <col />
+  </colgroup>
+  <thead>
+    <tr><th>修訂</th><th>1</th><th>2</th><th>3</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>圖片</th>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="版本 1" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-white.png')} alt="版本 2" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="版本 3" width="80%" /></td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>錶殼顏色</th>
+      <td>藍色</td><td>白色</td><td>藍色</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>載板</th>
+      <td>Waveshare</td><td>Seeed 工作室</td><td>Waveshare</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>MIPI 連接器類型</th>
+      <td>22 針腳</td><td>30 針</td><td>22 針腳</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>相機序列介面</th>
+      <td>CSI1/CSI2</td><td>CSI0/CSI2</td><td>CSI1/CSI2</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>序列號格式</th>
+      <td>SNXXX</td><td>SNXXX-S</td><td>SNXXX</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>SoM 修訂版</th>
+      <td>1（不含貼紙，僅適用於 DevKit 載板）</td>
+      <td>1（不含貼紙，僅為 DevKit 載板）</td>
+      <td><a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf">2</a> （貼紙，適用於第三方載板）</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>供應情況</th>
+      <td>GA</td><td>工程樣品</td><td>工程樣品</td>
+    </tr>
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>
