@@ -26,7 +26,7 @@
     "docs/reference/tech-notes/index.md": "e28a6581964e59cb7a4c7f30c470565fab16c6c1a2d50831aa394bb3fa5a0946",
     "docs/reference/tech-notes/nfs.mdx": "511438098915297862f154772cfbb5a66047add1aaead45836914599b3f6e0b9",
     "docs/reference/tech-notes/ros2.mdx": "424ba03fb0c484bba473d19257788665c942c40f6069aea36450576d43f82f99",
-    "docs/tools/web-serial-console.mdx": "04bf7b309851833a742c1931d41369798491fd39a8706dc1a5b9df9a4a79e1d6"
+    "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "ko": {
     "docs/devkit/modalix-devkit.mdx": "ae069fdc8b843e8d4ee246ddc44d10bb758832339e165ea85974a1a7788ba66e",
@@ -55,7 +55,7 @@
     "docs/reference/tech-notes/index.md": "e28a6581964e59cb7a4c7f30c470565fab16c6c1a2d50831aa394bb3fa5a0946",
     "docs/reference/tech-notes/nfs.mdx": "511438098915297862f154772cfbb5a66047add1aaead45836914599b3f6e0b9",
     "docs/reference/tech-notes/ros2.mdx": "424ba03fb0c484bba473d19257788665c942c40f6069aea36450576d43f82f99",
-    "docs/tools/web-serial-console.mdx": "04bf7b309851833a742c1931d41369798491fd39a8706dc1a5b9df9a4a79e1d6"
+    "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "uk": {
     "docs/devkit/modalix-devkit.mdx": "ae069fdc8b843e8d4ee246ddc44d10bb758832339e165ea85974a1a7788ba66e",
@@ -84,7 +84,7 @@
     "docs/reference/tech-notes/index.md": "e28a6581964e59cb7a4c7f30c470565fab16c6c1a2d50831aa394bb3fa5a0946",
     "docs/reference/tech-notes/nfs.mdx": "511438098915297862f154772cfbb5a66047add1aaead45836914599b3f6e0b9",
     "docs/reference/tech-notes/ros2.mdx": "424ba03fb0c484bba473d19257788665c942c40f6069aea36450576d43f82f99",
-    "docs/tools/web-serial-console.mdx": "04bf7b309851833a742c1931d41369798491fd39a8706dc1a5b9df9a4a79e1d6"
+    "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "zh-Hant": {
     "docs/devkit/modalix-devkit.mdx": "ae069fdc8b843e8d4ee246ddc44d10bb758832339e165ea85974a1a7788ba66e",
@@ -113,6 +113,6 @@
     "docs/reference/tech-notes/index.md": "e28a6581964e59cb7a4c7f30c470565fab16c6c1a2d50831aa394bb3fa5a0946",
     "docs/reference/tech-notes/nfs.mdx": "511438098915297862f154772cfbb5a66047add1aaead45836914599b3f6e0b9",
     "docs/reference/tech-notes/ros2.mdx": "424ba03fb0c484bba473d19257788665c942c40f6069aea36450576d43f82f99",
-    "docs/tools/web-serial-console.mdx": "04bf7b309851833a742c1931d41369798491fd39a8706dc1a5b9df9a4a79e1d6"
+    "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   }
 }
