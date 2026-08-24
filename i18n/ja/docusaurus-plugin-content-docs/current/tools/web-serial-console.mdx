@@ -23,6 +23,26 @@ Web Serial API は、Chromium をベースとしたブラウザでのみ利用�
 FirefoxとSafariは、Web Serial APIをサポートしておらず、このツールで使用できません。
 :::
 
+### Linux：`dialout` グループへのアクセス
+
+Linux では、`/dev/ttyUSB0` などのシリアルデバイスは、モード `crw-rw----` で `root:dialout` によって所有されています。新しいユーザーアカウントはデフォルトでは `dialout` グループに属していないため、`lsusb` と `dmesg` に USB - シリアル変換アダプターが表示され、`/dev/ttyUSB0` が存在していても、ブラウザでデバイスを開くことができず、**DevKit がシリアルポート選択画面に表示されません**。
+
+ユーザーを `dialout` グループに追加します。
+
+```console
+sudo usermod -aG dialout $USER
+```
+
+その後、**ログアウトして再度ログインするか、再起動してください**。グループの変更は現在のセッションには適用されません。次のコマンドで確認します。
+
+```console
+groups | grep dialout
+```
+
+:::note
+この手順は Linux にのみ適用されます。macOS と Windows では必要ありません。
+:::
+
 ## はじめに
 
 1. SiMa.ai DevKit を、USB - シリアル変換ケーブルを使用してコンピューターに接続します。
