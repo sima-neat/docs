@@ -1,0 +1,47 @@
+---
+title: Modalix PCIeカード
+description: HHHL PCIeカード。ホストに接続された推論システム向けに、MLSoC Modalixをベースに構築されています。
+sidebar_position: 3
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix PCIeカード
+
+**Modalix PCIeカード**は、**MLSoC Modalix**をベースとした、ハーフハイト/ハーフレングス（HHHL）のPCIeカードです。ホストマシンにインストールし、PCIe経由で専用のModalix推論アクセラレーションを提供します。
+
+<Tabs>
+<TabItem value="interfaces" label="インターフェース" default>
+
+<img src={useBaseUrl('/img/devkit/modalix-ea-pcie-interfaces.jpg')} alt="Modalix PCIe Card のインターフェース" style={{width: '100%', display: 'block', margin: '0 auto'}} />
+
+| インターフェース | 説明 |
+| --- | --- |
+| イーサネットポート（eth0、eth1） | リモート接続用のRJ45、ギガビットイーサネットネットワークインターフェース。 |
+| PCI-Express 5.0 x4インターフェース | ホストマシンへの統合のためのPCIeインターフェース。ホストの構成によっては、アダプターが必要になる場合があります。 |
+| ホストへのCOMポート | シリアルコンソールをホストに接続してデバッグを行います。付属のケーブルの矢印を一番左のピンに合わせます。 |
+| SDカードスロット | Modalix PCIeカードの背面にある。 |
+| カメラ用GMSL2 FAKRAポート | 高帯域幅のビデオ伝送用のギガビットマルチメディアシリアルリンクポート。 |
+
+</TabItem>
+<TabItem value="features" label="主な機能">
+
+| 機能 | 詳細 |
+| --- | --- |
+| PCIeインターフェース | 標準のボードエッジコネクタを備えた、1つのPCIe Gen 5.0 x4リンクインターフェース。|
+| システムメモリ | 高帯域幅、低遅延動作を実現する、16GBまたは32GBのLPDDR5 DRAMインターフェース。|
+| eMMCフラッシュストレージ | ブートおよびシステムストレージ用の、1つの32GB eMMCフラッシュメモリインターフェース。|
+| QSPI NORフラッシュ | ファームウェアおよびブートローダーのストレージ用の、1つの128Mbit QSPI NORフラッシュインターフェース。|
+| イーサネット | RJ45コネクタを介した、1つの10Gbpsイーサネットインターフェース。|
+| JTAGインターフェース | ハードウェアデバッグおよび初期化用の、1つのオプションのJTAGインターフェース。|
+| Micro SDインターフェース | 取り外し可能なストレージおよびシステムリカバリ用の、1つのMicro SDカードインターフェース。|
+| デバッグUART（tRoot） | tRoot診断およびデバッグ用の、1つの専用デバッグUARTインターフェース。|
+| デバッグUART（Linux） | Linuxコンソールへのアクセスおよびデバッグ用の、1つの専用デバッグUARTインターフェース。|
+| カメラインターフェース | シリアル化されたリンクを介してリモートカメラを接続するための、2つのGMSL2 FAKRAポート。|
+| ステータスインジケーター | システムの電源状態を示す、1つの電源LED。|
+
+</TabItem>
+</Tabs>

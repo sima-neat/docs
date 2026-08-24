@@ -1,4 +1,15 @@
 import shellConfig from './config.cjs';
+import siteConfig from '@generated/docusaurus.config';
+import docusaurusI18n from '@generated/i18n';
+
+const SITE_ROOT = shellConfig.deploymentSiteRoot(
+  siteConfig.baseUrl || '/',
+  docusaurusI18n.currentLocale,
+);
+
+function withoutSiteRoot(pathname) {
+  return shellConfig.withoutSiteRoot(pathname, SITE_ROOT);
+}
 
 function normalizeDeveloperCenterBrand() {
   document.querySelectorAll('a.navbar__brand').forEach((brandLink) => {
@@ -8,9 +19,11 @@ function normalizeDeveloperCenterBrand() {
 }
 
 function markActiveNavItem() {
-  const activeSection = shellConfig.activeSectionForPath(window.location.pathname);
+  const activeSection = shellConfig.activeSectionForPath(withoutSiteRoot(window.location.pathname));
   document.querySelectorAll('.navbar__link').forEach((link) => {
-    const section = link.dataset.developerCenterSection || shellConfig.activeSectionForPath(new URL(link.href, window.location.href).pathname);
+    const section = link.dataset.developerCenterSection || shellConfig.activeSectionForPath(
+      withoutSiteRoot(new URL(link.href, window.location.href).pathname),
+    );
     if (section === 'home') {
       return;
     }
@@ -20,14 +33,24 @@ function markActiveNavItem() {
 }
 
 function normalizeHardwareBreadcrumbHome() {
-  if (!window.location.pathname.startsWith('/hardware')) {
+  const routePath = withoutSiteRoot(window.location.pathname);
+  if (shellConfig.activeSectionForPath(routePath) !== 'hardware') {
     return;
   }
 
   document
     .querySelectorAll('.theme-doc-breadcrumbs a[aria-label="Home page"]')
     .forEach((link) => {
-      link.setAttribute('href', shellConfig.SECTION_ROUTES.hardware);
+      link.setAttribute(
+        'href',
+        shellConfig.withSiteRoot(
+          shellConfig.withLocalePrefixFromPath(
+            shellConfig.SECTION_ROUTES.hardware,
+            routePath,
+          ),
+          SITE_ROOT,
+        ),
+      );
     });
 }
 
@@ -85,18 +108,19 @@ export function initializeCloudFrontRouteNavigation() {
         return;
       }
 
-      if (url.hash && shellConfig.normalizePath(url.pathname) === shellConfig.normalizePath(window.location.pathname)) {
+      const routePath = withoutSiteRoot(url.pathname);
+      if (url.hash && shellConfig.normalizePath(routePath) === shellConfig.normalizePath(withoutSiteRoot(window.location.pathname))) {
         return;
       }
 
-      if (!shellConfig.isCloudFrontRoutedPath(url.pathname)) {
+      if (!shellConfig.isCloudFrontRoutedPath(routePath)) {
         return;
       }
 
       event.preventDefault();
       event.stopImmediatePropagation();
 
-      const pathname = shellConfig.normalizePath(url.pathname);
+      const pathname = shellConfig.withSiteRoot(shellConfig.normalizePath(routePath), SITE_ROOT);
       window.location.assign(`${pathname}${url.search}${url.hash}`);
     },
     true,

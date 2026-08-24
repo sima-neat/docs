@@ -1,0 +1,23 @@
+---
+title: "獨立模式"
+description: "設定 Modalix DevKit，使其作為一個獨立運作的邊緣裝置。"
+sidebar_position: 3
+---
+
+# 獨立模式
+
+在獨立模式下，Modalix DevKit 作為一個獨立的邊緣設備運行。它接收來自感測器、相機、儲存裝置或網路介面的資料，在本地進行處理，並透過網路傳送結果。
+
+當 DevKit 未作為 PCIe 卡安裝在主機機器上時，請使用本節。
+
+<div class="overview-link-columns overview-link-columns-single">
+  <section class="overview-link-panel overview-link-panel-start">
+    <h2>設定獨立模式</h2>
+    <p>設定 DevKit 在獨立運行時通常需要的服務和介面。</p>
+    <ul class="overview-link-list">
+      <li><a class="overview-link-card" href="/hardware/getting-started/standalone-mode/network"><strong>網路設定</strong><span>尋找 DevKit 的 IP 位址，在 DHCP 和靜態設定之間切換，或共享主機機器上的網路連線。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/standalone-mode/nvme-storage"><strong>設定 NVMe 儲存裝置</strong><span>使用 sima-cli 格式化、掛載和重新掛載 NVMe 磁碟。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/standalone-mode/mipi-camera-interfaces"><strong>設定 MIPI 介面</strong><span>選擇匹配的相機疊加層，啟動 DevKit，並使用 libcamera 進行測試。</span></a></li>
+    </ul>
+  </section>
+</div>

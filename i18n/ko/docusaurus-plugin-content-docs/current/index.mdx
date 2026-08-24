@@ -1,0 +1,155 @@
+---
+title: SiMa.ai 하드웨어 설명서
+description: SiMa.ai MLSoC Modalix 제품에 대한 하드웨어 설정, 펌웨어 및 저수준 인터페이스입니다.
+sidebar_position: 1
+slug: /
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# SiMa.ai 하드웨어 설명서
+
+이 사이트는 SiMa.ai MLSoC Modalix 제품의 하드웨어 설정, 펌웨어 워크플로우 및 저수준 인터페이스에 대한 정보를 제공합니다. 소프트웨어, 머신 러닝 및 파이프라인 도구에 대한 설명서는 별도로 제공됩니다.
+
+## MLSoC Modalix에 대하여
+
+**MLSoC Modalix**는 SiMa.ai의 2세대 머신 러닝 시스템 온 칩입니다. Arm Cortex-A65 애플리케이션 복합체, 고성능 **머신 러닝 가속기(MLA)**, 카메라 입력용 **이미지 신호 프로세서(ISP)**, 그리고 기존 비전 워크로드를 위한 **컴퓨터 비전 장치(CVU)**를 단일 칩에 통합했습니다.
+
+이 통합을 통해 별도의 가속기, 호스트 CPU 및 카메라 브리지를 결합하지 않고도 엣지에서 멀티모달, 생성형 및 비전 AI 파이프라인을 실행할 수 있습니다. Modalix SoM은 캐리어 보드 및 제품 통합을 위해 MLSoC Modalix를 패키징하며, 여기에 설명된 모든 DevKit은 동일한 실리콘을 사용합니다.
+
+<img src={useBaseUrl('/img/media/modalix-arch.png')} alt="PCIe Gen5, 10G 이더넷, MIPI CSI2, Arm A65, ISP, CVU, 비디오 코덱, MLA, LPDDR5, NoC 및 시스템 블록을 보여주는 Modalix 블록 다이어그램" style={{width: '100%', maxWidth: '760px', display: 'block', margin: '1.5rem auto'}} />
+
+## DevKit 포트폴리오
+
+SiMa.ai는 엣지 AI 애플리케이션을 위한 MLSoC Modalix 기반 개발 키트와 PCIe 제품을 제공합니다. 아래에서 제품을 선택하거나 표에서 기능을 비교해 보세요.
+
+<div className="card-grid">
+  <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
+    <img src={useBaseUrl('/img/media/modalix-devkit-no-label.png')} alt="Modalix DevKit" />
+    <h4>Modalix DevKit</h4>
+    <p>MLSoC Modalix를 평가하고 Modalix SoM에서 애플리케이션을 구축하기 위한 현재 개발 키트입니다.</p>
+  </a>
+  <a className="card devkit-card" href="/hardware/devkit/modalix-pcie-card">
+    <img src={useBaseUrl('/img/media/modalix-ea-pcie.jpg')} alt="Modalix PCIe Card" />
+    <h4>Modalix PCIe 카드</h4>
+    <p>확장 가능한 엣지 컴퓨팅 시스템을 위해 설계된 하프 높이/하프 길이(HHHL) 카드입니다.</p>
+  </a>
+  <a className="card devkit-card" href="/hardware/devkit/modalix-ea-kit">
+    <img src={useBaseUrl('/img/media/modalix-ea-kit.png')} alt="Modalix Early Access DevKit" />
+    <h4>Modalix 얼리 액세스 개발 키트</h4>
+    <p>기존 얼리 액세스 고객을 위한 이전 개발 키트입니다.</p>
+  </a>
+</div>
+
+### 기능 비교
+
+| 기능 | Modalix 개발 키트 | Modalix PCIe 카드 | Modalix 얼리 액세스 개발 키트 |
+| --- | --- | --- | --- |
+| **문서 및 운영 체제** | | | |
+| 제품 개요 | [ 보기 ](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) | — | [ 보기 ](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
+| 미리 설치된 운영 체제 | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) |
+| **계산** | | | |
+| ARM 코어 | 8개의 Arm Cortex-A65, 클럭 속도 1.4 GHz | 8개의 Arm Cortex-A65, 클럭 속도 1.4 GHz | 8개의 Arm Cortex-A65, 클럭 속도 1.4 GHz |
+| 이미지 신호 프로세서(ISP) | ARM C-71, 1.2 GHz | ARM C-71, 1.2 GHz | ARM C-71, 1.2 GHz |
+| 컴퓨터 비전 장치(CVU) | 시놉시스 EV74, 750, 16비트 GOPS | 시놉시스 EV74, 750, 16비트 GOPS | 시놉시스 EV74, 750, 16비트 GOPS |
+| **메모리 및 저장 공간** | | | |
+| RAM 크기 | 32GB LPDDR5 | 32GB LPDDR5 | 64GB LPDDR5 |
+| 저장 공간 | 16GB eMMC, 500GB NVMe | 16GB eMMC | 10GB eMMC |
+| SD 카드 슬롯 | ✖ | ✔ | ✔ |
+| **네트워킹** | | | |
+| 이더넷 | 1개의 1GbE | 1개의 1GbE | 1개의 1GbE (end0), 1개의 10GbE (end1), 2개의 10GbE SFP+ (end2/3) |
+| **카메라 입력** | | | |
+| MIPI CSI | 2개의 2레인 MIPI CSI | ✖ | 4개의 4레인 MIPI CSI |
+| FAKRA를 사용하는 GMSL2 | ✖ | FAKRA를 통해 2개의 GMSL2 연결 | ✖ |
+| **입/출력 및 디스플레이** | | | |
+| GPIO / 헤더 | 40핀 GPIO 헤더 | ✖ | 40핀 GPIO 헤더 |
+| USB | USB 3.0 포트 4개 | ✖ | ✖ |
+| HDMI | HDMI 1.4 포트 1개 | ✖ | ✖ |
+| 그래픽 컨트롤러 | [실리콘 모션 SM768](https://www.siliconmotion.com/download/3PR/a/SM768_PB_EN_202004.pdf) | ✖ | ✖ |
+| **비디오 코덱** | | | |
+| H.264/H.265 인코더 | 4kp60 | 4kp60 | 4kp60 |
+| MJPEG 인코더 | 4kp30 | 4kp30 | 4kp30 |
+| H.264/H.265 디코더 | 4kp60 | 4kp60 | 4kp60 |
+| AV1 및 MJPEG 디코더 | 4kp60 | 4kp60 | 4kp60 |
+| **폼 팩터** | | | |
+| 호스트에 연결된 PCIe 카드 | ✖ | ✔ | ✖ |
+
+<a className="docs-button" href="https://sima.ai/contact/" target="_blank" rel="noreferrer"> 개발 키트를 주문하세요.</a>
+
+## 배포 아키텍처
+
+MLSoC Modalix는 두 가지 일반적인 개발 아키텍처를 지원합니다. 바로 독립 실행 모드와 PCIe 모드입니다. 하드웨어가 연결된 방식과 애플리케이션이 실행되는 위치에 따라 적합한 아키텍처를 선택하십시오.
+
+<Tabs>
+<TabItem value="standalone" label="독립 실행형 모드" default>
+
+독립 모드에서는 Modalix DevKit 또는 맞춤형 Modalix SoM 기반 시스템이 자체적으로 작동하는 장치로 실행됩니다. 이 모드는 장치가 센서, 카메라, 저장 장치 또는 네트워크 인터페이스에서 직접 데이터를 수신할 때 사용합니다.
+
+**주요 활용 사례**
+
+- **엣지 AI 애플리케이션**: 중앙 서버나 클라우드 인프라에 의존하지 않고 추론을 실행합니다.
+- **소규모 배포**: 추가 호스트 하드웨어의 필요성을 줄입니다.
+- **전력 제약 시스템**: 배터리 또는 태양 전지판으로 전원을 공급받는 원격 모니터링 시스템을 지원합니다.
+
+**장점**
+
+- **독립 실행**: 호스트 장치 없이 실행됩니다.
+- **전력 효율성**: 전력 소비에 민감한 환경을 지원합니다.
+- **컴팩트**: 공간 제약이 있는 환경에 적합합니다.
+
+**일반적인 데이터 흐름**
+
+1. DevKit는 네트워크 인터페이스 또는 센서로부터 직접 데이터를 수신합니다.
+2. DevKit은 장치 내 추론 파이프라인을 정의하는 [NEAT 애플리케이션 ](https://developer.sima.ai/software)를 로드합니다.
+3. MLSoC Modalix는 추론을 수행하고 데이터를 로컬에서 처리합니다.
+4. 결과는 네트워크 연결을 통해 다른 장치 또는 시스템으로 전송되어 추가적인 작업이나 시각화에 사용됩니다.
+
+<a className="docs-button" href="/hardware/getting-started/standalone-mode">독립 실행 모드로 설정</a>
+
+</TabItem>
+<TabItem value="pcie" label="PCIe 모드">
+
+PCIe 모드에서는 Modalix PCIe 카드를 호스트 장치에 설치합니다. 서버, 데스크톱 또는 워크스테이션이 오케스트레이션, 스토리지 및 I/O를 처리하고 카드는 Modalix 추론 가속을 제공할 때 이 모드를 사용합니다.
+
+**주요 활용 사례**
+
+- **고성능 시스템:** 데이터 처리 및 저장을 위해 데이터 센터 서버 또는 워크스테이션을 사용하고, Modalix PCIe 카드는 추론 작업을 수행합니다.
+- **호스트 관리 I/O:** 호스트 스토리지, 네트워킹 또는 센서 입력을 사용하고 추론 작업을 카드에 위임합니다.
+
+**장점**
+
+- **전용 가속:** 호스트 CPU에서 추론 작업을 Modalix 하드웨어로 오프로드합니다.
+- **확장 가능한 용량:** 필요에 따라 추론 카드를 추가하여 용량을 늘릴 수 있습니다.
+
+**일반적인 데이터 처리 흐름**
+
+1. 호스트 장치는 센서, 주변 장치, 저장 장치 또는 네트워크 인터페이스에서 데이터를 수집합니다.
+2. Modalix PCIe 카드는 추론 파이프라인과 조정된 AI 모델을 포함하는 [NEAT 애플리케이션](https://developer.sima.ai/software)을 로드합니다.
+3. 호스트는 PCIe를 통해 데이터를 Modalix PCIe 카드에 전송합니다.
+4. 호스트는 결과를 처리하거나 하위 시스템으로 전달합니다.
+
+<a className="docs-button" href="/hardware/getting-started/pcie-mode">PCIe 모드 설정</a>
+
+</TabItem>
+</Tabs>
+
+## 시작하기
+
+설정에 맞는 경로를 선택하세요. 각 가이드에서는 해당 모드에 대한 직렬 콘솔 액세스, 네트워크 설정 및 펌웨어 관리를 다룹니다.
+
+<div className="card-grid">
+  <a className="card" href={useBaseUrl('/tools/qsg/index.html')} target="_blank" rel="noreferrer">
+    <h4>빠른 시작 가이드</h4>
+    <p>처음 사용하는 사용자를 위한 단계별 대화형 안내.</p>
+  </a>
+  <a className="card" href="/hardware/getting-started/standalone-mode">
+    <h4>독립 모드</h4>
+    <p>Modalix DevKit 또는 Modalix SoM 기반 시스템을 독립적인 엣지 장치로 실행합니다.</p>
+  </a>
+  <a className="card" href="/hardware/getting-started/pcie-mode">
+    <h4>PCIe 모드</h4>
+    <p>Modalix PCIe 카드를 호스트 장치에 설치하여 추론 작업을 오프로드합니다.</p>
+  </a>
+</div>

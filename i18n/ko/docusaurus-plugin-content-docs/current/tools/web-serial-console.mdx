@@ -1,0 +1,64 @@
+---
+title: "Web Serial 콘솔"
+description: "Web Serial API를 사용하여 SiMa.ai DevKit용 브라우저 기반 시리얼 콘솔을 제공합니다."
+sidebar_position: 1
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# Web Serial 콘솔
+
+**SiMa.ai Web Serial 콘솔**은 [Web Serial API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Serial_API)를 통해 Chromium 기반 브라우저에서 SiMa.ai DevKit에 직접 연결할 수 있는 브라우저 기반 도구입니다. 설치는 필요하지 않습니다. 호환되는 브라우저에서 도구를 열고, USB를 통해 DevKit을 연결한 다음 연결하면 됩니다.
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Web Serial 콘솔을 실행합니다.</a>
+
+## 요구 사항
+
+Web Serial API는 Chromium 기반 브라우저에서만 사용할 수 있습니다.
+
+- **Google Chrome** (권장)
+- **Microsoft Edge**
+
+:::note
+Firefox와 Safari는 Web Serial API를 지원하지 않으므로 이 도구와 함께 사용할 수 없습니다.
+:::
+
+## 시작하기
+
+1. USB-to-Serial 케이블을 사용하여 SiMa.ai DevKit을 컴퓨터에 연결하세요.
+2. 지원되는 브라우저에서 [Web Serial 콘솔](pathname:///tools/serial/index.html)을 엽니다.
+3. 명령어 팔레트에서 **[+] 새 연결**을 클릭하세요.
+4. 브라우저 팝업에서 사용 중인 DevKit에 해당하는 시리얼 포트를 선택하고 **연결**을 클릭하세요.
+5. 콘솔은 로그인 메시지를 자동으로 감지하고 기본 자격 증명을 사용하여 로그인합니다(`sima`/`edgeai`).
+
+## 인터페이스
+
+### 터미널
+
+터미널 창에 명령어를 직접 입력하고 **Enter** 키를 눌러 연결된 DevKit에서 실행합니다.
+
+### 명령어 팔레트
+
+페이지 하단의 명령 팔레트를 통해 자주 사용하는 기능에 빠르게 접근할 수 있습니다.
+
+| 버튼 | 행동 |
+| --- | --- |
+| **[+] 새 연결** | 추가적인 DevKit을 위해 새 연결 탭을 엽니다. |
+| **설정** | 연결하기 전에 통신 속도와 흐름 제어를 설정하십시오. |
+| **로그인** | 기본 자격 증명( `sima`/ `edgeai`)을 보내세요. |
+| **네트워킹** | 활성화된 DevKit에서 `ifconfig`를 실행합니다. |
+| **디스크 공간** | 활성화된 DevKit에서 `df -h`를 실행합니다. |
+| **구축** | 활성화된 DevKit에서 `/etc/buildinfo`를 표시합니다. |
+| **로그아웃** | 활성화된 DevKit에 `logout` 명령을 보냅니다. |
+| **명확한** | 터미널 출력을 지웁니다. |
+| **밝은/어두운 모드** | UI 테마를 전환합니다. |
+| **전체 화면** | 전체 화면 모드로 전환 |
+| **[숨기기]** | 터미널 창을 더 크게 보려면 명령 팔레트를 접습니다. |
+
+### 여러 연결
+
+이 콘솔은 여러 개의 DevKit에 동시에 연결하는 것을 지원합니다. 각 연결은 터미널 영역 상단에 별도의 탭으로 열립니다. 탭을 클릭하여 활성 연결을 전환하거나, 탭에서 **×**를 클릭하여 연결을 끊고 해당 세션을 닫을 수 있습니다.
+
+## 연결 해제
+
+연결을 끊으려면 연결 탭의 **×** 버튼을 클릭하세요. 콘솔은 연결을 닫기 전에 자동으로 `logout` 명령을 DevKit으로 보냅니다.

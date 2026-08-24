@@ -1,0 +1,89 @@
+---
+title: "在 Modalix 系統模組 (SoM) 的 DevKit 上安裝 ROS 2"
+description: "在 Modalix 系統模組 (SoM) DevKit 上安裝機器人作業系統 2 (ROS 2)。"
+sidebar_position: 5
+---
+
+# 在 Modalix 系統模組 (SoM) 的 DevKit 上安裝 ROS 2
+
+請使用本指南來安裝 [機器人作業系統 2 (ROS 2)](https://docs.ros.org/) 在 Modalix 系統模組 DevKit 上，並了解它如何適應實際的 AI 工作負載。
+
+## 什麼是 ROS 2？
+
+ROS 2 是第二代機器人作業系統，它是一個開源的軟體函式庫和工具集，用於建置機器人和物理人工智慧應用程式。它並非一個單一的作業系統，而是一個中間層，可在 Linux 上執行，並允許獨立的機器人程序（例如感測器、執行器、感知模型、規劃器和控制器）相互發現並交換資料。
+
+主要功能包括：
+
+- **基於節點的架構。** 每個功能（例如：相機驅動程式、偵測器、馬達控制器、SLAM 堆疊）都以獨立的 *節點* 形式執行。節點會在執行階段組成，因此相同的感知節點可以在非常不同的機器人之間重複使用。
+- **基於 DDS 的通訊。** ROS 2 建立在資料分發服務 (DDS) 標準之上，用於即時、點對點的發布/訂閱訊息，並具有可設定的服務品質 (可靠性、持久性、截止期限、活動狀態) — 這對於安全關鍵且對時間敏感的機器人應用來說，是一個絕對的要求。
+- **標準訊息類型。** 一個包含大量常用訊息定義的目錄（例如：`sensor_msgs`、`geometry_msgs`、`nav_msgs`、`vision_msgs` 等），可讓來自不同供應商的感知、規劃和控制元件之間相互協作，而無需使用自訂的連接程式碼。
+- **跨平台且支援即時應用。** ROS 2 可以在 Linux 上執行，支援 ARM64 和 x86_64 架構，並設計為與即時核心和微控制器堆疊（micro-ROS）共存。
+- **豐富的工具生態系統。** 提供 `rviz2`，用於 3D 視覺化；提供 `rqt`，用於內省；提供 `rosbag2`，用於記錄和重播感測器資料流；以及提供 `ros2 launch`，用於宣告式系統啟動。
+
+## 為什麼要在 Modalix SoM 上執行 ROS 2？
+
+實體式人工智慧系統，包括自主移動機器人、無人機、機械手臂、自動導引車 (AMR) 以及配備驅動裝置的智慧型攝影機，都需要具備**高吞吐量神經網路推論**能力，以及用於感測器、控制和安全目的的**確定性軟體架構**。Modalix 模組系統 (SoM) 支援這兩種功能的結合：
+
+- **將感知任務卸載到 MLA，並在 Arm 核心上執行 ROS 2。** 感知節點（物件偵測、分割、深度、姿勢、BEV 融合）可以調用 MLSoC 的 MLA，而 ROS 2 發布者將結果以標準 `vision_msgs` 或 `sensor_msgs` 格式傳輸——無需任何專有 IPC。
+- **單一板卡，整合所有功能。** 相機資料輸入、機器學習推論、ROS 2 中介軟體、規劃和馬達控制，所有這些功能都可以在一張 Modalix 系統模組 (SoM) 上執行，從而減少對獨立輔助運算板的需求。
+- **節能邊緣部署。** Modalix 的「每瓦效能」指標，支援使用電池供電的平台，例如無人機、自動移動機器人 (AMR) 和手持式檢測設備。
+- **eLxr Debian 基本系統。** Modalix 系統模組 (SoM) 執行一個 eLxr Debian 衍生版的執行階段，因此標準的 ROS 2 `apt` 套件可以順利安裝——對於一般情況，不需要進行交叉編譯或使用自訂的 Yocto 層。
+
+## 先決條件
+
+:::info
+在 Modalix SoM 上安裝 ROS 2 需要 SDK 版本為 **2.1.0** 或更高版本，且在 eLxr 執行階段上執行。若要檢查或轉換執行階段，請參閱 [轉換為 eLxr](./elxr-conversion)。
+:::
+
+您還需要：
+
+- 一個 Modalix 系統模組 (SoM) DevKit 已啟動，並且可以透過網路或序列埠控制台進行存取。
+- 已在 DevKit 上安裝 `sima-cli`。
+- 為了下載套件，請確保 DevKit 裝置已連線至網際網路。
+
+## 安裝 ROS 2
+
+`sima-cli` 提供一個安裝程式，用於下載適用於 Modalix SoM 的正確 ROS 2 發布版本，設定 apt 來源，並安裝基本套件和標準工具。
+
+<details open>
+<summary><strong>步驟 1：透過 sima-cli 安裝 ROS 2。</strong></summary>
+
+從 Modalix 終端機執行：
+
+```console
+sima@modalix:~$ sima-cli install tools/ros2
+```
+
+安裝程式：
+
+- 新增所需的 Debian `bookworm` 和 ROS 2 apt 軟體源，以及 ROS 簽名金鑰。
+- 安裝建置所需的依賴套件（`cmake`、`colcon`、`vcstool`）、Qt 和 OpenCV 開發套件，以及 GStreamer 外掛程式集，還有其他建置和執行 SoM 上的 ROS 2 節點所需的函式庫。
+- 安裝 `ros2` 和 `colcon` 套件。
+- 將 `source /usr/local/ros2/local_setup.bash` 附加到 `/home/sima/.bash_profile`，以便每次登入時自動載入 ROS 2 環境，並針對目前的 shell 執行此指令。
+
+</details>
+
+<details open>
+<summary><strong>步驟 2：驗證安裝。</strong></summary>
+
+`sima-cli install tools/ros2` 完成後，安裝程式已在目前的 shell 中載入 ROS 2 環境。請確認可透過 PATH 執行 `ros2` CLI：
+
+```console
+sima@modalix:~$ ros2
+```
+
+接著，在兩個終端機上執行標準的「發送者/接收者」示範程式，以確認 DDS 中介軟體是否能完整地從端到端地運作：
+
+```console
+sima@modalix:~$ ros2 run demo_nodes_cpp talker
+```
+
+在同一裝置上的第二個終端機中：
+
+```console
+sima@modalix:~$ ros2 run demo_nodes_py listener
+```
+
+當 talker 發布訊息時，listener 應列印 `I heard: [Hello World: N]`。ROS 2 現已準備就緒，可在 Modalix SoM 上與 SiMa.ai 機器學習管線並行執行感知、規劃和控制節點。
+
+</details>

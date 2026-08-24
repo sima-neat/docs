@@ -1,0 +1,127 @@
+---
+title: "MIPI Інтерфейси для підключення камер"
+description: "Налаштуйте інтерфейси камери MIPI на Modalix DevKit."
+sidebar_position: 3
+---
+
+# MIPI Інтерфейси для підключення камер
+
+:::note
+Будь ласка, встановіть або оновіть `sima-cli`, перш ніж продовжувати. Ця інструкція призначена для використання з останньою версією `sima-cli`.
+:::
+
+:::note
+Для виконання цієї процедури потрібен хост із встановленою останньою версією `sima-cli`. Також потрібна версія мікропрограми **Modalix DevKit**, яка містить файли `.dtbo` для підтримки MIPI.
+:::
+
+**Modalix DevKit** містить два інтерфейси MIPI для підключення камери. Порти MIPI розташовані на платі-носії.
+
+Перш ніж почати, вимкніть **Modalix DevKit** і під’єднайте камеру MIPI до одного з портів MIPI.
+
+Під’єднайте послідовний кабель від хоста до **Modalix DevKit**, а потім увімкніть DevKit.
+
+Відкрийте послідовний термінал за допомогою `sima-cli`, а потім натисніть будь-яку клавішу під час 3-секундного зворотного відліку, щоб перейти до U-Boot:
+
+```console
+sima-cli serial -b 115200
+...
+Hit any key to stop autoboot:  0
+sima$
+```
+
+У U-Boot встановіть значення змінної `dtbos` на відповідний файл **Device Tree Blob Overlay** (`.dtbo`). Правильний файл залежить від **плати-носія**, **виробника камери**, **типу сенсора** та **порту камери**. Потім збережіть налаштування та завантажте операційну систему.
+
+Ім’я файлу має таку структуру:
+
+```text
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+```
+
+Обирайте кожен компонент відповідно до вашого апаратного забезпечення:
+
+| Компонент | Цінності | Опис |
+| --- | --- | --- |
+| Плата-носій | `connectech`, `seeedstudio`, `waveshare` | Модель плати-носія. |
+| Виробник камери | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems або Leopard Imaging. |
+| Тип датчика | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | Модель сенсора камери. |
+| Порт | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | Номер порту MIPI, до якого підключено камеру. |
+
+Наприклад, плата-носій Connectech з датчиком Leopard Imaging IMX477, підключеним до порту 0:
+
+```console
+sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+```
+
+Повний перелік доступних файлів `.dtbo`:
+
+```text
+modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
+modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
+modalix-som-connectech-ECON-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-IMX678-0CAM.dtbo
+modalix-som-connectech-ECON-IMX678-1CAM.dtbo
+modalix-som-connectech-ECON-IMX678-2CAM.dtbo
+modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-LI-AR0234-0CAM.dtbo
+modalix-som-connectech-LI-AR0234-1CAM.dtbo
+modalix-som-connectech-LI-AR0234-2CAM.dtbo
+modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-OG05C10-0CAM.dtbo
+modalix-som-connectech-LI-OG05C10-1CAM.dtbo
+modalix-som-connectech-LI-OG05C10-2CAM.dtbo
+modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
+modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
+modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
+modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
+modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
+modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-LI-AR0234-1CAM.dtbo
+modalix-som-waveshare-LI-AR0234-2CAM.dtbo
+modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+```
+
+Щоб перевірити роботу інтерфейсів, під’єднайте Modalix DevKit до дисплея та увійдіть до системи. Потім використовуйте libcamera, щоб перевірити підключення камери.
+
+1. Список доступних камер:
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. Відобразіть різні формати зображень для камери 1:
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. Зробіть знімок за допомогою камери 1:
+
+   ```console
+   sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```

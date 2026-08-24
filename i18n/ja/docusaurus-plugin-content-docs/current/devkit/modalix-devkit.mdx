@@ -1,0 +1,103 @@
+---
+title: "Modalix DevKit"
+description: "MLSoC Modalix の評価とエッジ AI アプリケーションの構築に使用する Modalix 開発キットです。"
+sidebar_position: 1
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Modalix DevKit
+
+**Modalix DevKit** は、MLSoC Modalix の評価とエッジ AI アプリケーションの構築に使用する主要な開発キットです。Modalix のハードウェアアクセラレーションと、コンピュータービジョン、大規模言語モデル（LLM）、マルチモーダルパイプラインなどのワークロードの開発、テスト、実行に必要なソフトウェアスタックを組み合わせています。
+
+<Tabs>
+<TabItem value="interfaces" label="インターフェース" default>
+
+<img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="SiMa.ai Modalix SoMインターフェース" style={{width: '60%', display: 'block', margin: '0 auto'}} />
+
+| インターフェース | 説明 |
+| --- | --- |
+| イーサネットポート（end0） | RJ45、1ギガビットイーサネットのネットワークインターフェース。リモート接続に使用。 |
+| COMポートからホストへ（USB-C） | ホストシステムに接続することで、デバッグ作業を容易にします。 |
+| MIPI インターフェース（X2） | MIPIカメラの接続用。[セットアップ](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) |
+| USB インターフェース（4つ） | USB 3.0インターフェースを搭載し、マイク、スピーカー、およびUSBビデオカメラに対応。 |
+| HDMIインターフェース（1つ） | 外部ディスプレイを接続するための HDMI 1.4（最大解像度：4K、30Hz、1080p @ 60Hz）。 |
+| 内蔵ストレージ（eMMC） | 16GB |
+| NVMe | M.2 512GB |
+| USB | 4倍 USB 3.0ポート |
+
+製品の詳細については、公式サイトをご覧ください：[SiMa.ai](https://sima.ai/mlsoc/)。
+
+</TabItem>
+<TabItem value="features" label="主な機能">
+
+| 機能 | 詳細 |
+| --- | --- |
+| MLA AIのパフォーマンス | INT8ニューラルネットワーク計算において、1秒あたり50テラ演算を処理可能。また、bf16の精度にも対応。 |
+| 消費電力 | 作業負荷に応じて、8Wから12Wまで。 |
+| アプリケーション処理ユニット（APU） | 最大1.4 GHzで動作する8個のデュアルスレッド [Arm Cortex-A65 CPU](https://www.arm.com/products/silicon-ip-cpu/cortex-a/cortex-a65) コア。 |
+| ビデオエンコーダー | H.264（AVC）、H.265（HEVC）、およびMJPEGの圧縮規格に対応しています。AVCのメイン/ハイプロファイル、HEVCのメインプロファイル、およびMJPEGのベースラインプロファイルをサポートします。エンコーダーは、最大4KP60のレートでH.264/H.265をサポートします。 |
+| ビデオデコーダー | H.264（AVC）、H.265（HEVC）、AV1、およびMJPEGの圧縮規格に対応しています。AVCのメイン/ハイプロファイル、HEVCのメインプロファイル、AV1のメインプロファイル、およびMJPEGのベースラインプロファイルをサポートします。4:2:0ピクセルと8ビットの精度に対応しています。デコーダーは、最大4KP60のレートでH.264/H.265をサポートします。 |
+| コンピュータビジョンユニット（CVU） | 最大で**750の16ビットGOPS**をサポートする、4コアのSynopsys [ARC EV74 ビジョンプロセッサ](https://www.synopsys.com/dw/ipdir.php?ds=ev7x-vision-processors)。 |
+| メモリ | 32GBのLPDDR5 RAMを搭載し、そのうち6GBはARMコアに、16GBはMLAに割り当てられます。残りの容量は、システムの他の部分に割り当てられます。 |
+| 保存 | 16GBの内蔵eMMCに加えて、microSDカードスロットを搭載し、ストレージ容量を拡張可能 |
+| ネットワーキング | 1つの10ギガビットイーサネットポートが、キャリアボード経由で利用可能 |
+
+</TabItem>
+<TabItem value="revisions" label="改訂点">
+
+<table>
+  <colgroup>
+    <col style={{width: '200px'}} />
+    <col />
+    <col />
+    <col />
+  </colgroup>
+  <thead>
+    <tr><th>改訂</th><th>1</th><th>2</th><th>3</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>画像</th>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="バージョン1" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-white.png')} alt="バージョン2" width="80%" /></td>
+      <td><img src={useBaseUrl('/img/media/modalix-devkit-blue.png')} alt="バージョン3" width="80%" /></td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>ケースの色</th>
+      <td>青</td><td>白</td><td>青</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>キャリアボード</th>
+      <td>Waveshare</td><td>Seeed Studio</td><td>Waveshare</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>MIPI コネクタの種類</th>
+      <td>22ピン</td><td>30ピン</td><td>22ピン</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>カメラのシリアルインターフェース</th>
+      <td>CSI1/CSI2</td><td>CSI0/CSI2</td><td>CSI1/CSI2</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>シリアル番号の形式</th>
+      <td>SNXXX</td><td>SNXXX-S</td><td>SNXXX</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>SoM 改訂版</th>
+      <td>1（ステッカーは付属しません。開発キット用キャリアボードのみです）</td>
+      <td>1（ステッカーなし、DevKit キャリアボードのみ）</td>
+      <td><a href="https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf">2</a> （ステッカー、サードパーティ製のキャリアボードに対応）</td>
+    </tr>
+    <tr>
+      <th style={{whiteSpace: 'nowrap', textAlign: 'left'}}>利用可能状況</th>
+      <td>GA</td><td>試作品</td><td>試作品</td>
+    </tr>
+  </tbody>
+</table>
+
+</TabItem>
+</Tabs>

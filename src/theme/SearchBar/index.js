@@ -1,6 +1,8 @@
 import React, {useCallback, useEffect, useState} from "react";
 import {createPortal} from "react-dom";
 import {useLocation} from "@docusaurus/router";
+import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import developerCenterShell from "../../developerCenter/shell/config.cjs";
 
 // On mobile the native navbar is the single top bar, and search lives in the
 // Developer Center shell (hidden on mobile). This renders an always-visible
@@ -12,6 +14,26 @@ const SHELL_INPUT_ID = "developer-center-search-input";
 export default function SearchBar() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
+  const {i18n} = useDocusaurusContext();
+  const routeLocale = developerCenterShell.SHELL_TRANSLATIONS[i18n.currentLocale]
+    ? i18n.currentLocale
+    : developerCenterShell.DEFAULT_LOCALE;
+  const [locale, setLocale] = useState(routeLocale);
+  const searchCopy = (
+    developerCenterShell.SHELL_TRANSLATIONS[locale]
+    || developerCenterShell.SHELL_TRANSLATIONS.en
+  ).search;
+
+  useEffect(() => setLocale(routeLocale), [routeLocale]);
+  useEffect(() => {
+    const onLanguageChange = (event) => {
+      if (developerCenterShell.SHELL_TRANSLATIONS[event?.detail?.locale]) {
+        setLocale(event.detail.locale);
+      }
+    };
+    window.addEventListener("developer-center-language-change", onLanguageChange);
+    return () => window.removeEventListener("developer-center-language-change", onLanguageChange);
+  }, []);
 
   const focusShellSearch = useCallback(() => {
     document.getElementById(SHELL_INPUT_ID)?.focus();
@@ -54,7 +76,7 @@ export default function SearchBar() {
       <button
         type="button"
         className="dc-mobile-search-box"
-        aria-label="Search Developer Center"
+        aria-label={searchCopy.placeholder}
         onClick={() => setOpen(true)}
       >
         <svg
@@ -70,7 +92,7 @@ export default function SearchBar() {
             d="M9.5 3a6.5 6.5 0 0 1 5.18 10.43l4.45 4.44-1.42 1.42-4.44-4.45A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"
           />
         </svg>
-        <span className="dc-mobile-search-box__label">Search Developer Center</span>
+        <span className="dc-mobile-search-box__label">{searchCopy.placeholder}</span>
       </button>
       {open &&
         typeof document !== "undefined" &&
@@ -84,8 +106,8 @@ export default function SearchBar() {
             <button
               type="button"
               className="dc-mobile-search-close"
-              aria-label="Close search"
-              title="Close search"
+              aria-label={searchCopy.close}
+              title={searchCopy.close}
               onClick={() => setOpen(false)}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

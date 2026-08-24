@@ -1,0 +1,65 @@
+---
+title: 使用 sima-cli 更新
+description: 使用 sima-cli 透過網路更新正在運行的 Modalix DevKit。
+sidebar_position: 1
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 使用 sima-cli 更新
+
+當 DevKit 正在執行且可透過網路存取時，請使用 `sima-cli update`。此方法會下載韌體映像，並在 DevKit 上觸發更新。
+
+在繼續之前，請確認主機可以透過網路存取 DevKit。請參閱：
+
+- [獨立模式網路設定](/hardware/getting-started/standalone-mode/network)
+- [PCIe 模式虛擬網路設定](/hardware/getting-started/pcie-mode/virtual-network)
+
+<Tabs groupId="sima-cli-source">
+<TabItem value="from-devkit" label="從 DevKit" default>
+
+直接在獨立 DevKit 上執行 `sima-cli`。請確保 DevKit 具有有效的網際網路連線，然後執行：
+
+```console
+modalix:~$ sima-cli update
+```
+
+在執行 Yocto Linux 的 MLSoC 上，如果您之前已下載並自行託管映像，則也可以指定完整的 URL，而不是版本字串。
+
+```console
+modalix:~$ sima-cli update http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="from-host" label="從主機">
+
+:::note
+此方法僅在執行 Yocto 的 MLSoC 平台上受支援。對於執行 eLxr Linux 的 Modalix 裝置，請直接在 DevKit 上執行更新。
+:::
+
+從主機執行以下命令：
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit}
+```
+
+如果適用，此命令還會在主機上安裝適當的 Linux 驅動程式版本。
+
+如果您已下載韌體並在您的網路中託管，請提供 URL 以避免重複下載。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli update --ip {ip_address_of_the_devkit} http://your-server/image.tar.gz
+```
+
+</TabItem>
+<TabItem value="download" label="僅下載">
+
+若要僅下載韌體映像以進行手動更新步驟，請使用適當的 Modalix 韌體檔案的 URL 執行 `sima-cli download`。
+
+</TabItem>
+</Tabs>
+
+:::note
+若要**降級** DevKit 或安裝**非最新版本**的建置（例如，預發布的 `develop` 建置或內部工程映像），請改用 [網路啟動恢復](/hardware/getting-started/firmware-update/net-boot)。它會從主機上的 TFTP 伺服器啟動 DevKit，並直接將目標映像閃存到 eMMC。
+:::

@@ -3,6 +3,8 @@
 const lightCodeTheme = require('prism-react-renderer').themes.github;
 const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 const developerCenterShell = require('./src/developerCenter/shell/config.cjs');
+const localizeHardwareLinks = require('./src/remark/localizeHardwareLinks.cjs');
+const substituteVersions = require('./src/remark/substituteVersions.cjs');
 
 const url = process.env.SYSDOC_URL || 'https://sysdoc.neat.sima.ai';
 const baseUrl = process.env.SYSDOC_BASE_URL || '/';
@@ -25,6 +27,42 @@ const themeBootstrapScript = `(function(){try{
   document.documentElement.setAttribute('data-theme-choice',t);
 }catch(e){}})();`;
 
+// Apply the cross-site documentation-language preference before Docusaurus
+// hydrates so Hardware and Software switch without flashing the previous
+// locale. Hardware's locale prefix precedes its route base (`/ja/hardware`).
+const languageBootstrapScript = `(function(){try{
+  var supported=${JSON.stringify(developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code))};
+  var m=document.cookie.match(/(?:^|; )${developerCenterShell.LOCALE_COOKIE}=([^;]*)/);
+  var preferred=null;
+  if(m){try{preferred=decodeURIComponent(m[1])}catch(e){}}
+  if(supported.indexOf(preferred)===-1){try{preferred=window.localStorage.getItem(${JSON.stringify(developerCenterShell.LOCALE_KEY)})}catch(e){}}
+  if(supported.indexOf(preferred)===-1)return;
+  var parts=window.location.pathname.split('/').filter(Boolean);
+  var baseParts=${JSON.stringify(baseUrl.split('/').filter(Boolean))};
+  var routeParts=parts.slice(0,baseParts.length).join('/')===baseParts.join('/')?parts.slice(baseParts.length):parts;
+  var landingLocale=routeParts.length===0?${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)}:(routeParts.length===1&&supported.indexOf(routeParts[0])>0?routeParts[0]:null);
+  if(landingLocale!==null){
+    if(landingLocale===preferred)return;
+    var destinationParts=baseParts.slice();
+    if(preferred!==${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)})destinationParts.push(preferred);
+    var destination='/'+destinationParts.join('/');
+    if(destination!=='/')destination+='/'
+    window.location.replace(destination+window.location.search+window.location.hash);
+    return;
+  }
+  var hardwareIndex=parts.indexOf('hardware');
+  if(hardwareIndex<0)return;
+  var localeIndex=hardwareIndex>0&&supported.indexOf(parts[hardwareIndex-1])>0?hardwareIndex-1:-1;
+  var current=localeIndex>=0?parts[localeIndex]:${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)};
+  if(current===preferred)return;
+  if(localeIndex>=0)parts.splice(localeIndex,1);
+  if(preferred!==${JSON.stringify(developerCenterShell.DEFAULT_LOCALE)}){
+    hardwareIndex=parts.indexOf('hardware');
+    parts.splice(hardwareIndex,0,preferred);
+  }
+  window.location.replace('/'+parts.join('/')+window.location.search+window.location.hash);
+}catch(e){}})();`;
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'SiMa.ai System Documentation',
@@ -40,6 +78,11 @@ const config = {
       tagName: 'script',
       attributes: {},
       innerHTML: themeBootstrapScript,
+    },
+    {
+      tagName: 'script',
+      attributes: {},
+      innerHTML: languageBootstrapScript,
     },
     {
       tagName: 'script',
@@ -65,7 +108,13 @@ const config = {
 
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: developerCenterShell.SUPPORTED_LOCALES.map(({code}) => code),
+    localeConfigs: Object.fromEntries(
+      developerCenterShell.SUPPORTED_LOCALES.map(({code, label, htmlLang}) => [
+        code,
+        {label, htmlLang},
+      ]),
+    ),
   },
 
   presets: [
@@ -78,11 +127,11 @@ const config = {
           routeBasePath: 'hardware',
           // Substitute %platform_version% (and any other key in src/versions.cjs) at build
           // time, including inside fenced code blocks. See src/remark/substituteVersions.cjs.
-          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
+          remarkPlugins: [substituteVersions, localizeHardwareLinks],
         },
         pages: {
           // src/pages/agents.md (served at /agents) uses the same %key% tokens.
-          remarkPlugins: [require('./src/remark/substituteVersions.cjs')],
+          remarkPlugins: [substituteVersions],
         },
         blog: false,
         theme: {
@@ -109,14 +158,17 @@ const config = {
         },
         items: [
           ...developerCenterShell.docusaurusNavbarItems(),
+          {
+            type: 'localeDropdown',
+            position: 'right',
+          },
         ],
       },
       footer: {
         style: 'light',
         links: [
           {
-            label: 'Documentation feedback',
-            href: 'https://github.com/sima-neat/docs/issues/new?template=doc-feedback-report.md',
+            html: '<a class="footer__link-item" href="https://github.com/sima-neat/docs/issues/new?template=doc-feedback-report.md" data-documentation-feedback>Documentation feedback</a>',
           },
           {
             html: '<button type="button" class="footer__link-item cookie-preferences-link" data-cookie-preferences>Cookie preferences</button>',

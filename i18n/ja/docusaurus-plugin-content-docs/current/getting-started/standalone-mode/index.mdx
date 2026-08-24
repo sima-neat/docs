@@ -1,0 +1,23 @@
+---
+title: "スタンドアロンモード"
+description: "Modalix DevKit を、スタンドアロンのエッジデバイスとして動作するように設定します。"
+sidebar_position: 3
+---
+
+# スタンドアロンモード
+
+スタンドアロンモードでは、Modalix DevKit は、独立したエッジデバイスとして動作します。センサー、カメラ、ストレージ、またはネットワークインターフェースからデータを受信し、ローカルで処理し、結果をネットワーク経由で送信します。
+
+DevKit が PCIe カードとしてホストマシンにインストールされていない場合に、このセクションを使用します。
+
+<div class="overview-link-columns overview-link-columns-single">
+  <section class="overview-link-panel overview-link-panel-start">
+    <h2>スタンドアロンモードの設定</h2>
+    <p>DevKit が単独で動作する場合に通常必要となるサービスとインターフェースを設定します。</p>
+    <ul class="overview-link-list">
+      <li><a class="overview-link-card" href="/hardware/getting-started/standalone-mode/network"><strong>ネットワークの設定</strong><span>DevKit の IP アドレスを検索し、DHCP と静的プロファイルの切り替え、またはホストマシンのネットワーク接続の共有を行います。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/standalone-mode/nvme-storage"><strong>NVMe ストレージの設定</strong><span>sima-cli を使用して、NVMe ドライブのフォーマット、マウント、および再マウントを行います。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/standalone-mode/mipi-camera-interfaces"><strong>MIPI インターフェースの設定</strong><span>適切なカメラオーバーレイを選択し、DevKit を起動し、libcamera でテストします。</span></a></li>
+    </ul>
+  </section>
+</div>

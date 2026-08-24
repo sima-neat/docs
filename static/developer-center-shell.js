@@ -12,6 +12,32 @@
       cookie: 'sima-neat-theme',
       keys: ['theme', 'portal-theme'],
     },
+    language: {
+      cookie: 'sima-neat-locale',
+      key: 'sima-neat-locale',
+      defaultLocale: 'en',
+      locales: [
+        {code: 'en', shortLabel: '🇺🇸', label: 'English', htmlLang: 'en-US'},
+        {code: 'ko', shortLabel: '🇰🇷', label: '한국어', htmlLang: 'ko-KR'},
+        {code: 'ja', shortLabel: '🇯🇵', label: '日本語', htmlLang: 'ja-JP'},
+        {code: 'zh-Hant', shortLabel: '🇹🇼', label: '繁體中文', htmlLang: 'zh-Hant-TW'},
+        {code: 'uk', shortLabel: '🇺🇦', label: 'Українська', htmlLang: 'uk-UA'},
+      ],
+      translations: {
+        en: {brand: 'Developer Portal', homeLabel: 'Home', externalLinkLabel: 'Opens in new tab', themeToggleLabel: 'Switch between dark and light mode', landing: {kicker: 'Developer Center', title: 'Open, Simple, Performant, Neat!', summary: 'Learn how to build physical AI with SiMa.ai technology. Explore hardware interfaces, software tools, and best practices for building high-performance AI applications.', sectionsLabel: 'Documentation sections'}, search: {label: 'Search', placeholder: 'Search Developer Center', clear: 'Clear search', close: 'Close search', sources: {all: 'All', hardware: 'Hardware', software: 'Software', examples: 'Examples'}, overview: 'Overview', filtersLabel: 'Search result filters', resultsLabel: 'Search results', searching: 'Searching...', unavailable: 'Search is unavailable in this local build.', prompt: 'Search hardware, software, APIs, and examples.', noMatches: 'No matches found.', noSectionMatches: 'No matches in this section.', error: 'Search failed.'}, navItems: {quickstart: 'Quick Start Guide', hardware: 'Hardware', software: 'Software', examples: 'Examples', models: 'Models', community: 'Community'}},
+        ko: {brand: '개발자 포털', homeLabel: '홈', externalLinkLabel: '새 탭에서 열림', themeToggleLabel: '다크 모드와 라이트 모드 전환', landing: {kicker: '개발자 센터', title: '개방적이고, 단순하며, 뛰어난 성능의 Neat!', summary: 'SiMa.ai 기술로 피지컬 AI를 구축하는 방법을 알아보세요. 하드웨어 인터페이스, 소프트웨어 도구, 고성능 AI 애플리케이션 구축을 위한 모범 사례를 살펴보세요.', sectionsLabel: '문서 섹션'}, search: {label: '검색', placeholder: '개발자 센터 검색', clear: '검색 지우기', close: '검색 닫기', sources: {all: '전체', hardware: '하드웨어', software: '소프트웨어', examples: '예제'}, overview: '개요', filtersLabel: '검색 결과 필터', resultsLabel: '검색 결과', searching: '검색 중...', unavailable: '이 로컬 빌드에서는 검색을 사용할 수 없습니다.', prompt: '하드웨어, 소프트웨어, API 및 예제를 검색하세요.', noMatches: '일치하는 결과가 없습니다.', noSectionMatches: '이 섹션에는 일치하는 결과가 없습니다.', error: '검색에 실패했습니다.'}, navItems: {quickstart: '빠른 시작 가이드', hardware: '하드웨어', software: '소프트웨어', examples: '예제', models: '모델', community: '커뮤니티'}},
+        ja: {brand: '開発者ポータル', homeLabel: 'ホーム', externalLinkLabel: '新しいタブで開きます', themeToggleLabel: 'ダークモードとライトモードを切り替える', landing: {kicker: 'デベロッパーセンター', title: 'オープン、シンプル、高性能、Neat！', summary: 'SiMa.ai のテクノロジーを使用してフィジカル AI を構築する方法を学びましょう。ハードウェアインターフェース、ソフトウェアツール、高性能 AI アプリケーションを構築するためのベストプラクティスをご覧ください。', sectionsLabel: 'ドキュメントセクション'}, search: {label: '検索', placeholder: 'デベロッパーセンターを検索', clear: '検索をクリア', close: '検索を閉じる', sources: {all: 'すべて', hardware: 'ハードウェア', software: 'ソフトウェア', examples: '使用例'}, overview: '概要', filtersLabel: '検索結果フィルター', resultsLabel: '検索結果', searching: '検索中...', unavailable: 'このローカルビルドでは検索を利用できません。', prompt: 'ハードウェア、ソフトウェア、API、使用例を検索します。', noMatches: '一致する結果がありません。', noSectionMatches: 'このセクションには一致する結果がありません。', error: '検索に失敗しました。'}, navItems: {quickstart: 'クイックスタートガイド', hardware: 'ハードウェア', software: 'ソフトウェア', examples: '使用例', models: 'モデル', community: 'コミュニティ'}},
+        'zh-Hant': {brand: '開發者入口網站', homeLabel: '首頁', externalLinkLabel: '在新分頁中開啟', themeToggleLabel: '切換深色與淺色模式', landing: {kicker: '開發者中心', title: '開放、簡單、高效能、Neat！', summary: '瞭解如何運用 SiMa.ai 技術打造實體 AI。探索硬體介面、軟體工具，以及建置高效能 AI 應用程式的最佳實務。', sectionsLabel: '文件區段'}, search: {label: '搜尋', placeholder: '搜尋開發者中心', clear: '清除搜尋', close: '關閉搜尋', sources: {all: '全部', hardware: '硬體', software: '軟體', examples: '範例'}, overview: '概覽', filtersLabel: '搜尋結果篩選條件', resultsLabel: '搜尋結果', searching: '搜尋中...', unavailable: '此本機建置無法使用搜尋功能。', prompt: '搜尋硬體、軟體、API 和範例。', noMatches: '找不到相符結果。', noSectionMatches: '此區段中找不到相符結果。', error: '搜尋失敗。'}, navItems: {quickstart: '快速入門指南', hardware: '硬體', software: '軟體', examples: '範例', models: '模型', community: '社群'}},
+        uk: {brand: 'Портал розробника', homeLabel: 'Головна сторінка', externalLinkLabel: 'Відкривається в новій вкладці', themeToggleLabel: 'Перемкнути між темною та світлою темами', landing: {kicker: 'Центр розробника', title: 'Відкрито, просто, продуктивно, Neat!', summary: 'Дізнайтеся, як створювати фізичний ШІ за допомогою технологій SiMa.ai. Ознайомтеся з апаратними інтерфейсами, програмними інструментами та найкращими практиками створення високопродуктивних застосунків ШІ.', sectionsLabel: 'Розділи документації'}, search: {label: 'Пошук', placeholder: 'Пошук у Центрі розробника', clear: 'Очистити пошук', close: 'Закрити пошук', sources: {all: 'Усі', hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади'}, overview: 'Огляд', filtersLabel: 'Фільтри результатів пошуку', resultsLabel: 'Результати пошуку', searching: 'Пошук...', unavailable: 'Пошук недоступний у цій локальній збірці.', prompt: 'Шукайте в апаратній документації, програмному забезпеченні, API та прикладах.', noMatches: 'Збігів не знайдено.', noSectionMatches: 'У цьому розділі збігів не знайдено.', error: 'Не вдалося виконати пошук.'}, navItems: {quickstart: 'Посібник зі швидкого старту', hardware: 'Апаратне забезпечення', software: 'Програмне забезпечення', examples: 'Приклади', models: 'Моделі', community: 'Спільнота'}},
+      },
+      pickerTranslations: {
+        en: {heading: 'Documentation language', menuLabel: 'Select documentation language', currentLabel: 'Documentation language'},
+        ko: {heading: '문서 언어', menuLabel: '문서 언어 선택', currentLabel: '문서 언어'},
+        ja: {heading: 'ドキュメントの言語', menuLabel: 'ドキュメントの言語を選択', currentLabel: 'ドキュメントの言語'},
+        'zh-Hant': {heading: '文件語言', menuLabel: '選擇文件語言', currentLabel: '文件語言'},
+        uk: {heading: 'Мова документації', menuLabel: 'Виберіть мову документації', currentLabel: 'Мова документації'},
+      },
+    },
     runtimeConfig: '/developer-center-runtime.json',
     search: null,
   };
@@ -23,6 +49,7 @@
     {key: 'examples', label: 'Examples'},
   ];
   const MAX_SEARCH_RESULTS = 24;
+  let activeManifest = DEFAULT_MANIFEST;
 
   function normalizeTheme(value) {
     return VALID_THEMES.has(value) ? value : null;
@@ -33,6 +60,35 @@
       return '/';
     }
     return pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  }
+
+  function withSiteRoot(pathname, siteRoot = '/') {
+    if (!pathname.startsWith('/') || !siteRoot || siteRoot === '/') {
+      return pathname;
+    }
+    return `${siteRoot.replace(/\/+$/, '')}${pathname}`;
+  }
+
+  function isAbsoluteUrl(href) {
+    return /^[a-z][a-z\d+.-]*:/i.test(href) || href.startsWith('//');
+  }
+
+  function withoutSiteRoot(pathname, siteRoot = '/') {
+    const normalizedRoot = siteRoot.replace(/\/+$/, '');
+    if (!normalizedRoot || normalizedRoot === '/') return pathname;
+    if (pathname === normalizedRoot) return '/';
+    return pathname.startsWith(`${normalizedRoot}/`)
+      ? pathname.slice(normalizedRoot.length)
+      : pathname;
+  }
+
+  function decodeCookieEntry(entry) {
+    if (!entry) return null;
+    try {
+      return decodeURIComponent(entry.split('=').slice(1).join('='));
+    } catch (_) {
+      return null;
+    }
   }
 
   function cookieDomain() {
@@ -51,7 +107,7 @@
     const entry = document.cookie
       .split('; ')
       .find((cookie) => cookie.startsWith(`${cookieName}=`));
-    return normalizeTheme(entry ? decodeURIComponent(entry.split('=').slice(1).join('=')) : null);
+    return normalizeTheme(decodeCookieEntry(entry));
   }
 
   function readStoredTheme(keys) {
@@ -102,11 +158,180 @@
     );
   }
 
+  function languageConfig(manifest) {
+    return manifest.language || DEFAULT_MANIFEST.language;
+  }
+
+  function normalizeLocale(value, manifest) {
+    return languageConfig(manifest).locales.some((locale) => locale.code === value)
+      ? value
+      : null;
+  }
+
+  function shellTranslations(manifest, locale) {
+    const config = languageConfig(manifest);
+    const translations = config.translations || DEFAULT_MANIFEST.language.translations;
+    const english = translations.en || DEFAULT_MANIFEST.language.translations.en;
+    const localized = translations[locale] || english;
+    const pickerTranslations = config.pickerTranslations || DEFAULT_MANIFEST.language.pickerTranslations;
+    const englishPicker = pickerTranslations.en || DEFAULT_MANIFEST.language.pickerTranslations.en;
+    const localizedPicker = pickerTranslations[locale] || englishPicker;
+    return {
+      ...english,
+      ...localized,
+      landing: {...english.landing, ...localized.landing},
+      search: {
+        ...english.search,
+        ...localized.search,
+        sources: {...english.search.sources, ...localized.search.sources},
+      },
+      languagePicker: {...englishPicker, ...localizedPicker},
+      navItems: {...english.navItems, ...localized.navItems},
+    };
+  }
+
+  function readCookieLocale(manifest) {
+    const cookieName = languageConfig(manifest).cookie;
+    const entry = document.cookie
+      .split('; ')
+      .find((cookie) => cookie.startsWith(`${cookieName}=`));
+    return normalizeLocale(decodeCookieEntry(entry), manifest);
+  }
+
+  function readStoredLocale(manifest) {
+    try {
+      return normalizeLocale(
+        window.localStorage.getItem(languageConfig(manifest).key),
+        manifest,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function writeLocale(locale, manifest = activeManifest) {
+    const config = languageConfig(manifest);
+    try {
+      window.localStorage.setItem(config.key, locale);
+    } catch (_) {
+      // Ignore restricted storage modes.
+    }
+
+    const domain = cookieDomain();
+    const domainPart = domain ? `; Domain=.${domain}` : '';
+    const securePart = window.location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `${config.cookie}=${encodeURIComponent(locale)}; Path=/; Max-Age=31536000; SameSite=Lax${securePart}${domainPart}`;
+  }
+
+  function localeFromPath(pathname, manifest = activeManifest) {
+    const defaultLocale = languageConfig(manifest).defaultLocale;
+    const segments = pathname.split('/').filter(Boolean);
+    const hardwareSegment = normalizePath(manifest.routes?.hardware || '/hardware')
+      .split('/')
+      .filter(Boolean)
+      .at(-1);
+    const softwareSegment = normalizePath(manifest.routes?.software || '/software')
+      .split('/')
+      .filter(Boolean)
+      .at(-1);
+
+    const leadingLocale = normalizeLocale(segments[0], manifest);
+    if (leadingLocale && (segments.length === 1 || segments[1] === hardwareSegment)) {
+      return leadingLocale;
+    }
+    if (segments[0] === hardwareSegment || segments[0] === softwareSegment) {
+      return normalizeLocale(segments[1], manifest) || defaultLocale;
+    }
+    return defaultLocale;
+  }
+
+  function localizedPath(pathname, targetLocale, manifest = activeManifest) {
+    const locale = normalizeLocale(targetLocale, manifest);
+    if (!locale) return pathname;
+
+    const config = languageConfig(manifest);
+    const defaultLocale = config.defaultLocale;
+    const trailingSlash = pathname.length > 1 && pathname.endsWith('/');
+    const segments = pathname.split('/').filter(Boolean);
+    const hardwareSegment = normalizePath(manifest.routes?.hardware || '/hardware')
+      .split('/')
+      .filter(Boolean)
+      .at(-1);
+    const softwareSegment = normalizePath(manifest.routes?.software || '/software')
+      .split('/')
+      .filter(Boolean)
+      .at(-1);
+
+    let sectionIndex = segments.indexOf(hardwareSegment);
+    let localeIndex = sectionIndex === 1 && normalizeLocale(segments[0], manifest) ? 0 : -1;
+    let localePlacement = 'before';
+
+    if (sectionIndex < 0) {
+      sectionIndex = segments.indexOf(softwareSegment);
+      localePlacement = 'after';
+      if (sectionIndex >= 0 && normalizeLocale(segments[sectionIndex + 1], manifest)) {
+        localeIndex = sectionIndex + 1;
+      }
+    } else if (localeIndex < 0 && normalizeLocale(segments[sectionIndex + 1], manifest)) {
+      localeIndex = sectionIndex + 1;
+    }
+
+    if (sectionIndex < 0) {
+      const leadingLocale = normalizeLocale(segments[0], manifest);
+      if (segments.length > 1 && leadingLocale) {
+        segments.shift();
+        if (locale !== defaultLocale) segments.unshift(locale);
+        return `/${segments.join('/')}${trailingSlash ? '/' : ''}`;
+      }
+      const landingLocale = segments.length === 1
+        ? normalizeLocale(segments[0], manifest)
+        : null;
+      if (segments.length > 1 || (segments.length === 1 && !landingLocale)) return pathname;
+      if (locale === defaultLocale) return '/';
+      return `/${locale}${trailingSlash || pathname === '/' ? '/' : ''}`;
+    }
+    if (localeIndex >= 0) {
+      segments.splice(localeIndex, 1);
+      if (localeIndex < sectionIndex) sectionIndex -= 1;
+    }
+    if (locale !== defaultLocale) {
+      segments.splice(localePlacement === 'before' ? sectionIndex : sectionIndex + 1, 0, locale);
+    }
+
+    return `/${segments.join('/')}${trailingSlash ? '/' : ''}`;
+  }
+
+  function initialLocale(manifest) {
+    const pathLocale = localeFromPath(window.location.pathname, manifest);
+    const defaultLocale = languageConfig(manifest).defaultLocale;
+    return pathLocale !== defaultLocale
+      ? pathLocale
+      : readCookieLocale(manifest) || readStoredLocale(manifest) || defaultLocale;
+  }
+
+  function sectionForPath(pathname, manifest) {
+    const segments = pathname.split('/').filter(Boolean);
+    const localeOffset = normalizeLocale(segments[0], manifest) ? 1 : 0;
+    const hardwareSegment = normalizePath(manifest.routes?.hardware || '/hardware')
+      .split('/')
+      .filter(Boolean)
+      .at(-1);
+    const softwareSegment = normalizePath(manifest.routes?.software || '/software')
+      .split('/')
+      .filter(Boolean)
+      .at(-1);
+    if (segments[localeOffset] === hardwareSegment) return 'hardware';
+    if (segments[0] === softwareSegment) return 'software';
+    return '';
+  }
+
   function activeKey(manifest, configuredActive) {
     if (configuredActive) {
       return configuredActive;
     }
     const pathname = normalizePath(window.location.pathname);
+    const documentationSection = sectionForPath(pathname, manifest);
+    if (documentationSection) return documentationSection;
     const match = (manifest.navItems || DEFAULT_MANIFEST.navItems).find(
       (item) => !item.external && normalizePath(item.href) === pathname,
     );
@@ -145,8 +370,9 @@
     return hit.section || hit.category || hit.hierarchy?.lvl1 || sourceLabel(source);
   }
 
-  function displaySectionLabel(section, source) {
-    return section === sourceLabel(source) ? 'Overview' : section;
+  function displaySectionLabel(section, source, searchCopy) {
+    const topLevelLabels = [source, sourceLabel(source), searchCopy.sources[source]];
+    return topLevelLabels.includes(section) ? searchCopy.overview : section;
   }
 
   function filterKey(source, section) {
@@ -245,6 +471,7 @@
   function renderSearchResults(root, state) {
     const panel = root.querySelector('[data-developer-center-search-panel]');
     if (!panel) return;
+    const searchCopy = state.copy;
 
     const sourceCounts = new Map(SEARCH_SOURCES.map((source) => [source.key, 0]));
     const categoryCounts = new Map();
@@ -280,7 +507,11 @@
     };
     const sourceTree = SEARCH_SOURCES.map((source) => {
       if (source.key === 'all') {
-        return filterButton({key: 'all', label: 'All', count: sourceCounts.get('all') || 0});
+        return filterButton({
+          key: 'all',
+          label: searchCopy.sources.all,
+          count: sourceCounts.get('all') || 0,
+        });
       }
 
       const sourceCount = sourceCounts.get(source.key) || 0;
@@ -290,7 +521,7 @@
         .map(([key, count]) =>
           filterButton({
             key,
-            label: displaySectionLabel(key.slice(source.key.length + 1), source.key),
+            label: displaySectionLabel(key.slice(source.key.length + 1), source.key, searchCopy),
             count,
             className: ' developer-center-search-filter-sub',
           }),
@@ -301,7 +532,7 @@
         <div class="developer-center-search-filter-group">
           ${filterButton({
             key: source.key,
-            label: source.label,
+            label: searchCopy.sources[source.key],
             count: sourceCount,
             className: ' developer-center-search-filter-source',
           })}
@@ -311,20 +542,20 @@
 
     let content = '';
     if (state.loading) {
-      content = '<div class="developer-center-search-status">Searching...</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.searching)}</div>`;
     } else if (state.error) {
       content = `<div class="developer-center-search-status developer-center-search-error">${escapeHtml(state.error)}</div>`;
     } else if (state.searchConfigured === false) {
-      content = '<div class="developer-center-search-status">Search is unavailable in this local build.</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.unavailable)}</div>`;
     } else if (!state.query.trim()) {
-      content = '<div class="developer-center-search-status">Search hardware, software, APIs, and examples.</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.prompt)}</div>`;
     } else if (state.hits.length === 0) {
-      content = '<div class="developer-center-search-status">No matches found.</div>';
+      content = `<div class="developer-center-search-status">${escapeHtml(searchCopy.noMatches)}</div>`;
     } else {
       content = `
         <div class="developer-center-search-layout">
-          <aside class="developer-center-search-filters" aria-label="Search result filters">${sourceTree}</aside>
-          <section class="developer-center-search-results" aria-label="Search results">
+          <aside class="developer-center-search-filters" aria-label="${escapeHtml(searchCopy.filtersLabel)}">${sourceTree}</aside>
+          <section class="developer-center-search-results" aria-label="${escapeHtml(searchCopy.resultsLabel)}">
             ${
               visibleHits.length
                 ? visibleHits
@@ -332,14 +563,14 @@
                       const source = normalizeSource(hit.source, hit.url || hit.route);
                       const section = hitSection(hit, source);
                       return `
-                        <a class="developer-center-search-result" href="${escapeHtml(hitRoute(hit))}">
+                        <a class="developer-center-search-result" href="${escapeHtml(withSiteRoot(withoutSiteRoot(hitRoute(hit), state.siteRoot), state.siteRoot))}">
                           <span class="developer-center-search-title">${sanitizeHighlighted(hitTitle(hit))}</span>
-                          <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source))}</span>
+                          <span class="developer-center-search-section">${escapeHtml(displaySectionLabel(section, source, searchCopy))}</span>
                           <span class="developer-center-search-snippet">${sanitizeHighlighted(hitSnippet(hit))}</span>
                         </a>`;
                     })
                     .join('')
-                : '<div class="developer-center-search-status">No matches in this section.</div>'
+                : `<div class="developer-center-search-status">${escapeHtml(searchCopy.noSectionMatches)}</div>`
             }
           </section>
         </div>`;
@@ -354,7 +585,7 @@
     });
   }
 
-  async function runSearch(manifest, state, root) {
+  async function runSearch(manifest, state, root, locale) {
     const search = manifest.search || DEFAULT_MANIFEST.search;
     if (!isSearchConfigured(search)) {
       state.searchConfigured = false;
@@ -385,6 +616,7 @@
         payload: {
           query,
           hitsPerPage: MAX_SEARCH_RESULTS,
+          ...(index.languageFacet ? {facetFilters: [`language:${locale}`]} : {}),
           // Require every query term to match (strict AND). Without this, Algolia's default
           // word-dropping fallback floods multi-word searches (e.g. "llima pull") with loose
           // partial matches. When nothing matches all terms, hits are empty and the UI shows
@@ -423,7 +655,7 @@
       if (requestId !== state.requestId) return;
       state.hits = [];
       state.loading = false;
-      state.error = err?.message || 'Search request failed.';
+      state.error = state.copy.error;
       renderSearchResults(root, state);
     }
   }
@@ -439,11 +671,12 @@
     root.querySelector('[data-developer-center-search-input]')?.focus();
   }
 
-  function mountSearch(root, manifest) {
+  function mountSearch(root, manifest, locale, siteRoot = '/') {
     const search = manifest.search || DEFAULT_MANIFEST.search;
 
     const state = {
       activeFilter: 'all',
+      copy: shellTranslations(manifest, locale).search,
       error: '',
       hits: [],
       loading: false,
@@ -451,6 +684,7 @@
       query: '',
       requestId: 0,
       searchConfigured: isSearchConfigured(search),
+      siteRoot,
       timer: 0,
     };
     const input = root.querySelector('[data-developer-center-search-input]');
@@ -460,7 +694,7 @@
 
     const scheduleSearch = () => {
       window.clearTimeout(state.timer);
-      state.timer = window.setTimeout(() => runSearch(manifest, state, root), 150);
+      state.timer = window.setTimeout(() => runSearch(manifest, state, root, locale), 150);
     };
 
     const onInput = () => {
@@ -516,21 +750,115 @@
     };
   }
 
+  function mountLanguagePicker(root, manifest, currentLocale, siteRoot = '/') {
+    const picker = root.querySelector('[data-developer-center-language]');
+    const button = picker?.querySelector('[data-developer-center-language-button]');
+    const menu = picker?.querySelector('[data-developer-center-language-menu]');
+    const options = Array.from(
+      picker?.querySelectorAll('[data-developer-center-language-option]') || [],
+    );
+    if (!picker || !button || !menu) return () => {};
+
+    function setOpen(open, {focusCurrent = false} = {}) {
+      picker.classList.toggle('developer-center-language-open', open);
+      button.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      if (open && focusCurrent) {
+        (options.find((option) => option.dataset.locale === currentLocale) || options[0])?.focus();
+      }
+    }
+
+    function onButtonClick() {
+      setOpen(menu.hidden, {focusCurrent: menu.hidden});
+    }
+
+    function onButtonKeyDown(event) {
+      if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+      event.preventDefault();
+      setOpen(true, {focusCurrent: true});
+    }
+
+    function onMenuKeyDown(event) {
+      const focusedIndex = options.indexOf(document.activeElement);
+      let nextIndex = focusedIndex;
+      if (event.key === 'ArrowDown') nextIndex = (focusedIndex + 1) % options.length;
+      else if (event.key === 'ArrowUp') nextIndex = (focusedIndex - 1 + options.length) % options.length;
+      else if (event.key === 'Home') nextIndex = 0;
+      else if (event.key === 'End') nextIndex = options.length - 1;
+      else if (event.key === 'Escape') {
+        event.preventDefault();
+        setOpen(false);
+        button.focus();
+        return;
+      } else {
+        return;
+      }
+      event.preventDefault();
+      options[nextIndex]?.focus();
+    }
+
+    function onDocumentPointerDown(event) {
+      if (!picker.contains(event.target)) setOpen(false);
+    }
+
+    function onOptionClick(event) {
+      const locale = normalizeLocale(event.currentTarget.dataset.locale, manifest);
+      if (!locale) return;
+      writeLocale(locale, manifest);
+      const routePath = withoutSiteRoot(window.location.pathname, siteRoot);
+      const destination = withSiteRoot(localizedPath(routePath, locale, manifest), siteRoot);
+      const languageChangeEvent = new CustomEvent(
+        'developer-center-language-change',
+        {detail: {locale}},
+      );
+      if (destination !== window.location.pathname) {
+        window.dispatchEvent(languageChangeEvent);
+        window.location.assign(`${destination}${window.location.search}${window.location.hash}`);
+        return;
+      }
+
+      // The mount-level listener handles no-navigation routes (for example
+      // /agents) by rebuilding all locale-dependent shell and search state.
+      window.dispatchEvent(languageChangeEvent);
+    }
+
+    button.addEventListener('click', onButtonClick);
+    button.addEventListener('keydown', onButtonKeyDown);
+    menu.addEventListener('keydown', onMenuKeyDown);
+    options.forEach((option) => option.addEventListener('click', onOptionClick));
+    document.addEventListener('pointerdown', onDocumentPointerDown);
+
+    return () => {
+      button.removeEventListener('click', onButtonClick);
+      button.removeEventListener('keydown', onButtonKeyDown);
+      menu.removeEventListener('keydown', onMenuKeyDown);
+      options.forEach((option) => option.removeEventListener('click', onOptionClick));
+      document.removeEventListener('pointerdown', onDocumentPointerDown);
+    };
+  }
+
   function render(target, manifest, options) {
     target.__developerCenterShellCleanup?.();
 
     const theme = normalizeTheme(document.documentElement.getAttribute('data-theme')) || initialTheme(manifest);
     const active = activeKey(manifest, options.active);
+    const locale = normalizeLocale(options.locale, manifest) || initialLocale(manifest);
+    const selectedLocale = languageConfig(manifest).locales.find(
+      (item) => item.code === locale,
+    );
+    const shellCopy = shellTranslations(manifest, locale);
+    const languageCopy = shellCopy.languagePicker;
     const navItems = manifest.navItems || DEFAULT_MANIFEST.navItems;
     const search = manifest.search || DEFAULT_MANIFEST.search;
     const searchOptions = search || {};
+    const siteRoot = options.siteRoot || '/';
     const searchMarkup = `
         <div class="developer-center-search" role="search">
-          <label class="developer-center-search-label" for="developer-center-search-input">Search</label>
+          <label class="developer-center-search-label" for="developer-center-search-input">${escapeHtml(shellCopy.search.label)}</label>
           <div class="developer-center-search-control">
             <svg class="developer-center-search-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9.5 3a6.5 6.5 0 0 1 5.18 10.43l4.45 4.44-1.42 1.42-4.44-4.45A6.5 6.5 0 1 1 9.5 3Zm0 2a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z"></path></svg>
-            <input id="developer-center-search-input" data-developer-center-search-input class="developer-center-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(searchOptions.placeholder || 'Search Developer Center')}" aria-label="Search Developer Center" />
-            <button class="developer-center-search-clear" data-developer-center-search-clear type="button" aria-label="Clear search">×</button>
+            <input id="developer-center-search-input" data-developer-center-search-input class="developer-center-search-input" type="search" autocomplete="off" spellcheck="false" placeholder="${escapeHtml(shellCopy.search.placeholder || searchOptions.placeholder || 'Search Developer Center')}" aria-label="${escapeHtml(shellCopy.search.placeholder)}" />
+            <button class="developer-center-search-clear" data-developer-center-search-clear type="button" aria-label="${escapeHtml(shellCopy.search.clear)}">×</button>
           </div>
           <div class="developer-center-search-panel" data-developer-center-search-panel></div>
         </div>`;
@@ -538,9 +866,14 @@
       const activeClass = item.key === active ? ' navbar__link--active' : '';
       const targetAttr = item.external ? ' target="_blank" rel="noreferrer"' : '';
       const externalIcon = item.external
-        ? '<svg width="13.5" height="13.5" viewBox="0 0 24 24" aria-label="(opens in new tab)" class="iconExternalLink"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"></path></svg>'
+        ? `<svg width="13.5" height="13.5" viewBox="0 0 24 24" aria-label="${escapeHtml(shellCopy.externalLinkLabel)}" class="iconExternalLink"><path fill="currentColor" d="M14 3h7v7h-2V6.41l-9.29 9.3-1.42-1.42 9.3-9.29H14V3ZM5 5h6v2H7v10h10v-4h2v6H5V5Z"></path></svg>`
         : '';
-      return `<a class="navbar__item navbar__link${activeClass}" data-developer-center-section="${escapeHtml(item.key)}" href="${escapeHtml(item.href)}"${targetAttr}>${escapeHtml(item.label)}${externalIcon}</a>`;
+      const routeHref = ['hardware', 'software'].includes(item.key)
+        ? localizedPath(item.href, locale, manifest)
+        : item.href;
+      const href = isAbsoluteUrl(routeHref) ? routeHref : withSiteRoot(routeHref, siteRoot);
+      const label = shellCopy.navItems[item.key] || item.label;
+      return `<a class="navbar__item navbar__link${activeClass}" data-developer-center-section="${escapeHtml(item.key)}" href="${escapeHtml(href)}"${targetAttr}>${escapeHtml(label)}${externalIcon}</a>`;
     };
     const desktopItems = navItems
       .map((item) => {
@@ -548,22 +881,44 @@
         return item.external ? link : `<div class="navbar__item">${link}</div>`;
       })
       .join('');
+    const languageOptions = languageConfig(manifest).locales
+      .map((item) => {
+        const active = item.code === locale;
+        return `
+          <button class="developer-center-language-option${active ? ' developer-center-language-option-active' : ''}" type="button" role="menuitemradio" aria-checked="${active}" data-developer-center-language-option data-locale="${escapeHtml(item.code)}" lang="${escapeHtml(item.htmlLang)}">
+            <span>${escapeHtml(item.label)}</span>
+            <svg class="developer-center-language-check" viewBox="0 0 20 20" aria-hidden="true"><path fill="currentColor" d="m7.7 14.2-4-4 1.4-1.4 2.6 2.6 7.2-7.2 1.4 1.4-8.6 8.6Z"></path></svg>
+          </button>`;
+      })
+      .join('');
+    const languageMarkup = `
+      <div class="developer-center-language" data-developer-center-language>
+        <button class="developer-center-language-button" type="button" aria-label="${escapeHtml(languageCopy.currentLabel)}: ${escapeHtml(selectedLocale.label)}" aria-haspopup="menu" aria-expanded="false" aria-controls="developer-center-language-menu" data-developer-center-language-button>
+          <svg class="developer-center-language-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-3.1a15.7 15.7 0 0 0-1.4-3.4A8.1 8.1 0 0 1 18.9 8ZM12 4c.8 1 1.5 2.4 1.8 4h-3.6c.3-1.6 1-3 1.8-4ZM4.3 14a7.7 7.7 0 0 1 0-4H8a17.6 17.6 0 0 0 0 4H4.3Zm.8 2h3.1c.3 1.2.8 2.3 1.4 3.4A8.1 8.1 0 0 1 5.1 16ZM8.2 8H5.1a8.1 8.1 0 0 1 4.5-3.4A15.7 15.7 0 0 0 8.2 8Zm3.8 12c-.8-1-1.5-2.4-1.8-4h3.6c-.3 1.6-1 3-1.8 4Zm2.2-6H9.8a15.5 15.5 0 0 1 0-4h4.4a15.5 15.5 0 0 1 0 4Zm.2 5.4c.6-1 1.1-2.2 1.4-3.4h3.1a8.1 8.1 0 0 1-4.5 3.4Zm1.6-5.4a17.6 17.6 0 0 0 0-4h3.7a7.7 7.7 0 0 1 0 4H16Z"></path></svg>
+          <span class="developer-center-language-code" data-developer-center-language-code>${escapeHtml(selectedLocale.shortLabel)}</span>
+        </button>
+        <div id="developer-center-language-menu" class="developer-center-language-menu" role="menu" aria-label="${escapeHtml(languageCopy.menuLabel)}" data-developer-center-language-menu hidden>
+          <div class="developer-center-language-heading" role="presentation">${escapeHtml(languageCopy.heading)}</div>
+          ${languageOptions}
+        </div>
+      </div>`;
 
     target.innerHTML = `
       <div class="developer-center-shell">
         <header class="navbar dev-center-navbar">
           <div class="navbar__inner">
             <div class="navbar__items">
-              <a class="navbar__brand" href="/" aria-label="Developer Center home">
-                <span class="navbar__logo"><img src="/img/sima-logo.png" alt="" /></span>
-                <span class="navbar__title">Developer Center</span>
+              <a class="navbar__brand" href="${escapeHtml(withSiteRoot(localizedPath('/', locale, manifest), siteRoot))}" aria-label="${escapeHtml(shellCopy.brand)}: ${escapeHtml(shellCopy.homeLabel)}">
+                <span class="navbar__logo"><img src="${escapeHtml(withSiteRoot('/img/sima-logo.png', siteRoot))}" alt="" /></span>
+                <span class="navbar__title">${escapeHtml(shellCopy.brand)}</span>
               </a>
               <div class="navbar__items navbar__items--desktop">${desktopItems}</div>
             </div>
             <div class="navbar__items navbar__items--right">
               ${searchMarkup}
+              ${languageMarkup}
               <div class="color-mode-toggle">
-                <button class="color-mode-toggle-button" type="button" aria-label="Switch between dark and light mode" title="Switch between dark and light mode">
+                <button class="color-mode-toggle-button" type="button" aria-label="${escapeHtml(shellCopy.themeToggleLabel)}" title="${escapeHtml(shellCopy.themeToggleLabel)}">
                   <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="color-mode-toggle-icon color-mode-toggle-icon-light"><path fill="currentColor" d="M12 9c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3m0-2c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5ZM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1Zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1ZM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1Zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1ZM5.99 4.58a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41L5.99 4.58Zm12.37 12.37a1 1 0 0 0-1.41 1.41l1.06 1.06a1 1 0 0 0 1.41-1.41l-1.06-1.06ZM19.42 5.99a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06ZM7.05 18.36a1 1 0 0 0-1.41-1.41l-1.06 1.06a1 1 0 0 0 1.41 1.41l1.06-1.06Z"></path></svg>
                   <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="color-mode-toggle-icon color-mode-toggle-icon-dark"><path fill="currentColor" d="M9.37 5.51A7.4 7.4 0 0 0 16.5 14.9c.68 0 1.35-.09 1.99-.27A7.03 7.03 0 0 1 12 19c-3.86 0-7-3.14-7-7 0-2.93 1.81-5.45 4.37-6.49ZM12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.4 5.4 0 0 1-4.4 2.26 5.4 5.4 0 0 1-3.14-9.8A9.2 9.2 0 0 0 12 3Z"></path></svg>
                 </button>
@@ -578,8 +933,12 @@
       applyTheme(current === 'light' ? 'dark' : 'light', manifest);
       render(target, manifest, options);
     });
-    const cleanupSearch = mountSearch(target, manifest);
-    target.__developerCenterShellCleanup = cleanupSearch;
+    const cleanupSearch = mountSearch(target, manifest, locale, siteRoot);
+    const cleanupLanguagePicker = mountLanguagePicker(target, manifest, locale, siteRoot);
+    target.__developerCenterShellCleanup = () => {
+      cleanupSearch();
+      cleanupLanguagePicker();
+    };
   }
 
   async function fetchJson(path, {warn = true} = {}) {
@@ -616,10 +975,12 @@
     };
   }
 
-  async function loadManifest() {
-    const manifest = await fetchJson('/developer-center-shell.json');
+  async function loadManifest(siteRoot = '/') {
+    const manifest = await fetchJson(withSiteRoot('/developer-center-shell.json', siteRoot));
     const runtimePath = manifest?.runtimeConfig || DEFAULT_MANIFEST.runtimeConfig;
-    const runtimeConfig = runtimePath ? await fetchJson(runtimePath, {warn: false}) : null;
+    const runtimeConfig = runtimePath
+      ? await fetchJson(withSiteRoot(runtimePath, siteRoot), {warn: false})
+      : null;
     return mergeManifest(manifest, runtimeConfig);
   }
 
@@ -630,13 +991,29 @@
         : targetOrSelector;
     if (!target) return;
 
-    const manifest = await loadManifest();
+    const manifest = await loadManifest(options.siteRoot);
+    activeManifest = manifest;
     applyTheme(initialTheme(manifest), manifest);
     render(target, manifest, options);
+
+    target.__developerCenterShellLanguageCleanup?.();
+    const onLanguageChange = (event) => {
+      const locale = normalizeLocale(event?.detail?.locale, manifest);
+      if (!locale) return;
+      writeLocale(locale, manifest);
+      render(target, manifest, {...options, locale});
+    };
+    window.addEventListener('developer-center-language-change', onLanguageChange);
+    target.__developerCenterShellLanguageCleanup = () => {
+      window.removeEventListener('developer-center-language-change', onLanguageChange);
+    };
   }
 
   window.DeveloperCenterShell = {
     mount,
     applyTheme,
+    localeFromPath,
+    localizedPath,
+    writeLocale,
   };
 })();

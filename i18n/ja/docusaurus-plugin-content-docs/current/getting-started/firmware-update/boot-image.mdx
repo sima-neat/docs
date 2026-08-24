@@ -1,0 +1,60 @@
+---
+title: ブートイメージの作成
+description: Modalix DevKit のブータブルメディアを作成または復元します。
+sidebar_position: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# ブートイメージの作成
+
+標準の更新パスが利用できない場合や、リムーバブルブートメディアが必要な場合に、ブートイメージを使用します。一般的なケースには、以下が含まれます。
+
+- DevKit の内部ストレージが破損しているか、起動に失敗する。
+- 複数のブータブル SD カードまたはリムーバブルドライブをデプロイ用に準備する必要がある。
+
+`sima-cli bootimg` を使用して、SD カードや NVMe ドライブなどのリムーバブルデバイスに完全なブータブルイメージをダウンロードして書き込みます。また、[BalenaEtcher](https://etcher.balena.io/) などのサードパーティツールを使用することもできます。
+
+<Tabs groupId="bootimage-method">
+<TabItem value="sima-cli" label="sima-cli の使用" default>
+
+```console
+sima-cli bootimg -v %platform_version% --boardtype [modalix|mlsoc]
+```
+
+このコマンドは、次の手順を実行します。
+
+1. 指定されたボードタイプ (`modalix` または `mlsoc`) と SDK バージョンのブータブルイメージをダウンロードします。
+2. ホストマシンをスキャンして、リムーバブルストレージデバイスを検索します。
+3. 書き込むデバイスを確認するように求めます。
+4. ブートイメージを直接選択したデバイスに書き込みます。
+
+プロセスが完了したら、SD カードを取り出して DevKit に挿入します。次の起動時に、DevKit は新しいイメージから起動します。
+
+**重要な注意点:**
+
+- このコマンドは、Linux または macOS ホストで実行する必要があります。
+- イメージをダウンロードするには、インターネット接続が必要です。
+
+</TabItem>
+<TabItem value="third-party" label="サードパーティツールを使用">
+
+サードパーティのイメージ書き込みツール (BalenaEtcher など) を使用してイメージを書き込むこともできます。
+
+1. まず、`sima-cli` を使用してイメージをダウンロードします。
+
+   手動の更新手順のためにファームウェアイメージのみをダウンロードするには、適切な Modalix ファームウェアアーカイブの URL を指定して `sima-cli download` を実行します。
+
+2. ダウンロードしたアーカイブの内容を抽出します。
+
+   ```console
+   tar -xvf simaai-devkit-fw-modalix-yocto-1.7.0.tar.gz
+   ```
+
+3. BalenaEtcher を使用して、結果の `.wic.gz` ファイルを選択し、SD カードまたは USB ドライブに書き込みます。
+
+書き込みが完了したら、デバイスを DevKit に挿入して電源を入れ、イメージから起動します。
+
+</TabItem>
+</Tabs>

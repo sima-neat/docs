@@ -1,0 +1,163 @@
+---
+title: "Налаштуйте Bluetooth на модулі Modalix DevKit."
+description: "Під’єднайте адаптер Bluetooth USB до модуля Modalix SoM DevKit і запустіть стек bluez."
+sidebar_position: 4
+---
+
+# Налаштуйте Bluetooth на модулі Modalix DevKit.
+
+Використовуйте цю інструкцію, щоб під’єднати адаптер Bluetooth USB до модуля Modalix SoM DevKit і запустити стек Bluetooth за допомогою `bluez`.
+
+:::info
+Для підтримки Bluetooth потрібна версія SDK **2.1.0** або новіша, що працює в середовищі виконання eLxr. Щоб перевірити середовище виконання, див. [Перехід на eLxr](./elxr-conversion).
+:::
+
+<details open>
+<summary><strong>Крок 1. Підключіть Bluetooth USB адаптер</strong></summary>
+
+Підключіть Bluetooth USB адаптер до одного з DevKit's USB портів, а потім переконайтеся, що ядро системи розпізнає його за допомогою команди `lsusb`:
+
+```console
+sima@modalix:~$ lsusb
+Bus 002 Device 002: ID 0bda:0489 Realtek Semiconductor Corp. 4-Port USB 3.0 Hub
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 003: ID 7392:c611 Edimax Technology Co., Ltd Edimax Bluetooth Adapter
+Bus 001 Device 002: ID 0bda:5489 Realtek Semiconductor Corp. 4-Port USB 2.0 Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+```
+
+Адаптер Bluetooth має з’явитися в списку. У цьому прикладі адаптер — `Edimax Bluetooth Adapter` на шині 001, пристрій 003. Якщо вашого адаптера немає в списку, від’єднайте його та знову під’єднайте, або спробуйте використати інший USB порт.
+
+</details>
+
+<details open>
+<summary><strong>Крок 2. Встановіть BlueZ</strong></summary>
+
+Встановіть стек `bluez` і службу `bluetooth`:
+
+```console
+sima@modalix:~$ sudo apt update && sudo apt-get install bluez bluetooth -y
+```
+
+</details>
+
+<details open>
+<summary><strong>Крок 3. Перевірте. Bluetooth Модуль ядра</strong></summary>
+
+Підтвердіть наявність у структурі. `bluetooth` модуль ядра доступний:
+
+```console
+sima@modalix:~$ modinfo bluetooth
+filename:       /lib/modules/6.18.3-modalix/kernel/net/bluetooth/bluetooth.ko
+alias:          net-pf-31
+license:        GPL
+version:        2.22
+description:    Bluetooth Core ver 2.22
+author:         Marcel Holtmann <marcel@holtmann.org>
+srcversion:     5D3CDB34E67B8B16F66F6AC
+depends:        ecdh_generic,rfkill
+intree:         Y
+name:           bluetooth
+vermagic:       6.18.3-modalix SMP preempt mod_unload aarch64
+parm:           disable_esco:Disable eSCO connection creation (bool)
+parm:           disable_ertm:Disable enhanced retransmission mode (bool)
+parm:           enable_ecred:Enable enhanced credit flow control mode (bool)
+```
+
+</details>
+
+<details open>
+<summary><strong>Крок 4. Запустіть bluetoothctl.</strong></summary>
+
+Запустіть інтерактивний режим. Bluetooth контролер:
+
+```console
+sima@modalix:~$ bluetoothctl
+Agent registered
+[bluetooth]#
+```
+
+`bluetoothctl` — це інтерактивна командна оболонка BlueZ, призначена для керування локальним адаптером і віддаленими пристроями. У командному рядку `[bluetooth]#` використовуйте ці команди для типової процедури встановлення пари та підключення:
+
+| Команда | Мета. |
+| --- | --- |
+| `power on` | Увімкніть локальний Bluetooth контролер. Це необхідно зробити перед будь-яким скануванням або підключенням. |
+| `agent on` / `default-agent` | Зареєструйте та активуйте стандартний агент для встановлення з’єднання, щоб запити на введення PIN-коду та підтвердження оброблялися в цьому середовищі. |
+| `scan on` | Розпочніть пошук. Поблизу розташовані пристрої відображатимуться у вигляді рядків `[NEW] Device <MAC> <Name>`. Запустіть `scan off` після того, як цільовий пристрій буде додано до списку. |
+| `devices` | Перелічіть пристрої, які контролер виявив. |
+| `pair <MAC>` | З’єднайте пристрій за допомогою MAC-адреси. Можливо, вам буде запропоновано підтвердити пароль на обох пристроях. |
+| `trust <MAC>` | Позначте пристрій як надійний, щоб він автоматично підключався під час наступних запусків, без необхідності повторного встановлення з’єднання. |
+| `connect <MAC>` | Встановіть активне з’єднання. Для аудіопристроїв ця команда відкриває приймач A2DP, який використовується на кроці 6. |
+| `info <MAC>` | Відобразити інформацію про пристрій (з’єднаний, довірений, підключений, підтримувані профілі). |
+| `disconnect <MAC>` / `remove <MAC>` | Від’єднайте сеанс або повністю видаліть запис про з’єднання. |
+| `help` | Перелічіть усі доступні команди та їхні аргументи. |
+| `quit` / `exit` | Вийдіть із середовища `bluetoothctl`. |
+
+Найпростіша сесія парного програмування має такий вигляд:
+
+```console
+[bluetooth]# power on
+[bluetooth]# agent on
+[bluetooth]# scan on
+...
+[NEW] Device AA:BB:CC:DD:EE:FF My Speaker
+[bluetooth]# scan off
+[bluetooth]# pair AA:BB:CC:DD:EE:FF
+[bluetooth]# trust AA:BB:CC:DD:EE:FF
+[bluetooth]# connect AA:BB:CC:DD:EE:FF
+```
+
+Після встановлення `connect`, коли з’явиться повідомлення `Connection successful`, пристрій буде готовий до виконання наведених нижче кроків налаштування аудіо.
+
+</details>
+
+:::note
+Кроки з 5-го по 7-й необхідні лише для аудіопристроїв Bluetooth, таких як колонки та навушники. Для інших периферійних пристроїв, таких як клавіатури, миші, ігрові контролери, датчики та пристрої для передачі файлів, достатньо виконати лише крок 4.
+:::
+
+<details open>
+<summary> <strong> Крок 5. Встановіть аудіо-бібліотеки та програвач </strong> </summary>
+
+Щоб передавати аудіо з DevKit на під’єднану колонку або навушники Bluetooth, встановіть PipeWire, плагін BlueZ SPA та консольний аудіопрогравач:
+
+```console
+sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
+```
+
+</details>
+
+<details open>
+<summary><strong>Крок 6. Направте аудіо на Bluetooth пристрій</strong></summary>
+
+Якщо Bluetooth аудіопристрій, підключений на кроці 4, вже під’єднано, перелічіть доступні канали PipeWire/PulseAudio:
+
+```console
+sima@modalix:~$ pactl list short sinks
+```
+
+Знайдіть запис `bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink`, що відповідає вашому під’єднаному пристрою, а потім встановіть його як пристрій за замовчуванням (замініть заповнювач MAC на значення з попередньої команди):
+
+```console
+sima@modalix:~$ pactl set-default-sink bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink
+```
+
+Перезапустіть служби Bluetooth та аудіо, щоб нові налаштування маршрутизації почали діяти:
+
+```console
+sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-pulse
+```
+
+</details>
+
+<details open>
+<summary><strong>Крок 7. Відтворення аудіо за допомогою cmus</strong></summary>
+
+Запустіть `cmus` і додайте аудіофайл або каталог до черги, щоб перевірити відтворення через Bluetooth пристрій:
+
+```console
+sima@modalix:~$ cmus
+```
+
+В інтерфейсі `cmus` натисніть `5`, щоб перейти до файлового менеджера, знайдіть потрібний медіафайл і натисніть `Enter`, щоб почати відтворення. Тепер аудіо має передаватися на під’єднаний пристрій Bluetooth.
+
+</details>

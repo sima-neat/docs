@@ -1,0 +1,155 @@
+---
+title: SiMa.ai 硬體文件
+description: SiMa.ai MLSoC Modalix 產品的硬體設定、韌體和低階介面。
+sidebar_position: 1
+slug: /
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# SiMa.ai 硬體文件
+
+請使用此網站來了解 SiMa.ai MLSoC Modalix 產品的硬體設定、韌體流程和低階介面。軟體、機器學習和流程工具的說明文件將另行提供。
+
+## 關於 MLSoC Modalix
+
+**MLSoC Modalix** 是 SiMa.ai 的第二代機器學習系統晶片。它結合了一個 Arm Cortex-A65 應用處理器、一個高吞吐量的**機器學習加速器 (MLA)**、一個用於相機輸入的**影像訊號處理器 (ISP)**，以及一個用於傳統視覺工作負載的**電腦視覺單元 (CVU)**——所有這些都整合在單一晶片上。
+
+此整合功能讓您可以在邊緣端執行多模態、生成式和視覺 AI 流程，而無需整合個別的加速器、主機 CPU 和攝影機橋接器。Modalix SoM 將 MLSoC Modalix 包裝起來，以便與載板和產品整合，並且這裡記錄的每個開發套件都使用相同的矽晶片。
+
+<img src={useBaseUrl('/img/media/modalix-arch.png')} alt="Modalix 區塊圖，顯示 PCIe Gen5、10G 以太網、MIPI CSI2、Arm A65、ISP、CVU、視訊編解碼器、MLA、LPDDR5、NoC 和系統區塊" style={{width: '100%', maxWidth: '760px', display: 'block', margin: '1.5rem auto'}} />
+
+## DevKit 作品集
+
+SiMa.ai 提供基於 MLSoC Modalix 的開發套件和 PCIe 產品，適用於邊緣 AI 應用。請在下方選擇一款產品，或在表格中比較功能。
+
+<div className="card-grid">
+  <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
+    <img src={useBaseUrl('/img/media/modalix-devkit-no-label.png')} alt="Modalix DevKit" />
+    <h4>Modalix 開發套件</h4>
+    <p>用於評估 MLSoC Modalix 並在 Modalix SoM 上構建應用程式的當前開發套件。</p>
+  </a>
+  <a className="card devkit-card" href="/hardware/devkit/modalix-pcie-card">
+    <img src={useBaseUrl('/img/media/modalix-ea-pcie.jpg')} alt="Modalix PCIe Card" />
+    <h4>Modalix PCIe 擴充卡</h4>
+    <p>專為可擴展的邊緣運算系統設計的半高/半長 (HHHL) 擴充卡。</p>
+  </a>
+  <a className="card devkit-card" href="/hardware/devkit/modalix-ea-kit">
+    <img src={useBaseUrl('/img/media/modalix-ea-kit.png')} alt="Modalix Early Access DevKit" />
+    <h4>Modalix 早期存取開發套件</h4>
+    <p>為現有早期存取客戶提供的舊版開發套件。</p>
+  </a>
+</div>
+
+### 功能比較
+
+| 功能 | Modalix 開發工具包 | Modalix PCIe 擴充卡 | Modalix 早期版本開發套件 |
+| --- | --- | --- | --- |
+| **文件與作業系統** | | | |
+| 產品簡介 | [ 檢視 ](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) | — | [ 檢視 ](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
+| 預先安裝的作業系統 | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) |
+| **計算** | | | |
+| ARM 核心 | 8 核心 Arm Cortex-A65，時脈 1.4 GHz | 8 核心 Arm Cortex-A65，時脈 1.4 GHz | 8 核心 Arm Cortex-A65，時脈 1.4 GHz |
+| 影像訊號處理器 | Arm C-71，時脈 1.2 GHz | Arm C-71，時脈 1.2 GHz | Arm C-71，時脈 1.2 GHz |
+| 電腦視覺單元 (CVU) | Synopsys EV74，750 16 位元 GOPS | Synopsys EV74，750 16 位元 GOPS | Synopsys EV74，750 16 位元 GOPS |
+| **記憶體與儲存空間** | | | |
+| 記憶體大小 | 32 GB LPDDR5 | 32 GB LPDDR5 | 64 GB LPDDR5 |
+| 儲存空間 | 16 GB eMMC，500 GB NVMe | 16 GB eMMC | 10 GB eMMC |
+| SD 卡插槽 | ✖ | ✔ | ✔ |
+| **網路** | | | |
+| 乙太網路 | 1 個 1GbE | 1 個 1GbE | 1 個 1GbE 埠（end0）、1 個 10GbE 埠（end1）、2 個 10GbE SFP+ 埠（end2/3） |
+| **攝影機輸入** | | | |
+| MIPI CSI | 2 個 2 通道 MIPI CSI | ✖ | 4 個 4 通道 MIPI CSI |
+| 透過 FAKRA 介面的 GMSL2 | ✖ | 兩個 GMSL2 介面，透過 FAKRA 連接。 | ✖ |
+| **輸入/輸出與顯示** | | | |
+| GPIO / 標頭 | 40 針 GPIO 接頭 | ✖ | 40 針 GPIO 接頭 |
+| USB | 4 個 USB 3.0 連接埠 | ✖ | ✖ |
+| HDMI | 1 個 HDMI 1.4 埠 | ✖ | ✖ |
+| 圖形控制器 | [Silicon Motion SM768](https://www.siliconmotion.com/download/3PR/a/SM768_PB_EN_202004.pdf) | ✖ | ✖ |
+| **視訊編解碼器** | | | |
+| H.264/H.265 編碼器 | 4kp60 | 4kp60 | 4kp60 |
+| MJPEG 編碼器 | 4kp30 | 4kp30 | 4kp30 |
+| H.264/H.265 解碼器 | 4kp60 | 4kp60 | 4kp60 |
+| AV1 和 MJPEG 解碼器 | 4kp60 | 4kp60 | 4kp60 |
+| **外形尺寸** | | | |
+| 連接主機的 PCIe 卡 | ✖ | ✔ | ✖ |
+
+<a className="docs-button" href="https://sima.ai/contact/" target="_blank" rel="noreferrer"> 立即訂購您的開發套件 </a>
+
+## 部署架構
+
+MLSoC Modalix 支援兩種常見的開發架構：獨立模式和 PCIe 模式。請選擇與您的硬體連接方式以及應用程式運行位置相符的架構。
+
+<Tabs>
+<TabItem value="standalone" label="獨立模式" default>
+
+在獨立模式下，一個 Modalix 開發套件或一個自訂的基於 Modalix SoM 的系統將作為一個獨立的設備運行。當設備直接從感測器、攝影機、儲存裝置或網路介面接收資料時，請使用此模式。
+
+**主要應用場景**
+
+- **邊緣 AI 應用**：無需依賴中央伺服器或雲端基礎架構即可執行推論。
+- **精簡部署**：減少對額外主機硬體的需求。
+- **電力受限系統**：支援由電池或太陽能板供電的遠端監控系統。
+
+**優點**
+
+- **獨立運行**：無需依賴主機機器即可運行。
+- **節能高效**：支援對電力敏感的環境。
+- **精簡**：適用於空間有限的部署環境。
+
+**典型資料流程**
+
+1. 開發套件直接從網路介面或感測器接收資料。
+2. DevKit 會載入一個定義裝置端推論管線的 [NEAT 應用程式](https://developer.sima.ai/software)。
+3. MLSoC Modalix 會在本機執行推論並處理資料。
+4. 結果會透過網路連線傳送到其他裝置或系統，以進行後續處理或視覺化呈現。
+
+<a className="docs-button" href="/hardware/getting-started/standalone-mode">設定獨立模式</a>
+
+</TabItem>
+<TabItem value="pcie" label="PCIe 模式">
+
+在 PCIe 模式下，Modalix PCIe 卡會安裝在主機機器中。當伺服器、桌面電腦或工作站處理協調、儲存和 I/O 時，請使用此模式，而該卡則提供 Modalix 推論加速功能。
+
+**主要應用場景**
+
+- **高效系統：** 使用資料中心伺服器或工作站進行資料處理和儲存，同時讓 Modalix PCIe 卡執行推論。
+- **主機管理的 I/O：** 使用主機儲存、網路或感測器輸入，同時將推論任務卸載到卡上。
+
+**優點**
+
+- **專用加速：** 將推論作業從主機 CPU 卸載到 Modalix 硬體。
+- **可擴展容量：** 隨著需求的增加，您可以新增推理卡。
+
+**典型資料處理流程**
+
+1. 主機機器會從感測器、外圍設備、儲存裝置或網路介面擷取資料。
+2. Modalix PCIe 卡載入一個 [NEAT 應用程式 ](https://developer.sima.ai/software)，該應用程式封裝了推理流程和經過調整的 AI 模型。
+3. 主機透過 PCIe 將資料傳送到 Modalix PCIe 卡。
+4. 主機會處理結果或將其轉送至後端系統。
+
+<a className="docs-button" href="/hardware/getting-started/pcie-mode">設定 PCIe 模式</a>
+
+</TabItem>
+</Tabs>
+
+## 開始使用
+
+選擇與您的設定相符的路徑。每個指南涵蓋了該模式下的序列主控台存取、網路啟動和韌體管理。
+
+<div className="card-grid">
+  <a className="card" href={useBaseUrl('/tools/qsg/index.html')} target="_blank" rel="noreferrer">
+    <h4>快速入門指南</h4>
+    <p>針對首次啟動 DevKit 的逐步互動式教學。</p>
+  </a>
+  <a className="card" href="/hardware/getting-started/standalone-mode">
+    <h4>獨立模式</h4>
+    <p>將 Modalix DevKit 或基於 Modalix SoM 的系統作為一個獨立的邊緣設備運行。</p>
+  </a>
+  <a className="card" href="/hardware/getting-started/pcie-mode">
+    <h4>PCIe 模式</h4>
+    <p>將 Modalix PCIe 卡安裝到主機中，以進行卸載推理。</p>
+  </a>
+</div>
