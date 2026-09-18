@@ -12,3 +12,4 @@ Use these pages for platform-specific instructions, advanced setup, and known li
 - [Convert to eLxr](./elxr-conversion.mdx)
 - [Set Up Bluetooth on the Modalix SoM DevKit](./bluetooth.mdx)
 - [Install ROS 2 on the Modalix SoM DevKit](./ros2.mdx)
+- [PCIe Card Bring-up and Troubleshooting](./pcie-card-bringup.mdx)
