@@ -41,6 +41,14 @@ The rename is still useful if you want a stable interface name across hosts, and
 SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="*:53:49:4d:41:30", NAME="veth-simaai", ENV{NM_UNMANAGED}="1"
 ```
 
+This rule assumes a **single** Modalix card in the host. The leading wildcard
+covers the first MAC octet, which is the card number (see
+[Virtual Network](/hardware/getting-started/pcie-mode/virtual-network)), so on a
+host with more than one card the rule matches every card's host-side interface —
+and only one of them can take the name `veth-simaai`. For a multi-card host, give
+each card its own rule matching its full MAC and a distinct name, for example
+`veth-simaai0` and `veth-simaai1`, and refer to those names in the steps below.
+
 `/etc/NetworkManager/conf.d/99-unmanaged-devices.conf`:
 
 ```ini
@@ -62,7 +70,17 @@ sima-user@sima-user-machine:~$ sudo udevadm control --reload-rules
 sima-user@sima-user-machine:~$ sudo systemctl restart NetworkManager
 ```
 
-The rule matches `ACTION=="add"`, so reloading alone does not rename an interface that already exists. Reconnect or power-cycle the enclosure so a new device event fires.
+The rule matches `ACTION=="add"`, so reloading alone does not rename an interface
+that already exists — a new device event has to fire:
+
+- **External enclosure:** reconnect or power-cycle the enclosure.
+- **Internal motherboard slot:** reboot the host, or remove and rescan the device
+  without rebooting, substituting the card's PCI address:
+
+  ```console
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/devices/0000:2f:00.0/remove
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/rescan
+  ```
 
 ## Verify the Link
 
