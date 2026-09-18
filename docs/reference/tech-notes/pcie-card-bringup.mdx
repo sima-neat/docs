@@ -113,6 +113,12 @@ Detected PCIe virtual ethernet.
 `UNKNOWN` is normal for virtual interfaces. If you applied the rename, the interface does not appear in **Settings → Network** because it is marked unmanaged — verify with `ip`, not the GUI.
 
 Do not change the default `10.0.0.1` / `10.0.0.2` addresses unless SiMa engineering instructs you to.
+
+These are the addresses for card number 0, which is the single-card case this
+note assumes. The pattern is `10.0.<cardnum>.1` on the host and
+`10.0.<cardnum>.2` on the card (see
+[Virtual Network](/hardware/getting-started/pcie-mode/virtual-network)), so a
+second card uses `10.0.1.1` and `10.0.1.2`. Substitute accordingly throughout.
 :::
 
 ## Throughput Test
@@ -136,7 +142,7 @@ The tested setup measured roughly 7–8 Gbps. Actual throughput depends on the h
 | Card does not appear in `lspci -nnk -d 1f06:` | Enclosure power, Thunderbolt/USB4 connection, and card seating. Then cold power-cycle both host and enclosure. |
 | `sima-cli` reports `veth-simaai not found` | An older `sima-cli` that still matched on the interface name. Update `sima-cli`, or apply the `udev` rule above and re-add or power-cycle the card. |
 | Interface exists but `ping 10.0.0.2` fails | Confirm `10.0.0.1/24` on the host and `10.0.0.2/24` on the card, and that both interfaces are up. Do not change the addresses. |
-| `Device "veth-simaai" does not exist` | Expected when the rename has not been applied, or on older pre-eLxr card builds that name the card-side interface `eth2`. Run `ip -br addr` and match on the address and the MAC ending `:41:30` (host) or `:41:31` (card). |
+| `Device "veth-simaai" does not exist` | Expected when the rename has not been applied, or on older pre-eLxr card builds that name the card-side interface `eth2`. Run `ip addr` — the brief form omits the MAC — and match on the address and the MAC ending `:41:30` (host) or `:41:31` (card). |
 | PCIe worked before reboot, unstable after | Use the power sequence above — the enclosure has separate power. |
 
 ## Related
