@@ -58,7 +58,13 @@ managed=0
 ```
 
 :::warning
-Use the wildcard `*:53:49:4d:41:30` as written — do not substitute one system's exact MAC. The rule must match the **host** interface; the card's own interface ends in `:41:31`.
+For the single-card rule above, use the wildcard `*:53:49:4d:41:30` as written
+rather than one system's exact MAC — the wildcard covers the card-number octet.
+The exception is the multi-card case described above, where each card needs a
+rule matching its own full MAC to be told apart.
+
+Either way the rule must match the **host** interface, whose MAC ends in
+`:41:30`. The card's own interface ends in `:41:31`.
 :::
 
 The two files work together: the NetworkManager drop-in matches `interface-name:veth-simaai`, so it only takes effect once the `udev` rule has applied that name.
