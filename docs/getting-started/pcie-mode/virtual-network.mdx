@@ -64,7 +64,7 @@ When the interfaces are created, the host interface uses a MAC address in the fo
    ```
 
    :::note
-   Older pre-eLxr builds name this interface `eth2`. If `veth-simaai` is not present, run `ip -br addr` on the DevKit and match on `10.0.0.2/24` and the MAC ending `:41:31`.
+   Older pre-eLxr builds name this interface `eth2`. If `veth-simaai` is not present, run `ip addr` on the DevKit and match on `10.0.0.2/24` and the MAC ending `:41:31`. Use `ip addr` rather than `ip -br addr` here: the brief form prints only interface, state and IP addresses, so the MAC is not shown.
    :::
 
 3. SSH from the host to the device. Use the default username `sima` and password `edgeai`.
