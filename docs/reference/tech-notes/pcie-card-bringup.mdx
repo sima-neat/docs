@@ -35,6 +35,24 @@ Cards in internal motherboard slots share host power and need no special sequenc
 
 The rename is still useful if you want a stable interface name across hosts, and to keep NetworkManager from reconfiguring the link. To apply it, create two files on the **host**.
 
+:::note Skipping the rename
+The two jobs here are separable. If NetworkManager is claiming the interface and
+replacing the driver-provided `10.0.<cardnum>.1` address, discovery still works
+by PCI address while `ping` and SSH fail — so you may want the unmanaged setting
+without the rename. Match the device by MAC instead of by name, and create only
+this file:
+
+```ini
+[device-simaai-unmanaged]
+match-device=mac:00:53:49:4d:41:30
+managed=0
+```
+
+Substitute the host interface's own MAC, whose first octet is the card number.
+Then `sudo systemctl restart NetworkManager`; no `udev` rule and no new device
+event are needed, because nothing is being renamed.
+:::
+
 `/etc/udev/rules.d/90-network.rules`:
 
 ```text
