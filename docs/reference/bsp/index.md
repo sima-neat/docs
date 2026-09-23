@@ -54,7 +54,6 @@ own drivers do not require an NDA or a sales enquiry.
   third-party carrier board, and what needs software adaptation.
 - [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO
   blocks, with the full 64-pin mapping.
-- [MIPI Camera Configuration](./mipi-camera.mdx) — bringing up CSI cameras.
 
 The SDK manual is the starting point: it covers the Docker build environment,
 fetching and configuring the kernel and U-Boot, building both, installing the

@@ -68,7 +68,7 @@ These may need configuration or software changes for your board:
 
 | Component | Notes |
 | --- | --- |
-| MIPI or GMSL cameras | See [MIPI Camera Configuration](./mipi-camera.mdx) |
+| MIPI or GMSL cameras | See [Cameras](#cameras) below |
 | USB hub | |
 | NVMe device | |
 | Wi-Fi / Bluetooth | |
@@ -92,7 +92,48 @@ several carrier boards.
 Board-specific overlay sources (`.dtso`) live in the BSP repository under
 `meta-simaai/recipes-kernel/oot-dtbo/files/`.
 
+## Cameras
+
+To *use* a camera on a DevKit, select a shipped overlay — see
+[MIPI Camera Interfaces](/hardware/getting-started/standalone-mode/mipi-camera-interfaces),
+which covers choosing the right `.dtbo` and setting it in U-Boot.
+
+On a custom carrier board you may need to *author* the overlay instead, because
+the power line, I2C bus and regulators differ from the reference design. Three
+pieces are usually needed.
+
+Drive the camera power-down line through a GPIO hog — here port 5, GPIO 6:
+
+```dts
+&port5 {
+    cam-hog0 {
+        gpio-hog;
+        gpios = <6 0>;          /* GPIO_ACTIVE_HIGH */
+        output-high;
+        line-name = "cam0_powdn";
+    };
+};
+```
+
+Enable the I2C bus the sensor sits on — here SIO port 5, I2C #2:
+
+```dts
+&i2c52 {
+    status = "okay";
+    clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+};
+```
+
+Declare the camera rails as fixed-voltage regulators, added to the root node
+through an overlay fragment, so Linux knows those rails exist and are powered.
+
+Start from the [overlay examples](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)
+in the kernel tree. Camera controls, PHY frequency, DMA for a second camera, the
+data highway and ISP configuration are not yet documented here.
+
 ## Next steps
 
 - [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO blocks.
-- [MIPI Camera Configuration](./mipi-camera.mdx) — bringing up CSI cameras.
+- [MIPI Camera Interfaces](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) — using cameras on a DevKit.

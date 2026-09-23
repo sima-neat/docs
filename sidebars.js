@@ -110,7 +110,6 @@ const sidebars = {
             'reference/bsp/build-from-source',
             'reference/bsp/carrier-board',
             'reference/bsp/low-speed-io',
-            'reference/bsp/mipi-camera',
           ],
         },
         {
