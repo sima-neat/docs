@@ -101,6 +101,7 @@ const sidebars = {
       collapsed: true,
       items: [
         'reference/bsp',
+        'reference/bsp-build',
         {
           type: 'category',
           label: 'Tech Notes',

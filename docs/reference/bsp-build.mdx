@@ -1,0 +1,173 @@
+---
+title: Build the BSP from Source
+description: Build the Modalix kernel, U-Boot and device trees from public sources, and install the artifacts on a board.
+sidebar_position: 2
+---
+
+# Build the BSP from Source
+
+Build the Modalix Linux kernel, U-Boot and device trees yourself, then install
+the results on a board. Everything here uses public repositories — no NDA and no
+sales enquiry.
+
+:::note
+This page follows the [eLxr SDK manual](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc/blob/master/sdk-manual.rst),
+which is the authoritative source. See [Board Support Package](./bsp.md) for what
+a BSP contains and where each repository lives.
+:::
+
+## Before you start
+
+- An **Ubuntu 22.04** host for the build.
+- [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) installed.
+- `qemu-user-static` installed:
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt install qemu-user-static
+  ```
+
+To install what you build, you also need a board already running an eLxr image
+with root access, reachable over the network from the container, and booted from
+eMMC (enumerated as `mmcblk0`).
+
+## Set up the build container
+
+The SDK container carries the toolchain, headers and libraries for the target.
+Clone [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
+for `Dockerfile.modalix`, then build the image:
+
+```console
+sima-user@sima-user-machine:~$ docker build -t modalix-sdk --file Dockerfile.modalix .
+```
+
+To preload extra packages into the sysroot, pass a comma-separated list:
+
+```console
+sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libzix-dev,vxi-dev -t modalix-sdk --file Dockerfile.modalix .
+```
+
+Launch it from a directory you can write to:
+
+```console
+sima-user@sima-user-machine:~$ docker run -it --privileged -v $(pwd):/data -w /data -v /dev:/dev --pid=host modalix-sdk
+```
+
+The sysroot is at `/opt/toolchain/aarch64/<platform>`. The build environment is
+set automatically at launch; to set it by hand, run
+`source /opt/bin/simaai-init-build-env modalix`.
+
+## Build the kernel
+
+Inside the container:
+
+```console
+root@sdk:/data$ git clone https://github.com/SiMa-ai/simaai-linux.git && cd simaai-linux
+root@sdk:/data/simaai-linux$ make ARCH=arm64 simaai_modalix_defconfig
+root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC_FLAGS=-@
+```
+
+This produces:
+
+| Artifact | Path |
+| --- | --- |
+| Kernel image | `arch/arm64/boot/Image` |
+| Device trees | `arch/arm64/boot/dts/simaai/*.dtb` |
+
+## Build a device tree overlay (optional)
+
+Write the overlay source (`.dtso`), then compile it to a blob (`.dtbo`):
+
+```console
+root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
+```
+
+## Build U-Boot
+
+```console
+root@sdk:/data$ git clone https://github.com/SiMa-ai/sima-ai-uboot.git && cd sima-ai-uboot
+root@sdk:/data/sima-ai-uboot$ make ARCH=arm64 simaai_modalix_debug_defconfig
+root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
+```
+
+The image is `u-boot.bin`.
+
+## Install the artifacts
+
+### How the eMMC is laid out
+
+| Partition | Contents |
+| --- | --- |
+| `mmcblk0p1` | U-Boot, primary |
+| `mmcblk0p2` | U-Boot, backup |
+| `mmcblk0p3` | Boot partition — holds two directories, `boot-0` and `boot-1`, one primary and one backup |
+| `mmcblk0p4` | Root filesystem |
+
+:::warning
+Write partitions with `dd`, not `cp`, and copy to the board as `root`. To find
+the board's address, run `hostname -I` or `ip route get 1.1.1.1` on the board.
+:::
+
+### U-Boot
+
+Copy the image over, find the partition currently in use, and write it:
+
+```console
+root@sdk:/data$ scp sima-ai-uboot/u-boot.bin root@<board-ip>:/tmp/
+```
+
+```console
+root@modalix:~# parted /dev/mmcblk0 print | grep legacy_boot | cut -f2 -d" "
+1
+root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress
+root@modalix:~# sync
+```
+
+### Kernel, device trees and overlays
+
+Find the active boot directory first — it is either `boot-0` or `boot-1`:
+
+```console
+root@modalix:~# strings /boot/uboot.env | grep boot_path= | cut -f2 -d"="
+/boot-0/
+```
+
+Copy the artifacts into that directory:
+
+```console
+root@sdk:/data$ scp simaai-linux/arch/arm64/boot/Image root@<board-ip>:/boot/boot-0/
+root@sdk:/data$ scp simaai-linux/arch/arm64/boot/dts/simaai/modalix*.dtb root@<board-ip>:/boot/boot-0/
+root@sdk:/data$ scp imx415.dtbo root@<board-ip>:/boot/boot-0/
+```
+
+### Kernel modules
+
+Modules go into the running kernel's module tree. `uname -a` on the board gives
+the version string:
+
+```console
+root@sdk:/data$ scp simaai-linux/drivers/net/phy/marvell10g.ko root@<board-ip>:/lib/modules/6.18.3-modalix/kernel/drivers/net/phy/
+```
+
+### Finish up
+
+```console
+root@modalix:~# depmod -a 6.18.3-modalix
+root@modalix:~# sync
+root@modalix:~# reboot
+```
+
+If you added a new overlay, register it in U-Boot's `dtbos` variable. Interrupt
+autoboot, then:
+
+```console
+sima$ env set dtbos $dtbos imx415.dtbo
+sima$ saveenv
+sima$ boot
+```
+
+## Next steps
+
+- [Firmware Update](/hardware/getting-started/firmware-update) — flashing a full
+  image rather than individual artifacts.
+- [Board Support Package](./bsp.md) — what the BSP contains, and the repositories.
+- [Convert to eLxr](./tech-notes/elxr-conversion.mdx) — moving a Yocto DevKit to eLxr.

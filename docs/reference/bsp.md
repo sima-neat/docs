@@ -46,6 +46,9 @@ own drivers do not require an NDA or a sales enquiry.
 | U-Boot source | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
 | eLxr layer and documentation | [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc) |
 
+To follow the manual as a guided page, see
+[Build the BSP from Source](./bsp-build.mdx).
+
 The SDK manual is the starting point: it covers the Docker build environment,
 fetching and configuring the kernel and U-Boot, building both, installing the
 resulting artifacts on a board, and working with device trees, overlays and
