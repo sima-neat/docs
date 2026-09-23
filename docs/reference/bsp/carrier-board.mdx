@@ -35,7 +35,12 @@ Comparison Guide to hand.
 ## Carrier board components
 
 The reference bring-up used a Waveshare carrier board. Any board conforming to
-the 260-pin SODIMM pinout will work.
+the 260-pin SODIMM pinout will work. The numbers in the table below correspond
+to the callouts in these views.
+
+![SoM carrier board, top view](/img/bsp/carrier-board-top.png)
+
+![SoM carrier board, bottom view](/img/bsp/carrier-board-bottom.png)
 
 | # | Component |
 | --- | --- |
@@ -51,6 +56,58 @@ the 260-pin SODIMM pinout will work.
 | 10 | 4-pin PWM fan header |
 | 11 | M.2 Key M for NVMe SSDs |
 | 12 | RTC backup battery header, PH1.25 2P |
+
+## The Modalix SoM
+
+The bring-up used Modalix SoM Rev 2. It carries the MLSoC Modalix die, two
+LPDDR5 packages, 16 GB eMMC and SPI flash, and connects through the goldfinger
+SO-DIMM edge connector.
+
+![Modalix SoM board, top view](/img/bsp/som-board-top.png)
+
+Top side: **Modalix SoC**, **LPDDR5 DRAM** (×2), **PMIC**, and the **SoM
+goldfinger connector**.
+
+![Modalix SoM board, bottom view](/img/bsp/som-board-bottom.png)
+
+Bottom side: **16 GB eMMC**, **SPI flash**, **HDMI controller**, **Ethernet
+PHY**, **USB controller**, and the **clock generator**.
+
+:::note
+These views are for labelling only. The board ships with a heatsink attached.
+:::
+
+## What the connector exposes
+
+The functional block diagram shows which interfaces reach the SO-DIMM connector,
+and how they are routed inside the module. Use it when deciding what your
+carrier board can take from the SoM.
+
+![Modalix SoM Rev 2 functional block diagram](/img/bsp/som-block-diagram.png)
+
+| Interface | At the connector |
+| --- | --- |
+| PCIe | `PCIe0` Gen4 ×4 (lanes 0–3), `PCIe1`, `PCIe2` Gen3 ×2 |
+| MIPI CSI | `MIPI CSI0`–`CSI3`, 2 lanes each |
+| Ethernet | `MDI` through the Gigabit Ethernet PHY (SGMII to `ETH0`); `ETH1` shares `PCIe1` |
+| USB | `USB2 P0`–`P2` and `USB3 P0`–`P2` through the USB controller |
+| Display | `HDMI` through the HDMI video processor |
+| Audio | `I2S0` (via level shifter), `I2S1` |
+| I2C | `I2C_CAM`, `I2C0`, `I2C1`, `I2C2` |
+| UART | `UART0`, `UART1`, `UART2` |
+| GPIO | 15× |
+| SPI | `SPI0`, `SPI1` — `SPI1` is muxed with the on-module QSPI flash |
+| Power and control | `SYS_RESET#`, `POWER_EN`, `SHUTDOWN_REQ#`, `SLEEP/WAKE#`, `MODE_SLEEP#`, `FORCE_RECOVERY#` |
+
+On-module and not brought out: LPDDR5 (×64 on DDR0-1 and DDR2-3), eMMC flash
+(×8), status LEDs, and the `I2C_MGMT` devices — EEPROM, real-time clock, clock
+generator and TPM.
+
+:::tip
+`FORCE_RECOVERY#` drives the SPI mux that selects between the on-module QSPI
+flash and the SoC flash path. Expose it if you want recovery without
+disassembling the system.
+:::
 
 ## What needs software adaptation
 
