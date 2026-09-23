@@ -16,7 +16,7 @@ which is the authoritative source. See [Board Support Package](./index.md) for w
 a BSP contains and where each repository lives.
 :::
 
-## Before you start
+## Before You Start
 
 - An **Ubuntu 22.04** host for the build.
 - [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) installed.
@@ -30,7 +30,7 @@ To install what you build, you also need a board already running an eLxr image
 with root access, reachable over the network from the container, and booted from
 eMMC (enumerated as `mmcblk0`).
 
-## Set up the build container
+## Set Up the Build Container
 
 The SDK container carries the toolchain, headers and libraries for the target.
 Clone [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
@@ -56,7 +56,7 @@ The sysroot is at `/opt/toolchain/aarch64/<platform>`. The build environment is
 set automatically at launch; to set it by hand, run
 `source /opt/bin/simaai-init-build-env modalix`.
 
-## Build the kernel
+## Build the Kernel
 
 Inside the container:
 
@@ -73,7 +73,7 @@ This produces:
 | Kernel image | `arch/arm64/boot/Image` |
 | Device trees | `arch/arm64/boot/dts/simaai/*.dtb` |
 
-## Build a device tree overlay (optional)
+## Build a Device Tree Overlay (Optional)
 
 Write the overlay source (`.dtso`), then compile it to a blob (`.dtbo`):
 
@@ -91,9 +91,9 @@ root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
 
 The image is `u-boot.bin`.
 
-## Install the artifacts
+## Install the Artifacts
 
-### How the eMMC is laid out
+### How the eMMC Is Laid Out
 
 | Partition | Contents |
 | --- | --- |
@@ -122,7 +122,7 @@ root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress
 root@modalix:~# sync
 ```
 
-### Kernel, device trees and overlays
+### Kernel, Device Trees and Overlays
 
 Find the active boot directory first — it is either `boot-0` or `boot-1`:
 
@@ -139,7 +139,7 @@ root@sdk:/data$ scp simaai-linux/arch/arm64/boot/dts/simaai/modalix*.dtb root@<b
 root@sdk:/data$ scp imx415.dtbo root@<board-ip>:/boot/boot-0/
 ```
 
-### Kernel modules
+### Kernel Modules
 
 Modules go into the running kernel's module tree. `uname -a` on the board gives
 the version string:
@@ -148,7 +148,7 @@ the version string:
 root@sdk:/data$ scp simaai-linux/drivers/net/phy/marvell10g.ko root@<board-ip>:/lib/modules/6.18.3-modalix/kernel/drivers/net/phy/
 ```
 
-### Finish up
+### Finish Up
 
 ```console
 root@modalix:~# depmod -a 6.18.3-modalix
@@ -176,7 +176,7 @@ sima$ boot
 | U-Boot source | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
 | Device trees and overlays | [`dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 
-## Next steps
+## Next Steps
 
 - [Firmware Update](/hardware/getting-started/firmware-update) — flashing a full
   image rather than individual artifacts.

@@ -21,7 +21,7 @@ should also have the SoM data sheet, the SoC data sheet, and the Modalix SoM
 Comparison Guide to hand.
 :::
 
-## Handling the board safely
+## Handling the Board Safely
 
 - Use proper ESD grounding: an antistatic wrist strap and an ESD-protected mat.
 - Do not touch the board while powered on.
@@ -32,15 +32,22 @@ Comparison Guide to hand.
 - Keep water and other conductive liquids away from the board — contact can
   damage it.
 
-## Carrier board components
+## Carrier Board Components
 
 The reference bring-up used a Waveshare carrier board. Any board conforming to
 the 260-pin SODIMM pinout will work. The numbers in the table below correspond
 to the callouts in these views.
 
-![SoM carrier board, top view](/img/bsp/carrier-board-top.png)
-
-![SoM carrier board, bottom view](/img/bsp/carrier-board-bottom.png)
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-top.png" alt="SoM carrier board, top view, with numbered component callouts" />
+    <figcaption><strong>Figure 1.</strong> Carrier board, top view</figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-bottom.png" alt="SoM carrier board, bottom view, with numbered component callouts" />
+    <figcaption><strong>Figure 2.</strong> Carrier board, bottom view</figcaption>
+  </figure>
+</div>
 
 | # | Component |
 | --- | --- |
@@ -63,27 +70,37 @@ The bring-up used Modalix SoM Rev 2. It carries the MLSoC Modalix die, two
 LPDDR5 packages, 16 GB eMMC and SPI flash, and connects through the goldfinger
 SO-DIMM edge connector.
 
-![Modalix SoM board, top view](/img/bsp/som-board-top.png)
-
-Top side: **Modalix SoC**, **LPDDR5 DRAM** (×2), **PMIC**, and the **SoM
-goldfinger connector**.
-
-![Modalix SoM board, bottom view](/img/bsp/som-board-bottom.png)
-
-Bottom side: **16 GB eMMC**, **SPI flash**, **HDMI controller**, **Ethernet
-PHY**, **USB controller**, and the **clock generator**.
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2, top view, showing the MLSoC die between two LPDDR5 packages" />
+    <figcaption>
+      <strong>Figure 3.</strong> SoM, top view — Modalix SoC, LPDDR5 DRAM (×2),
+      PMIC, and the goldfinger connector
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2, bottom view, showing eMMC, SPI flash and the Ethernet PHY" />
+    <figcaption>
+      <strong>Figure 4.</strong> SoM, bottom view — 16 GB eMMC, SPI flash, HDMI
+      controller, Ethernet PHY, USB controller, clock generator
+    </figcaption>
+  </figure>
+</div>
 
 :::note
 These views are for labelling only. The board ships with a heatsink attached.
 :::
 
-## What the connector exposes
+## What the Connector Exposes
 
 The functional block diagram shows which interfaces reach the SO-DIMM connector,
 and how they are routed inside the module. Use it when deciding what your
 carrier board can take from the SoM.
 
-![Modalix SoM Rev 2 functional block diagram](/img/bsp/som-block-diagram.png)
+<figure className="doc-figure doc-figure--wide">
+  <img src="/img/bsp/som-block-diagram.png" alt="Functional block diagram of Modalix SoM Rev 2, showing the SO-DIMM connector signals routed to the Modalix SoC" />
+  <figcaption><strong>Figure 5.</strong> Modalix SoM Rev 2 functional block diagram</figcaption>
+</figure>
 
 | Interface | At the connector |
 | --- | --- |
@@ -109,9 +126,9 @@ flash and the SoC flash path. Expose it if you want recovery without
 disassembling the system.
 :::
 
-## What needs software adaptation
+## What Needs Software Adaptation
 
-### Works without changes
+### Works Without Changes
 
 These components are on the SoM itself and work on any carrier board following
 the 260-pin assignment standard:
@@ -119,7 +136,7 @@ the 260-pin assignment standard:
 SiMa Modalix device · DDR · SPI flash · eMMC flash · USB controller · RTC ·
 Ethernet PHY · HDMI video processor
 
-### Depends on the carrier board
+### Depends on the Carrier Board
 
 These may need configuration or software changes for your board:
 
@@ -132,7 +149,7 @@ These may need configuration or software changes for your board:
 | **UART2** | Assigned as the **Secure Boot** terminal on Modalix SoM Rev 2. On NVIDIA systems this port is the terminal interface — a common source of confusion when porting. |
 | **UART1** | The U-Boot and Linux terminal on Modalix SoM Rev 2, wired to an FTDI UART-to-USB converter. On an NVIDIA carrier board this typically defaults to USB OTG (USB3). Some carrier boards expose UART1 on the 40-pin header. |
 
-## Software configuration
+## Software Configuration
 
 Most configuration happens through the Linux **device tree**, with **overlays**
 layered on top for board-specific differences. That is what makes one BSP serve
@@ -200,7 +217,7 @@ data highway and ISP configuration are not yet documented here.
 | Device tree usage model | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
 | Overlay notes | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
 
-## Next steps
+## Next Steps
 
 - [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO blocks.
 - [MIPI Camera Interfaces](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) — using cameras on a DevKit.

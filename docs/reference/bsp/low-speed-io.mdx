@@ -10,7 +10,7 @@ Modalix has **two dedicated SPI channels** plus **eight configurable SIO blocks*
 Each SIO block can be configured to provide GPIO, UART, I2C or SPI, and an output
 pin multiplexer selects which function reaches each pin.
 
-## Mapping guidelines
+## Mapping Guidelines
 
 When assigning SIO pins:
 
@@ -22,7 +22,7 @@ When assigning SIO pins:
 3. Use the function named in the **Function** column so the selected interface
    matches the pin's available functionality.
 
-## SIO pin mapping
+## SIO Pin Mapping
 
 The 64-pin SIO interface is divided into eight 8-bit ports. All pins are I/O at
 **1.8 V**.
@@ -165,7 +165,7 @@ Binding: [`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/
 Two I2C interfaces are exposed on the 40-pin header (J12 on the Waveshare
 carrier card).
 
-### Confirming the buses
+### Confirming the Buses
 
 ```console
 root@modalix:~# ls /dev/i2c-*
@@ -173,7 +173,7 @@ root@modalix:~# ls /dev/i2c-*
 /dev/i2c-1
 ```
 
-### 40-pin header pinout (J12)
+### 40-Pin Header Pinout (J12)
 
 | Pin | Signal | Pin | Signal |
 | --- | --- | --- | --- |
@@ -197,7 +197,7 @@ root@modalix:~# ls /dev/i2c-*
 | 37 | `SPI1_MOSI` | 38 | `I2S0_SDIN` |
 | 39 | GND | 40 | `I2S0_SDOUT` |
 
-### Driver and device tree
+### Driver and Device Tree
 
 The I2C GPIO expander is supported by the **PCF857x** driver, enabled in
 `arch/arm64/configs/simaai_modalix_defconfig`:
@@ -223,7 +223,7 @@ Enabling bus 0 with a PCF8574 attached:
 };
 ```
 
-### Command-line tools
+### Command-Line Tools
 
 `i2c-tools` ships in the standard build; install it if missing:
 
@@ -265,7 +265,7 @@ All of these are public:
 | I2C controller binding | [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml) |
 | PCF857x expander binding | [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml) |
 
-## Next steps
+## Next Steps
 
 - [Carrier Board Bring-up](./carrier-board.mdx) — what needs adaptation and why.
 - [Build the BSP from Source](./build-from-source.mdx) — building and installing

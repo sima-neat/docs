@@ -22,7 +22,7 @@ The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the M
 
 Source layer: [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
 
-## What you can do with the BSP sources
+## What You Can Do with the BSP Sources
 
 The repository above is useful when you need to:
 
@@ -33,7 +33,7 @@ The repository above is useful when you need to:
 
 After you build a custom image, flash it onto a DevKit using one of the methods in [Firmware Update](/hardware/getting-started/firmware-update).
 
-## Sources and manuals
+## Sources and Manuals
 
 Everything below is public. Building an image, flashing a board, and adding your
 own drivers do not require an NDA or a sales enquiry.
@@ -46,7 +46,7 @@ own drivers do not require an NDA or a sales enquiry.
 | U-Boot source | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
 | eLxr layer and documentation | [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc) |
 
-## In this section
+## In This Section
 
 - [Build the BSP from Source](./build-from-source.mdx) — build environment,
   kernel, U-Boot, device trees, and installing the artifacts.
