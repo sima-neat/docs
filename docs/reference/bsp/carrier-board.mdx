@@ -1,0 +1,98 @@
+---
+title: Carrier Board Bring-up
+description: Bring up a Modalix SoM Rev 2 on a third-party carrier board — hardware overview, what needs software adaptation, and where the configuration lives.
+sidebar_position: 3
+---
+
+# Carrier Board Bring-up
+
+The Modalix SoM Rev 2 connects to a carrier board through a **260-pin SODIMM**
+connector with standardized pin assignments, and works with any carrier board
+compatible with the NVIDIA Jetson Orin NX or Orin Nano.
+
+:::warning Check pin compatibility first
+Verify electrical pin compatibility between the SoM and the carrier board before
+connecting them.
+:::
+
+:::note Prerequisites
+SDK 2.1 or higher, with the Palette package installed for graphics support. You
+should also have the SoM data sheet, the SoC data sheet, and the Modalix SoM
+Comparison Guide to hand.
+:::
+
+## Handling the board safely
+
+- Use proper ESD grounding: an antistatic wrist strap and an ESD-protected mat.
+- Do not touch the board while powered on.
+- Store the board in an antistatic bag before placing it on any surface.
+- Handle the module by its edges; avoid touching onboard ICs and components.
+- Use the supplied power supply.
+- After power-on, confirm every power-indication LED is lit.
+- Keep water and other conductive liquids away from the board — contact can
+  damage it.
+
+## Carrier board components
+
+The reference bring-up used a Waveshare carrier board. Any board conforming to
+the 260-pin SODIMM pinout will work.
+
+| # | Component |
+| --- | --- |
+| 1 | 260-pin SODIMM socket for the SiMa system on module |
+| 2 | 12-pin header — power supply, reset button, force-recovery setting, serial debug, auto power-up enable, power indicator |
+| 3 | 2× 22-pin CSI camera connectors |
+| 4 | DC power jack, 9 V–19 V, 5.5 × 2.5 mm male plug |
+| 5 | HDMI connector, 4K UHD (3840 × 2160) |
+| 6 | 4× USB 3.1 Type-A ports |
+| 7 | RJ45 Gigabit Ethernet |
+| 8 | USB Type-C for debug logs |
+| 9 | 40-pin header |
+| 10 | 4-pin PWM fan header |
+| 11 | M.2 Key M for NVMe SSDs |
+| 12 | RTC backup battery header, PH1.25 2P |
+
+## What needs software adaptation
+
+### Works without changes
+
+These components are on the SoM itself and work on any carrier board following
+the 260-pin assignment standard:
+
+SiMa Modalix device · DDR · SPI flash · eMMC flash · USB controller · RTC ·
+Ethernet PHY · HDMI video processor
+
+### Depends on the carrier board
+
+These may need configuration or software changes for your board:
+
+| Component | Notes |
+| --- | --- |
+| MIPI or GMSL cameras | See [MIPI Camera Configuration](./mipi-camera.mdx) |
+| USB hub | |
+| NVMe device | |
+| Wi-Fi / Bluetooth | |
+| **UART2** | Assigned as the **Secure Boot** terminal on Modalix SoM Rev 2. On NVIDIA systems this port is the terminal interface — a common source of confusion when porting. |
+| **UART1** | The U-Boot and Linux terminal on Modalix SoM Rev 2, wired to an FTDI UART-to-USB converter. On an NVIDIA carrier board this typically defaults to USB OTG (USB3). Some carrier boards expose UART1 on the 40-pin header. |
+
+## Software configuration
+
+Most configuration happens through the Linux **device tree**, with **overlays**
+layered on top for board-specific differences. That is what makes one BSP serve
+several carrier boards.
+
+- [Build the BSP from Source](./build-from-source.mdx) — build environment,
+  kernel, U-Boot, device trees, and installing the result.
+- [Device tree usage model](https://docs.kernel.org/devicetree/usage-model.html)
+  and [overlay notes](https://docs.kernel.org/devicetree/overlay-notes.html) —
+  upstream kernel documentation.
+- [Example overlays](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)
+  in the kernel tree.
+
+Board-specific overlay sources (`.dtso`) live in the BSP repository under
+`meta-simaai/recipes-kernel/oot-dtbo/files/`.
+
+## Next steps
+
+- [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO blocks.
+- [MIPI Camera Configuration](./mipi-camera.mdx) — bringing up CSI cameras.

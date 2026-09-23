@@ -100,8 +100,19 @@ const sidebars = {
       collapsible: true,
       collapsed: true,
       items: [
-        'reference/bsp',
-        'reference/bsp-build',
+        {
+          type: 'category',
+          label: 'Board Support Package',
+          collapsible: true,
+          collapsed: true,
+          link: {type: 'doc', id: 'reference/bsp/index'},
+          items: [
+            'reference/bsp/build-from-source',
+            'reference/bsp/carrier-board',
+            'reference/bsp/low-speed-io',
+            'reference/bsp/mipi-camera',
+          ],
+        },
         {
           type: 'category',
           label: 'Tech Notes',

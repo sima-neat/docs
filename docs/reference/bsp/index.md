@@ -18,7 +18,7 @@ A SiMa.ai BSP contains:
 
 ## Modalix BSP
 
-The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](./tech-notes/elxr-conversion).
+The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](../tech-notes/elxr-conversion.mdx).
 
 Source layer: [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
 
@@ -46,8 +46,15 @@ own drivers do not require an NDA or a sales enquiry.
 | U-Boot source | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
 | eLxr layer and documentation | [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc) |
 
-To follow the manual as a guided page, see
-[Build the BSP from Source](./bsp-build.mdx).
+## In this section
+
+- [Build the BSP from Source](./build-from-source.mdx) — build environment,
+  kernel, U-Boot, device trees, and installing the artifacts.
+- [Carrier Board Bring-up](./carrier-board.mdx) — running a Modalix SoM on a
+  third-party carrier board, and what needs software adaptation.
+- [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO
+  blocks, with the full 64-pin mapping.
+- [MIPI Camera Configuration](./mipi-camera.mdx) — bringing up CSI cameras.
 
 The SDK manual is the starting point: it covers the Docker build environment,
 fetching and configuring the kernel and U-Boot, building both, installing the

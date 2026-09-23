@@ -1,0 +1,251 @@
+---
+title: Low-Speed I/O
+description: GPIO, UART, I2C and SPI on the Modalix SIO blocks — pin mapping, drivers, device trees and user-space tools.
+sidebar_position: 4
+---
+
+# Low-Speed I/O
+
+Modalix has **two dedicated SPI channels** plus **eight configurable SIO blocks**.
+Each SIO block can be configured to provide GPIO, UART, I2C or SPI, and an output
+pin multiplexer selects which function reaches each pin.
+
+## Mapping guidelines
+
+When assigning SIO pins:
+
+1. Choose the Ethernet and PCIe channels you intend to use first — some pin
+   functions are predefined and must be used with the corresponding PCIe and
+   Ethernet interfaces.
+2. Within each SIO block, pins in the **upper rows take priority** and should be
+   considered first.
+3. Use the function named in the **Function** column so the selected interface
+   matches the pin's available functionality.
+
+## SIO pin mapping
+
+The 64-pin SIO interface is divided into eight 8-bit ports. All pins are I/O at
+**1.8 V**.
+
+| SIO pin | Type | Voltage | Interface | Function |
+| --- | --- | --- | --- | --- |
+| `SIO0_IO[0]` | I/O | 1.8V | UART | UART_RX |
+| `SIO0_IO[1]` | I/O | 1.8V | — | UART_TX |
+| `SIO0_IO[2]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO0_IO[3]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO0_IO[4]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO0_IO[5]` | I/O | 1.8V | — | GPIO |
+| `SIO0_IO[6]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO0_IO[7]` | I/O | 1.8V | — | GPIO |
+| `SIO1_IO[0]` | I/O | 1.8V | I2C | ETH0_PTP_PPS |
+| `SIO1_IO[1]` | I/O | 1.8V | I2C | N/A |
+| `SIO1_IO[2]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO1_IO[3]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO1_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO1_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO1_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO1_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO2_IO[0]` | I/O | 1.8V | I2C | ETH0_SMA_MDC |
+| `SIO2_IO[1]` | I/O | 1.8V | — | ETH0_SMA_MDIO |
+| `SIO2_IO[2]` | I/O | 1.8V | SPI | N/A |
+| `SIO2_IO[3]` | I/O | 1.8V | — | N/A |
+| `SIO2_IO[4]` | I/O | 1.8V | UART | UART_RX |
+| `SIO2_IO[5]` | I/O | 1.8V | — | UART_TX |
+| `SIO2_IO[6]` | I/O | 1.8V | UART | UART_RX |
+| `SIO2_IO[7]` | I/O | 1.8V | — | UART_TX |
+| `SIO3_IO[0]` | I/O | 1.8V | SPI | PCIE0_PERST# |
+| `SIO3_IO[1]` | I/O | 1.8V | I2C | PCIE0_WAKE# |
+| `SIO3_IO[2]` | I/O | 1.8V | I2C | PCIE0_CLKREQ# |
+| `SIO3_IO[3]` | I/O | 1.8V | GPIO | N/A |
+| `SIO3_IO[4]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO3_IO[5]` | I/O | 1.8V | GPIO | I2C_SDA |
+| `SIO3_IO[6]` | I/O | 1.8V | PCIE2 | PCIE0_PERST# |
+| `SIO3_IO[7]` | I/O | 1.8V | PCIE2 | PCIE0_WAKE# |
+| `SIO4_IO[0]` | I/O | 1.8V | PCIE2 | PCIE2_CLKREQ# |
+| `SIO4_IO[1]` | I/O | 1.8V | PCIE3 | PCIE3_PERST# |
+| `SIO4_IO[2]` | I/O | 1.8V | PCIE3 | PCIE3_WAKE# |
+| `SIO4_IO[3]` | I/O | 1.8V | PCIE3 | PCIE3_CLKREQ# |
+| `SIO4_IO[4]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO4_IO[5]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO4_IO[6]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO4_IO[7]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO5_IO[0]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO5_IO[1]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO5_IO[2]` | I/O | 1.8V | UART | UART_RX |
+| `SIO5_IO[3]` | I/O | 1.8V | — | UART_TX |
+| `SIO5_IO[4]` | I/O | 1.8V | UART | UART_RX |
+| `SIO5_IO[5]` | I/O | 1.8V | — | UART_TX |
+| `SIO5_IO[6]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO5_IO[7]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO6_IO[0]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO6_IO[1]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO6_IO[2]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO6_IO[3]` | I/O | 1.8V | — | GPIO |
+| `SIO6_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO6_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO6_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO6_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO7_IO[0]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO7_IO[1]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO7_IO[2]` | I/O | 1.8V | I2C | SPI_MOSI |
+| `SIO7_IO[3]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO7_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO7_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO7_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO7_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+
+## GPIO
+
+**Driver:** `gpio-dwapb`
+
+From user space, use **libgpiod** and its command-line tools:
+
+| Tool | Purpose |
+| --- | --- |
+| `gpiodetect` | List available GPIO chips |
+| `gpioinfo` | List chips and lines, with state and owning driver |
+| `gpioset` | Set a line's value |
+| `gpioget` | Read a line's value |
+
+Identify the chip and line first — devices appear as `/dev/gpiochip0` and
+similar:
+
+```console
+root@modalix:~# gpiodetect
+root@modalix:~# gpioset gpiochip0 17 1
+root@modalix:~# gpioget gpiochip0 17
+```
+
+For custom applications, use the **libgpiod C API** rather than driving the
+command-line tools.
+
+## UART
+
+**Driver:** `snps-dw-apb-uart`
+
+A UART node names its SIO block and index — `uart12` is SIO block 1, index 2.
+Each SIO block provides up to **4 UART ports**, each consuming 2 pins, so index
+2 maps to output pins 4 and 5.
+
+```dts
+uart12: uart@0x0401a000 {
+    compatible = "snps,dw-apb-uart";
+    reg = <0x0 0x0401a000 0x0 0x100>;
+    interrupts = <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
+    reg-io-width = <4>;
+    reg-shift = <2>;
+    clocks = <&sio10_clk SIMAAI_SIO_DEV_UART2>;
+    resets = <&reset10 SIMAAI_SIO_DEV_UART2>;
+    pinctrl-0 = <&pins_uart12_deafult>;
+    pinctrl-names = "default";
+    dmas = <&dmac10 4>, <&dmac10 5>;
+    dma-names = "tx", "rx";
+    status = "disabled";
+};
+```
+
+Enable it from an overlay:
+
+```dts
+&uart12 {
+    status = "okay";
+};
+```
+
+Clock, reset and other settings can be overridden in the same overlay. Each SIO
+block implements its own clock, reset, pin and DMA controllers, referenced by
+the node above.
+
+Field documentation: [snps-dw-apb-uart.yaml](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml)
+
+## I2C
+
+Two I2C interfaces are exposed on the 40-pin header (J12 on the Waveshare
+carrier card).
+
+### Confirming the buses
+
+```console
+root@modalix:~# ls /dev/i2c-*
+/dev/i2c-0
+/dev/i2c-1
+```
+
+### 40-pin header pinout (J12)
+
+| Pin | Signal | Pin | Signal |
+| --- | --- | --- | --- |
+| 1 | 3.3 V power | 2 | 5 V power |
+| 3 | `I2C1_SDA` | 4 | 5 V power |
+| 5 | `I2C1_SCL` | 6 | GND |
+| 7 | `GPIO09_AUD_MCLK` | 8 | `UART1_TXD` |
+| 9 | GND | 10 | `UART1_RXD` |
+| 11 | `UART1_RTS` | 12 | `I2S0_SCLK` |
+| 13 | `SPI1_SCK` | 14 | GND |
+| 15 | `GPIO12` | 16 | `SPI1_CS1` |
+| 19 | `SPI0_MOSI` | 20 | GND |
+| 21 | `SPI0_MISO` | 22 | `SPI1_MISO` |
+| 23 | `SPI0_SCLK` | 24 | `SPI0_CS0` |
+| 25 | GND | 26 | `SPI0_CS1` |
+| 27 | `I2C0_SDA` | 28 | `I2C0_SCL` |
+| 29 | `GPIO01` | 30 | GND |
+| 31 | `GPIO11` | 32 | `GPIO07` |
+| 33 | `GPIO13` | 34 | GND |
+| 35 | `I2S0_FS` | 36 | `UART1_CTS` |
+| 37 | `SPI1_MOSI` | 38 | `I2S0_SDIN` |
+| 39 | GND | 40 | `I2S0_SDOUT` |
+
+### Driver and device tree
+
+The I2C GPIO expander is supported by the **PCF857x** driver, enabled in
+`arch/arm64/configs/simaai_modalix_defconfig`:
+
+```text
+CONFIG_GPIO_PCF857X=y
+```
+
+This covers NXP PCF8574 and PCF8575 I2C GPIO expanders. Enabling bus 0 with a
+PCF8574 attached:
+
+```dts
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+    };
+};
+```
+
+### Command-line tools
+
+`i2c-tools` ships in the standard build; install it if missing:
+
+```console
+root@modalix:~# sudo apt update
+root@modalix:~# sudo apt install i2c-tools
+```
+
+`i2cdetect` probes every address on a bus and reports which devices respond.
+`-r` uses SMBus read-byte probing, `-y` skips the confirmation prompt, and the
+final argument is the bus number:
+
+```console
+root@modalix:~# i2cdetect -r -y 0
+```
+
+## SPI
+
+Modalix has two dedicated SPI channels in addition to any SIO block configured
+for SPI. Device overlays for both the NVS SPI and SIO SPI paths, along with the
+SPI device driver and device tree bindings, follow the same overlay pattern
+shown for UART above.
+
+## Next steps
+
+- [Carrier Board Bring-up](./carrier-board.mdx) — what needs adaptation and why.
+- [Build the BSP from Source](./build-from-source.mdx) — building and installing
+  a kernel with your overlays.
