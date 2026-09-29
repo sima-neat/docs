@@ -47,3 +47,5 @@ documented publicly. Contact your SiMa.ai representative for this.
   peripheral setup.
 - [Deploy Your Build](../software/build-from-source.mdx#deploy-your-build): getting
   your own build onto your boards.
+- [Factory Build and Test](../deployment/factory-build-and-test.mdx): programming
+  and testing boards in production.

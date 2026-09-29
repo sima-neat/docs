@@ -1,0 +1,178 @@
+---
+title: Flash an Image to eMMC
+description: Boot a Modalix board from the network or an SD card, write a complete image to eMMC, and set the boot order.
+sidebar_position: 1
+---
+
+# Flash an Image to eMMC
+
+Use this page to write a complete image to a board's eMMC, for example on a
+production line, on a board you designed, or with an image that is not a
+published release. You run every step yourself, so it works with any image file
+you have.
+
+To update a DevKit to a published SiMa.ai release, use
+[Firmware Update](/hardware/getting-started/firmware-update) instead. To replace
+only the kernel, device trees, or U-Boot on a board that already boots, see
+[Install the Artifacts](/hardware/software/build-from-source#install-the-artifacts).
+
+## Before You Start
+
+- A board that reaches the U-Boot prompt.
+- A serial connection to the board's U-Boot/Linux UART at 115200 baud with
+  hardware flow control disabled. See [Configure Serial Connection](/hardware/getting-started/setup-serial).
+- The image to flash:
+
+  | Image | Files |
+  | --- | --- |
+  | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
+  | Yocto | `simaai-image-palette-modalix.wic.gz` and `simaai-image-palette-modalix.wic.bmap` |
+
+- Either a host with Ethernet and a TFTP server, or an SD card.
+
+## How the Board Chooses a Boot Source
+
+A board can't overwrite the eMMC while it is running from it, so it first boots
+from the network or an SD card. U-Boot tries the sources in `boot_targets` in
+order:
+
+| Target | Boots from |
+| --- | --- |
+| `mmc1` | SD card |
+| `mmc0` | eMMC |
+| `dhcp` | TFTP server found through DHCP |
+| `net` | TFTP server at a static IP address |
+
+The default order is `mmc1 mmc0 dhcp net`. To change it, interrupt autoboot in
+the serial console, then set and save the order:
+
+```console
+sima$ env set boot_targets mmc1 mmc0 net dhcp; saveenv
+Saving Environment to FAT... OK
+sima$ printenv boot_targets
+boot_targets=mmc1 mmc0 net dhcp
+sima$ boot
+```
+
+## Step 1. Boot From the Network or an SD Card
+
+Booting from an SD card is preferred on a test station, because it leaves the
+Ethernet ports free for network stress tests.
+
+<details open>
+<summary><strong>Boot from the network</strong></summary>
+
+This uses your own TFTP server, so you choose what it serves.
+[Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) does the
+same with `sima-cli`, which downloads and serves a published release for you.
+
+1. Copy the boot files to the TFTP server's root directory:
+   - `netboot.scr.uimg`
+   - `Image`
+   - the device tree blobs (`*.dtb`)
+   - the root filesystem archive: `elxr-palette-modalix-arm64.cpio.gz` for eLxr,
+     or `simaai-image-palette-modalix.cpio.gz` for Yocto
+2. Connect the host to the board's first Ethernet port (`eth0`). The board uses
+   `192.168.1.20`, so give the host an address on `192.168.1.0/24`:
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ifconfig <interface_name> 192.168.1.10 up
+   ```
+
+3. Power on the board, interrupt autoboot, and make `net` the first boot source:
+
+   ```console
+   sima$ env set boot_targets net mmc0 mmc1 dhcp; saveenv
+   sima$ boot
+   ```
+
+4. After Linux boots, confirm the build and that the root filesystem is in RAM
+   (`root=/dev/ram0`):
+
+   ```console
+   root@modalix:~# cat /etc/buildinfo
+   root@modalix:~# cat /proc/cmdline
+   ```
+
+</details>
+
+<details open>
+<summary><strong>Boot from an SD card</strong></summary>
+
+1. Write the image to the SD card. You can write it from the host with
+   [Create Boot Image](/hardware/getting-started/firmware-update/boot-image), or
+   from a board you booted from the network with the SD card inserted
+   (`/dev/mmcblk1`):
+
+   For eLxr:
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk1 bs=4M status=progress conv=fsync
+   ```
+
+   For Yocto, copy both the `.wic.gz` and `.wic.bmap` files, then:
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   ```
+
+   Then repair the partition table. The image is smaller than the card, so the
+   backup GPT header is not at the end of the device until `parted` moves it:
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk1 print
+   ```
+
+2. Reboot, interrupt autoboot, and make sure `mmc1` comes first. It does by
+   default:
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   sima$ boot
+   ```
+
+3. After Linux boots, check `/etc/buildinfo`, and check `/proc/cmdline` for
+   `root=/dev/mmcblk1p*`.
+
+</details>
+
+## Step 2. Write the Image to eMMC
+
+Run these steps on the board, as root, while it is booted from the network or
+the SD card.
+
+1. Copy the `.wic.gz` and `.wic.bmap` files from the host to `/tmp` on the board:
+
+   ```console
+   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. Write the image to the eMMC (`/dev/mmcblk0`):
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   ```
+
+3. Repair the partition table:
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk0 print
+   ```
+
+## Step 3. Boot From eMMC
+
+1. If you booted from the network, restore the default boot order:
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   ```
+
+   If you booted from an SD card, remove it.
+2. Reboot or power-cycle the board and confirm it boots from eMMC.
+
+## Next Steps
+
+- [Factory Build and Test](./factory-build-and-test.mdx): the full production
+  flow, including board ID, MAC address, and diagnostics.
+- [Release Compatibility](/hardware/software/release-compatibility): which
+  kernel and U-Boot commits make up each release.

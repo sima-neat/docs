@@ -90,7 +90,8 @@ function HardwareSubnav() {
   const softwareBase = useBaseUrl("/hardware/software");
   const referenceBase = useBaseUrl("/hardware/reference");
   const path = location.pathname;
-  const deployActive = path.includes(firmwareBase);
+  const deploymentBase = useBaseUrl("/hardware/deployment");
+  const deployActive = path.includes(firmwareBase) || path.includes(deploymentBase);
 
   const links = [
     {

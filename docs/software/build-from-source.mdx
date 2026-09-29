@@ -269,16 +269,16 @@ trees, overlays and modules onto a board that already boots, as in
 [Install the Artifacts](#install-the-artifacts), then reboot. This is the fastest
 loop, but it changes one board by hand and leaves no reproducible image behind.
 
-**Package an update for your boards.** To ship a build to other boards, including
-in production, generate a board update package from your artifacts and flash that
-package. Each board then carries exactly the same build, and you can reflash it
-after every change.
+**Flash a complete image.** To put the same build on many boards, including in
+production, boot each board from the network or an SD card and write a complete
+image to its eMMC. See [Flash an Image to eMMC](/hardware/deployment/flash-image),
+and [Factory Build and Test](/hardware/deployment/factory-build-and-test) for the
+full production flow.
 
 :::caution[The update format changes in 3.0]
 Platform releases 2.x and 3.0 use different update mechanisms: 3.0 moves to
-swupdate. Build the update package in the format that matches the release on
-your board. The steps for creating and flashing a custom update package are
-being documented.
+swupdate. Assembling a complete image or update package from your own kernel and
+U-Boot builds is not yet documented here.
 :::
 
 [Firmware Update](/hardware/getting-started/firmware-update) installs the stock

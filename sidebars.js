@@ -62,6 +62,8 @@ const sidebars = {
       'getting-started/firmware-update/sima-cli',
       'getting-started/firmware-update/net-boot',
       'getting-started/firmware-update/boot-image',
+      'deployment/flash-image',
+      'deployment/factory-build-and-test',
     ]),
     section('Reference & Downloads', undefined, [
       'reference/extra-docs',
