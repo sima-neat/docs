@@ -31,6 +31,7 @@ const sidebars = {
         href: 'pathname:///tools/qsg/index.html',
       },
       'getting-started/setup-serial',
+      'getting-started/firmware-update/sima-cli',
       section('Standalone Mode', 'getting-started/standalone-mode/index', [
         'getting-started/standalone-mode/network',
       ]),
@@ -59,7 +60,6 @@ const sidebars = {
       'reference/tech-notes/bluetooth',
     ]),
     section('Flash, Update & Recover', 'getting-started/firmware-update/index', [
-      'getting-started/firmware-update/sima-cli',
       'getting-started/firmware-update/net-boot',
       'getting-started/firmware-update/boot-image',
       'deployment/flash-image',

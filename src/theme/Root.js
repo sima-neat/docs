@@ -91,7 +91,10 @@ function HardwareSubnav() {
   const referenceBase = useBaseUrl("/hardware/reference");
   const path = location.pathname;
   const deploymentBase = useBaseUrl("/hardware/deployment");
-  const deployActive = path.includes(firmwareBase) || path.includes(deploymentBase);
+  // Updating with sima-cli is part of DevKit setup, so it belongs to Evaluate.
+  const simaCliUpdate = path.includes(useBaseUrl("/hardware/getting-started/firmware-update/sima-cli"));
+  const deployActive =
+    (path.includes(firmwareBase) && !simaCliUpdate) || path.includes(deploymentBase);
 
   const links = [
     {
