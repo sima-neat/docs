@@ -42,7 +42,7 @@ own drivers do not require an NDA or a sales enquiry.
 | --- | --- |
 | Build steps — build environment, kernel and U-Boot build, device trees, kernel modules | [Build the BSP from Source](./build-from-source.mdx) |
 | Which source commit matches each platform release | [Release Compatibility](./release-compatibility.mdx) |
-| Modalix build container | [Dockerfile.modalix](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc/blob/master/Dockerfile.modalix) |
+| Modalix build container | [Dockerfile.modalix](./build-from-source.mdx#set-up-the-build-container) |
 | Linux kernel source | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | U-Boot source | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
 
