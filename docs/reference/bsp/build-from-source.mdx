@@ -11,9 +11,10 @@ the results on a board. Everything here uses public repositories — no NDA and 
 sales enquiry.
 
 :::note
-This page follows the [eLxr SDK manual](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc/blob/master/sdk-manual.rst),
-which is the authoritative source. See [Board Support Package](./index.md) for what
-a BSP contains and where each repository lives.
+Build from the source commit that matches the release running on your board.
+[Release Compatibility](./release-compatibility.mdx) maps each platform release to
+its kernel and U-Boot commit. See [Board Support Package](./index.md) for what a
+BSP contains and where each repository lives.
 :::
 
 ## Before You Start
@@ -33,8 +34,8 @@ eMMC (enumerated as `mmcblk0`).
 ## Set Up the Build Container
 
 The SDK container carries the toolchain, headers and libraries for the target.
-Clone [swsoc-simaai-elxr-doc](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc)
-for `Dockerfile.modalix`, then build the image:
+Download [`Dockerfile.modalix`](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc/blob/master/Dockerfile.modalix),
+then build the image from the directory that contains it:
 
 ```console
 sima-user@sima-user-machine:~$ docker build -t modalix-sdk --file Dockerfile.modalix .
@@ -62,9 +63,14 @@ Inside the container:
 
 ```console
 root@sdk:/data$ git clone https://github.com/SiMa-ai/simaai-linux.git && cd simaai-linux
+root@sdk:/data/simaai-linux$ git checkout <kernel-commit>
 root@sdk:/data/simaai-linux$ make ARCH=arm64 simaai_modalix_defconfig
 root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC_FLAGS=-@
 ```
+
+Replace `<kernel-commit>` with the kernel commit for your release from
+[Release Compatibility](./release-compatibility.mdx). Building `master` gives you the
+latest release, which may not match the image on your board.
 
 This produces:
 
@@ -85,11 +91,13 @@ root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
 
 ```console
 root@sdk:/data$ git clone https://github.com/SiMa-ai/sima-ai-uboot.git && cd sima-ai-uboot
+root@sdk:/data/sima-ai-uboot$ git checkout <u-boot-commit>
 root@sdk:/data/sima-ai-uboot$ make ARCH=arm64 simaai_modalix_debug_defconfig
 root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
 ```
 
-The image is `u-boot.bin`.
+Replace `<u-boot-commit>` with the U-Boot commit for your release from
+[Release Compatibility](./release-compatibility.mdx). The image is `u-boot.bin`.
 
 ## Install the Artifacts
 
@@ -165,11 +173,37 @@ sima$ saveenv
 sima$ boot
 ```
 
+## Deploy Your Build
+
+There are two ways to get a custom build onto a board, and they suit different
+stages of work.
+
+**Iterate on a running board.** While developing, copy the kernel image, device
+trees, overlays and modules onto a board that already boots, as in
+[Install the Artifacts](#install-the-artifacts), then reboot. This is the fastest
+loop, but it changes one board by hand and leaves no reproducible image behind.
+
+**Package an update for your boards.** To ship a build to other boards, including
+in production, generate a board update package from your artifacts and flash that
+package. Each board then carries exactly the same build, and you can reflash it
+after every change.
+
+:::caution[The update format changes in 3.0]
+Platform releases 2.x and 3.0 use different update mechanisms: 3.0 moves to
+swupdate. Build the update package in the format that matches the release on
+your board. The steps for creating and flashing a custom update package are
+being documented.
+:::
+
+[Firmware Update](/hardware/getting-started/firmware-update) installs the stock
+SiMa.ai image. Use it to return a board to a known release, not to deploy your
+own build: it overwrites what you installed.
+
 ## References
 
 | Reference | Where |
 | --- | --- |
-| eLxr SDK manual (authoritative) | [sdk-manual.rst](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc/blob/master/sdk-manual.rst) |
+| Release to source commit mapping | [Release Compatibility](./release-compatibility.mdx) |
 | Build container | [Dockerfile.modalix](https://github.com/SiMa-ai/swsoc-simaai-elxr-doc/blob/master/Dockerfile.modalix) |
 | Kernel source | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | Kernel defconfig | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
@@ -178,7 +212,8 @@ sima$ boot
 
 ## Next Steps
 
-- [Firmware Update](/hardware/getting-started/firmware-update) — flashing a full
-  image rather than individual artifacts.
-- [Board Support Package](./index.md) — what the BSP contains, and the repositories.
+- [Release Compatibility](./release-compatibility.mdx) — which source commit
+  matches each platform release.
+- [Carrier Board Bring-up](./carrier-board.mdx) — adapting the device tree for your
+  own carrier board.
 - [Convert to eLxr](../tech-notes/elxr-conversion.mdx) — moving a Yocto DevKit to eLxr.

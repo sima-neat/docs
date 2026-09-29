@@ -108,6 +108,7 @@ const sidebars = {
           link: {type: 'doc', id: 'reference/bsp/index'},
           items: [
             'reference/bsp/build-from-source',
+            'reference/bsp/release-compatibility',
             'reference/bsp/carrier-board',
             'reference/bsp/low-speed-io',
           ],
