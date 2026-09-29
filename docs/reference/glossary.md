@@ -34,7 +34,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## System Software
 
 **BSP**
-: **Board Support Package.** The collection of low-level software — bootloader, kernel, device trees, drivers, and root filesystem — that brings a SiMa.ai board up from power-on to a usable Linux userspace. See [Board Support Package](./bsp).
+: **Board Support Package.** The collection of low-level software — bootloader, kernel, device trees, drivers, and root filesystem — that brings a SiMa.ai board up from power-on to a usable Linux userspace. See [Board Support Package](../software/index.md).
 
 **eLxr**
 : A [Debian-derived Linux distribution](https://elxr.org/) used as the default runtime on Modalix DevKits shipped after mid-December 2025. Userspace is managed with `apt`.

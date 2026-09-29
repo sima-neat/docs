@@ -1,5 +1,18 @@
 // @ts-check
 
+// Grouped by what the reader is trying to do (sima-neat/docs#80). Routes are
+// independent of this grouping: pages keep their URLs when they change section.
+
+/** @param {string} label @param {string | undefined} link @param {any[]} items */
+const section = (label, link, items) => ({
+  type: 'category',
+  label,
+  collapsible: true,
+  collapsed: true,
+  ...(link ? {link: {type: 'doc', id: link}} : {}),
+  items,
+});
+
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   systemDocs: [
@@ -11,125 +24,53 @@ const sidebars = {
       label: 'For AI Agents',
       href: '/agents',
     },
-    {
-      type: 'category',
-      label: 'Getting Started',
-      collapsible: true,
-      collapsed: true,
-      link: {
-        type: 'doc',
-        id: 'getting-started/index',
+    section('Evaluate with a DevKit', 'getting-started/index', [
+      {
+        type: 'link',
+        label: 'Quick Start Guide',
+        href: 'pathname:///tools/qsg/index.html',
       },
-      items: [
-        {
-          type: 'link',
-          label: 'Quick Start Guide',
-          href: 'pathname:///tools/qsg/index.html',
-        },
-        'getting-started/setup-serial',
-        {
-          type: 'category',
-          label: 'Standalone Mode',
-          collapsible: true,
-          collapsed: true,
-          link: {
-            type: 'doc',
-            id: 'getting-started/standalone-mode/index',
-          },
-          items: [
-            'getting-started/standalone-mode/network',
-            'getting-started/standalone-mode/nvme-storage',
-            'getting-started/standalone-mode/mipi-camera-interfaces',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'PCIe Mode',
-          collapsible: true,
-          collapsed: true,
-          link: {
-            type: 'doc',
-            id: 'getting-started/pcie-mode/index',
-          },
-          items: [
-            'getting-started/pcie-mode/hardware-preparation',
-            'getting-started/pcie-mode/driver-installation',
-            'getting-started/pcie-mode/virtual-network',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Firmware Update',
-          collapsible: true,
-          collapsed: true,
-          link: {
-            type: 'doc',
-            id: 'getting-started/firmware-update/index',
-          },
-          items: [
-            'getting-started/firmware-update/sima-cli',
-            'getting-started/firmware-update/net-boot',
-            'getting-started/firmware-update/boot-image',
-          ],
-        },
-      ],
-    },
-    {
-      type: 'category',
-      label: 'DevKit Variants',
-      collapsible: true,
-      collapsed: true,
-      items: [
+      'getting-started/setup-serial',
+      section('Standalone Mode', 'getting-started/standalone-mode/index', [
+        'getting-started/standalone-mode/network',
+      ]),
+      section('PCIe Mode', 'getting-started/pcie-mode/index', [
+        'getting-started/pcie-mode/hardware-preparation',
+        'getting-started/pcie-mode/driver-installation',
+        'getting-started/pcie-mode/virtual-network',
+      ]),
+      section('DevKit Variants', undefined, [
         'devkit/modalix-devkit',
         'devkit/modalix-pcie-card',
         'devkit/modalix-ea-kit',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'Tools',
-      collapsible: true,
-      collapsed: true,
-      items: [
-        'tools/web-serial-console',
-      ],
-    },
-    {
-      type: 'category',
-      label: 'References',
-      collapsible: true,
-      collapsed: true,
-      items: [
-        {
-          type: 'category',
-          label: 'Board Support Package',
-          collapsible: true,
-          collapsed: true,
-          link: {type: 'doc', id: 'reference/bsp/index'},
-          items: [
-            'reference/bsp/build-from-source',
-            'reference/bsp/release-compatibility',
-            'reference/bsp/carrier-board',
-            'reference/bsp/low-speed-io',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Tech Notes',
-          collapsible: true,
-          collapsed: true,
-          items: [
-            'reference/tech-notes/index',
-            'reference/tech-notes/nfs',
-            'reference/tech-notes/elxr-conversion',
-            'reference/tech-notes/bluetooth',
-            'reference/tech-notes/ros2',
-          ],
-        },
-        'reference/glossary',
-        'reference/extra-docs',
-      ],
-    },
+      ]),
+      'tools/web-serial-console',
+    ]),
+    section('Design Your Hardware', 'design/index', ['design/som-carrier']),
+    section('Build & Customize eLxr', 'software/index', [
+      'software/build-from-source',
+      'software/release-compatibility',
+      'reference/tech-notes/elxr-conversion',
+    ]),
+    section('Interfaces & Peripherals', undefined, [
+      'interfaces/low-speed-io',
+      'getting-started/standalone-mode/mipi-camera-interfaces',
+      'getting-started/standalone-mode/nvme-storage',
+      'reference/tech-notes/bluetooth',
+    ]),
+    section('Flash, Update & Recover', 'getting-started/firmware-update/index', [
+      'getting-started/firmware-update/sima-cli',
+      'getting-started/firmware-update/net-boot',
+      'getting-started/firmware-update/boot-image',
+    ]),
+    section('Reference & Downloads', undefined, [
+      'reference/extra-docs',
+      'reference/glossary',
+      section('Tech Notes', 'reference/tech-notes/index', [
+        'reference/tech-notes/nfs',
+        'reference/tech-notes/ros2',
+      ]),
+    ]),
   ],
 };
 

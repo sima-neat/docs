@@ -6,9 +6,10 @@ import {useLocation} from "@docusaurus/router";
 const LOCALIZED_UI = {
   en: {
     hardwareDocs: "Hardware documentation",
-    gettingStarted: "Getting Started",
-    devkitVariants: "DevKit Variants",
-    tools: "Tools",
+    evaluate: "Evaluate",
+    design: "Design",
+    software: "Build eLxr",
+    deploy: "Flash & Update",
     references: "References",
     webSerial: "Web Serial Console",
     quickStart: "Quick Start",
@@ -16,9 +17,10 @@ const LOCALIZED_UI = {
   },
   ko: {
     hardwareDocs: "하드웨어 문서",
-    gettingStarted: "시작하기",
-    devkitVariants: "DevKit 변형",
-    tools: "도구",
+    evaluate: "평가",
+    design: "설계",
+    software: "eLxr 빌드",
+    deploy: "플래시 및 업데이트",
     references: "참조",
     webSerial: "웹 시리얼 콘솔",
     quickStart: "빠른 시작",
@@ -26,9 +28,10 @@ const LOCALIZED_UI = {
   },
   ja: {
     hardwareDocs: "ハードウェアドキュメント",
-    gettingStarted: "はじめに",
-    devkitVariants: "DevKit バリエーション",
-    tools: "ツール",
+    evaluate: "評価",
+    design: "設計",
+    software: "eLxr のビルド",
+    deploy: "書き込みと更新",
     references: "リファレンス",
     webSerial: "Web シリアルコンソール",
     quickStart: "クイックスタート",
@@ -36,9 +39,10 @@ const LOCALIZED_UI = {
   },
   "zh-Hant": {
     hardwareDocs: "硬體文件",
-    gettingStarted: "開始使用",
-    devkitVariants: "DevKit 型號",
-    tools: "工具",
+    evaluate: "評估",
+    design: "設計",
+    software: "建置 eLxr",
+    deploy: "燒錄與更新",
     references: "參考資料",
     webSerial: "網頁序列主控台",
     quickStart: "快速入門",
@@ -46,9 +50,10 @@ const LOCALIZED_UI = {
   },
   uk: {
     hardwareDocs: "Документація апаратного забезпечення",
-    gettingStarted: "Початок роботи",
-    devkitVariants: "Варіанти DevKit",
-    tools: "Інструменти",
+    evaluate: "Оцінка",
+    design: "Проєктування",
+    software: "Збірка eLxr",
+    deploy: "Оновлення",
     references: "Довідкові матеріали",
     webSerial: "Вебконсоль послідовного порту",
     quickStart: "Швидкий старт",
@@ -78,30 +83,43 @@ function HardwareSubnav() {
   const copy = LOCALIZED_UI[locale] || LOCALIZED_UI.en;
   const hardwareBase = useBaseUrl("/hardware");
   const gettingStartedBase = useBaseUrl("/hardware/getting-started");
+  const firmwareBase = useBaseUrl("/hardware/getting-started/firmware-update");
   const devkitBase = useBaseUrl("/hardware/devkit");
   const toolsBase = useBaseUrl("/hardware/tools");
+  const designBase = useBaseUrl("/hardware/design");
+  const softwareBase = useBaseUrl("/hardware/software");
   const referenceBase = useBaseUrl("/hardware/reference");
+  const path = location.pathname;
+  const deployActive = path.includes(firmwareBase);
 
   const links = [
     {
-      label: copy.gettingStarted,
+      label: copy.evaluate,
       href: useBaseUrl("/hardware/getting-started"),
-      active: location.pathname.includes(gettingStartedBase),
+      active:
+        (path.includes(gettingStartedBase) && !deployActive) ||
+        path.includes(devkitBase) ||
+        path.includes(toolsBase),
     },
     {
-      label: copy.devkitVariants,
-      href: useBaseUrl("/hardware/devkit/modalix-devkit"),
-      active: location.pathname.includes(devkitBase),
+      label: copy.design,
+      href: useBaseUrl("/hardware/design"),
+      active: path.includes(designBase),
     },
     {
-      label: copy.tools,
-      href: useBaseUrl("/hardware/tools/web-serial-console"),
-      active: location.pathname.includes(toolsBase),
+      label: copy.software,
+      href: useBaseUrl("/hardware/software"),
+      active: path.includes(softwareBase),
+    },
+    {
+      label: copy.deploy,
+      href: useBaseUrl("/hardware/getting-started/firmware-update"),
+      active: deployActive,
     },
     {
       label: copy.references,
-      href: useBaseUrl("/hardware/reference/bsp"),
-      active: location.pathname.includes(referenceBase),
+      href: useBaseUrl("/hardware/reference/extra-docs"),
+      active: path.includes(referenceBase),
     },
   ];
 
