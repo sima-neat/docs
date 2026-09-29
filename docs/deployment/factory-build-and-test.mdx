@@ -39,12 +39,12 @@ sima-user@sima-user-machine:~$ minicom -b 115200 -D /dev/ttyUSB0
 The device name (`/dev/ttyUSB0`, `/dev/ttyUSB1`) depends on how the cables
 enumerate on the host.
 
-## Physical Assembly
+## Physical Assembly {#physical-assembly}
 
 This depends on your board and production flow: fitting heatsinks, installing the
 board in an enclosure or test fixture, and so on.
 
-## Electrical Verification
+## Electrical Verification {#electrical-verification}
 
 1. List the access points for every main power rail, and check each rail's
    impedance for opens and shorts.
@@ -52,7 +52,7 @@ board in an enclosure or test fixture, and so on.
    sample of boards in each build.
 3. Check the clocks you can measure, and record them against each serial number.
 
-## Program the Board ID and MAC Address
+## Program the Board ID and MAC Address {#program-the-board-id-and-mac-address}
 
 The board ID (also called the device ID) and the MAC addresses are written to the
 MLSoC's one-time programmable (OTP) memory by a special tRoot firmware.
@@ -86,7 +86,7 @@ OTP memory can be written only once. Check each value before you confirm it.
 7. Load your production tRoot firmware into SPI flash, as described in
    [Program the tRoot SPI Flash](#program-the-troot-spi-flash).
 
-### Program the tRoot SPI Flash
+### Program the tRoot SPI Flash {#program-the-troot-spi-flash}
 
 The tRoot firmware is a single binary, `troot_blob.be`. You write one of two
 versions: the OTP programming firmware used above, or your production firmware.
@@ -104,7 +104,7 @@ Phase Flash Center software.
 6. Load `troot_blob.be`.
 7. Program the flash.
 
-## Set Up the Test Station
+## Set Up the Test Station {#set-up-the-test-station}
 
 1. If the board under test needs a carrier or interface board, connect it.
 2. Connect the host to both the tRoot UART and the U-Boot/Linux UART.
@@ -113,7 +113,7 @@ Phase Flash Center software.
 5. If the board is a PCIe card, install it in a host PCIe Gen5 slot of at least
    x8 width.
 
-## Boot the Test Image
+## Boot the Test Image {#boot-the-test-image}
 
 Boot the latest released test firmware from an SD card or the network, as
 described in
@@ -121,7 +121,7 @@ described in
 An SD card is preferred, because it leaves the Ethernet ports free for the network
 stress test.
 
-## Run Diagnostics
+## Run Diagnostics {#run-diagnostics}
 
 The sequence is: record the idle temperature, run the stress tests, check the
 final temperature, then check each I/O interface.
@@ -146,7 +146,7 @@ sima-user@sima-user-machine:~$ sudo ifconfig eno1:4 192.168.4.10 up
 For a PCIe card, remove any external power from the card before you power on
 the host. The card is powered from the slot.
 
-### 1. Idle Temperature
+### 1. Idle Temperature {#1-idle-temperature}
 
 Find the `hwmon` device named `simaai_modalix_thermal_sensor`:
 
@@ -309,12 +309,12 @@ This test installs a tRoot update package with `swupdate`.
 
 4. Check that output on the tRoot console stops within 5 minutes.
 
-## Program the Production Image
+## Program the Production Image {#program-the-production-image}
 
 Write the latest released production image to the eMMC, as described in
 [Flash an Image to eMMC](./flash-image.mdx#step-2-write-the-image-to-emmc), then
 check that the board boots from eMMC.
 
-## Application Testing, Labeling, and Packaging
+## Application Testing, Labeling, and Packaging {#application-testing-labeling-and-packaging}
 
 These steps depend on your product.

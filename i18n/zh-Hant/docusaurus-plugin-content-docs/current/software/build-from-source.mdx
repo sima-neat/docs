@@ -1,0 +1,274 @@
+---
+title: 從原始碼建置 BSP
+description: 從公開原始碼建置 Modalix 核心、U-Boot 與 device tree，並將建置成品安裝到電路板上。
+sidebar_position: 2
+---
+
+# 從原始碼建置 BSP
+
+自行建置 Modalix Linux 核心、U-Boot 與 device tree，然後將結果安裝到電路板上。本頁使用的全部都是公開儲存庫，不需要簽署 NDA，也不需要洽詢業務。
+
+:::note
+請從與電路板上執行版本相符的原始碼 commit 進行建置。[版本相容性](./release-compatibility.mdx)列出了每個平台版本所對應的核心與 U-Boot commit。關於 BSP 包含的內容以及各儲存庫的位置，請參閱[板級支援套件](./index.md)。
+:::
+
+## 開始之前
+
+- 一台用於建置的 **Ubuntu 22.04** 主機。
+- 已安裝 [Docker Engine](https://docs.docker.com/engine/install/ubuntu/)。
+- 已安裝 `qemu-user-static`：
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt install qemu-user-static
+  ```
+
+若要安裝您建置的成品，您還需要一塊已在執行 eLxr 映像檔的電路板，具備 root 存取權限、可從容器透過網路連線，並從 eMMC 開機（列舉為 `mmcblk0`）。
+
+## 設定建置容器 {#set-up-the-build-container}
+
+SDK 容器內含目標平台的工具鏈、標頭檔與函式庫。請將下方的 Dockerfile 儲存為 `Dockerfile.modalix`，然後從該檔案所在的目錄建置映像檔。此 Dockerfile 會設定版本 2.1.0 的 SDK。
+
+<details>
+<summary><strong>Dockerfile.modalix</strong></summary>
+
+```dockerfile title="Dockerfile.modalix"
+# Generated Dockerfile for modalix Build:release[2.1.0]
+
+FROM debian:bookworm
+
+# List of additional packages that are to be deployed in SDK sysroot
+ARG SDK_PKG_LIST
+ENV SDK_PKG_LIST="\
+	libgrpc-dev,\
+	protobuf-compiler-grpc,\
+	python3-pybind11,\
+	${SDK_PKG_LIST}"
+
+RUN dpkg --add-architecture arm64
+RUN dpkg --add-architecture arc
+RUN dpkg --add-architecture armhf
+RUN apt-get clean && \
+    apt-get update --allow-releaseinfo-change && \
+    apt-get install -y wget pip
+RUN wget -qO - https://mirror.elxr.dev/elxr/public.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/elxr.gpg
+RUN wget -qO - https://packages.fluentbit.io/fluentbit.key | gpg --dearmor > /etc/apt/trusted.gpg.d/fluentbit.gpg
+RUN wget --no-check-certificate -O - https://repo.sima.ai/elxr/deb/simaai.gpg | gpg --dearmor > /etc/apt/trusted.gpg.d/simaai.gpg
+RUN chmod 644 /etc/apt/trusted.gpg.d/elxr.gpg
+RUN chmod 644 /etc/apt/trusted.gpg.d/fluentbit.gpg
+
+RUN echo "deb [signed-by=/etc/apt/trusted.gpg.d/elxr.gpg] https://mirror.elxr.dev/elxr aria main" > /etc/apt/sources.list.d/elxr.list
+RUN echo "deb [signed-by=/etc/apt/trusted.gpg.d/fluentbit.gpg] https://packages.fluentbit.io/debian/bookworm bookworm main" >> /etc/apt/sources.list.d/elxr.list
+RUN echo "deb [trusted=yes] https://repo.sima.ai/elxr/deb/release bookworm non-free  #simaai repo" >> /etc/apt/sources.list.d/elxr.list
+
+RUN apt-get update --allow-releaseinfo-change && \
+    apt-get install -y --no-install-recommends \
+	python3-apt-ostree \
+	vim \
+	make \
+	cmake \
+	gcc-aarch64-linux-gnu \
+	g++-aarch64-linux-gnu \
+	device-tree-compiler \
+	bison \
+	flex \
+	quilt \
+	zlib1g-dev \
+	bzip2 \
+	bc \
+	rsync \
+	kmod \
+	cpio \
+	git \
+	curl \
+	libssl-dev \
+	libgnutls28-dev \
+	openssh-client \
+	simaai-sdk-tools
+
+RUN echo "Package: *" > /etc/apt/preferences.d/stable.pref
+RUN echo "Pin: origin \"repo.sima.ai/elxr\"" >> /etc/apt/preferences.d/stable.pref
+RUN echo "Pin-Priority: 999" >> /etc/apt/preferences.d/stable.pref
+
+RUN export RUSTUP_HOME=/opt/toolchain/rust && export CARGO_HOME=/opt/toolchain/rust && \
+    mkdir -p ${RUSTUP_HOME} && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rustup.sh && \
+    chmod 755 /tmp/rustup.sh && /tmp/rustup.sh -y && \
+    echo "export RUSTUP_HOME=${RUSTUP_HOME}" >> ${CARGO_HOME}/env && \
+    echo "export CARGO_HOME=${CARGO_HOME}" >> ${CARGO_HOME}/env && \
+    . ${CARGO_HOME}/env && rm /tmp/rustup.sh
+
+RUN if uname -a | grep -q '#[0-9]*-Ubuntu'; then \
+        apt-get update --allow-releaseinfo-change; \
+        --privileged mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc || true; \
+    fi
+
+RUN if [ "x86_64" = "x86_64" ]; then apt update --allow-releaseinfo-change && apt install \
+    arch-test -y; fi
+
+RUN python3 /opt/bin/simaai_setup_sdk.py modalix 2.1.0 \
+	 \
+	"${SDK_PKG_LIST}"
+
+RUN echo "source /opt/bin/simaai-init-build-env modalix" >> /root/.bashrc
+```
+
+</details>
+
+
+```console
+sima-user@sima-user-machine:~$ docker build -t modalix-sdk --file Dockerfile.modalix .
+```
+
+若要將額外的套件預先載入 sysroot，請傳入以逗號分隔的清單：
+
+```console
+sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libzix-dev,vxi-dev -t modalix-sdk --file Dockerfile.modalix .
+```
+
+請從您具有寫入權限的目錄啟動容器：
+
+```console
+sima-user@sima-user-machine:~$ docker run -it --privileged -v $(pwd):/data -w /data -v /dev:/dev --pid=host modalix-sdk
+```
+
+sysroot 位於 `/opt/toolchain/aarch64/<platform>`。建置環境會在啟動時自動設定；若要手動設定，請執行 `source /opt/bin/simaai-init-build-env modalix`。
+
+## 建置核心
+
+在容器內執行：
+
+```console
+root@sdk:/data$ git clone https://github.com/SiMa-ai/simaai-linux.git && cd simaai-linux
+root@sdk:/data/simaai-linux$ git checkout <kernel-commit>
+root@sdk:/data/simaai-linux$ make ARCH=arm64 simaai_modalix_defconfig
+root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC_FLAGS=-@
+```
+
+請將 `<kernel-commit>` 替換為[版本相容性](./release-compatibility.mdx)中您所用版本的核心 commit。建置 `master` 會得到最新版本，可能與電路板上的映像檔不相符。
+
+建置結果如下：
+
+| 成品 | 路徑 |
+| --- | --- |
+| 核心映像檔 | `arch/arm64/boot/Image` |
+| Device tree | `arch/arm64/boot/dts/simaai/*.dtb` |
+
+## 建置 Device Tree Overlay（選用）
+
+撰寫 overlay 原始檔（`.dtso`），然後將其編譯為二進位檔（`.dtbo`）：
+
+```console
+root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
+```
+
+## 建置 U-Boot
+
+```console
+root@sdk:/data$ git clone https://github.com/SiMa-ai/sima-ai-uboot.git && cd sima-ai-uboot
+root@sdk:/data/sima-ai-uboot$ git checkout <u-boot-commit>
+root@sdk:/data/sima-ai-uboot$ make ARCH=arm64 simaai_modalix_debug_defconfig
+root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
+```
+
+請將 `<u-boot-commit>` 替換為[版本相容性](./release-compatibility.mdx)中您所用版本的 U-Boot commit。產生的映像檔為 `u-boot.bin`。
+
+## 安裝建置成品 {#install-the-artifacts}
+
+### eMMC 的分割區配置
+
+| 分割區 | 內容 |
+| --- | --- |
+| `mmcblk0p1` | U-Boot，主要 |
+| `mmcblk0p2` | U-Boot，備份 |
+| `mmcblk0p3` | 開機分割區：包含 `boot-0` 與 `boot-1` 兩個目錄，一個為主要、一個為備份 |
+| `mmcblk0p4` | 根檔案系統 |
+
+:::warning
+請使用 `dd` 而非 `cp` 寫入分割區，並以 `root` 身分複製檔案到電路板。若要查詢電路板的位址，請在電路板上執行 `hostname -I` 或 `ip route get 1.1.1.1`。
+:::
+
+### U-Boot
+
+將映像檔複製過去，找出目前使用中的分割區，然後寫入：
+
+```console
+root@sdk:/data$ scp sima-ai-uboot/u-boot.bin root@<board-ip>:/tmp/
+```
+
+```console
+root@modalix:~# parted /dev/mmcblk0 print | grep legacy_boot | cut -f2 -d" "
+1
+root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress  # use the partition number printed above
+root@modalix:~# sync
+```
+
+### 核心、Device Tree 與 Overlay
+
+請先找出目前使用中的開機目錄，它會是 `boot-0` 或 `boot-1`：
+
+```console
+root@modalix:~# strings /boot/uboot.env | grep boot_path= | cut -f2 -d"="
+/boot-0/
+```
+
+將建置成品複製到該目錄：
+
+```console
+root@sdk:/data$ scp simaai-linux/arch/arm64/boot/Image root@<board-ip>:/boot/boot-0/
+root@sdk:/data$ scp simaai-linux/arch/arm64/boot/dts/simaai/modalix*.dtb root@<board-ip>:/boot/boot-0/
+root@sdk:/data$ scp imx415.dtbo root@<board-ip>:/boot/boot-0/
+```
+
+### 核心模組
+
+模組需放入執行中核心的模組樹。在電路板上執行 `uname -r` 可取得版本字串：
+
+```console
+root@sdk:/data$ scp simaai-linux/drivers/net/phy/marvell10g.ko root@<board-ip>:/lib/modules/6.18.3-modalix/kernel/drivers/net/phy/
+```
+
+### 完成安裝
+
+```console
+root@modalix:~# depmod -a 6.18.3-modalix
+root@modalix:~# sync
+root@modalix:~# reboot
+```
+
+如果您新增了 overlay，請在 U-Boot 的 `dtbos` 變數中註冊它。中斷自動開機，然後執行：
+
+```console
+sima$ env set dtbos $dtbos imx415.dtbo
+sima$ saveenv
+sima$ boot
+```
+
+## 部署您的建置 {#deploy-your-build}
+
+將自訂建置安裝到電路板上有兩種方式，分別適用於不同的工作階段。
+
+**在執行中的電路板上反覆修改。** 開發期間，請依照[安裝建置成品](#install-the-artifacts)的步驟，將核心映像檔、device tree、overlay 與模組複製到已能開機的電路板上，然後重新開機。這是最快速的迭代方式，但它是以手動方式修改單一電路板，不會留下可重現的映像檔。
+
+**燒錄完整映像檔。** 若要將相同的建置安裝到多塊電路板上（包括量產環境），請讓每塊電路板從網路或 SD 卡開機，並將完整映像檔寫入其 eMMC。請參閱[將映像檔燒錄到 eMMC](/hardware/deployment/flash-image)，完整的量產流程則請參閱[工廠組裝與測試](/hardware/deployment/factory-build-and-test)。
+
+:::caution[更新格式在 3.0 版有所變更]
+平台版本 2.x 與 3.0 使用不同的更新機制：3.0 改用 swupdate。本頁目前尚未說明如何以您自己的核心與 U-Boot 建置組裝完整映像檔或更新套件。
+:::
+
+[韌體更新](/hardware/getting-started/firmware-update)會安裝 SiMa.ai 的標準映像檔。請用它將電路板還原到已知版本，而不是用來部署您自己的建置：它會覆寫您先前安裝的內容。
+
+## 參考資料
+
+| 參考資料 | 位置 |
+| --- | --- |
+| 版本與原始碼 commit 對應 | [版本相容性](./release-compatibility.mdx) |
+| 建置容器 | [Dockerfile.modalix](#set-up-the-build-container) |
+| 核心原始碼 | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
+| 核心 defconfig | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
+| U-Boot 原始碼 | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| Device tree 與 overlay | [`dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+
+## 後續步驟
+
+- [版本相容性](./release-compatibility.mdx)：每個平台版本所對應的原始碼 commit。
+- [載板硬體啟動](../design/som-carrier.mdx)：針對您自己的載板調整 device tree。
+- [轉換為 eLxr](../reference/tech-notes/elxr-conversion.mdx)：將 Yocto DevKit 轉換為 eLxr。

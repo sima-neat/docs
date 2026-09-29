@@ -1,0 +1,153 @@
+---
+title: 將映像檔燒錄到 eMMC
+description: 讓 Modalix 電路板從網路或 SD 卡開機，將完整映像檔寫入 eMMC，並設定開機順序。
+sidebar_position: 1
+---
+
+# 將映像檔燒錄到 eMMC
+
+本頁說明如何將完整映像檔寫入電路板的 eMMC，例如在生產線上、在您自行設計的電路板上，或使用非公開發行版本的映像檔時。所有步驟都由您親自執行，因此適用於您手邊的任何映像檔。
+
+若要將 DevKit 更新為 SiMa.ai 已發行的版本，請改用[韌體更新](/hardware/getting-started/firmware-update)。若只要在已能開機的電路板上替換核心、device tree 或 U-Boot，請參閱[安裝建置成品](/hardware/software/build-from-source#install-the-artifacts)。
+
+## 開始之前
+
+- 一塊能進入 U-Boot 提示字元的電路板。
+- 連接到電路板 U-Boot/Linux UART 的序列連線，鮑率為 115200，並停用硬體流量控制。請參閱[設定序列埠連線](/hardware/getting-started/setup-serial)。
+- 要燒錄的映像檔：
+
+  | 映像檔 | 檔案 |
+  | --- | --- |
+  | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
+  | Yocto | `simaai-image-palette-modalix.wic.gz` 與 `simaai-image-palette-modalix.wic.bmap` |
+
+- 一台具備乙太網路與 TFTP 伺服器的主機，或一張 SD 卡。
+
+## 電路板如何選擇開機來源
+
+電路板在從 eMMC 執行時無法覆寫 eMMC，因此必須先從網路或 SD 卡開機。U-Boot 會依照 `boot_targets` 中的順序嘗試各個來源：
+
+| 目標 | 開機來源 |
+| --- | --- |
+| `mmc1` | SD 卡 |
+| `mmc0` | eMMC |
+| `dhcp` | 透過 DHCP 找到的 TFTP 伺服器 |
+| `net` | 位於靜態 IP 位址的 TFTP 伺服器 |
+
+預設順序為 `mmc1 mmc0 dhcp net`。若要變更順序，請在序列主控台中中斷自動開機，然後設定並儲存順序：
+
+```console
+sima$ env set boot_targets mmc1 mmc0 net dhcp; saveenv
+Saving Environment to FAT... OK
+sima$ printenv boot_targets
+boot_targets=mmc1 mmc0 net dhcp
+sima$ boot
+```
+
+## 步驟 1. 從網路或 SD 卡開機 {#step-1-boot-from-the-network-or-an-sd-card}
+
+在測試站上建議從 SD 卡開機，因為這樣可以讓乙太網路連接埠空出來進行網路壓力測試。
+
+<details open>
+<summary><strong>從網路開機</strong></summary>
+
+此方式使用您自己的 TFTP 伺服器，因此可以自行決定要提供哪些檔案。[網路啟動恢復](/hardware/getting-started/firmware-update/net-boot)也能達到相同效果，但使用的是 `sima-cli`，它會替您下載並提供已發行的版本。
+
+1. 將開機檔案複製到 TFTP 伺服器的根目錄：
+   - `netboot.scr.uimg`
+   - `Image`
+   - device tree 二進位檔（`*.dtb`）
+   - 根檔案系統封存檔：eLxr 使用 `elxr-palette-modalix-arm64.cpio.gz`，Yocto 使用 `simaai-image-palette-modalix.cpio.gz`
+2. 將主機連接到電路板的第一個乙太網路連接埠（`eth0`）。電路板使用 `192.168.1.20`，因此請為主機指定 `192.168.1.0/24` 網段內的位址：
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ifconfig <interface_name> 192.168.1.10 up
+   ```
+
+3. 將電路板上電，中斷自動開機，並將 `net` 設為第一個開機來源：
+
+   ```console
+   sima$ env set boot_targets net mmc0 mmc1 dhcp; saveenv
+   sima$ boot
+   ```
+
+4. Linux 開機後，確認建置版本，以及根檔案系統位於 RAM 中（`root=/dev/ram0`）：
+
+   ```console
+   root@modalix:~# cat /etc/buildinfo
+   root@modalix:~# cat /proc/cmdline
+   ```
+
+</details>
+
+<details open>
+<summary><strong>從 SD 卡開機</strong></summary>
+
+1. 將映像檔寫入 SD 卡。您可以在主機上使用[建立啟動映像](/hardware/getting-started/firmware-update/boot-image)寫入，也可以在已從網路開機且插入 SD 卡（`/dev/mmcblk1`）的電路板上寫入：
+
+   eLxr：
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk1 bs=4M status=progress conv=fsync
+   ```
+
+   Yocto 則請複製 `.wic.gz` 與 `.wic.bmap` 兩個檔案，然後執行：
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   ```
+
+   接著修復分割表。由於映像檔比記憶卡小，在 `parted` 移動備份 GPT 標頭之前，該標頭並不位於裝置的尾端：
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk1 print
+   ```
+
+2. 重新開機，中斷自動開機，並確認 `mmc1` 位於第一順位。預設即是如此：
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   sima$ boot
+   ```
+
+3. Linux 開機後，檢查 `/etc/buildinfo`，並確認 `/proc/cmdline` 中包含 `root=/dev/mmcblk1p*`。
+
+</details>
+
+## 步驟 2. 將映像檔寫入 eMMC {#step-2-write-the-image-to-emmc}
+
+請在電路板從網路或 SD 卡開機的狀態下，以 root 身分在電路板上執行下列步驟。
+
+1. 將 `.wic.gz` 與 `.wic.bmap` 檔案從主機複製到電路板的 `/tmp`：
+
+   ```console
+   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. 將映像檔寫入 eMMC（`/dev/mmcblk0`）：
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   ```
+
+3. 修復分割表：
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk0 print
+   ```
+
+## 步驟 3. 從 eMMC 開機
+
+1. 如果您是從網路開機，請還原預設的開機順序：
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   ```
+
+   如果您是從 SD 卡開機，請將 SD 卡取出。
+2. 重新開機或將電路板斷電重啟，並確認它從 eMMC 開機。
+
+## 後續步驟
+
+- [工廠組裝與測試](./factory-build-and-test.mdx)：完整的量產流程，包括電路板 ID、MAC 位址與診斷。
+- [版本相容性](/hardware/software/release-compatibility)：組成每個版本的核心與 U-Boot commit。

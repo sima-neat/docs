@@ -1,7 +1,7 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "開始使用",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate with a DevKit": {
+    "message": "使用 DevKit 評估",
+    "description": "The label for category 'Evaluate with a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "快速入門指南",
@@ -15,21 +15,29 @@
     "message": "PCIe 模式",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "韌體更新",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
-  },
   "sidebar.systemDocs.category.DevKit Variants": {
     "message": "DevKit 型號",
     "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "工具",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Design Your Hardware": {
+    "message": "設計您的硬體",
+    "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "參考資料",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build & Customize eLxr": {
+    "message": "建置與自訂 eLxr",
+    "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Interfaces & Peripherals": {
+    "message": "介面與周邊裝置",
+    "description": "The label for category 'Interfaces & Peripherals' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Flash, Update & Recover": {
+    "message": "燒錄、更新與復原",
+    "description": "The label for category 'Flash, Update & Recover' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "參考資料與下載",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "技術說明",

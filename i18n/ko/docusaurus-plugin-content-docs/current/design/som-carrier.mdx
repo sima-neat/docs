@@ -1,0 +1,219 @@
+---
+title: 캐리어 보드 브링업
+description: 타사 캐리어 보드에서 Modalix SoM Rev 2를 브링업합니다. 하드웨어 개요, 소프트웨어 적응이 필요한 부분, 구성 위치를 설명합니다.
+sidebar_position: 4
+---
+
+# 캐리어 보드 브링업
+
+Modalix SoM Rev 2는 표준화된 핀 할당을 갖춘 **260핀 SODIMM** 커넥터를 통해 캐리어
+보드에 연결되며, NVIDIA Jetson Orin NX 또는 Orin Nano와 호환되는 모든 캐리어 보드에서
+동작합니다.
+
+:::warning 먼저 핀 호환성을 확인하십시오
+SoM과 캐리어 보드를 연결하기 전에 두 보드 간의 전기적 핀 호환성을 확인하십시오.
+:::
+
+:::note 사전 요구 사항
+그래픽 지원을 위해 Palette 패키지가 설치된 SDK 2.1 이상이 필요합니다. 또한 SoM
+데이터시트, SoC 데이터시트 및 Modalix SoM 비교 가이드를 준비해 두십시오.
+:::
+
+## 보드 안전 취급
+
+- 정전기 방지 손목 스트랩과 ESD 보호 매트를 사용하여 올바르게 ESD 접지를 하십시오.
+- 전원이 켜진 상태에서는 보드를 만지지 마십시오.
+- 보드를 표면에 내려놓기 전에 정전기 방지 봉투에 보관하십시오.
+- 모듈은 가장자리를 잡고 다루며, 보드에 실장된 IC와 부품을 만지지 마십시오.
+- 제공된 전원 공급 장치를 사용하십시오.
+- 전원을 켠 후 모든 전원 표시 LED가 켜져 있는지 확인하십시오.
+- 물 및 기타 전도성 액체를 보드에서 멀리 두십시오. 접촉 시 보드가
+  손상될 수 있습니다.
+
+## 캐리어 보드 구성 부품
+
+레퍼런스 브링업에는 Waveshare 캐리어 보드를 사용했습니다. 260핀 SODIMM 핀아웃을
+따르는 보드라면 어떤 보드든 사용할 수 있습니다. 아래 표의 번호는 다음 그림의 번호
+표시에 대응합니다.
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-top.png" alt="번호가 매겨진 부품 표시가 있는 SoM 캐리어 보드 윗면" />
+    <figcaption><strong>그림 1.</strong> 캐리어 보드 윗면</figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-bottom.png" alt="번호가 매겨진 부품 표시가 있는 SoM 캐리어 보드 아랫면" />
+    <figcaption><strong>그림 2.</strong> 캐리어 보드 아랫면</figcaption>
+  </figure>
+</div>
+
+| # | 부품 |
+| --- | --- |
+| 1 | SiMa 시스템 온 모듈용 260핀 SODIMM 소켓 |
+| 2 | 12핀 헤더 — 전원 공급, 리셋 버튼, 강제 복구 설정, 시리얼 디버그, 자동 전원 켜기 활성화, 전원 표시기 |
+| 3 | 22핀 CSI 카메라 커넥터 2개 |
+| 4 | DC 전원 잭, 9 V–19 V, 5.5 × 2.5 mm 수 플러그 |
+| 5 | HDMI 커넥터, 4K UHD(3840 × 2160) |
+| 6 | USB 3.1 Type-A 포트 4개 |
+| 7 | RJ45 기가비트 이더넷 |
+| 8 | 디버그 로그용 USB Type-C |
+| 9 | 40핀 헤더 |
+| 10 | 4핀 PWM 팬 헤더 |
+| 11 | NVMe SSD용 M.2 Key M |
+| 12 | RTC 백업 배터리 헤더, PH1.25 2P |
+
+## Modalix SoM
+
+브링업에는 Modalix SoM Rev 2를 사용했습니다. 이 모듈에는 MLSoC Modalix 다이, LPDDR5
+패키지 2개, 16 GB eMMC 및 SPI 플래시가 탑재되어 있으며, 골드핑거 SO-DIMM 에지
+커넥터를 통해 연결됩니다.
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-top.png" alt="두 LPDDR5 패키지 사이에 MLSoC 다이가 있는 Modalix SoM Rev 2 윗면" />
+    <figcaption>
+      <strong>그림 3.</strong> SoM 윗면 — Modalix SoC, LPDDR5 DRAM(×2),
+      PMIC 및 골드핑거 커넥터
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-bottom.png" alt="eMMC, SPI 플래시 및 이더넷 PHY가 보이는 Modalix SoM Rev 2 아랫면" />
+    <figcaption>
+      <strong>그림 4.</strong> SoM 아랫면 — 16 GB eMMC, SPI 플래시, HDMI
+      컨트롤러, 이더넷 PHY, USB 컨트롤러, 클록 생성기
+    </figcaption>
+  </figure>
+</div>
+
+:::note
+이 그림은 부품 표시용입니다. 보드는 방열판이 부착된 상태로 출하됩니다.
+:::
+
+## 커넥터로 노출되는 인터페이스
+
+기능 블록 다이어그램은 어떤 인터페이스가 SO-DIMM 커넥터까지 연결되는지, 그리고
+모듈 내부에서 어떻게 라우팅되는지 보여 줍니다. 캐리어 보드가 SoM에서 어떤 신호를
+가져올 수 있는지 결정할 때 참고하십시오.
+
+<figure className="doc-figure doc-figure--wide">
+  <img src="/img/bsp/som-block-diagram.png" alt="SO-DIMM 커넥터 신호가 Modalix SoC로 라우팅되는 모습을 보여 주는 Modalix SoM Rev 2 기능 블록 다이어그램" />
+  <figcaption><strong>그림 5.</strong> Modalix SoM Rev 2 기능 블록 다이어그램</figcaption>
+</figure>
+
+| 인터페이스 | 커넥터에서 제공되는 신호 |
+| --- | --- |
+| PCIe | `PCIe0` Gen4 ×4(레인 0–3), `PCIe1`, `PCIe2` Gen3 ×2 |
+| MIPI CSI | `MIPI CSI0`–`CSI3`, 각 2레인 |
+| 이더넷 | 기가비트 이더넷 PHY를 통한 `MDI`(`ETH0`에 SGMII 연결), `ETH1`은 `PCIe1`과 공유 |
+| USB | USB 컨트롤러를 통한 `USB2 P0`–`P2` 및 `USB3 P0`–`P2` |
+| 디스플레이 | HDMI 비디오 프로세서를 통한 `HDMI` |
+| 오디오 | `I2S0`(레벨 시프터 경유), `I2S1` |
+| I2C | `I2C_CAM`, `I2C0`, `I2C1`, `I2C2` |
+| UART | `UART0`, `UART1`, `UART2` |
+| GPIO | 15개 |
+| SPI | `SPI0`, `SPI1` — `SPI1`은 모듈 내장 QSPI 플래시와 먹스됨 |
+| 전원 및 제어 | `SYS_RESET#`, `POWER_EN`, `SHUTDOWN_REQ#`, `SLEEP/WAKE#`, `MODE_SLEEP#`, `FORCE_RECOVERY#` |
+
+모듈에 내장되어 외부로 인출되지 않는 요소: LPDDR5(DDR0-1 및 DDR2-3에 ×64), eMMC
+플래시(×8), 상태 LED, 그리고 `I2C_MGMT` 장치(EEPROM, 실시간 클록, 클록 생성기 및
+TPM).
+
+:::tip
+`FORCE_RECOVERY#`는 모듈 내장 QSPI 플래시와 SoC 플래시 경로 중 하나를 선택하는 SPI
+먹스를 구동합니다. 시스템을 분해하지 않고 복구하려면 이 신호를 외부로 노출하십시오.
+:::
+
+## 소프트웨어 적응이 필요한 부분
+
+### 변경 없이 동작하는 부품
+
+다음 부품은 SoM 자체에 탑재되어 있으므로, 260핀 할당 표준을 따르는 모든 캐리어
+보드에서 동작합니다.
+
+SiMa Modalix 디바이스 · DDR · SPI 플래시 · eMMC 플래시 · USB 컨트롤러 · RTC ·
+이더넷 PHY · HDMI 비디오 프로세서
+
+### 캐리어 보드에 따라 달라지는 부품
+
+다음 부품은 보드에 따라 구성 또는 소프트웨어 변경이 필요할 수 있습니다.
+
+| 부품 | 참고 |
+| --- | --- |
+| MIPI 또는 GMSL 카메라 | 아래 [카메라](#cameras)를 참조하십시오 |
+| USB 허브 | |
+| NVMe 장치 | |
+| Wi-Fi / Bluetooth | |
+| **UART2** | Modalix SoM Rev 2에서 **보안 부팅** 터미널로 할당되어 있습니다. NVIDIA 시스템에서는 이 포트가 터미널 인터페이스이므로, 포팅 시 흔히 혼동하는 부분입니다. |
+| **UART1** | Modalix SoM Rev 2의 U-Boot 및 Linux 터미널이며, FTDI UART-USB 변환기에 연결되어 있습니다. NVIDIA 캐리어 보드에서는 일반적으로 USB OTG(USB3)가 기본값입니다. 일부 캐리어 보드는 40핀 헤더에 UART1을 노출합니다. |
+
+## 소프트웨어 구성
+
+대부분의 구성은 Linux **디바이스 트리**를 통해 이루어지며, 보드별 차이는 그 위에
+**오버레이**를 겹쳐 적용합니다. 이 방식 덕분에 하나의 BSP로 여러 캐리어 보드를
+지원할 수 있습니다.
+
+- [소스에서 BSP 빌드](../software/build-from-source.mdx) — 빌드 환경, 커널, U-Boot,
+  디바이스 트리 및 결과물 설치.
+- [디바이스 트리 사용 모델](https://docs.kernel.org/devicetree/usage-model.html)
+  및 [오버레이 참고 사항](https://docs.kernel.org/devicetree/overlay-notes.html) —
+  업스트림 커널 문서.
+- 커널 트리의 [오버레이 예제](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays).
+
+보드별 오버레이 소스(`.dtso`)는 BSP 저장소의
+`meta-simaai/recipes-kernel/oot-dtbo/files/` 아래에 있습니다.
+
+## 카메라 {#cameras}
+
+DevKit에서 카메라를 *사용*하려면 제공되는 오버레이를 선택하십시오.
+[MIPI 카메라 인터페이스](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)에서
+적절한 `.dtbo`를 선택하고 U-Boot에서 설정하는 방법을 설명합니다.
+
+사용자 지정 캐리어 보드에서는 전원 라인, I2C 버스 및 레귤레이터가 레퍼런스 설계와
+다르기 때문에 오버레이를 직접 *작성*해야 할 수 있습니다. 일반적으로 세 가지 요소가
+필요합니다.
+
+GPIO hog를 통해 카메라 파워다운 라인을 구동합니다(이 예에서는 포트 5, GPIO 6).
+
+```dts
+&port5 {
+    cam-hog0 {
+        gpio-hog;
+        gpios = <6 0>;          /* GPIO_ACTIVE_HIGH */
+        output-high;
+        line-name = "cam0_powdn";
+    };
+};
+```
+
+센서가 연결된 I2C 버스를 활성화합니다(이 예에서는 SIO 포트 5, I2C #2).
+
+```dts
+&i2c52 {
+    status = "okay";
+    clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+};
+```
+
+Linux가 카메라 전원 레일의 존재와 전원 공급 여부를 알 수 있도록, 오버레이 조각을
+통해 루트 노드에 추가되는 고정 전압 레귤레이터로 해당 레일을 선언합니다.
+
+커널 트리의 [오버레이 예제](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)에서
+시작하십시오. 카메라 제어, PHY 주파수, 두 번째 카메라용 DMA, 데이터 하이웨이 및 ISP
+구성은 아직 이 문서에서 다루지 않습니다.
+
+## 참고 자료
+
+| 참고 자료 | 위치 |
+| --- | --- |
+| 커널, 디바이스 트리 및 오버레이 빌드 | [소스에서 BSP 빌드](../software/build-from-source.mdx) |
+| Modalix 디바이스 트리 | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+| 오버레이 예제 | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| 디바이스 트리 사용 모델 | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
+| 오버레이 참고 사항 | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
+
+## 다음 단계
+
+- [저속 I/O](../interfaces/low-speed-io.mdx) — SIO 블록의 GPIO, UART, I2C 및 SPI.
+- [MIPI 카메라 인터페이스](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) — DevKit에서 카메라 사용.

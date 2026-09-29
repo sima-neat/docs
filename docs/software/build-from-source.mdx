@@ -31,7 +31,7 @@ To install what you build, you also need a board already running an eLxr image
 with root access, reachable over the network from the container, and booted from
 eMMC (enumerated as `mmcblk0`).
 
-## Set Up the Build Container
+## Set Up the Build Container {#set-up-the-build-container}
 
 The SDK container carries the toolchain, headers and libraries for the target.
 Save the Dockerfile below as `Dockerfile.modalix`, then build the image from the
@@ -185,7 +185,7 @@ root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
 Replace `<u-boot-commit>` with the U-Boot commit for your release from
 [Release Compatibility](./release-compatibility.mdx). The image is `u-boot.bin`.
 
-## Install the Artifacts
+## Install the Artifacts {#install-the-artifacts}
 
 ### How the eMMC Is Laid Out
 
@@ -212,7 +212,7 @@ root@sdk:/data$ scp sima-ai-uboot/u-boot.bin root@<board-ip>:/tmp/
 ```console
 root@modalix:~# parted /dev/mmcblk0 print | grep legacy_boot | cut -f2 -d" "
 1
-root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress
+root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress  # use the partition number printed above
 root@modalix:~# sync
 ```
 
@@ -235,7 +235,7 @@ root@sdk:/data$ scp imx415.dtbo root@<board-ip>:/boot/boot-0/
 
 ### Kernel Modules
 
-Modules go into the running kernel's module tree. `uname -a` on the board gives
+Modules go into the running kernel's module tree. `uname -r` on the board gives
 the version string:
 
 ```console
@@ -259,7 +259,7 @@ sima$ saveenv
 sima$ boot
 ```
 
-## Deploy Your Build
+## Deploy Your Build {#deploy-your-build}
 
 There are two ways to get a custom build onto a board, and they suit different
 stages of work.

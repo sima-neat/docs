@@ -1,0 +1,39 @@
+---
+title: Сумісність випусків
+description: Коміти вихідного коду ядра Linux і U-Boot, що відповідають кожному випуску платформи Modalix.
+sidebar_position: 3
+---
+
+# Сумісність випусків
+
+Кожен випуск платформи Modalix зібрано з одного коміту в загальнодоступних репозиторіях ядра та
+U-Boot. Щоб перезібрати компонент, який відповідає образу на вашій платі, перед збиранням
+перейдіть на коміт цього випуску. Див.
+[Збирання BSP з вихідного коду](./build-from-source.mdx).
+
+## Ядро та U-Boot за випусками
+
+| Випуск платформи | Версія ядра | Коміт ядра | Коміт U-Boot |
+| --- | --- | --- | --- |
+| 2.1.3 | 6.18.3 | [`65aba29989da`](https://github.com/SiMa-ai/simaai-linux/commit/65aba29989da02d7612da5484dbbcd50643fdd60) | [`5a026adbe2a5`](https://github.com/SiMa-ai/sima-ai-uboot/commit/5a026adbe2a54aeaae5dc50e1852d4b5c1884640) |
+| 2.1.1 | 6.18.3 | [`75cf83206ddf`](https://github.com/SiMa-ai/simaai-linux/commit/75cf83206ddf82d4c94f9eaf037c30fbe2e5bcef) | [`ae825aa3b679`](https://github.com/SiMa-ai/sima-ai-uboot/commit/ae825aa3b679389672e7b5b6f5e7a75f55330e1d) |
+| 2.1.0 | 6.18.3 | [`694f7f2bd658`](https://github.com/SiMa-ai/simaai-linux/commit/694f7f2bd658297bd3f3e31e507d63eed4849189) | [`96c6ccab6a56`](https://github.com/SiMa-ai/sima-ai-uboot/commit/96c6ccab6a567398323a4239a5d837b5a44b5788) |
+| 2.0.0 | 6.1.22 | [`e92918061c54`](https://github.com/SiMa-ai/simaai-linux/commit/e92918061c54726431a00c60d3d9fff2ddce27f2) | [`93961411fa44`](https://github.com/SiMa-ai/sima-ai-uboot/commit/93961411fa44a5b90dca02eb55fd87d33043ad2a) |
+
+Рядок ядра для 2.1.0 вказує на виправлення збирання, яке було внесено після коміту випуску
+[`11591e638c71`](https://github.com/SiMa-ai/simaai-linux/commit/11591e638c7144fbc97b736de6aa209bab190a5c).
+
+## Як читати цю таблицю
+
+- Репозиторії не мають тегів випусків. Кожен випуск — це окремий коміт у гілці
+  `master` із заголовком `SiMa.AI Release <version>`.
+- Гілка `master` завжди містить найновіший випуск. Якщо зібрати її для плати зі
+  старішим випуском, ви отримаєте ядро чи завантажувач, що не відповідає кореневій
+  файловій системі та модулям цієї плати.
+- Щоб дізнатися випуск на працюючій платі, виконайте `cat /etc/buildinfo`.
+
+Щоб перейти на коміт випуску:
+
+```console
+root@sdk:/data/simaai-linux$ git checkout 65aba29989da
+```

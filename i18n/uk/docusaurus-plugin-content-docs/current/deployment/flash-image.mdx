@@ -1,0 +1,178 @@
+---
+title: Прошивання образу на eMMC
+description: Завантажте плату Modalix із мережі або з SD-карти, запишіть повний образ на eMMC і встановіть порядок завантаження.
+sidebar_position: 1
+---
+
+# Прошивання образу на eMMC
+
+Використовуйте цю сторінку, щоб записати повний образ на eMMC плати, наприклад на
+виробничій лінії, на платі власної розробки або з образом, який не є
+опублікованим випуском. Усі кроки ви виконуєте самостійно, тож процедура працює з будь-яким
+наявним у вас файлом образу.
+
+Щоб оновити DevKit до опублікованого випуску SiMa.ai, натомість скористайтеся розділом
+[Оновлення прошивки](/hardware/getting-started/firmware-update). Щоб замінити
+лише ядро, дерева пристроїв або U-Boot на платі, яка вже завантажується, див.
+[Встановлення артефактів](/hardware/software/build-from-source#install-the-artifacts).
+
+## Перед початком роботи
+
+- Плата, яка доходить до запрошення U-Boot.
+- Послідовне з’єднання з UART U-Boot/Linux плати на швидкості 115200 бод із
+  вимкненим апаратним керуванням потоком. Див. [Налаштування послідовного з’єднання](/hardware/getting-started/setup-serial).
+- Образ для прошивання:
+
+  | Образ | Файли |
+  | --- | --- |
+  | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
+  | Yocto | `simaai-image-palette-modalix.wic.gz` і `simaai-image-palette-modalix.wic.bmap` |
+
+- Хост з Ethernet і сервером TFTP або SD-карта.
+
+## Як плата вибирає джерело завантаження
+
+Плата не може перезаписати eMMC, поки працює з неї, тому спершу вона завантажується
+з мережі або з SD-карти. U-Boot перебирає джерела зі змінної `boot_targets` у
+заданому порядку:
+
+| Ціль | Завантаження з |
+| --- | --- |
+| `mmc1` | SD-карти |
+| `mmc0` | eMMC |
+| `dhcp` | сервера TFTP, знайденого через DHCP |
+| `net` | сервера TFTP зі статичною IP-адресою |
+
+Порядок за замовчуванням — `mmc1 mmc0 dhcp net`. Щоб змінити його, перервіть автоматичне завантаження в
+послідовній консолі, а потім задайте й збережіть порядок:
+
+```console
+sima$ env set boot_targets mmc1 mmc0 net dhcp; saveenv
+Saving Environment to FAT... OK
+sima$ printenv boot_targets
+boot_targets=mmc1 mmc0 net dhcp
+sima$ boot
+```
+
+## Крок 1. Завантаження з мережі або з SD-карти {#step-1-boot-from-the-network-or-an-sd-card}
+
+На тестовій станції краще завантажуватися з SD-карти, оскільки тоді
+порти Ethernet залишаються вільними для навантажувальних тестів мережі.
+
+<details open>
+<summary><strong>Завантаження з мережі</strong></summary>
+
+У цьому варіанті використовується ваш власний сервер TFTP, тож ви самі обираєте, що він надає.
+[Відновлення за допомогою мережевого завантаження](/hardware/getting-started/firmware-update/net-boot) робить
+те саме за допомогою `sima-cli`, який завантажує та надає опублікований випуск за вас.
+
+1. Скопіюйте файли завантаження до кореневого каталогу сервера TFTP:
+   - `netboot.scr.uimg`
+   - `Image`
+   - двійкові файли дерев пристроїв (`*.dtb`)
+   - архів кореневої файлової системи: `elxr-palette-modalix-arm64.cpio.gz` для eLxr
+     або `simaai-image-palette-modalix.cpio.gz` для Yocto
+2. Під’єднайте хост до першого порту Ethernet плати (`eth0`). Плата використовує
+   `192.168.1.20`, тож призначте хосту адресу в мережі `192.168.1.0/24`:
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ifconfig <interface_name> 192.168.1.10 up
+   ```
+
+3. Увімкніть живлення плати, перервіть автоматичне завантаження та зробіть `net` першим джерелом завантаження:
+
+   ```console
+   sima$ env set boot_targets net mmc0 mmc1 dhcp; saveenv
+   sima$ boot
+   ```
+
+4. Після завантаження Linux перевірте збірку та те, що коренева файлова система розміщена в RAM
+   (`root=/dev/ram0`):
+
+   ```console
+   root@modalix:~# cat /etc/buildinfo
+   root@modalix:~# cat /proc/cmdline
+   ```
+
+</details>
+
+<details open>
+<summary><strong>Завантаження з SD-карти</strong></summary>
+
+1. Запишіть образ на SD-карту. Це можна зробити з хоста за допомогою
+   [Створення завантажувального образу](/hardware/getting-started/firmware-update/boot-image) або
+   з плати, завантаженої з мережі, зі вставленою SD-картою
+   (`/dev/mmcblk1`):
+
+   Для eLxr:
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk1 bs=4M status=progress conv=fsync
+   ```
+
+   Для Yocto скопіюйте обидва файли `.wic.gz` і `.wic.bmap`, а потім виконайте:
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   ```
+
+   Потім виправте таблицю розділів. Образ менший за карту, тому
+   резервний заголовок GPT не розташований у кінці пристрою, доки `parted` його не перемістить:
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk1 print
+   ```
+
+2. Перезавантажте плату, перервіть автоматичне завантаження та переконайтеся, що `mmc1` стоїть першим. За
+   замовчуванням так і є:
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   sima$ boot
+   ```
+
+3. Після завантаження Linux перевірте `/etc/buildinfo`, а також переконайтеся, що `/proc/cmdline` містить
+   `root=/dev/mmcblk1p*`.
+
+</details>
+
+## Крок 2. Запис образу на eMMC {#step-2-write-the-image-to-emmc}
+
+Виконайте ці кроки на платі від імені root, поки вона завантажена з мережі або
+з SD-карти.
+
+1. Скопіюйте файли `.wic.gz` і `.wic.bmap` із хоста до `/tmp` на платі:
+
+   ```console
+   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. Запишіть образ на eMMC (`/dev/mmcblk0`):
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   ```
+
+3. Виправте таблицю розділів:
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk0 print
+   ```
+
+## Крок 3. Завантаження з eMMC
+
+1. Якщо ви завантажувалися з мережі, відновіть порядок завантаження за замовчуванням:
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   ```
+
+   Якщо ви завантажувалися з SD-карти, вийміть її.
+2. Перезавантажте плату або вимкніть і знову ввімкніть її живлення та переконайтеся, що вона завантажується з eMMC.
+
+## Наступні кроки
+
+- [Заводське збирання та тестування](./factory-build-and-test.mdx): повний виробничий
+  процес, зокрема ідентифікатор плати, MAC-адреса та діагностика.
+- [Сумісність випусків](/hardware/software/release-compatibility): які
+  коміти ядра та U-Boot утворюють кожен випуск.

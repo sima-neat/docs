@@ -13,6 +13,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 이 사이트는 SiMa.ai MLSoC Modalix 제품의 하드웨어 설정, 펌웨어 워크플로우 및 저수준 인터페이스에 대한 정보를 제공합니다. 소프트웨어, 머신 러닝 및 파이프라인 도구에 대한 설명서는 별도로 제공됩니다.
 
+## 경로 선택
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>DevKit 평가</h4>
+    <p>Modalix DevKit 또는 PCIe 카드를 설정하고 개발을 시작합니다.</p>
+  </a>
+  <a className="card" href="/hardware/design#som-carrier-board">
+    <h4>SoM 캐리어 보드 설계</h4>
+    <p>Modalix SoM을 중심으로 맞춤형 보드를 제작합니다.</p>
+  </a>
+  <a className="card" href="/hardware/design#chip-down">
+    <h4>SoC 기반 설계</h4>
+    <p>Modalix SoC를 자체 보드에 직접 실장합니다.</p>
+  </a>
+</div>
+
+필요한 내용을 이미 알고 계십니까?
+
+- [맞춤형 eLxr 이미지 빌드](/hardware/software/build-from-source)
+- [릴리스에 해당하는 소스 커밋 찾기](/hardware/software/release-compatibility)
+- [GPIO, UART, I2C 및 SPI 핀 매핑](/hardware/interfaces/low-speed-io)
+- [MIPI 카메라 구성](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [보드 업데이트 또는 복구](/hardware/getting-started/firmware-update)
+- [양산 환경에서 보드 플래싱 및 테스트](/hardware/deployment/factory-build-and-test)
+
 ## MLSoC Modalix에 대하여
 
 **MLSoC Modalix**는 SiMa.ai의 2세대 머신 러닝 시스템 온 칩입니다. Arm Cortex-A65 애플리케이션 복합체, 고성능 **머신 러닝 가속기(MLA)**, 카메라 입력용 **이미지 신호 프로세서(ISP)**, 그리고 기존 비전 워크로드를 위한 **컴퓨터 비전 장치(CVU)**를 단일 칩에 통합했습니다.

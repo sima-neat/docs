@@ -13,6 +13,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 このサイトでは、SiMa.ai MLSoC Modalix製品のハードウェア設定、ファームウェアのワークフロー、および低レベルインターフェイスについて説明します。ソフトウェア、機械学習、およびパイプラインツールについては、別のドキュメントで解説します。
 
+## 目的に合わせて選ぶ
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>DevKit を評価する</h4>
+    <p>Modalix DevKit または PCIe カードをセットアップして、開発を始めます。</p>
+  </a>
+  <a className="card" href="/hardware/design#som-carrier-board">
+    <h4>SoM キャリアボードを設計する</h4>
+    <p>Modalix SoM を中心にカスタムボードを構築します。</p>
+  </a>
+  <a className="card" href="/hardware/design#chip-down">
+    <h4>SoC を使って設計する</h4>
+    <p>Modalix SoC を自社のボードに直接実装します。</p>
+  </a>
+</div>
+
+必要なものがすでに決まっている場合は、次のページを参照してください。
+
+- [カスタム eLxr イメージをビルドする](/hardware/software/build-from-source)
+- [リリースに対応するソースコミットを調べる](/hardware/software/release-compatibility)
+- [GPIO、UART、I2C、SPI のピンを割り当てる](/hardware/interfaces/low-speed-io)
+- [MIPI カメラを設定する](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [ボードをアップデートまたは復旧する](/hardware/getting-started/firmware-update)
+- [量産時にボードへの書き込みとテストを行う](/hardware/deployment/factory-build-and-test)
+
 ## MLSoC Modalixについて
 
 **MLSoC Modalix** は、SiMa.ai の第 2 世代の機械学習システム・オン・チップです。Arm Cortex-A65 アプリケーション・コンプレックス、高スループットの **機械学習アクセラレータ (MLA)**、カメラからの画像入力用の **画像信号プロセッサ (ISP)**、および従来の画像処理ワークロード用の **コンピュータ・ビジョン・ユニット (CVU)** を 1 つのチップに集約しています。

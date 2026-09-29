@@ -18,10 +18,10 @@ start, because they need different collateral and different bring-up work.
 
 Chip-down design is also called chip-on-board design.
 
-## SoM Carrier Board
+## SoM Carrier Board {#som-carrier-board}
 
 1. Read the **Modalix SoM Carrier Board Hardware Reference** and the **Modalix SoM
-   Datasheet** in [Reference Documents](../reference/extra-docs.md#design-a-custom-carrier-board).
+   Datasheet** in [Reference Documents](../reference/extra-docs.md).
 2. Plan connector mapping, power, and interfaces using
    [Carrier Board Bring-up](./som-carrier.mdx), which covers the connector
    interfaces, what changes from the reference carrier board, and camera overlays.
@@ -30,11 +30,11 @@ Chip-down design is also called chip-on-board design.
    first power-on, then adapt the device tree with
    [Build the BSP from Source](../software/build-from-source.mdx).
 
-## Chip-Down
+## Chip-Down {#chip-down}
 
 1. Request the **Modalix SoC Datasheet**, **PCB Routing Guidelines**, **DDR Tuning
    Guide**, and a reference design package from your SiMa.ai representative. See
-   [Reference Documents](../reference/extra-docs.md#chip-on-board-design) for what each one covers.
+   [Reference Documents](../reference/extra-docs.md) for what each one covers.
 2. Plan cooling with the **Modalix SoM Thermal Design Guide**.
 3. Build and adapt the software with [Build & Customize eLxr](../software/index.md).
 

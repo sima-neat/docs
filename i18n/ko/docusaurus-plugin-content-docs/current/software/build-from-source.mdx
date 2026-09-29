@@ -1,0 +1,304 @@
+---
+title: 소스에서 BSP 빌드
+description: 공개 소스에서 Modalix 커널, U-Boot 및 디바이스 트리를 빌드하고, 아티팩트를 보드에 설치합니다.
+sidebar_position: 2
+---
+
+# 소스에서 BSP 빌드
+
+Modalix Linux 커널, U-Boot 및 디바이스 트리를 직접 빌드한 다음, 결과물을 보드에
+설치합니다. 이 문서의 모든 내용은 공개 저장소를 사용하므로 NDA나 영업 문의가 필요하지
+않습니다.
+
+:::note
+보드에서 실행 중인 릴리스와 일치하는 소스 커밋으로 빌드하십시오.
+[릴리스 호환성](./release-compatibility.mdx)에서 각 플랫폼 릴리스에 해당하는 커널 및
+U-Boot 커밋을 확인할 수 있습니다. BSP의 구성과 각 저장소의 위치는
+[보드 지원 패키지](./index.md)를 참조하십시오.
+:::
+
+## 시작하기 전에
+
+- 빌드용 **Ubuntu 22.04** 호스트.
+- [Docker Engine](https://docs.docker.com/engine/install/ubuntu/) 설치.
+- `qemu-user-static` 설치:
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt install qemu-user-static
+  ```
+
+빌드한 결과물을 설치하려면, 루트 권한으로 접근할 수 있고 컨테이너에서 네트워크로
+연결할 수 있으며 eMMC(`mmcblk0`으로 인식됨)에서 부팅된 eLxr 이미지 실행 보드도
+필요합니다.
+
+## 빌드 컨테이너 설정 {#set-up-the-build-container}
+
+SDK 컨테이너에는 대상 플랫폼용 툴체인, 헤더 및 라이브러리가 들어 있습니다. 아래
+Dockerfile을 `Dockerfile.modalix`로 저장한 다음, 이 파일이 있는 디렉터리에서
+이미지를 빌드하십시오. 이 Dockerfile은 릴리스 2.1.0용 SDK를 설정합니다.
+
+<details>
+<summary><strong>Dockerfile.modalix</strong></summary>
+
+```dockerfile title="Dockerfile.modalix"
+# Generated Dockerfile for modalix Build:release[2.1.0]
+
+FROM debian:bookworm
+
+# List of additional packages that are to be deployed in SDK sysroot
+ARG SDK_PKG_LIST
+ENV SDK_PKG_LIST="\
+	libgrpc-dev,\
+	protobuf-compiler-grpc,\
+	python3-pybind11,\
+	${SDK_PKG_LIST}"
+
+RUN dpkg --add-architecture arm64
+RUN dpkg --add-architecture arc
+RUN dpkg --add-architecture armhf
+RUN apt-get clean && \
+    apt-get update --allow-releaseinfo-change && \
+    apt-get install -y wget pip
+RUN wget -qO - https://mirror.elxr.dev/elxr/public.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/elxr.gpg
+RUN wget -qO - https://packages.fluentbit.io/fluentbit.key | gpg --dearmor > /etc/apt/trusted.gpg.d/fluentbit.gpg
+RUN wget --no-check-certificate -O - https://repo.sima.ai/elxr/deb/simaai.gpg | gpg --dearmor > /etc/apt/trusted.gpg.d/simaai.gpg
+RUN chmod 644 /etc/apt/trusted.gpg.d/elxr.gpg
+RUN chmod 644 /etc/apt/trusted.gpg.d/fluentbit.gpg
+
+RUN echo "deb [signed-by=/etc/apt/trusted.gpg.d/elxr.gpg] https://mirror.elxr.dev/elxr aria main" > /etc/apt/sources.list.d/elxr.list
+RUN echo "deb [signed-by=/etc/apt/trusted.gpg.d/fluentbit.gpg] https://packages.fluentbit.io/debian/bookworm bookworm main" >> /etc/apt/sources.list.d/elxr.list
+RUN echo "deb [trusted=yes] https://repo.sima.ai/elxr/deb/release bookworm non-free  #simaai repo" >> /etc/apt/sources.list.d/elxr.list
+
+RUN apt-get update --allow-releaseinfo-change && \
+    apt-get install -y --no-install-recommends \
+	python3-apt-ostree \
+	vim \
+	make \
+	cmake \
+	gcc-aarch64-linux-gnu \
+	g++-aarch64-linux-gnu \
+	device-tree-compiler \
+	bison \
+	flex \
+	quilt \
+	zlib1g-dev \
+	bzip2 \
+	bc \
+	rsync \
+	kmod \
+	cpio \
+	git \
+	curl \
+	libssl-dev \
+	libgnutls28-dev \
+	openssh-client \
+	simaai-sdk-tools
+
+RUN echo "Package: *" > /etc/apt/preferences.d/stable.pref
+RUN echo "Pin: origin \"repo.sima.ai/elxr\"" >> /etc/apt/preferences.d/stable.pref
+RUN echo "Pin-Priority: 999" >> /etc/apt/preferences.d/stable.pref
+
+RUN export RUSTUP_HOME=/opt/toolchain/rust && export CARGO_HOME=/opt/toolchain/rust && \
+    mkdir -p ${RUSTUP_HOME} && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > /tmp/rustup.sh && \
+    chmod 755 /tmp/rustup.sh && /tmp/rustup.sh -y && \
+    echo "export RUSTUP_HOME=${RUSTUP_HOME}" >> ${CARGO_HOME}/env && \
+    echo "export CARGO_HOME=${CARGO_HOME}" >> ${CARGO_HOME}/env && \
+    . ${CARGO_HOME}/env && rm /tmp/rustup.sh
+
+RUN if uname -a | grep -q '#[0-9]*-Ubuntu'; then \
+        apt-get update --allow-releaseinfo-change; \
+        --privileged mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc || true; \
+    fi
+
+RUN if [ "x86_64" = "x86_64" ]; then apt update --allow-releaseinfo-change && apt install \
+    arch-test -y; fi
+
+RUN python3 /opt/bin/simaai_setup_sdk.py modalix 2.1.0 \
+	 \
+	"${SDK_PKG_LIST}"
+
+RUN echo "source /opt/bin/simaai-init-build-env modalix" >> /root/.bashrc
+```
+
+</details>
+
+
+```console
+sima-user@sima-user-machine:~$ docker build -t modalix-sdk --file Dockerfile.modalix .
+```
+
+sysroot에 추가 패키지를 미리 로드하려면 쉼표로 구분한 목록을 전달하십시오.
+
+```console
+sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libzix-dev,vxi-dev -t modalix-sdk --file Dockerfile.modalix .
+```
+
+쓰기 권한이 있는 디렉터리에서 컨테이너를 실행하십시오.
+
+```console
+sima-user@sima-user-machine:~$ docker run -it --privileged -v $(pwd):/data -w /data -v /dev:/dev --pid=host modalix-sdk
+```
+
+sysroot는 `/opt/toolchain/aarch64/<platform>`에 있습니다. 빌드 환경은 실행 시
+자동으로 설정됩니다. 직접 설정하려면
+`source /opt/bin/simaai-init-build-env modalix`를 실행하십시오.
+
+## 커널 빌드
+
+컨테이너 내부에서 다음을 실행합니다.
+
+```console
+root@sdk:/data$ git clone https://github.com/SiMa-ai/simaai-linux.git && cd simaai-linux
+root@sdk:/data/simaai-linux$ git checkout <kernel-commit>
+root@sdk:/data/simaai-linux$ make ARCH=arm64 simaai_modalix_defconfig
+root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC_FLAGS=-@
+```
+
+`<kernel-commit>`을 [릴리스 호환성](./release-compatibility.mdx)에 나와 있는 해당
+릴리스의 커널 커밋으로 바꾸십시오. `master`를 빌드하면 최신 릴리스가 빌드되며, 이는
+보드의 이미지와 일치하지 않을 수 있습니다.
+
+빌드 결과물은 다음과 같습니다.
+
+| 아티팩트 | 경로 |
+| --- | --- |
+| 커널 이미지 | `arch/arm64/boot/Image` |
+| 디바이스 트리 | `arch/arm64/boot/dts/simaai/*.dtb` |
+
+## 디바이스 트리 오버레이 빌드(선택 사항)
+
+오버레이 소스(`.dtso`)를 작성한 다음, 바이너리(`.dtbo`)로 컴파일합니다.
+
+```console
+root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
+```
+
+## U-Boot 빌드
+
+```console
+root@sdk:/data$ git clone https://github.com/SiMa-ai/sima-ai-uboot.git && cd sima-ai-uboot
+root@sdk:/data/sima-ai-uboot$ git checkout <u-boot-commit>
+root@sdk:/data/sima-ai-uboot$ make ARCH=arm64 simaai_modalix_debug_defconfig
+root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
+```
+
+`<u-boot-commit>`을 [릴리스 호환성](./release-compatibility.mdx)에 나와 있는 해당
+릴리스의 U-Boot 커밋으로 바꾸십시오. 생성되는 이미지는 `u-boot.bin`입니다.
+
+## 아티팩트 설치 {#install-the-artifacts}
+
+### eMMC 파티션 구성
+
+| 파티션 | 내용 |
+| --- | --- |
+| `mmcblk0p1` | U-Boot, 기본 |
+| `mmcblk0p2` | U-Boot, 백업 |
+| `mmcblk0p3` | 부트 파티션 — 기본용과 백업용인 `boot-0`, `boot-1` 두 디렉터리를 포함 |
+| `mmcblk0p4` | 루트 파일 시스템 |
+
+:::warning
+파티션은 `cp`가 아닌 `dd`로 기록하고, 보드에는 `root`로 복사하십시오. 보드의 주소를
+확인하려면 보드에서 `hostname -I` 또는 `ip route get 1.1.1.1`을 실행하십시오.
+:::
+
+### U-Boot
+
+이미지를 복사하고, 현재 사용 중인 파티션을 확인한 다음 기록합니다.
+
+```console
+root@sdk:/data$ scp sima-ai-uboot/u-boot.bin root@<board-ip>:/tmp/
+```
+
+```console
+root@modalix:~# parted /dev/mmcblk0 print | grep legacy_boot | cut -f2 -d" "
+1
+root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress  # use the partition number printed above
+root@modalix:~# sync
+```
+
+### 커널, 디바이스 트리 및 오버레이
+
+먼저 활성 부트 디렉터리를 확인합니다. `boot-0` 또는 `boot-1` 중 하나입니다.
+
+```console
+root@modalix:~# strings /boot/uboot.env | grep boot_path= | cut -f2 -d"="
+/boot-0/
+```
+
+아티팩트를 해당 디렉터리에 복사합니다.
+
+```console
+root@sdk:/data$ scp simaai-linux/arch/arm64/boot/Image root@<board-ip>:/boot/boot-0/
+root@sdk:/data$ scp simaai-linux/arch/arm64/boot/dts/simaai/modalix*.dtb root@<board-ip>:/boot/boot-0/
+root@sdk:/data$ scp imx415.dtbo root@<board-ip>:/boot/boot-0/
+```
+
+### 커널 모듈
+
+모듈은 실행 중인 커널의 모듈 트리에 넣습니다. 보드에서 `uname -r`를 실행하면 버전
+문자열을 확인할 수 있습니다.
+
+```console
+root@sdk:/data$ scp simaai-linux/drivers/net/phy/marvell10g.ko root@<board-ip>:/lib/modules/6.18.3-modalix/kernel/drivers/net/phy/
+```
+
+### 마무리
+
+```console
+root@modalix:~# depmod -a 6.18.3-modalix
+root@modalix:~# sync
+root@modalix:~# reboot
+```
+
+새 오버레이를 추가했다면 U-Boot의 `dtbos` 변수에 등록하십시오. 자동 부팅을 중단한
+다음 다음을 실행합니다.
+
+```console
+sima$ env set dtbos $dtbos imx415.dtbo
+sima$ saveenv
+sima$ boot
+```
+
+## 빌드 배포 {#deploy-your-build}
+
+사용자 지정 빌드를 보드에 올리는 방법은 두 가지이며, 작업 단계에 따라 적합한 방법이
+다릅니다.
+
+**실행 중인 보드에서 반복 작업.** 개발 중에는 [아티팩트 설치](#install-the-artifacts)에서
+설명한 대로 이미 부팅되는 보드에 커널 이미지, 디바이스 트리, 오버레이 및 모듈을 복사한
+다음 재부팅합니다. 가장 빠른 반복 방법이지만, 보드 한 대를 수동으로 변경하며 재현
+가능한 이미지가 남지 않습니다.
+
+**전체 이미지 플래싱.** 양산을 포함하여 여러 보드에 동일한 빌드를 올리려면, 각 보드를
+네트워크 또는 SD 카드로 부팅한 다음 eMMC에 전체 이미지를 기록합니다.
+[eMMC에 이미지 플래싱](/hardware/deployment/flash-image)을 참조하고, 전체 양산 절차는
+[공장 빌드 및 테스트](/hardware/deployment/factory-build-and-test)를 참조하십시오.
+
+:::caution[3.0에서 업데이트 형식이 변경됩니다]
+플랫폼 릴리스 2.x와 3.0은 서로 다른 업데이트 방식을 사용합니다. 3.0부터는
+swupdate로 전환됩니다. 직접 빌드한 커널과 U-Boot로 전체 이미지나 업데이트 패키지를
+구성하는 방법은 아직 이 문서에서 다루지 않습니다.
+:::
+
+[펌웨어 업데이트](/hardware/getting-started/firmware-update)는 SiMa.ai 기본 이미지를
+설치합니다. 이 기능은 보드를 알려진 릴리스로 되돌릴 때 사용하며, 직접 만든 빌드를
+배포하는 용도로는 사용하지 마십시오. 설치한 내용을 덮어씁니다.
+
+## 참고 자료
+
+| 참고 자료 | 위치 |
+| --- | --- |
+| 릴리스와 소스 커밋 매핑 | [릴리스 호환성](./release-compatibility.mdx) |
+| 빌드 컨테이너 | [Dockerfile.modalix](#set-up-the-build-container) |
+| 커널 소스 | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
+| 커널 defconfig | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
+| U-Boot 소스 | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| 디바이스 트리 및 오버레이 | [`dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+
+## 다음 단계
+
+- [릴리스 호환성](./release-compatibility.mdx) — 각 플랫폼 릴리스에 해당하는 소스
+  커밋.
+- [캐리어 보드 브링업](../design/som-carrier.mdx) — 자체 캐리어 보드에 맞게 디바이스
+  트리 적응.
+- [eLxr로 변환](../reference/tech-notes/elxr-conversion.mdx) — Yocto DevKit을 eLxr로 전환.

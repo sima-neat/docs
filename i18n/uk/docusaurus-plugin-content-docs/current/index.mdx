@@ -13,6 +13,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Використовуйте цей сайт для отримання інформації про налаштування обладнання, робочі процеси прошивки та низькорівневі інтерфейси для продуктів SiMa.ai MLSoC Modalix. Документація щодо програмного забезпечення, машинного навчання та інструментів для створення конвеєрів наведена окремо.
 
+## Оберіть свій шлях
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>Оцінити DevKit</h4>
+    <p>Налаштуйте Modalix DevKit або PCIe-карту та почніть розробку.</p>
+  </a>
+  <a className="card" href="/hardware/design#som-carrier-board">
+    <h4>Спроєктувати плату-носій для SoM</h4>
+    <p>Створіть власну плату на основі модуля Modalix SoM.</p>
+  </a>
+  <a className="card" href="/hardware/design#chip-down">
+    <h4>Проєктувати з SoC</h4>
+    <p>Розмістіть Modalix SoC безпосередньо на власній платі.</p>
+  </a>
+</div>
+
+Уже знаєте, що вам потрібно?
+
+- [Зібрати власний образ eLxr](/hardware/software/build-from-source)
+- [Знайти вихідний коміт для випуску](/hardware/software/release-compatibility)
+- [Призначення контактів GPIO, UART, I2C та SPI](/hardware/interfaces/low-speed-io)
+- [Налаштувати камери MIPI](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [Оновити або відновити плату](/hardware/getting-started/firmware-update)
+- [Прошивати й тестувати плати на виробництві](/hardware/deployment/factory-build-and-test)
+
 ## Про MLSoC Modalix
 
 **MLSoC Modalix** — це друге покоління системи на кристалі для машинного навчання від SiMa.ai. Вона поєднує в собі обчислювальний комплекс Arm Cortex-A65, високопродуктивний **прискорювач машинного навчання (MLA)**, **процесор обробки зображень (ISP)** для обробки даних з камери та **блок комп’ютерного зору (CVU)** для класичних задач обробки зображень — і все це розміщено на одному кристалі.
