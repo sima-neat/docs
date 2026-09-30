@@ -23,6 +23,10 @@
     "message": "設計您的硬體",
     "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
   },
+  "sidebar.systemDocs.category.Carrier Board Design": {
+    "message": "載板設計",
+    "description": "The label for category 'Carrier Board Design' in sidebar 'systemDocs'"
+  },
   "sidebar.systemDocs.category.Build & Customize eLxr": {
     "message": "建置與自訂 eLxr",
     "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"

@@ -23,6 +23,10 @@
     "message": "Проєктування власного обладнання",
     "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
   },
+  "sidebar.systemDocs.category.Carrier Board Design": {
+    "message": "Проєктування плати-носія",
+    "description": "The label for category 'Carrier Board Design' in sidebar 'systemDocs'"
+  },
   "sidebar.systemDocs.category.Build & Customize eLxr": {
     "message": "Збирання та налаштування eLxr",
     "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"

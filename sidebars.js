@@ -47,7 +47,10 @@ const sidebars = {
       ]),
       'tools/web-serial-console',
     ]),
-    section('Design Your Hardware', 'design/index', ['design/som-carrier']),
+    section('Design Your Hardware', 'design/index', [
+      'design/chip-down',
+      section('Carrier Board Design', 'design/carrier-board', ['design/som-carrier']),
+    ]),
     section('Build & Customize eLxr', 'software/index', [
       'software/build-from-source',
       'software/release-compatibility',

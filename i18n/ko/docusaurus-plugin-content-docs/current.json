@@ -23,6 +23,10 @@
     "message": "하드웨어 설계",
     "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
   },
+  "sidebar.systemDocs.category.Carrier Board Design": {
+    "message": "캐리어 보드 설계",
+    "description": "The label for category 'Carrier Board Design' in sidebar 'systemDocs'"
+  },
   "sidebar.systemDocs.category.Build & Customize eLxr": {
     "message": "eLxr 빌드 및 사용자 지정",
     "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"
