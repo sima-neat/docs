@@ -1,0 +1,190 @@
+---
+title: 載板硬體啟動
+description: 在第三方載板上啟動 Modalix SoM Rev 2：硬體概觀、需要軟體調整的項目，以及設定所在的位置。
+sidebar_position: 4
+---
+
+# 載板硬體啟動
+
+Modalix SoM Rev 2 透過採用標準化腳位配置的 **260 針 SODIMM** 連接器連接到載板，並可搭配任何與 NVIDIA Jetson Orin NX 或 Orin Nano 相容的載板使用。
+
+:::warning 請先確認腳位相容性
+連接 SoM 與載板之前，請先確認兩者的電氣腳位相容。
+:::
+
+:::note 先決條件
+SDK 2.1 或更新版本，並已安裝 Palette 套件以提供圖形支援。您也應備妥 SoM 資料表、SoC 資料表以及 Modalix SoM Comparison Guide。
+:::
+
+## 安全處理電路板
+
+- 做好適當的 ESD 接地：使用防靜電手環與具 ESD 防護的工作墊。
+- 電路板通電時請勿觸碰。
+- 將電路板放在任何表面之前，請先將其裝入防靜電袋。
+- 拿取模組時請握住邊緣，避免觸碰板上的 IC 與元件。
+- 請使用隨附的電源供應器。
+- 上電後，請確認所有電源指示 LED 皆已亮起。
+- 讓水及其他導電液體遠離電路板，接觸到液體可能會損壞電路板。
+
+## 載板元件
+
+參考硬體啟動使用的是 Waveshare 載板。任何符合 260 針 SODIMM 腳位定義的電路板皆可使用。下表中的編號對應這些視圖中的標示。
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-top.png" alt="SoM 載板頂視圖，附有編號的元件標示" />
+    <figcaption><strong>圖 1.</strong> 載板頂視圖</figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-bottom.png" alt="SoM 載板底視圖，附有編號的元件標示" />
+    <figcaption><strong>圖 2.</strong> 載板底視圖</figcaption>
+  </figure>
+</div>
+
+| # | 元件 |
+| --- | --- |
+| 1 | 用於 SiMa 系統模組的 260 針 SODIMM 插槽 |
+| 2 | 12 針排針：電源供應、重設按鈕、強制復原設定、序列除錯、自動上電啟用、電源指示燈 |
+| 3 | 2 個 22 針 CSI 相機連接器 |
+| 4 | DC 電源插孔，9 V–19 V，5.5 × 2.5 mm 公頭插頭 |
+| 5 | HDMI 連接器，4K UHD (3840 × 2160) |
+| 6 | 4 個 USB 3.1 Type-A 連接埠 |
+| 7 | RJ45 Gigabit 乙太網路 |
+| 8 | 用於除錯記錄的 USB Type-C |
+| 9 | 40 針排針 |
+| 10 | 4 針 PWM 風扇排針 |
+| 11 | 用於 NVMe SSD 的 M.2 Key M |
+| 12 | RTC 備用電池排針，PH1.25 2P |
+
+## Modalix SoM
+
+硬體啟動使用的是 Modalix SoM Rev 2。它搭載 MLSoC Modalix 晶粒、兩顆 LPDDR5 封裝、16 GB eMMC 與 SPI 快閃記憶體，並透過金手指 SO-DIMM 邊緣連接器連接。
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2 頂視圖，顯示位於兩顆 LPDDR5 封裝之間的 MLSoC 晶粒" />
+    <figcaption>
+      <strong>圖 3.</strong> SoM 頂視圖：Modalix SoC、LPDDR5 DRAM（×2）、PMIC 以及金手指連接器
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2 底視圖，顯示 eMMC、SPI 快閃記憶體與乙太網路 PHY" />
+    <figcaption>
+      <strong>圖 4.</strong> SoM 底視圖：16 GB eMMC、SPI 快閃記憶體、HDMI 控制器、乙太網路 PHY、USB 控制器、時脈產生器
+    </figcaption>
+  </figure>
+</div>
+
+:::note
+這些視圖僅供標示用途。電路板出貨時已安裝散熱片。
+:::
+
+## 連接器提供的介面
+
+功能方塊圖顯示了哪些介面會引出到 SO-DIMM 連接器，以及這些介面在模組內部如何佈線。在決定您的載板可從 SoM 取用哪些介面時，請參考此圖。
+
+<figure className="doc-figure doc-figure--wide">
+  <img src="/img/bsp/som-block-diagram.png" alt="Modalix SoM Rev 2 功能方塊圖，顯示 SO-DIMM 連接器訊號如何佈線至 Modalix SoC" />
+  <figcaption><strong>圖 5.</strong> Modalix SoM Rev 2 功能方塊圖</figcaption>
+</figure>
+
+| 介面 | 連接器上的訊號 |
+| --- | --- |
+| PCIe | `PCIe0` Gen4 ×4（通道 0–3）、`PCIe1`、`PCIe2` Gen3 ×2 |
+| MIPI CSI | `MIPI CSI0`–`CSI3`，各 2 通道 |
+| 乙太網路 | 經由 Gigabit 乙太網路 PHY 的 `MDI`（SGMII 至 `ETH0`）；`ETH1` 與 `PCIe1` 共用 |
+| USB | 經由 USB 控制器的 `USB2 P0`–`P2` 與 `USB3 P0`–`P2` |
+| 顯示 | 經由 HDMI 視訊處理器的 `HDMI` |
+| 音訊 | `I2S0`（經由電位轉換器）、`I2S1` |
+| I2C | `I2C_CAM`、`I2C0`、`I2C1`、`I2C2` |
+| UART | `UART0`、`UART1`、`UART2` |
+| GPIO | 15 個 |
+| SPI | `SPI0`、`SPI1`；`SPI1` 與模組上的 QSPI 快閃記憶體多工共用 |
+| 電源與控制 | `SYS_RESET#`、`POWER_EN`、`SHUTDOWN_REQ#`、`SLEEP/WAKE#`、`MODE_SLEEP#`、`FORCE_RECOVERY#` |
+
+位於模組上但未引出的元件：LPDDR5（DDR0-1 與 DDR2-3 上的 ×64）、eMMC 快閃記憶體（×8）、狀態 LED，以及 `I2C_MGMT` 裝置：EEPROM、即時時鐘、時脈產生器與 TPM。
+
+:::tip
+`FORCE_RECOVERY#` 會驅動 SPI 多工器，在模組上的 QSPI 快閃記憶體與 SoC 快閃記憶體路徑之間進行選擇。如果您希望不拆解系統即可進行復原，請將此訊號引出。
+:::
+
+## 需要軟體調整的項目
+
+### 無須修改即可運作
+
+這些元件位於 SoM 本身，在任何遵循 260 針腳位配置標準的載板上皆可運作：
+
+SiMa Modalix 裝置 · DDR · SPI 快閃記憶體 · eMMC 快閃記憶體 · USB 控制器 · RTC ·
+乙太網路 PHY · HDMI 視訊處理器
+
+### 取決於載板
+
+以下元件可能需要針對您的電路板進行設定或軟體修改：
+
+| 元件 | 附註 |
+| --- | --- |
+| MIPI 或 GMSL 相機 | 請參閱下方的[相機](#cameras) |
+| USB 集線器 | |
+| NVMe 裝置 | |
+| Wi-Fi / Bluetooth | |
+| **UART2** | 在 Modalix SoM Rev 2 上被指派為 **Secure Boot** 終端機。在 NVIDIA 系統上，此連接埠是終端機介面，這是移植時常見的混淆來源。 |
+| **UART1** | Modalix SoM Rev 2 上的 U-Boot 與 Linux 終端機，連接到 FTDI UART 轉 USB 轉換器。在 NVIDIA 載板上，此連接埠通常預設為 USB OTG (USB3)。部分載板會在 40 針排針上引出 UART1。 |
+
+## 軟體設定
+
+大部分設定是透過 Linux **device tree** 完成，並在其上疊加 **overlay** 以處理各電路板的差異。這使得同一套 BSP 能夠支援多種載板。
+
+- [從原始碼建置 BSP](../software/build-from-source.mdx)：建置環境、核心、U-Boot、device tree，以及安裝建置結果。
+- [Device tree 使用模型](https://docs.kernel.org/devicetree/usage-model.html)與 [overlay 說明](https://docs.kernel.org/devicetree/overlay-notes.html)：上游核心文件。
+- 核心原始碼樹中的 [overlay 範例](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)。
+
+各電路板專用的 overlay 原始檔（`.dtso`）位於 BSP 儲存庫的 `meta-simaai/recipes-kernel/oot-dtbo/files/` 下。
+
+## 相機 {#cameras}
+
+若要在 DevKit 上*使用*相機，請選擇隨附的 overlay；請參閱 [MIPI 相機介面](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)，其中說明如何選擇正確的 `.dtbo` 並在 U-Boot 中設定。
+
+在自訂載板上，您可能需要自行*撰寫* overlay，因為電源線路、I2C 匯流排與穩壓器都與參考設計不同。通常需要以下三個部分。
+
+透過 GPIO hog 驅動相機的 power-down 線路，此例為 port 5、GPIO 6：
+
+```dts
+&port5 {
+    cam-hog0 {
+        gpio-hog;
+        gpios = <6 0>;          /* GPIO_ACTIVE_HIGH */
+        output-high;
+        line-name = "cam0_powdn";
+    };
+};
+```
+
+啟用感測器所在的 I2C 匯流排，此例為 SIO port 5、I2C #2：
+
+```dts
+&i2c52 {
+    status = "okay";
+    clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+};
+```
+
+將相機電源軌宣告為固定電壓穩壓器，並透過 overlay 片段加入根節點，讓 Linux 知道這些電源軌存在且已供電。
+
+請從核心原始碼樹中的 [overlay 範例](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)著手。相機控制、PHY 頻率、第二台相機的 DMA、資料通道（data highway）與 ISP 設定目前尚未在此說明。
+
+## 參考資料
+
+| 參考資料 | 位置 |
+| --- | --- |
+| 建置核心、device tree 與 overlay | [從原始碼建置 BSP](../software/build-from-source.mdx) |
+| Modalix device tree | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+| 範例 overlay | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Device tree 使用模型 | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
+| Overlay 說明 | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
+
+## 後續步驟
+
+- [低速 I/O](../interfaces/low-speed-io.mdx)：SIO 區塊上的 GPIO、UART、I2C 與 SPI。
+- [MIPI 相機介面](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)：在 DevKit 上使用相機。

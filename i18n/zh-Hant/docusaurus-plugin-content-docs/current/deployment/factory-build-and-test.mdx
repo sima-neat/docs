@@ -1,0 +1,272 @@
+---
+title: 工廠組裝與測試
+description: 在工廠中組裝、燒錄與測試 Modalix 系列電路板的建議流程。
+sidebar_position: 2
+---
+
+# 工廠組裝與測試
+
+本頁提供在工廠中組裝與測試 Modalix 系列電路板的建議流程。請依據您的電路板、測試治具與組裝產線加以調整。
+
+1. [實體組裝](#physical-assembly)
+2. [電氣驗證](#electrical-verification)
+3. [燒錄電路板 ID 與 MAC 位址](#program-the-board-id-and-mac-address)
+4. [設定測試站](#set-up-the-test-station)
+5. [開機進入測試映像檔](#boot-the-test-image)
+6. [執行診斷](#run-diagnostics)
+7. [燒錄量產映像檔](#program-the-production-image)
+8. [應用程式測試、標籤與包裝](#application-testing-labeling-and-packaging)
+
+## 序列主控台
+
+Modalix 電路板有兩個序列主控台。兩者的鮑率皆為 115200，並停用硬體流量控制。
+
+| 主控台 | 用途 |
+| --- | --- |
+| tRoot UART（安全開機） | 燒錄電路板 ID 與 MAC、tRoot 更新訊息 |
+| U-Boot/Linux UART | U-Boot 指令、Linux 登入，以及本頁中的所有測試 |
+
+各主控台使用的連接器取決於電路板。若使用參考載板，請參閱[載板硬體啟動](/hardware/design/som-carrier)中的 UART 用途說明。從主機連接到各個主控台，例如：
+
+```console
+sima-user@sima-user-machine:~$ minicom -b 115200 -D /dev/ttyUSB0
+```
+
+裝置名稱（`/dev/ttyUSB0`、`/dev/ttyUSB1`）取決於連接線在主機上的列舉方式。
+
+## 實體組裝 {#physical-assembly}
+
+此步驟取決於您的電路板與生產流程，例如安裝散熱片、將電路板裝入機殼或測試治具等。
+
+## 電氣驗證 {#electrical-verification}
+
+1. 列出每個主要電源軌的量測點，並檢查每個電源軌的阻抗，確認沒有開路或短路。
+2. 列出可量測的電壓，並記錄每塊電路板的量測值，或每批生產中抽樣電路板的量測值。
+3. 檢查可量測的時脈，並依序號記錄。
+
+## 燒錄電路板 ID 與 MAC 位址 {#program-the-board-id-and-mac-address}
+
+電路板 ID（又稱裝置 ID）與 MAC 位址是由特殊的 tRoot 韌體寫入 MLSoC 的一次性可程式化（OTP）記憶體中。
+
+:::danger[OTP 值無法變更]
+OTP 記憶體只能寫入一次。確認每個值之前，請先仔細檢查。
+:::
+
+1. 將主機連接到 tRoot UART。
+2. 連接 SPI 快閃記憶體燒錄器，然後接上電源。
+3. 依照[燒錄 tRoot SPI 快閃記憶體](#program-the-troot-spi-flash)中的說明，將用於 OTP 燒錄的 tRoot 韌體載入 SPI 快閃記憶體。
+4. 移除電源，拔除 SPI 快閃記憶體燒錄器，然後重新接上電源。
+5. 在 tRoot 主控台中，以十六進位輸入電路板 ID 並確認，然後輸入 MAC 位址：
+
+   ```text
+   enter hwid in hex format(ex:0x00010012)
+   hwid entered is 0x123
+   Press (Y/N)
+   burning hwid
+   Configured HWID :: 0x123
+   Activated ID Selector :: 1
+   Enter mac addr in format (A0:B1:C2:D3:E4:F5)
+   ```
+
+   輸入 MAC 位址後，電路板會立即完成開機程序。
+6. 將電路板斷電重啟，確認其能夠開機，並回報電路板 ID 已燒錄。
+7. 依照[燒錄 tRoot SPI 快閃記憶體](#program-the-troot-spi-flash)中的說明，將您的量產 tRoot 韌體載入 SPI 快閃記憶體。
+
+### 燒錄 tRoot SPI 快閃記憶體 {#program-the-troot-spi-flash}
+
+tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩種版本之一：上述的 OTP 燒錄韌體，或您的量產韌體。SiMa.ai 建議使用 Total Phase Aardvark I2C/SPI 主機轉接器，搭配 Total Phase Flash Center 軟體。
+
+1. 在主機上安裝 Flash Center。
+2. 將燒錄器連接到電路板的 SPI 快閃記憶體排針。此連接器取決於電路板，通常為雙排排針。
+3. 啟動 Flash Center。如果您想將此步驟自動化，它也提供命令列工具。
+4. 新增轉接器。
+5. 選擇目標裝置：選擇 **SPI Flash**，然後選擇電路板上安裝的元件，例如 Winbond W25Q16（2 MB）。
+6. 載入 `troot_blob.be`。
+7. 燒錄快閃記憶體。
+
+## 設定測試站 {#set-up-the-test-station}
+
+1. 如果受測電路板需要載板或介面板，請將其連接。
+2. 將主機同時連接到 tRoot UART 與 U-Boot/Linux UART。
+3. 如果電路板有乙太網路連接埠，請將每個連接埠都連接到主機。
+4. 如果電路板有 MIPI 相機輸入，請連接測試用相機。
+5. 如果電路板是 PCIe 卡，請將其安裝在主機上寬度至少為 x8 的 PCIe Gen5 插槽中。
+
+## 開機進入測試映像檔 {#boot-the-test-image}
+
+依照[將映像檔燒錄到 eMMC](./flash-image.mdx#step-1-boot-from-the-network-or-an-sd-card)中的說明，從 SD 卡或網路開機進入最新發行的測試韌體。建議使用 SD 卡，因為這樣可以讓乙太網路連接埠空出來進行網路壓力測試。
+
+## 執行診斷 {#run-diagnostics}
+
+測試順序為：記錄閒置溫度、執行壓力測試、檢查最終溫度，然後檢查各個 I/O 介面。
+
+請在 U-Boot/Linux 主控台中執行所有測試。將電路板上電，等待 Linux 提示字元出現，以 `sima` 帳號及密碼 `edgeai` 登入，然後切換為 root：
+
+```console
+sima@modalix:~$ sudo su
+```
+
+如果電路板有乙太網路，請為主機針對電路板的每個連接埠各指定一個位址。例如，主機介面為 `eno1` 時：
+
+```console
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:1 192.168.1.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:2 192.168.2.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:3 192.168.3.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:4 192.168.4.10 up
+```
+
+若為 PCIe 卡，請在主機上電之前移除卡片上的所有外部電源。卡片由插槽供電。
+
+### 1. 閒置溫度 {#1-idle-temperature}
+
+找出名稱為 `simaai_modalix_thermal_sensor` 的 `hwmon` 裝置：
+
+```console
+root@modalix:~# grep -l simaai_modalix_thermal_sensor /sys/class/hwmon/hwmon*/name
+```
+
+讀取其 `temp1_input` 十次並計算平均值。數值單位為千分之一攝氏度。請將 `X` 替換為您找到的編號：
+
+```console
+root@modalix:~# for i in $(seq 10); do cat /sys/class/hwmon/hwmonX/temp1_input; done | awk '{s+=$1} END {print s/NR/1000 " C"}'
+```
+
+### 2. 乙太網路
+
+在主機上啟動 `iperf3` 伺服器：
+
+```console
+sima-user@sima-user-machine:~$ iperf3 -s
+```
+
+在電路板上，針對每個乙太網路連接埠執行用戶端：
+
+```console
+root@modalix:~# iperf3 -c 192.168.1.10 -t 60 --logfile /tmp/iperf1   # end0
+root@modalix:~# iperf3 -c 192.168.2.10 -t 60 --logfile /tmp/iperf2   # end1
+root@modalix:~# iperf3 -c 192.168.3.10 -t 60 --logfile /tmp/iperf3   # end2
+root@modalix:~# iperf3 -c 192.168.4.10 -t 60 --logfile /tmp/iperf4   # end3
+```
+
+### 3. 記憶體
+
+```console
+root@modalix:~# stress-ng --class memory --all -1 --log-file /tmp/memorytest --log-brief --verify --abort -x atomic,heapsort,judy,mergesort,radixsort,tree,wcs,zlib -t 370s
+```
+
+### 4. CPU 快取
+
+```console
+root@modalix:~# stress-ng --class cpu-cache --seq 2 -t 8s --log-brief --log-file /tmp/cpucache
+```
+
+### 5. CPU
+
+```console
+root@modalix:~# stress-ng --cpu 0 --verify -t 1m --log-brief --log-file /tmp/cpu0
+```
+
+`--cpu 0` 會在所有 CPU 上執行。結果必須回報 16 個 CPU。
+
+### 6. 最終溫度
+
+依照[閒置溫度](#1-idle-temperature)中的方式再次讀取溫度，並對照電路板的散熱限制進行檢查。
+
+### 7. PCIe 迴路測試
+
+1. 在主機上安裝 `sima_pcie_hostpkg.sh`，然後以相符的二進位檔讓電路板開機。
+2. 電路板開機後，在電路板主控台中執行：
+
+   ```console
+   root@modalix:~# sima_pep_test
+   ```
+
+3. 在主機上建立 1 MB 的測試檔案，並啟動迴路測試：
+
+   ```console
+   sima-user@sima-user-machine:~$ dd if=/dev/urandom of=~/data1MB.bin bs=1M count=1
+   sima-user@sima-user-machine:~$ sima_mla_test -Q 1 -q 0 -e 32 -i 8 -d ~/data1MB.bin
+   ```
+
+主機會印出成功訊息，並顯示傳送與接收的訊框數。
+
+### 8. MIPI 相機
+
+1. 為受測連接埠載入相機 overlay。重新開機，中斷自動開機，並設定 `dtbos`。以第一個連接埠上的 IMX477 為例：
+
+   ```console
+   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ saveenv
+   ```
+
+   Overlay 因相機、連接埠與電路板而異。請參閱 [MIPI 相機介面](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)。
+2. 在每個受測連接埠上連接一台 IMX477 相機，將電路板斷電重啟，登入後執行 `sudo su`。
+3. 擷取原始影格，然後啟動 ISP 輸出。請將 `video0raw` 與 `video0out` 改為受測連接埠對應的裝置：
+
+   ```console
+   root@modalix:~# gst-launch-1.0 v4l2src device=/dev/video0raw ! 'video/x-bayer,format=rggb12le,width=2048,height=1080,framerate=30/1' ! queue ! multifilesink location=/tmp/mipi_in_%d.raw12 &
+   root@modalix:~# gst-launch-1.0 v4l2src device=/dev/video0out ! 'video/x-raw,format=RGB,width=2048,height=1080,framerate=30/1' ! fakesink
+   ```
+
+   第一個管線每秒會寫入 30 個檔案到 `/tmp`，而該目錄的空間有限。請在約 10 秒後停止：按下 **Ctrl+C** 停止第二個管線，然後執行 `fg` 並按下 **Ctrl+C** 停止第一個管線。
+
+### 9. SD 卡
+
+如果電路板是從 SD 卡開機，請略過此測試。否則，請插入 SD 卡並執行儲存裝置測試指令碼。選擇 `1` 代表 SD 卡，然後選擇 `2` 進行快速傳輸量測試，或選擇 `3` 對整張卡進行完整讀寫：
+
+```console
+root@modalix:~# /usr/bin/simaai_pt/emmc_sd_test.sh
+Enter 0 - /dev/mmcblk0 (eMMC) or 1 /dev/mmcblk1 (SD card)
+Choice: 1
+1) Test 1: Memory Operations
+2) Test 2: Throughput Measurement
+3) Test 3: Whole memory read and write
+4) Test 4: sd_card insertion and connection back
+Enter your choice (1 or 2 or 3 or 4): 2
+Throughput: 11.3099 MB/s
+```
+
+### 10. eMMC
+
+:::warning
+此測試會覆寫 eMMC。請僅在電路板從網路或 SD 卡開機時執行，並在測試後燒錄量產映像檔。
+:::
+
+執行相同的指令碼，選擇 `0` 代表 eMMC，然後選擇 `2` 或 `3`。
+
+### 11. 顯示與 USB
+
+如果電路板有顯示輸出，請從網路或 SD 卡開機進入 eLxr 映像檔。連接 USB 鍵盤與滑鼠，並確認桌面以 1920×1080 解析度顯示。使用鍵盤與滑鼠登入，帳號密碼與主控台相同。
+
+### 12. NVMe
+
+安裝 NVMe 磁碟後，確認系統能偵測到它，然後量測直接讀取速度：
+
+```console
+root@modalix:~# nvme list
+root@modalix:~# hdparm -tT --direct /dev/nvme0n1
+```
+
+若要格式化並掛載磁碟，請參閱[設定 NVMe 儲存裝置](/hardware/getting-started/standalone-mode/nvme-storage)。
+
+### 13. tRoot 自我更新
+
+此測試使用 `swupdate` 安裝 tRoot 更新套件。
+
+1. 將量產用的 `troot-upgrade-simaai-ev.swu` 複製到電路板的 `/tmp`。
+2. 保持 tRoot 與 U-Boot/Linux 兩個主控台皆為連線狀態。
+3. 在 U-Boot/Linux 主控台中，以 root 身分執行：
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-troot:1.0 -i /tmp/troot-upgrade-simaai-ev.swu
+   ```
+
+4. 確認 tRoot 主控台上的輸出在 5 分鐘內停止。
+
+## 燒錄量產映像檔 {#program-the-production-image}
+
+依照[將映像檔燒錄到 eMMC](./flash-image.mdx#step-2-write-the-image-to-emmc)中的說明，將最新發行的量產映像檔寫入 eMMC，然後確認電路板能從 eMMC 開機。
+
+## 應用程式測試、標籤與包裝 {#application-testing-labeling-and-packaging}
+
+這些步驟取決於您的產品。

@@ -1,0 +1,218 @@
+---
+title: キャリアボードの立ち上げ
+description: サードパーティ製キャリアボード上で Modalix SoM Rev 2 を立ち上げます。ハードウェアの概要、ソフトウェアの適合が必要な箇所、構成の配置場所を説明します。
+sidebar_position: 4
+---
+
+# キャリアボードの立ち上げ
+
+Modalix SoM Rev 2 は、標準化されたピン割り当てを持つ **260 ピン SODIMM**
+コネクターを介してキャリアボードに接続し、NVIDIA Jetson Orin NX または Orin Nano
+と互換性のある任意のキャリアボードで動作します。
+
+:::warning 最初にピン互換性を確認する
+SoM とキャリアボードを接続する前に、両者の電気的なピン互換性を確認してください。
+:::
+
+:::note 前提条件
+SDK 2.1 以降と、グラフィックスをサポートするためにインストールされた Palette パッケージが必要です。
+また、SoM データシート、SoC データシート、および Modalix SoM
+Comparison Guide を手元に用意してください。
+:::
+
+## ボードを安全に取り扱う
+
+- 静電気防止リストストラップと ESD 保護マットを使用して、適切に ESD 対策を行ってください。
+- 電源が入っている間はボードに触れないでください。
+- ボードを何かの上に置く前に、静電気防止袋に入れて保管してください。
+- モジュールは端を持って扱い、オンボードの IC や部品に触れないようにしてください。
+- 付属の電源を使用してください。
+- 電源投入後、すべての電源表示 LED が点灯していることを確認してください。
+- 水やその他の導電性の液体をボードに近づけないでください。接触するとボードが
+  損傷する可能性があります。
+
+## キャリアボードの構成部品
+
+リファレンスの立ち上げには Waveshare のキャリアボードを使用しました。260 ピン SODIMM の
+ピン配置に準拠したボードであれば、どれでも動作します。下表の番号は、これらの図の吹き出し番号に
+対応しています。
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-top.png" alt="SoM キャリアボードの上面図。構成部品に番号付きの吹き出しが付いている" />
+    <figcaption><strong>図 1.</strong> キャリアボード（上面図）</figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/carrier-board-bottom.png" alt="SoM キャリアボードの底面図。構成部品に番号付きの吹き出しが付いている" />
+    <figcaption><strong>図 2.</strong> キャリアボード（底面図）</figcaption>
+  </figure>
+</div>
+
+| # | 構成部品 |
+| --- | --- |
+| 1 | SiMa システムオンモジュール用の 260 ピン SODIMM ソケット |
+| 2 | 12 ピンヘッダー：電源、リセットボタン、強制リカバリー設定、シリアルデバッグ、自動電源投入の有効化、電源インジケーター |
+| 3 | 22 ピン CSI カメラコネクター × 2 |
+| 4 | DC 電源ジャック、9 V～19 V、5.5 × 2.5 mm オスプラグ |
+| 5 | HDMI コネクター、4K UHD（3840 × 2160） |
+| 6 | USB 3.1 Type-A ポート × 4 |
+| 7 | RJ45 ギガビットイーサネット |
+| 8 | デバッグログ用 USB Type-C |
+| 9 | 40 ピンヘッダー |
+| 10 | 4 ピン PWM ファンヘッダー |
+| 11 | NVMe SSD 用 M.2 Key M |
+| 12 | RTC バックアップバッテリーヘッダー、PH1.25 2P |
+
+## Modalix SoM
+
+立ち上げには Modalix SoM Rev 2 を使用しました。SoM には MLSoC Modalix ダイ、2 つの
+LPDDR5 パッケージ、16 GB の eMMC、および SPI フラッシュが搭載されており、金メッキ端子の
+SO-DIMM エッジコネクターを介して接続します。
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2 の上面図。2 つの LPDDR5 パッケージの間に MLSoC ダイがある" />
+    <figcaption>
+      <strong>図 3.</strong> SoM（上面図）：Modalix SoC、LPDDR5 DRAM（× 2）、
+      PMIC、金メッキ端子コネクター
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2 の底面図。eMMC、SPI フラッシュ、イーサネット PHY が示されている" />
+    <figcaption>
+      <strong>図 4.</strong> SoM（底面図）：16 GB eMMC、SPI フラッシュ、HDMI
+      コントローラー、イーサネット PHY、USB コントローラー、クロックジェネレーター
+    </figcaption>
+  </figure>
+</div>
+
+:::note
+これらの図は部品の識別のみを目的としています。ボードはヒートシンクが取り付けられた状態で出荷されます。
+:::
+
+## コネクターに引き出されるインターフェース
+
+機能ブロック図は、どのインターフェースが SO-DIMM コネクターに引き出されているか、
+またモジュール内部でどのように配線されているかを示しています。キャリアボードで SoM から
+どの機能を利用できるかを判断する際に使用してください。
+
+<figure className="doc-figure doc-figure--wide">
+  <img src="/img/bsp/som-block-diagram.png" alt="Modalix SoM Rev 2 の機能ブロック図。SO-DIMM コネクターの信号が Modalix SoC に配線されている様子を示す" />
+  <figcaption><strong>図 5.</strong> Modalix SoM Rev 2 の機能ブロック図</figcaption>
+</figure>
+
+| インターフェース | コネクターでの信号 |
+| --- | --- |
+| PCIe | `PCIe0` Gen4 ×4（レーン 0～3）、`PCIe1`、`PCIe2` Gen3 ×2 |
+| MIPI CSI | `MIPI CSI0`～`CSI3`、各 2 レーン |
+| イーサネット | ギガビットイーサネット PHY 経由の `MDI`（`ETH0` へは SGMII）。`ETH1` は `PCIe1` と共用 |
+| USB | USB コントローラー経由の `USB2 P0`～`P2` および `USB3 P0`～`P2` |
+| ディスプレイ | HDMI ビデオプロセッサー経由の `HDMI` |
+| オーディオ | `I2S0`（レベルシフター経由）、`I2S1` |
+| I2C | `I2C_CAM`、`I2C0`、`I2C1`、`I2C2` |
+| UART | `UART0`、`UART1`、`UART2` |
+| GPIO | 15 本 |
+| SPI | `SPI0`、`SPI1`（`SPI1` はモジュール上の QSPI フラッシュと多重化されています） |
+| 電源と制御 | `SYS_RESET#`、`POWER_EN`、`SHUTDOWN_REQ#`、`SLEEP/WAKE#`、`MODE_SLEEP#`、`FORCE_RECOVERY#` |
+
+モジュール上にあり、コネクターには引き出されていないもの：LPDDR5（DDR0-1 と DDR2-3 で ×64）、
+eMMC フラッシュ（×8）、ステータス LED、および `I2C_MGMT` デバイス（EEPROM、リアルタイムクロック、
+クロックジェネレーター、TPM）。
+
+:::tip
+`FORCE_RECOVERY#` は、モジュール上の QSPI フラッシュと SoC フラッシュパスを切り替える
+SPI マルチプレクサーを駆動します。システムを分解せずにリカバリーを行いたい場合は、この信号を外部に引き出してください。
+:::
+
+## ソフトウェアの適合が必要な箇所
+
+### 変更なしで動作するもの
+
+以下の構成部品は SoM 自体に搭載されており、260 ピン割り当て標準に準拠した
+任意のキャリアボードで動作します。
+
+SiMa Modalix デバイス · DDR · SPI フラッシュ · eMMC フラッシュ · USB コントローラー · RTC ·
+イーサネット PHY · HDMI ビデオプロセッサー
+
+### キャリアボードに依存するもの
+
+以下は、ボードに応じて構成やソフトウェアの変更が必要になる場合があります。
+
+| 構成部品 | 備考 |
+| --- | --- |
+| MIPI または GMSL カメラ | 後述の[カメラ](#cameras)を参照してください |
+| USB ハブ | |
+| NVMe デバイス | |
+| Wi-Fi / Bluetooth | |
+| **UART2** | Modalix SoM Rev 2 では **セキュアブート** 用ターミナルに割り当てられています。NVIDIA のシステムではこのポートがターミナルインターフェースであるため、移植時に混乱しやすい点です。 |
+| **UART1** | Modalix SoM Rev 2 の U-Boot および Linux ターミナルで、FTDI の UART-USB 変換器に接続されています。NVIDIA のキャリアボードでは、通常、デフォルトで USB OTG（USB3）になります。キャリアボードによっては、40 ピンヘッダーに UART1 を引き出しているものもあります。 |
+
+## ソフトウェアの構成
+
+構成のほとんどは Linux の **デバイスツリー** で行い、ボード固有の違いはその上に重ねる
+**オーバーレイ** で吸収します。これにより、1 つの BSP で複数のキャリアボードに対応できます。
+
+- [BSP をソースからビルドする](../software/build-from-source.mdx)：ビルド環境、
+  カーネル、U-Boot、デバイスツリー、および成果物のインストール。
+- [デバイスツリーの使用モデル](https://docs.kernel.org/devicetree/usage-model.html)
+  と[オーバーレイに関する注記](https://docs.kernel.org/devicetree/overlay-notes.html)：
+  アップストリームのカーネルドキュメント。
+- カーネルツリー内の[オーバーレイの例](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)。
+
+ボード固有のオーバーレイソース（`.dtso`）は、BSP リポジトリの
+`meta-simaai/recipes-kernel/oot-dtbo/files/` にあります。
+
+## カメラ {#cameras}
+
+DevKit でカメラを *使用する* だけであれば、同梱のオーバーレイを選択します。適切な `.dtbo` の選び方と
+U-Boot での設定方法については、[MIPI カメラインターフェース](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)を
+参照してください。
+
+カスタムキャリアボードでは、電源ライン、I2C バス、レギュレーターがリファレンス設計と異なるため、
+オーバーレイを自分で *作成する* 必要がある場合があります。通常、次の 3 つの要素が必要です。
+
+カメラのパワーダウンラインを GPIO hog で駆動します（この例ではポート 5、GPIO 6）。
+
+```dts
+&port5 {
+    cam-hog0 {
+        gpio-hog;
+        gpios = <6 0>;          /* GPIO_ACTIVE_HIGH */
+        output-high;
+        line-name = "cam0_powdn";
+    };
+};
+```
+
+センサーが接続されている I2C バスを有効にします（この例では SIO ポート 5、I2C #2）。
+
+```dts
+&i2c52 {
+    status = "okay";
+    clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+};
+```
+
+カメラの電源レールを固定電圧レギュレーターとして宣言し、オーバーレイフラグメントを介して
+ルートノードに追加します。これにより、Linux はそれらのレールが存在し、給電されていることを認識します。
+
+カーネルツリー内の[オーバーレイの例](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)
+から始めてください。カメラ制御、PHY 周波数、2 台目のカメラ用の DMA、データハイウェイ、
+ISP の構成については、ここではまだ説明していません。
+
+## 参考資料
+
+| 参考資料 | 場所 |
+| --- | --- |
+| カーネル、デバイスツリー、オーバーレイのビルド | [BSP をソースからビルドする](../software/build-from-source.mdx) |
+| Modalix デバイスツリー | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+| オーバーレイの例 | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| デバイスツリーの使用モデル | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
+| オーバーレイに関する注記 | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
+
+## 次のステップ
+
+- [低速 I/O](../interfaces/low-speed-io.mdx)：SIO ブロック上の GPIO、UART、I2C、SPI。
+- [MIPI カメラインターフェース](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)：DevKit でのカメラの使用。

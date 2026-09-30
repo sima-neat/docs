@@ -1,0 +1,310 @@
+---
+title: 工場でのビルドとテスト
+description: Modalix ベースのボードを工場で組み立て、書き込み、テストするための推奨プロセス。
+sidebar_position: 2
+---
+
+# 工場でのビルドとテスト
+
+ここでは、Modalix ベースのボードを工場で製造およびテストするための推奨プロセスを説明します。
+お使いのボード、テスト治具、組み立てラインに合わせて調整してください。
+
+1. [物理的な組み立て](#physical-assembly)
+2. [電気的な検証](#electrical-verification)
+3. [ボード ID と MAC アドレスを書き込む](#program-the-board-id-and-mac-address)
+4. [テストステーションをセットアップする](#set-up-the-test-station)
+5. [テストイメージを起動する](#boot-the-test-image)
+6. [診断を実行する](#run-diagnostics)
+7. [量産用イメージを書き込む](#program-the-production-image)
+8. [アプリケーションテスト、ラベル貼付、梱包](#application-testing-labeling-and-packaging)
+
+## シリアルコンソール
+
+Modalix ボードには 2 つのシリアルコンソールがあります。どちらも 115200 ボー、ハードウェアフロー制御
+無効で動作します。
+
+| コンソール | 用途 |
+| --- | --- |
+| tRoot UART（セキュアブート） | ボード ID と MAC アドレスの書き込み、tRoot アップデートのメッセージ |
+| U-Boot/Linux UART | U-Boot コマンド、Linux へのログイン、およびこのページのすべてのテスト |
+
+それぞれのコネクターはボードによって異なります。リファレンスキャリアボードについては、
+[キャリアボードの立ち上げ](/hardware/design/som-carrier)に記載されている UART の役割を参照してください。
+ホストから各コンソールに接続します。例：
+
+```console
+sima-user@sima-user-machine:~$ minicom -b 115200 -D /dev/ttyUSB0
+```
+
+デバイス名（`/dev/ttyUSB0`、`/dev/ttyUSB1`）は、ホスト上でケーブルがどのように認識されるかによって
+異なります。
+
+## 物理的な組み立て {#physical-assembly}
+
+この工程は、お使いのボードと生産フローによって異なります。ヒートシンクの取り付け、ボードの
+筐体やテスト治具への設置などが含まれます。
+
+## 電気的な検証 {#electrical-verification}
+
+1. すべての主要電源レールのアクセスポイントを一覧にし、各レールのインピーダンスを測定して
+   オープンやショートがないことを確認します。
+2. 測定可能な電圧を一覧にし、すべてのボード、または各ロットのサンプルボードについて記録します。
+3. 測定可能なクロックを確認し、各シリアル番号に対して記録します。
+
+## ボード ID と MAC アドレスを書き込む {#program-the-board-id-and-mac-address}
+
+ボード ID（デバイス ID とも呼ばれます）と MAC アドレスは、特別な tRoot ファームウェアによって
+MLSoC のワンタイムプログラマブル（OTP）メモリに書き込まれます。
+
+:::danger[OTP の値は変更できません]
+OTP メモリには一度しか書き込めません。確定する前に各値を確認してください。
+:::
+
+1. ホストを tRoot UART に接続します。
+2. SPI フラッシュプログラマーを接続してから、電源を接続します。
+3. [tRoot SPI フラッシュに書き込む](#program-the-troot-spi-flash)の手順に従って、
+   OTP 書き込み用の tRoot ファームウェアを SPI フラッシュに読み込みます。
+4. 電源を外し、SPI フラッシュプログラマーを取り外してから、電源を再接続します。
+5. tRoot コンソールでボード ID を 16 進数で入力して確定し、続けて MAC
+   アドレスを入力します。
+
+   ```text
+   enter hwid in hex format(ex:0x00010012)
+   hwid entered is 0x123
+   Press (Y/N)
+   burning hwid
+   Configured HWID :: 0x123
+   Activated ID Selector :: 1
+   Enter mac addr in format (A0:B1:C2:D3:E4:F5)
+   ```
+
+   MAC アドレスを入力すると、ボードはすぐにブートシーケンスを完了します。
+6. ボードの電源を入れ直し、起動すること、およびボード ID が書き込み済みであると表示されることを
+   確認します。
+7. [tRoot SPI フラッシュに書き込む](#program-the-troot-spi-flash)の手順に従って、
+   量産用の tRoot ファームウェアを SPI フラッシュに読み込みます。
+
+### tRoot SPI フラッシュに書き込む {#program-the-troot-spi-flash}
+
+tRoot ファームウェアは単一のバイナリ `troot_blob.be` です。書き込むのは、上記で使用した OTP 書き込み用
+ファームウェアか、量産用ファームウェアのいずれかです。SiMa.ai では、Total Phase Aardvark I2C/SPI
+ホストアダプターと Total Phase Flash Center ソフトウェアの使用をお勧めします。
+
+1. ホストに Flash Center をインストールします。
+2. プログラマーをボードの SPI フラッシュヘッダーに接続します。このコネクターはボードによって異なり、
+   通常は 2 列のヘッダーです。
+3. Flash Center を起動します。この手順を自動化したい場合は、コマンドラインツールも用意されています。
+4. アダプターを追加します。
+5. ターゲットデバイスを選択します。**SPI Flash** を選択し、次にボードに実装されている部品
+   （例：Winbond W25Q16（2 MB））を選択します。
+6. `troot_blob.be` を読み込みます。
+7. フラッシュに書き込みます。
+
+## テストステーションをセットアップする {#set-up-the-test-station}
+
+1. テスト対象のボードにキャリアボードやインターフェースボードが必要な場合は、それを接続します。
+2. ホストを tRoot UART と U-Boot/Linux UART の両方に接続します。
+3. ボードにイーサネットポートがある場合は、それぞれをホストに接続します。
+4. ボードに MIPI カメラ入力がある場合は、テスト用カメラを接続します。
+5. ボードが PCIe カードの場合は、ホストの x8 幅以上の PCIe Gen5 スロットに取り付けます。
+
+## テストイメージを起動する {#boot-the-test-image}
+
+[イメージを eMMC に書き込む](./flash-image.mdx#step-1-boot-from-the-network-or-an-sd-card)の説明に従って、
+最新リリースのテストファームウェアを SD カードまたはネットワークから起動します。
+SD カードをお勧めします。イーサネットポートが空くため、ネットワークのストレステストに使用できます。
+
+## 診断を実行する {#run-diagnostics}
+
+手順は次のとおりです。アイドル時の温度を記録し、ストレステストを実行し、最終的な温度を確認してから、
+各 I/O インターフェースを確認します。
+
+すべてのテストは U-Boot/Linux コンソールで実行します。ボードの電源を入れ、Linux のプロンプトが
+表示されるまで待ってから、ユーザー `sima`、パスワード `edgeai` でログインし、root になります。
+
+```console
+sima@modalix:~$ sudo su
+```
+
+ボードにイーサネットがある場合は、ボードのポートごとに 1 つずつホストにアドレスを割り当てます。
+たとえば、ホストのインターフェースが `eno1` の場合は次のようにします。
+
+```console
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:1 192.168.1.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:2 192.168.2.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:3 192.168.3.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:4 192.168.4.10 up
+```
+
+PCIe カードの場合は、ホストの電源を入れる前に、カードから外部電源をすべて取り外してください。
+カードにはスロットから給電されます。
+
+### 1. アイドル時の温度 {#1-idle-temperature}
+
+`simaai_modalix_thermal_sensor` という名前の `hwmon` デバイスを探します。
+
+```console
+root@modalix:~# grep -l simaai_modalix_thermal_sensor /sys/class/hwmon/hwmon*/name
+```
+
+その `temp1_input` を 10 回読み取り、平均します。値の単位は 1/1000 ℃ です。
+`X` は見つかった番号に置き換えてください。
+
+```console
+root@modalix:~# for i in $(seq 10); do cat /sys/class/hwmon/hwmonX/temp1_input; done | awk '{s+=$1} END {print s/NR/1000 " C"}'
+```
+
+### 2. イーサネット
+
+ホストで `iperf3` サーバーを起動します。
+
+```console
+sima-user@sima-user-machine:~$ iperf3 -s
+```
+
+ボード上で、イーサネットポートごとにクライアントを実行します。
+
+```console
+root@modalix:~# iperf3 -c 192.168.1.10 -t 60 --logfile /tmp/iperf1   # end0
+root@modalix:~# iperf3 -c 192.168.2.10 -t 60 --logfile /tmp/iperf2   # end1
+root@modalix:~# iperf3 -c 192.168.3.10 -t 60 --logfile /tmp/iperf3   # end2
+root@modalix:~# iperf3 -c 192.168.4.10 -t 60 --logfile /tmp/iperf4   # end3
+```
+
+### 3. メモリ
+
+```console
+root@modalix:~# stress-ng --class memory --all -1 --log-file /tmp/memorytest --log-brief --verify --abort -x atomic,heapsort,judy,mergesort,radixsort,tree,wcs,zlib -t 370s
+```
+
+### 4. CPU キャッシュ
+
+```console
+root@modalix:~# stress-ng --class cpu-cache --seq 2 -t 8s --log-brief --log-file /tmp/cpucache
+```
+
+### 5. CPU
+
+```console
+root@modalix:~# stress-ng --cpu 0 --verify -t 1m --log-brief --log-file /tmp/cpu0
+```
+
+`--cpu 0` はすべての CPU で実行されます。結果には 16 個の CPU が表示される必要があります。
+
+### 6. 最終的な温度
+
+[アイドル時の温度](#1-idle-temperature)と同じ方法で温度を再度読み取り、ボードの熱的な限界値と
+照らし合わせて確認します。
+
+### 7. PCIe ループバック
+
+1. ホストに `sima_pcie_hostpkg.sh` をインストールしてから、対応するバイナリでボードを起動します。
+2. ボードが起動したら、ボードのコンソールで次を実行します。
+
+   ```console
+   root@modalix:~# sima_pep_test
+   ```
+
+3. ホストで 1 MB のテストファイルを作成し、ループバックテストを開始します。
+
+   ```console
+   sima-user@sima-user-machine:~$ dd if=/dev/urandom of=~/data1MB.bin bs=1M count=1
+   sima-user@sima-user-machine:~$ sima_mla_test -Q 1 -q 0 -e 32 -i 8 -d ~/data1MB.bin
+   ```
+
+ホストには、送信フレーム数と受信フレーム数を含む成功メッセージが表示されます。
+
+### 8. MIPI カメラ
+
+1. テスト対象のポート用のカメラオーバーレイを読み込みます。再起動して自動ブートを中断し、
+   `dtbos` を設定します。最初のポートの IMX477 の場合は次のとおりです。
+
+   ```console
+   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ saveenv
+   ```
+
+   オーバーレイは、カメラ、ポート、ボードごとに異なります。
+   [MIPI カメラインターフェース](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)を参照してください。
+2. テスト対象の各ポートに IMX477 カメラを接続し、電源を入れ直してログインし、
+   `sudo su` を実行します。
+3. RAW フレームをキャプチャーしてから、ISP 出力を開始します。`video0raw` と
+   `video0out` は、テスト対象のポートに合わせて変更してください。
+
+   ```console
+   root@modalix:~# gst-launch-1.0 v4l2src device=/dev/video0raw ! 'video/x-bayer,format=rggb12le,width=2048,height=1080,framerate=30/1' ! queue ! multifilesink location=/tmp/mipi_in_%d.raw12 &
+   root@modalix:~# gst-launch-1.0 v4l2src device=/dev/video0out ! 'video/x-raw,format=RGB,width=2048,height=1080,framerate=30/1' ! fakesink
+   ```
+
+   最初のパイプラインは `/tmp` に毎秒 30 個のファイルを書き込みますが、その容量は限られています。
+   約 10 秒で停止してください。**Ctrl+C** を押して 2 番目のパイプラインを停止し、次に
+   `fg` を実行してから **Ctrl+C** を押して最初のパイプラインを停止します。
+
+### 9. SD カード
+
+ボードを SD カードから起動した場合は、このテストをスキップしてください。それ以外の場合は、SD カードを挿入して
+ストレージテストスクリプトを実行します。SD カードには `1` を選択し、次に簡易スループットテストには `2`、
+カード全体の読み書きには `3` を選択します。
+
+```console
+root@modalix:~# /usr/bin/simaai_pt/emmc_sd_test.sh
+Enter 0 - /dev/mmcblk0 (eMMC) or 1 /dev/mmcblk1 (SD card)
+Choice: 1
+1) Test 1: Memory Operations
+2) Test 2: Throughput Measurement
+3) Test 3: Whole memory read and write
+4) Test 4: sd_card insertion and connection back
+Enter your choice (1 or 2 or 3 or 4): 2
+Throughput: 11.3099 MB/s
+```
+
+### 10. eMMC
+
+:::warning
+このテストは eMMC を上書きします。ボードがネットワークまたは SD カードから起動している場合にのみ実行し、
+その後で量産用イメージを書き込んでください。
+:::
+
+同じスクリプトを実行し、eMMC には `0` を選択してから、`2` または `3` を選択します。
+
+### 11. ディスプレイと USB
+
+ボードにディスプレイ出力がある場合は、eLxr イメージをネットワークまたは SD カードから起動します。
+USB キーボードとマウスを接続し、デスクトップが 1920×1080 で表示されることを確認します。
+コンソールと同じ認証情報を使用して、キーボードとマウスでログインします。
+
+### 12. NVMe
+
+NVMe ドライブを取り付けた状態で、ドライブが検出されることを確認し、ダイレクト読み取り速度を
+測定します。
+
+```console
+root@modalix:~# nvme list
+root@modalix:~# hdparm -tT --direct /dev/nvme0n1
+```
+
+ドライブのフォーマットとマウントについては、
+[NVMe ストレージの設定](/hardware/getting-started/standalone-mode/nvme-storage)を参照してください。
+
+### 13. tRoot のセルフアップデート
+
+このテストでは、`swupdate` を使用して tRoot アップデートパッケージをインストールします。
+
+1. 量産用の `troot-upgrade-simaai-ev.swu` をボードの `/tmp` にコピーします。
+2. tRoot コンソールと U-Boot/Linux コンソールの両方を接続したままにします。
+3. U-Boot/Linux コンソールで、root として次を実行します。
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-troot:1.0 -i /tmp/troot-upgrade-simaai-ev.swu
+   ```
+
+4. tRoot コンソールの出力が 5 分以内に停止することを確認します。
+
+## 量産用イメージを書き込む {#program-the-production-image}
+
+[イメージを eMMC に書き込む](./flash-image.mdx#step-2-write-the-image-to-emmc)の説明に従って、
+最新リリースの量産用イメージを eMMC に書き込み、ボードが eMMC から起動することを確認します。
+
+## アプリケーションテスト、ラベル貼付、梱包 {#application-testing-labeling-and-packaging}
+
+これらの手順は製品によって異なります。

@@ -1,7 +1,7 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "시작하기",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate with a DevKit": {
+    "message": "DevKit으로 평가하기",
+    "description": "The label for category 'Evaluate with a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "빠른 시작 가이드",
@@ -15,21 +15,33 @@
     "message": "PCIe 모드",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "펌웨어 업데이트",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
-  },
   "sidebar.systemDocs.category.DevKit Variants": {
     "message": "DevKit 변형",
     "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "도구",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Design Your Hardware": {
+    "message": "하드웨어 설계",
+    "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "참조",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Carrier Board Design": {
+    "message": "캐리어 보드 설계",
+    "description": "The label for category 'Carrier Board Design' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Build & Customize eLxr": {
+    "message": "eLxr 빌드 및 사용자 지정",
+    "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Interfaces & Peripherals": {
+    "message": "인터페이스 및 주변 장치",
+    "description": "The label for category 'Interfaces & Peripherals' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Flash, Update & Recover": {
+    "message": "플래시, 업데이트 및 복구",
+    "description": "The label for category 'Flash, Update & Recover' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "참조 및 다운로드",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "기술 노트",

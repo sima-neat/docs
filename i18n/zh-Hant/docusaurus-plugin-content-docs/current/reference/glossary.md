@@ -34,7 +34,7 @@ sidebar_position: 3
 ## 系統軟體
 
 **BSP**
-：**板級支援套件 (Board Support Package)。** 這是低階軟體的集合，包含啟動載入程式、核心、裝置樹、驅動程式和根檔案系統，可讓 SiMa.ai 板從開機到可使用的 Linux 使用者空間。請參閱 [板級支援套件](./bsp)。
+：**板級支援套件 (Board Support Package)。** 這是低階軟體的集合，包含啟動載入程式、核心、裝置樹、驅動程式和根檔案系統，可讓 SiMa.ai 板從開機到可使用的 Linux 使用者空間。請參閱 [板級支援套件](../software/index.md)。
 
 **eLxr**
 ：一種 [Debian 衍生 Linux 發行版](https://elxr.org/)，用於作為 2025 年 12 月中旬之後出貨的 Modalix DevKit 上的預設執行階段。使用者空間透過 `apt` 進行管理。

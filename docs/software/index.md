@@ -18,7 +18,7 @@ A SiMa.ai BSP contains:
 
 ## Modalix BSP
 
-The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](../tech-notes/elxr-conversion.mdx).
+The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](../reference/tech-notes/elxr-conversion.mdx).
 
 Sources: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (kernel and device trees) and [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot).
 
@@ -52,9 +52,9 @@ own drivers do not require an NDA or a sales enquiry.
   kernel, U-Boot, device trees, and installing the artifacts.
 - [Release Compatibility](./release-compatibility.mdx) — the kernel and U-Boot
   commit behind each platform release.
-- [Carrier Board Bring-up](./carrier-board.mdx) — running a Modalix SoM on a
+- [Carrier Board Bring-up](../design/som-carrier.mdx) — running a Modalix SoM on a
   third-party carrier board, and what needs software adaptation.
-- [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO
+- [Low-Speed I/O](../interfaces/low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO
   blocks, with the full 64-pin mapping.
 
 Start with [Build the BSP from Source](./build-from-source.mdx): it covers the

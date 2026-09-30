@@ -13,6 +13,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Use this site for hardware setup, firmware workflows, and low-level interfaces for SiMa.ai MLSoC Modalix products. Software, ML, and pipeline tooling are documented separately.
 
+## Choose Your Path
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>Evaluate a DevKit</h4>
+    <p>Set up a Modalix DevKit or PCIe card and start developing.</p>
+  </a>
+  <a className="card" href="/hardware/design/carrier-board">
+    <h4>Design a SoM Carrier Board</h4>
+    <p>Build a custom board around the Modalix SoM.</p>
+  </a>
+  <a className="card" href="/hardware/design/chip-down">
+    <h4>Design with the SoC</h4>
+    <p>Put the Modalix SoC directly on your own board.</p>
+  </a>
+</div>
+
+Already know what you need?
+
+- [Build a custom eLxr image](/hardware/software/build-from-source)
+- [Find the source commit for a release](/hardware/software/release-compatibility)
+- [Map GPIO, UART, I2C, and SPI pins](/hardware/interfaces/low-speed-io)
+- [Configure MIPI cameras](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [Update or recover a board](/hardware/getting-started/firmware-update)
+- [Flash and test boards in production](/hardware/deployment/factory-build-and-test)
+
 ## About the MLSoC Modalix
 
 The **MLSoC Modalix** is SiMa.ai's second-generation machine-learning system-on-chip. It combines an Arm Cortex-A65 application complex, a high-throughput **Machine Learning Accelerator (MLA)**, an **Image Signal Processor (ISP)** for camera ingest, and a **Computer Vision Unit (CVU)** for classical vision workloads — all on a single die.

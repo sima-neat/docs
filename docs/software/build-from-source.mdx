@@ -31,7 +31,7 @@ To install what you build, you also need a board already running an eLxr image
 with root access, reachable over the network from the container, and booted from
 eMMC (enumerated as `mmcblk0`).
 
-## Set Up the Build Container
+## Set Up the Build Container {#set-up-the-build-container}
 
 The SDK container carries the toolchain, headers and libraries for the target.
 Save the Dockerfile below as `Dockerfile.modalix`, then build the image from the
@@ -185,7 +185,7 @@ root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
 Replace `<u-boot-commit>` with the U-Boot commit for your release from
 [Release Compatibility](./release-compatibility.mdx). The image is `u-boot.bin`.
 
-## Install the Artifacts
+## Install the Artifacts {#install-the-artifacts}
 
 ### How the eMMC Is Laid Out
 
@@ -212,7 +212,7 @@ root@sdk:/data$ scp sima-ai-uboot/u-boot.bin root@<board-ip>:/tmp/
 ```console
 root@modalix:~# parted /dev/mmcblk0 print | grep legacy_boot | cut -f2 -d" "
 1
-root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress
+root@modalix:~# dd if=/tmp/u-boot.bin of=/dev/mmcblk0p1 status=progress  # use the partition number printed above
 root@modalix:~# sync
 ```
 
@@ -235,7 +235,7 @@ root@sdk:/data$ scp imx415.dtbo root@<board-ip>:/boot/boot-0/
 
 ### Kernel Modules
 
-Modules go into the running kernel's module tree. `uname -a` on the board gives
+Modules go into the running kernel's module tree. `uname -r` on the board gives
 the version string:
 
 ```console
@@ -259,7 +259,7 @@ sima$ saveenv
 sima$ boot
 ```
 
-## Deploy Your Build
+## Deploy Your Build {#deploy-your-build}
 
 There are two ways to get a custom build onto a board, and they suit different
 stages of work.
@@ -269,16 +269,16 @@ trees, overlays and modules onto a board that already boots, as in
 [Install the Artifacts](#install-the-artifacts), then reboot. This is the fastest
 loop, but it changes one board by hand and leaves no reproducible image behind.
 
-**Package an update for your boards.** To ship a build to other boards, including
-in production, generate a board update package from your artifacts and flash that
-package. Each board then carries exactly the same build, and you can reflash it
-after every change.
+**Flash a complete image.** To put the same build on many boards, including in
+production, boot each board from the network or an SD card and write a complete
+image to its eMMC. See [Flash an Image to eMMC](/hardware/deployment/flash-image),
+and [Factory Build and Test](/hardware/deployment/factory-build-and-test) for the
+full production flow.
 
 :::caution[The update format changes in 3.0]
 Platform releases 2.x and 3.0 use different update mechanisms: 3.0 moves to
-swupdate. Build the update package in the format that matches the release on
-your board. The steps for creating and flashing a custom update package are
-being documented.
+swupdate. Assembling a complete image or update package from your own kernel and
+U-Boot builds is not yet documented here.
 :::
 
 [Firmware Update](/hardware/getting-started/firmware-update) installs the stock
@@ -300,6 +300,6 @@ own build: it overwrites what you installed.
 
 - [Release Compatibility](./release-compatibility.mdx) — which source commit
   matches each platform release.
-- [Carrier Board Bring-up](./carrier-board.mdx) — adapting the device tree for your
+- [Carrier Board Bring-up](../design/som-carrier.mdx) — adapting the device tree for your
   own carrier board.
-- [Convert to eLxr](../tech-notes/elxr-conversion.mdx) — moving a Yocto DevKit to eLxr.
+- [Convert to eLxr](../reference/tech-notes/elxr-conversion.mdx) — moving a Yocto DevKit to eLxr.

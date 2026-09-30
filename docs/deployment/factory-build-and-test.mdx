@@ -1,0 +1,320 @@
+---
+title: Factory Build and Test
+description: A recommended process for assembling, programming, and testing Modalix-based boards in a factory.
+sidebar_position: 2
+---
+
+# Factory Build and Test
+
+This is a recommended process for building and testing Modalix-based boards in a
+factory. Adapt it to your board, test fixtures, and assembly line.
+
+1. [Physical Assembly](#physical-assembly)
+2. [Electrical Verification](#electrical-verification)
+3. [Program the Board ID and MAC Address](#program-the-board-id-and-mac-address)
+4. [Set Up the Test Station](#set-up-the-test-station)
+5. [Boot the Test Image](#boot-the-test-image)
+6. [Run Diagnostics](#run-diagnostics)
+7. [Program the Production Image](#program-the-production-image)
+8. [Application Testing, Labeling, and Packaging](#application-testing-labeling-and-packaging)
+
+## Serial Consoles
+
+A Modalix board has two serial consoles. Both run at 115200 baud with hardware
+flow control disabled.
+
+| Console | Used for |
+| --- | --- |
+| tRoot UART (secure boot) | Board ID and MAC programming, tRoot update messages |
+| U-Boot/Linux UART | U-Boot commands, Linux login, and every test in this page |
+
+The connector for each depends on the board. On the reference carrier board, see
+the UART roles in [Carrier Board Bring-up](/hardware/design/som-carrier). Connect
+to each console from the host, for example:
+
+```console
+sima-user@sima-user-machine:~$ minicom -b 115200 -D /dev/ttyUSB0
+```
+
+The device name (`/dev/ttyUSB0`, `/dev/ttyUSB1`) depends on how the cables
+enumerate on the host.
+
+## Physical Assembly {#physical-assembly}
+
+This depends on your board and production flow: fitting heatsinks, installing the
+board in an enclosure or test fixture, and so on.
+
+## Electrical Verification {#electrical-verification}
+
+1. List the access points for every main power rail, and check each rail's
+   impedance for opens and shorts.
+2. List the voltages you can measure, and log them for every board, or for a
+   sample of boards in each build.
+3. Check the clocks you can measure, and record them against each serial number.
+
+## Program the Board ID and MAC Address {#program-the-board-id-and-mac-address}
+
+The board ID (also called the device ID) and the MAC addresses are written to the
+MLSoC's one-time programmable (OTP) memory by a special tRoot firmware.
+
+:::danger[OTP values are permanent]
+OTP memory can be written only once. Check each value before you confirm it.
+:::
+
+1. Connect the host to the tRoot UART.
+2. Connect the SPI flash programmer, then connect power.
+3. Load the OTP programming tRoot firmware into SPI flash, as described in
+   [Program the tRoot SPI Flash](#program-the-troot-spi-flash).
+4. Remove power, disconnect the SPI flash programmer, and reconnect power.
+5. On the tRoot console, enter the board ID in hex, confirm it, then enter the MAC
+   address:
+
+   ```text
+   enter hwid in hex format(ex:0x00010012)
+   hwid entered is 0x123
+   Press (Y/N)
+   burning hwid
+   Configured HWID :: 0x123
+   Activated ID Selector :: 1
+   Enter mac addr in format (A0:B1:C2:D3:E4:F5)
+   ```
+
+   After you enter the MAC address, the board immediately completes a boot
+   sequence.
+6. Power-cycle the board, and check that it boots and reports that the board ID is
+   already programmed.
+7. Load your production tRoot firmware into SPI flash, as described in
+   [Program the tRoot SPI Flash](#program-the-troot-spi-flash).
+
+### Program the tRoot SPI Flash {#program-the-troot-spi-flash}
+
+The tRoot firmware is a single binary, `troot_blob.be`. You write one of two
+versions: the OTP programming firmware used above, or your production firmware.
+SiMa.ai recommends a Total Phase Aardvark I2C/SPI host adapter with the Total
+Phase Flash Center software.
+
+1. Install Flash Center on the host.
+2. Connect the programmer to the board's SPI flash header. This connector depends
+   on the board, and is typically a dual-row header.
+3. Start Flash Center. It also has command-line tools if you want to automate
+   this step.
+4. Add the adapter.
+5. Select the target device: choose **SPI Flash**, then the part fitted to your
+   board, for example a Winbond W25Q16 (2 MB).
+6. Load `troot_blob.be`.
+7. Program the flash.
+
+## Set Up the Test Station {#set-up-the-test-station}
+
+1. If the board under test needs a carrier or interface board, connect it.
+2. Connect the host to both the tRoot UART and the U-Boot/Linux UART.
+3. If the board has Ethernet ports, connect each one to the host.
+4. If the board has MIPI camera inputs, connect test cameras.
+5. If the board is a PCIe card, install it in a host PCIe Gen5 slot of at least
+   x8 width.
+
+## Boot the Test Image {#boot-the-test-image}
+
+Boot the latest released test firmware from an SD card or the network, as
+described in
+[Flash an Image to eMMC](./flash-image.mdx#step-1-boot-from-the-network-or-an-sd-card).
+An SD card is preferred, because it leaves the Ethernet ports free for the network
+stress test.
+
+## Run Diagnostics {#run-diagnostics}
+
+The sequence is: record the idle temperature, run the stress tests, check the
+final temperature, then check each I/O interface.
+
+Run every test in the U-Boot/Linux console. Power on the board, wait for the
+Linux prompt, log in as `sima` with password `edgeai`, then become root:
+
+```console
+sima@modalix:~$ sudo su
+```
+
+If the board has Ethernet, give the host one address per board port. For
+example, with the host interface `eno1`:
+
+```console
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:1 192.168.1.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:2 192.168.2.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:3 192.168.3.10 up
+sima-user@sima-user-machine:~$ sudo ifconfig eno1:4 192.168.4.10 up
+```
+
+For a PCIe card, remove any external power from the card before you power on
+the host. The card is powered from the slot.
+
+### 1. Idle Temperature {#1-idle-temperature}
+
+Find the `hwmon` device named `simaai_modalix_thermal_sensor`:
+
+```console
+root@modalix:~# grep -l simaai_modalix_thermal_sensor /sys/class/hwmon/hwmon*/name
+```
+
+Read its `temp1_input` ten times and average the readings. The value is in
+thousandths of a degree Celsius. Replace `X` with the number you found:
+
+```console
+root@modalix:~# for i in $(seq 10); do cat /sys/class/hwmon/hwmonX/temp1_input; done | awk '{s+=$1} END {print s/NR/1000 " C"}'
+```
+
+### 2. Ethernet
+
+Start an `iperf3` server on the host:
+
+```console
+sima-user@sima-user-machine:~$ iperf3 -s
+```
+
+On the board, run a client for each Ethernet port:
+
+```console
+root@modalix:~# iperf3 -c 192.168.1.10 -t 60 --logfile /tmp/iperf1   # end0
+root@modalix:~# iperf3 -c 192.168.2.10 -t 60 --logfile /tmp/iperf2   # end1
+root@modalix:~# iperf3 -c 192.168.3.10 -t 60 --logfile /tmp/iperf3   # end2
+root@modalix:~# iperf3 -c 192.168.4.10 -t 60 --logfile /tmp/iperf4   # end3
+```
+
+### 3. Memory
+
+```console
+root@modalix:~# stress-ng --class memory --all -1 --log-file /tmp/memorytest --log-brief --verify --abort -x atomic,heapsort,judy,mergesort,radixsort,tree,wcs,zlib -t 370s
+```
+
+### 4. CPU Cache
+
+```console
+root@modalix:~# stress-ng --class cpu-cache --seq 2 -t 8s --log-brief --log-file /tmp/cpucache
+```
+
+### 5. CPU
+
+```console
+root@modalix:~# stress-ng --cpu 0 --verify -t 1m --log-brief --log-file /tmp/cpu0
+```
+
+`--cpu 0` runs on every CPU. The result must report 16 CPUs.
+
+### 6. Final Temperature
+
+Read the temperature again as in [Idle Temperature](#1-idle-temperature), and
+check it against your board's thermal limits.
+
+### 7. PCIe Loopback
+
+1. On the host, install `sima_pcie_hostpkg.sh`, then boot the board with the
+   matching binaries.
+2. After the board boots, run this in the board console:
+
+   ```console
+   root@modalix:~# sima_pep_test
+   ```
+
+3. On the host, create a 1 MB test file and start the loopback test:
+
+   ```console
+   sima-user@sima-user-machine:~$ dd if=/dev/urandom of=~/data1MB.bin bs=1M count=1
+   sima-user@sima-user-machine:~$ sima_mla_test -Q 1 -q 0 -e 32 -i 8 -d ~/data1MB.bin
+   ```
+
+The host prints a success message with the transmitted and received frame counts.
+
+### 8. MIPI Cameras
+
+1. Load the camera overlays for the ports under test. Reboot, interrupt autoboot,
+   and set `dtbos`. For an IMX477 on the first port:
+
+   ```console
+   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ saveenv
+   ```
+
+   Overlays are specific to the camera, the port, and the board. See
+   [MIPI Camera Interfaces](/hardware/getting-started/standalone-mode/mipi-camera-interfaces).
+2. Connect an IMX477 camera to each port under test, power-cycle, log in, and run
+   `sudo su`.
+3. Capture raw frames, then start the ISP output. Change `video0raw` and
+   `video0out` to match the port under test:
+
+   ```console
+   root@modalix:~# gst-launch-1.0 v4l2src device=/dev/video0raw ! 'video/x-bayer,format=rggb12le,width=2048,height=1080,framerate=30/1' ! queue ! multifilesink location=/tmp/mipi_in_%d.raw12 &
+   root@modalix:~# gst-launch-1.0 v4l2src device=/dev/video0out ! 'video/x-raw,format=RGB,width=2048,height=1080,framerate=30/1' ! fakesink
+   ```
+
+   The first pipeline writes 30 files a second into `/tmp`, which has limited
+   space. Stop after about 10 seconds: press **Ctrl+C** to stop the second
+   pipeline, then run `fg` and press **Ctrl+C** to stop the first.
+
+### 9. SD Card
+
+Skip this test if the board booted from the SD card. Otherwise, insert an SD card
+and run the storage test script. Choose `1` for the SD card, then `2` for a quick
+throughput test or `3` for a full read and write of the card:
+
+```console
+root@modalix:~# /usr/bin/simaai_pt/emmc_sd_test.sh
+Enter 0 - /dev/mmcblk0 (eMMC) or 1 /dev/mmcblk1 (SD card)
+Choice: 1
+1) Test 1: Memory Operations
+2) Test 2: Throughput Measurement
+3) Test 3: Whole memory read and write
+4) Test 4: sd_card insertion and connection back
+Enter your choice (1 or 2 or 3 or 4): 2
+Throughput: 11.3099 MB/s
+```
+
+### 10. eMMC
+
+:::warning
+This test overwrites the eMMC. Run it only when the board is booted from the
+network or an SD card, and flash the production image afterwards.
+:::
+
+Run the same script and choose `0` for the eMMC, then `2` or `3`.
+
+### 11. Display and USB
+
+If the board has a display output, boot an eLxr image from the network or an SD
+card. Connect a USB keyboard and mouse, and check that the desktop appears at
+1920×1080. Log in with the keyboard and mouse, using the same credentials as the
+console.
+
+### 12. NVMe
+
+With an NVMe drive fitted, check that it is detected, then measure the direct
+read speed:
+
+```console
+root@modalix:~# nvme list
+root@modalix:~# hdparm -tT --direct /dev/nvme0n1
+```
+
+To format and mount the drive, see
+[Configure NVMe Storage](/hardware/getting-started/standalone-mode/nvme-storage).
+
+### 13. tRoot Self-Update
+
+This test installs a tRoot update package with `swupdate`.
+
+1. Copy the production `troot-upgrade-simaai-ev.swu` to `/tmp` on the board.
+2. Keep both the tRoot and U-Boot/Linux consoles connected.
+3. In the U-Boot/Linux console, as root:
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-troot:1.0 -i /tmp/troot-upgrade-simaai-ev.swu
+   ```
+
+4. Check that output on the tRoot console stops within 5 minutes.
+
+## Program the Production Image {#program-the-production-image}
+
+Write the latest released production image to the eMMC, as described in
+[Flash an Image to eMMC](./flash-image.mdx#step-2-write-the-image-to-emmc), then
+check that the board boots from eMMC.
+
+## Application Testing, Labeling, and Packaging {#application-testing-labeling-and-packaging}
+
+These steps depend on your product.

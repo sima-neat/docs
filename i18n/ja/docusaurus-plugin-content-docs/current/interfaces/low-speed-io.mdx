@@ -1,0 +1,267 @@
+---
+title: 低速 I/O
+description: Modalix の SIO ブロック上の GPIO、UART、I2C、SPI。ピンマッピング、ドライバー、デバイスツリー、ユーザー空間ツールについて説明します。
+sidebar_position: 5
+---
+
+# 低速 I/O
+
+Modalix には、**2 つの専用 SPI チャネル**と **8 つの構成可能な SIO ブロック**があります。
+各 SIO ブロックは GPIO、UART、I2C、SPI のいずれかを提供するように構成でき、出力ピン
+マルチプレクサーによって各ピンにどの機能を出力するかを選択します。
+
+## マッピングのガイドライン
+
+SIO ピンを割り当てる際は、次の点に従ってください。
+
+1. 使用するイーサネットチャネルと PCIe チャネルを最初に決めます。一部のピン機能はあらかじめ
+   定義されており、対応する PCIe インターフェースおよびイーサネットインターフェースと組み合わせて使用する必要があります。
+2. 各 SIO ブロック内では、**上の行のピンが優先**されるため、先に検討してください。
+3. 選択したインターフェースがピンで利用可能な機能と一致するように、**機能**列に記載された
+   機能を使用してください。
+
+## SIO ピンマッピング
+
+64 ピンの SIO インターフェースは、8 ビットのポート 8 つに分割されています。すべてのピンは
+**1.8 V** の I/O です。
+
+| SIO ピン | 種類 | 電圧 | インターフェース | 機能 |
+| --- | --- | --- | --- | --- |
+| `SIO0_IO[0]` | I/O | 1.8V | UART | UART_RX |
+| `SIO0_IO[1]` | I/O | 1.8V | — | UART_TX |
+| `SIO0_IO[2]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO0_IO[3]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO0_IO[4]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO0_IO[5]` | I/O | 1.8V | — | GPIO |
+| `SIO0_IO[6]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO0_IO[7]` | I/O | 1.8V | — | GPIO |
+| `SIO1_IO[0]` | I/O | 1.8V | I2C | ETH0_PTP_PPS |
+| `SIO1_IO[1]` | I/O | 1.8V | I2C | N/A |
+| `SIO1_IO[2]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO1_IO[3]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO1_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO1_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO1_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO1_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO2_IO[0]` | I/O | 1.8V | I2C | ETH0_SMA_MDC |
+| `SIO2_IO[1]` | I/O | 1.8V | — | ETH0_SMA_MDIO |
+| `SIO2_IO[2]` | I/O | 1.8V | SPI | N/A |
+| `SIO2_IO[3]` | I/O | 1.8V | — | N/A |
+| `SIO2_IO[4]` | I/O | 1.8V | UART | UART_RX |
+| `SIO2_IO[5]` | I/O | 1.8V | — | UART_TX |
+| `SIO2_IO[6]` | I/O | 1.8V | UART | UART_RX |
+| `SIO2_IO[7]` | I/O | 1.8V | — | UART_TX |
+| `SIO3_IO[0]` | I/O | 1.8V | SPI | PCIE0_PERST# |
+| `SIO3_IO[1]` | I/O | 1.8V | I2C | PCIE0_WAKE# |
+| `SIO3_IO[2]` | I/O | 1.8V | I2C | PCIE0_CLKREQ# |
+| `SIO3_IO[3]` | I/O | 1.8V | GPIO | N/A |
+| `SIO3_IO[4]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO3_IO[5]` | I/O | 1.8V | GPIO | I2C_SDA |
+| `SIO3_IO[6]` | I/O | 1.8V | PCIE2 | PCIE0_PERST# |
+| `SIO3_IO[7]` | I/O | 1.8V | PCIE2 | PCIE0_WAKE# |
+| `SIO4_IO[0]` | I/O | 1.8V | PCIE2 | PCIE2_CLKREQ# |
+| `SIO4_IO[1]` | I/O | 1.8V | PCIE3 | PCIE3_PERST# |
+| `SIO4_IO[2]` | I/O | 1.8V | PCIE3 | PCIE3_WAKE# |
+| `SIO4_IO[3]` | I/O | 1.8V | PCIE3 | PCIE3_CLKREQ# |
+| `SIO4_IO[4]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO4_IO[5]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO4_IO[6]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO4_IO[7]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO5_IO[0]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO5_IO[1]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO5_IO[2]` | I/O | 1.8V | UART | UART_RX |
+| `SIO5_IO[3]` | I/O | 1.8V | — | UART_TX |
+| `SIO5_IO[4]` | I/O | 1.8V | UART | UART_RX |
+| `SIO5_IO[5]` | I/O | 1.8V | — | UART_TX |
+| `SIO5_IO[6]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO5_IO[7]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO6_IO[0]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO6_IO[1]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO6_IO[2]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO6_IO[3]` | I/O | 1.8V | — | GPIO |
+| `SIO6_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO6_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO6_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO6_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO7_IO[0]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO7_IO[1]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO7_IO[2]` | I/O | 1.8V | I2C | SPI_MOSI |
+| `SIO7_IO[3]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO7_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO7_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO7_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO7_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+
+## GPIO
+
+**ドライバー：** `gpio-dwapb`
+
+ユーザー空間からは、**libgpiod** とそのコマンドラインツールを使用します。
+
+| ツール | 用途 |
+| --- | --- |
+| `gpiodetect` | 利用可能な GPIO チップを一覧表示する |
+| `gpioinfo` | チップとラインを、状態および所有ドライバーとともに一覧表示する |
+| `gpioset` | ラインの値を設定する |
+| `gpioget` | ラインの値を読み取る |
+
+まずチップとラインを特定します。デバイスは `/dev/gpiochip0` などとして表示されます。
+
+```console
+root@modalix:~# gpiodetect
+root@modalix:~# gpioset gpiochip0 17 1
+root@modalix:~# gpioget gpiochip0 17
+```
+
+カスタムアプリケーションでは、コマンドラインツールを呼び出すのではなく、**libgpiod C API** を
+使用してください。
+
+バインディング：[`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml)
+
+## UART
+
+**ドライバー：** `snps-dw-apb-uart`
+
+UART ノードの名前は SIO ブロックとインデックスを表します。`uart12` は SIO ブロック 1、インデックス 2 です。
+各 SIO ブロックは最大 **4 つの UART ポート**を提供し、各ポートが 2 本のピンを使用するため、
+インデックス 2 は出力ピン 4 と 5 に対応します。
+
+```dts
+uart12: uart@0x0401a000 {
+    compatible = "snps,dw-apb-uart";
+    reg = <0x0 0x0401a000 0x0 0x100>;
+    interrupts = <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
+    reg-io-width = <4>;
+    reg-shift = <2>;
+    clocks = <&sio10_clk SIMAAI_SIO_DEV_UART2>;
+    resets = <&reset10 SIMAAI_SIO_DEV_UART2>;
+    pinctrl-0 = <&pins_uart12_deafult>;
+    pinctrl-names = "default";
+    dmas = <&dmac10 4>, <&dmac10 5>;
+    dma-names = "tx", "rx";
+    status = "disabled";
+};
+```
+
+オーバーレイから有効にします。
+
+```dts
+&uart12 {
+    status = "okay";
+};
+```
+
+クロック、リセット、その他の設定も同じオーバーレイで上書きできます。各 SIO ブロックは、
+上記のノードから参照される独自のクロック、リセット、ピン、DMA コントローラーを実装しています。
+
+バインディング：[`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml)
+
+## I2C
+
+40 ピンヘッダー（Waveshare キャリアカードでは J12）に 2 つの I2C インターフェースが
+引き出されています。
+
+### バスを確認する
+
+```console
+root@modalix:~# ls /dev/i2c-*
+/dev/i2c-0
+/dev/i2c-1
+```
+
+### 40 ピンヘッダーのピン配置（J12）
+
+| ピン | 信号 | ピン | 信号 |
+| --- | --- | --- | --- |
+| 1 | 3.3 V 電源 | 2 | 5 V 電源 |
+| 3 | `I2C1_SDA` | 4 | 5 V 電源 |
+| 5 | `I2C1_SCL` | 6 | GND |
+| 7 | `GPIO09_AUD_MCLK` | 8 | `UART1_TXD` |
+| 9 | GND | 10 | `UART1_RXD` |
+| 11 | `UART1_RTS` | 12 | `I2S0_SCLK` |
+| 13 | `SPI1_SCK` | 14 | GND |
+| 15 | `GPIO12` | 16 | `SPI1_CS1` |
+| 19 | `SPI0_MOSI` | 20 | GND |
+| 21 | `SPI0_MISO` | 22 | `SPI1_MISO` |
+| 23 | `SPI0_SCLK` | 24 | `SPI0_CS0` |
+| 25 | GND | 26 | `SPI0_CS1` |
+| 27 | `I2C0_SDA` | 28 | `I2C0_SCL` |
+| 29 | `GPIO01` | 30 | GND |
+| 31 | `GPIO11` | 32 | `GPIO07` |
+| 33 | `GPIO13` | 34 | GND |
+| 35 | `I2S0_FS` | 36 | `UART1_CTS` |
+| 37 | `SPI1_MOSI` | 38 | `I2S0_SDIN` |
+| 39 | GND | 40 | `I2S0_SDOUT` |
+
+### ドライバーとデバイスツリー
+
+I2C GPIO エキスパンダーは **PCF857x** ドライバーでサポートされており、
+`arch/arm64/configs/simaai_modalix_defconfig` で有効になっています。
+
+```text
+CONFIG_GPIO_PCF857X=y
+```
+
+このドライバーは NXP PCF8574 および PCF8575 I2C GPIO エキスパンダーに対応しています。
+[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) を参照してください。
+PCF8574 を接続した状態でバス 0 を有効にする例：
+
+```dts
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+    };
+};
+```
+
+### コマンドラインツール
+
+`i2c-tools` は標準ビルドに含まれています。見つからない場合はインストールしてください。
+
+```console
+root@modalix:~# apt update
+root@modalix:~# apt install i2c-tools
+```
+
+バインディング：[`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml)
+および [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml)
+
+`i2cdetect` は、バス上のすべてのアドレスをプローブし、応答したデバイスを報告します。
+`-r` は SMBus の read-byte によるプローブを使用し、`-y` は確認プロンプトを省略します。最後の引数は
+バス番号です。
+
+```console
+root@modalix:~# i2cdetect -r -y 0
+```
+
+## SPI
+
+Modalix には、SPI 用に構成された SIO ブロックとは別に、2 つの専用 SPI チャネルがあります。
+NVS SPI パスと SIO SPI パスの両方のデバイスオーバーレイ、および SPI デバイスドライバーと
+デバイスツリーバインディングは、上記の UART と同じオーバーレイのパターンに従います。
+
+## 参考資料
+
+以下はすべて公開されています。
+
+| 参考資料 | 場所 |
+| --- | --- |
+| カーネル、デバイスツリー、オーバーレイのビルド | [BSP をソースからビルドする](../software/build-from-source.mdx) |
+| カーネルの構成 | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
+| Modalix デバイスツリー | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+| オーバーレイの例 | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| GPIO バインディング | [`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml) |
+| UART バインディング | [`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml) |
+| I2C コントローラーバインディング | [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml) |
+| PCF857x エキスパンダーバインディング | [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml) |
+
+## 次のステップ
+
+- [キャリアボードの立ち上げ](../design/som-carrier.mdx)：適合が必要な箇所とその理由。
+- [BSP をソースからビルドする](../software/build-from-source.mdx)：オーバーレイを含むカーネルの
+  ビルドとインストール。

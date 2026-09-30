@@ -1,7 +1,7 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "はじめに",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate with a DevKit": {
+    "message": "DevKit で評価する",
+    "description": "The label for category 'Evaluate with a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "クイックスタートガイド",
@@ -15,21 +15,33 @@
     "message": "PCIe モード",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "ファームウェア更新",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
-  },
   "sidebar.systemDocs.category.DevKit Variants": {
     "message": "DevKit バリエーション",
     "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "ツール",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Design Your Hardware": {
+    "message": "ハードウェアを設計する",
+    "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "リファレンス",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Carrier Board Design": {
+    "message": "キャリアボード設計",
+    "description": "The label for category 'Carrier Board Design' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Build & Customize eLxr": {
+    "message": "eLxr のビルドとカスタマイズ",
+    "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Interfaces & Peripherals": {
+    "message": "インターフェースと周辺機器",
+    "description": "The label for category 'Interfaces & Peripherals' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Flash, Update & Recover": {
+    "message": "書き込み・更新・復旧",
+    "description": "The label for category 'Flash, Update & Recover' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "リファレンスとダウンロード",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "技術ノート",

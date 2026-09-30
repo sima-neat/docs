@@ -1,0 +1,271 @@
+---
+title: Низькошвидкісний ввід-вивід
+description: GPIO, UART, I2C і SPI у блоках SIO Modalix — призначення контактів, драйвери, дерева пристроїв та інструменти простору користувача.
+sidebar_position: 5
+---
+
+# Низькошвидкісний ввід-вивід
+
+Modalix має **два виділені канали SPI** і **вісім конфігуровних блоків SIO**.
+Кожен блок SIO можна налаштувати для роботи як GPIO, UART, I2C або SPI, а вихідний
+мультиплексор контактів визначає, яка функція надходить на кожен контакт.
+
+## Рекомендації щодо призначення контактів
+
+Під час призначення контактів SIO:
+
+1. Спершу виберіть канали Ethernet і PCIe, які плануєте використовувати, — деякі функції
+   контактів визначено заздалегідь, і їх потрібно використовувати з відповідними інтерфейсами PCIe та
+   Ethernet.
+2. У межах кожного блоку SIO контакти у **верхніх рядках мають пріоритет** і їх слід
+   розглядати в першу чергу.
+3. Використовуйте функцію, зазначену в стовпці **Функція**, щоб вибраний інтерфейс
+   відповідав функціональним можливостям контакту.
+
+## Призначення контактів SIO
+
+64-контактний інтерфейс SIO поділено на вісім 8-бітних портів. Усі контакти є контактами вводу-виводу з напругою
+**1,8 В**.
+
+| Контакт SIO | Тип | Напруга | Інтерфейс | Функція |
+| --- | --- | --- | --- | --- |
+| `SIO0_IO[0]` | I/O | 1.8V | UART | UART_RX |
+| `SIO0_IO[1]` | I/O | 1.8V | — | UART_TX |
+| `SIO0_IO[2]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO0_IO[3]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO0_IO[4]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO0_IO[5]` | I/O | 1.8V | — | GPIO |
+| `SIO0_IO[6]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO0_IO[7]` | I/O | 1.8V | — | GPIO |
+| `SIO1_IO[0]` | I/O | 1.8V | I2C | ETH0_PTP_PPS |
+| `SIO1_IO[1]` | I/O | 1.8V | I2C | N/A |
+| `SIO1_IO[2]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO1_IO[3]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO1_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO1_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO1_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO1_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO2_IO[0]` | I/O | 1.8V | I2C | ETH0_SMA_MDC |
+| `SIO2_IO[1]` | I/O | 1.8V | — | ETH0_SMA_MDIO |
+| `SIO2_IO[2]` | I/O | 1.8V | SPI | N/A |
+| `SIO2_IO[3]` | I/O | 1.8V | — | N/A |
+| `SIO2_IO[4]` | I/O | 1.8V | UART | UART_RX |
+| `SIO2_IO[5]` | I/O | 1.8V | — | UART_TX |
+| `SIO2_IO[6]` | I/O | 1.8V | UART | UART_RX |
+| `SIO2_IO[7]` | I/O | 1.8V | — | UART_TX |
+| `SIO3_IO[0]` | I/O | 1.8V | SPI | PCIE0_PERST# |
+| `SIO3_IO[1]` | I/O | 1.8V | I2C | PCIE0_WAKE# |
+| `SIO3_IO[2]` | I/O | 1.8V | I2C | PCIE0_CLKREQ# |
+| `SIO3_IO[3]` | I/O | 1.8V | GPIO | N/A |
+| `SIO3_IO[4]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO3_IO[5]` | I/O | 1.8V | GPIO | I2C_SDA |
+| `SIO3_IO[6]` | I/O | 1.8V | PCIE2 | PCIE0_PERST# |
+| `SIO3_IO[7]` | I/O | 1.8V | PCIE2 | PCIE0_WAKE# |
+| `SIO4_IO[0]` | I/O | 1.8V | PCIE2 | PCIE2_CLKREQ# |
+| `SIO4_IO[1]` | I/O | 1.8V | PCIE3 | PCIE3_PERST# |
+| `SIO4_IO[2]` | I/O | 1.8V | PCIE3 | PCIE3_WAKE# |
+| `SIO4_IO[3]` | I/O | 1.8V | PCIE3 | PCIE3_CLKREQ# |
+| `SIO4_IO[4]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO4_IO[5]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO4_IO[6]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO4_IO[7]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO5_IO[0]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO5_IO[1]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO5_IO[2]` | I/O | 1.8V | UART | UART_RX |
+| `SIO5_IO[3]` | I/O | 1.8V | — | UART_TX |
+| `SIO5_IO[4]` | I/O | 1.8V | UART | UART_RX |
+| `SIO5_IO[5]` | I/O | 1.8V | — | UART_TX |
+| `SIO5_IO[6]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO5_IO[7]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO6_IO[0]` | I/O | 1.8V | I2C | I2C_SCL |
+| `SIO6_IO[1]` | I/O | 1.8V | — | I2C_SDA |
+| `SIO6_IO[2]` | I/O | 1.8V | GPIO | GPIO |
+| `SIO6_IO[3]` | I/O | 1.8V | — | GPIO |
+| `SIO6_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO6_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO6_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO6_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO7_IO[0]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO7_IO[1]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO7_IO[2]` | I/O | 1.8V | I2C | SPI_MOSI |
+| `SIO7_IO[3]` | I/O | 1.8V | — | SPI_MISO |
+| `SIO7_IO[4]` | I/O | 1.8V | SPI | SPI_CLK |
+| `SIO7_IO[5]` | I/O | 1.8V | — | SPI_CS# |
+| `SIO7_IO[6]` | I/O | 1.8V | SPI | SPI_MOSI |
+| `SIO7_IO[7]` | I/O | 1.8V | — | SPI_MISO |
+
+## GPIO
+
+**Драйвер:** `gpio-dwapb`
+
+У просторі користувача використовуйте **libgpiod** та його інструменти командного рядка:
+
+| Інструмент | Призначення |
+| --- | --- |
+| `gpiodetect` | Виводить список доступних мікросхем GPIO |
+| `gpioinfo` | Виводить список мікросхем і ліній із їхнім станом і драйвером-власником |
+| `gpioset` | Встановлює значення лінії |
+| `gpioget` | Зчитує значення лінії |
+
+Спершу визначте мікросхему та лінію — пристрої відображаються як `/dev/gpiochip0` тощо:
+
+```console
+root@modalix:~# gpiodetect
+root@modalix:~# gpioset gpiochip0 17 1
+root@modalix:~# gpioget gpiochip0 17
+```
+
+Для власних застосунків використовуйте **C API libgpiod**, а не виклики
+інструментів командного рядка.
+
+Прив’язка: [`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml)
+
+## UART
+
+**Драйвер:** `snps-dw-apb-uart`
+
+Назва вузла UART містить номер блоку SIO та індекс — `uart12` означає блок SIO 1, індекс 2.
+Кожен блок SIO надає до **4 портів UART**, кожен з яких займає 2 контакти, тож індекс
+2 відповідає вихідним контактам 4 і 5.
+
+```dts
+uart12: uart@0x0401a000 {
+    compatible = "snps,dw-apb-uart";
+    reg = <0x0 0x0401a000 0x0 0x100>;
+    interrupts = <GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>;
+    reg-io-width = <4>;
+    reg-shift = <2>;
+    clocks = <&sio10_clk SIMAAI_SIO_DEV_UART2>;
+    resets = <&reset10 SIMAAI_SIO_DEV_UART2>;
+    pinctrl-0 = <&pins_uart12_deafult>;
+    pinctrl-names = "default";
+    dmas = <&dmac10 4>, <&dmac10 5>;
+    dma-names = "tx", "rx";
+    status = "disabled";
+};
+```
+
+Увімкніть його за допомогою оверлею:
+
+```dts
+&uart12 {
+    status = "okay";
+};
+```
+
+Тактування, скидання та інші параметри можна перевизначити в тому самому оверлеї. Кожен блок SIO
+має власні контролери тактування, скидання, контактів і DMA, на які посилається
+наведений вище вузол.
+
+Прив’язка: [`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml)
+
+## I2C
+
+Два інтерфейси I2C виведено на 40-контактний роз’єм (J12 на платі-носії
+Waveshare).
+
+### Перевірка шин
+
+```console
+root@modalix:~# ls /dev/i2c-*
+/dev/i2c-0
+/dev/i2c-1
+```
+
+### Розводка 40-контактного роз’єму (J12)
+
+| Контакт | Сигнал | Контакт | Сигнал |
+| --- | --- | --- | --- |
+| 1 | Живлення 3,3 В | 2 | Живлення 5 В |
+| 3 | `I2C1_SDA` | 4 | Живлення 5 В |
+| 5 | `I2C1_SCL` | 6 | GND |
+| 7 | `GPIO09_AUD_MCLK` | 8 | `UART1_TXD` |
+| 9 | GND | 10 | `UART1_RXD` |
+| 11 | `UART1_RTS` | 12 | `I2S0_SCLK` |
+| 13 | `SPI1_SCK` | 14 | GND |
+| 15 | `GPIO12` | 16 | `SPI1_CS1` |
+| 19 | `SPI0_MOSI` | 20 | GND |
+| 21 | `SPI0_MISO` | 22 | `SPI1_MISO` |
+| 23 | `SPI0_SCLK` | 24 | `SPI0_CS0` |
+| 25 | GND | 26 | `SPI0_CS1` |
+| 27 | `I2C0_SDA` | 28 | `I2C0_SCL` |
+| 29 | `GPIO01` | 30 | GND |
+| 31 | `GPIO11` | 32 | `GPIO07` |
+| 33 | `GPIO13` | 34 | GND |
+| 35 | `I2S0_FS` | 36 | `UART1_CTS` |
+| 37 | `SPI1_MOSI` | 38 | `I2S0_SDIN` |
+| 39 | GND | 40 | `I2S0_SDOUT` |
+
+### Драйвер і дерево пристроїв
+
+Розширювач GPIO на шині I2C підтримується драйвером **PCF857x**, увімкненим у
+`arch/arm64/configs/simaai_modalix_defconfig`:
+
+```text
+CONFIG_GPIO_PCF857X=y
+```
+
+Він охоплює розширювачі GPIO NXP PCF8574 і PCF8575 на шині I2C — див.
+[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig).
+Увімкнення шини 0 із під’єднаним PCF8574:
+
+```dts
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+    };
+};
+```
+
+### Інструменти командного рядка
+
+`i2c-tools` входить до стандартної збірки; якщо пакета немає, установіть його:
+
+```console
+root@modalix:~# apt update
+root@modalix:~# apt install i2c-tools
+```
+
+Прив’язки: [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml)
+і [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml)
+
+`i2cdetect` опитує кожну адресу на шині та повідомляє, які пристрої відповідають.
+`-r` використовує опитування через SMBus read-byte, `-y` пропускає запит на підтвердження, а
+останній аргумент — це номер шини:
+
+```console
+root@modalix:~# i2cdetect -r -y 0
+```
+
+## SPI
+
+Окрім будь-якого блоку SIO, налаштованого для SPI, Modalix має два виділені канали SPI.
+Оверлеї пристроїв для шляхів NVS SPI і SIO SPI, а також драйвер пристрою SPI
+і прив’язки дерева пристроїв використовують той самий шаблон оверлею,
+що й показаний вище для UART.
+
+## Довідкові матеріали
+
+Усі ці матеріали є загальнодоступними:
+
+| Довідковий матеріал | Де |
+| --- | --- |
+| Збирання ядра, дерев пристроїв і оверлеїв | [Збирання BSP з вихідного коду](../software/build-from-source.mdx) |
+| Конфігурація ядра | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
+| Дерева пристроїв Modalix | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+| Приклади оверлеїв | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Прив’язка GPIO | [`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml) |
+| Прив’язка UART | [`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml) |
+| Прив’язка контролера I2C | [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml) |
+| Прив’язка розширювача PCF857x | [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml) |
+
+## Наступні кроки
+
+- [Запуск плати-носія](../design/som-carrier.mdx) — що потребує адаптації та чому.
+- [Збирання BSP з вихідного коду](../software/build-from-source.mdx) — збирання та встановлення
+  ядра з вашими оверлеями.

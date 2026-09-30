@@ -13,6 +13,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 請使用此網站來了解 SiMa.ai MLSoC Modalix 產品的硬體設定、韌體流程和低階介面。軟體、機器學習和流程工具的說明文件將另行提供。
 
+## 選擇您的路徑
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>評估 DevKit</h4>
+    <p>設定 Modalix DevKit 或 PCIe 卡，開始進行開發。</p>
+  </a>
+  <a className="card" href="/hardware/design/carrier-board">
+    <h4>設計 SoM 載板</h4>
+    <p>圍繞 Modalix SoM 打造自訂電路板。</p>
+  </a>
+  <a className="card" href="/hardware/design/chip-down">
+    <h4>直接採用 SoC 進行設計</h4>
+    <p>將 Modalix SoC 直接放在您自己的電路板上。</p>
+  </a>
+</div>
+
+已經知道您需要什麼了嗎？
+
+- [建置自訂 eLxr 映像檔](/hardware/software/build-from-source)
+- [查詢某個版本對應的原始碼 commit](/hardware/software/release-compatibility)
+- [對應 GPIO、UART、I2C 與 SPI 腳位](/hardware/interfaces/low-speed-io)
+- [設定 MIPI 相機](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [更新或復原電路板](/hardware/getting-started/firmware-update)
+- [在量產環境中燒錄與測試電路板](/hardware/deployment/factory-build-and-test)
+
 ## 關於 MLSoC Modalix
 
 **MLSoC Modalix** 是 SiMa.ai 的第二代機器學習系統晶片。它結合了一個 Arm Cortex-A65 應用處理器、一個高吞吐量的**機器學習加速器 (MLA)**、一個用於相機輸入的**影像訊號處理器 (ISP)**，以及一個用於傳統視覺工作負載的**電腦視覺單元 (CVU)**——所有這些都整合在單一晶片上。

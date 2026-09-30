@@ -155,7 +155,7 @@ Most configuration happens through the Linux **device tree**, with **overlays**
 layered on top for board-specific differences. That is what makes one BSP serve
 several carrier boards.
 
-- [Build the BSP from Source](./build-from-source.mdx) — build environment,
+- [Build the BSP from Source](../software/build-from-source.mdx) — build environment,
   kernel, U-Boot, device trees, and installing the result.
 - [Device tree usage model](https://docs.kernel.org/devicetree/usage-model.html)
   and [overlay notes](https://docs.kernel.org/devicetree/overlay-notes.html) —
@@ -166,7 +166,7 @@ several carrier boards.
 Board-specific overlay sources (`.dtso`) live in the BSP repository under
 `meta-simaai/recipes-kernel/oot-dtbo/files/`.
 
-## Cameras
+## Cameras {#cameras}
 
 To *use* a camera on a DevKit, select a shipped overlay — see
 [MIPI Camera Interfaces](/hardware/getting-started/standalone-mode/mipi-camera-interfaces),
@@ -211,7 +211,7 @@ data highway and ISP configuration are not yet documented here.
 
 | Reference | Where |
 | --- | --- |
-| Building the kernel, device trees and overlays | [Build the BSP from Source](./build-from-source.mdx) |
+| Building the kernel, device trees and overlays | [Build the BSP from Source](../software/build-from-source.mdx) |
 | Modalix device trees | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 | Example overlays | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
 | Device tree usage model | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
@@ -219,5 +219,5 @@ data highway and ISP configuration are not yet documented here.
 
 ## Next Steps
 
-- [Low-Speed I/O](./low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO blocks.
+- [Low-Speed I/O](../interfaces/low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO blocks.
 - [MIPI Camera Interfaces](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) — using cameras on a DevKit.

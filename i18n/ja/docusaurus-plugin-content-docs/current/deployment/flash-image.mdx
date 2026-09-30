@@ -1,0 +1,176 @@
+---
+title: イメージを eMMC に書き込む
+description: Modalix ボードをネットワークまたは SD カードから起動し、完全なイメージを eMMC に書き込み、ブート順序を設定します。
+sidebar_position: 1
+---
+
+# イメージを eMMC に書き込む
+
+このページでは、ボードの eMMC に完全なイメージを書き込む方法を説明します。たとえば、生産ラインで
+書き込む場合、自社で設計したボードに書き込む場合、公開リリースではないイメージを書き込む場合などが該当します。
+すべての手順を自分で実行するため、手元にあるどのイメージファイルでも使用できます。
+
+DevKit を SiMa.ai の公開リリースにアップデートする場合は、代わりに
+[ファームウェアアップデート](/hardware/getting-started/firmware-update)を使用してください。
+すでに起動できるボードでカーネル、デバイスツリー、または U-Boot のみを置き換える場合は、
+[成果物をインストールする](/hardware/software/build-from-source#install-the-artifacts)を参照してください。
+
+## 始める前に
+
+- U-Boot プロンプトまで到達できるボード。
+- ボードの U-Boot/Linux UART へのシリアル接続（115200 ボー、ハードウェアフロー制御は無効）。
+  [シリアル接続の設定](/hardware/getting-started/setup-serial)を参照してください。
+- 書き込むイメージ：
+
+  | イメージ | ファイル |
+  | --- | --- |
+  | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
+  | Yocto | `simaai-image-palette-modalix.wic.gz` と `simaai-image-palette-modalix.wic.bmap` |
+
+- イーサネットと TFTP サーバーを備えたホスト、または SD カードのいずれか。
+
+## ボードがブートソースを選択する仕組み
+
+ボードは、eMMC から起動している間はその eMMC を上書きできないため、まずネットワークまたは SD カードから
+起動します。U-Boot は `boot_targets` に記載されたソースを順番に試します。
+
+| ターゲット | 起動元 |
+| --- | --- |
+| `mmc1` | SD カード |
+| `mmc0` | eMMC |
+| `dhcp` | DHCP で検出された TFTP サーバー |
+| `net` | 固定 IP アドレスの TFTP サーバー |
+
+デフォルトの順序は `mmc1 mmc0 dhcp net` です。変更するには、シリアルコンソールで自動ブートを中断し、
+順序を設定して保存します。
+
+```console
+sima$ env set boot_targets mmc1 mmc0 net dhcp; saveenv
+Saving Environment to FAT... OK
+sima$ printenv boot_targets
+boot_targets=mmc1 mmc0 net dhcp
+sima$ boot
+```
+
+## ステップ 1. ネットワークまたは SD カードから起動する {#step-1-boot-from-the-network-or-an-sd-card}
+
+テストステーションでは、SD カードからの起動をお勧めします。イーサネットポートが空くため、
+ネットワークのストレステストに使用できます。
+
+<details open>
+<summary><strong>ネットワークから起動する</strong></summary>
+
+この方法では独自の TFTP サーバーを使用するため、配信する内容を自分で選択できます。
+[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)でも同じことを
+`sima-cli` で行えます。こちらは公開リリースのダウンロードと配信を自動で行います。
+
+1. ブートファイルを TFTP サーバーのルートディレクトリにコピーします。
+   - `netboot.scr.uimg`
+   - `Image`
+   - デバイスツリーバイナリ（`*.dtb`）
+   - ルートファイルシステムのアーカイブ：eLxr の場合は `elxr-palette-modalix-arm64.cpio.gz`、
+     Yocto の場合は `simaai-image-palette-modalix.cpio.gz`
+2. ホストをボードの最初のイーサネットポート（`eth0`）に接続します。ボードは
+   `192.168.1.20` を使用するため、ホストには `192.168.1.0/24` 内のアドレスを割り当てます。
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ifconfig <interface_name> 192.168.1.10 up
+   ```
+
+3. ボードの電源を入れて自動ブートを中断し、`net` を最初のブートソースにします。
+
+   ```console
+   sima$ env set boot_targets net mmc0 mmc1 dhcp; saveenv
+   sima$ boot
+   ```
+
+4. Linux が起動したら、ビルドを確認し、ルートファイルシステムが RAM 上にあること
+   （`root=/dev/ram0`）を確認します。
+
+   ```console
+   root@modalix:~# cat /etc/buildinfo
+   root@modalix:~# cat /proc/cmdline
+   ```
+
+</details>
+
+<details open>
+<summary><strong>SD カードから起動する</strong></summary>
+
+1. イメージを SD カードに書き込みます。ホストから
+   [ブートイメージの作成](/hardware/getting-started/firmware-update/boot-image)を使って書き込むか、
+   SD カードを挿入した状態でネットワークから起動したボード上で書き込みます
+   （`/dev/mmcblk1`）。
+
+   eLxr の場合：
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk1 bs=4M status=progress conv=fsync
+   ```
+
+   Yocto の場合は、`.wic.gz` ファイルと `.wic.bmap` ファイルの両方をコピーしてから、次を実行します。
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   ```
+
+   次に、パーティションテーブルを修復します。イメージはカードより小さいため、`parted` で移動するまで
+   バックアップ GPT ヘッダーはデバイスの末尾にありません。
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk1 print
+   ```
+
+2. 再起動して自動ブートを中断し、`mmc1` が最初になっていることを確認します。デフォルトでは
+   最初になっています。
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   sima$ boot
+   ```
+
+3. Linux が起動したら、`/etc/buildinfo` を確認し、`/proc/cmdline` に
+   `root=/dev/mmcblk1p*` が含まれていることを確認します。
+
+</details>
+
+## ステップ 2. イメージを eMMC に書き込む {#step-2-write-the-image-to-emmc}
+
+以下の手順は、ボードがネットワークまたは SD カードから起動している状態で、ボード上で root として
+実行します。
+
+1. `.wic.gz` ファイルと `.wic.bmap` ファイルを、ホストからボードの `/tmp` にコピーします。
+
+   ```console
+   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. イメージを eMMC（`/dev/mmcblk0`）に書き込みます。
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   ```
+
+3. パーティションテーブルを修復します。
+
+   ```console
+   root@modalix:~# printf "fix\n" | parted ---pretend-input-tty /dev/mmcblk0 print
+   ```
+
+## ステップ 3. eMMC から起動する
+
+1. ネットワークから起動した場合は、デフォルトのブート順序に戻します。
+
+   ```console
+   sima$ env set boot_targets mmc1 mmc0 dhcp net; saveenv
+   ```
+
+   SD カードから起動した場合は、SD カードを取り外します。
+2. ボードを再起動するか電源を入れ直し、eMMC から起動することを確認します。
+
+## 次のステップ
+
+- [工場でのビルドとテスト](./factory-build-and-test.mdx)：ボード ID、MAC アドレス、
+  診断を含む量産の全体的な流れ。
+- [リリースの互換性](/hardware/software/release-compatibility)：各リリースを構成する
+  カーネルと U-Boot のコミット。

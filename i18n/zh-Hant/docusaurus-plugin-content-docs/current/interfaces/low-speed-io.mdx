@@ -1,33 +1,26 @@
 ---
-title: Low-Speed I/O
-description: GPIO, UART, I2C and SPI on the Modalix SIO blocks — pin mapping, drivers, device trees and user-space tools.
+title: 低速 I/O
+description: Modalix SIO 區塊上的 GPIO、UART、I2C 與 SPI：腳位對應、驅動程式、device tree 與使用者空間工具。
 sidebar_position: 5
 ---
 
-# Low-Speed I/O
+# 低速 I/O
 
-Modalix has **two dedicated SPI channels** plus **eight configurable SIO blocks**.
-Each SIO block can be configured to provide GPIO, UART, I2C or SPI, and an output
-pin multiplexer selects which function reaches each pin.
+Modalix 具備**兩個專用 SPI 通道**以及**八個可設定的 SIO 區塊**。每個 SIO 區塊都可設定為提供 GPIO、UART、I2C 或 SPI 功能，並由輸出腳位多工器選擇要將哪個功能送到各個腳位。
 
-## Mapping Guidelines
+## 腳位對應準則
 
-When assigning SIO pins:
+指派 SIO 腳位時：
 
-1. Choose the Ethernet and PCIe channels you intend to use first — some pin
-   functions are predefined and must be used with the corresponding PCIe and
-   Ethernet interfaces.
-2. Within each SIO block, pins in the **upper rows take priority** and should be
-   considered first.
-3. Use the function named in the **Function** column so the selected interface
-   matches the pin's available functionality.
+1. 請先選定您要使用的乙太網路與 PCIe 通道：部分腳位功能是預先定義的，必須搭配對應的 PCIe 與乙太網路介面使用。
+2. 在每個 SIO 區塊中，**上方列的腳位具有優先權**，應優先考慮。
+3. 請使用 **Function** 欄中所列的功能，讓所選介面與該腳位可用的功能相符。
 
-## SIO Pin Mapping
+## SIO 腳位對應
 
-The 64-pin SIO interface is divided into eight 8-bit ports. All pins are I/O at
-**1.8 V**.
+64 腳位的 SIO 介面分為八個 8 位元連接埠。所有腳位皆為 **1.8 V** I/O。
 
-| SIO pin | Type | Voltage | Interface | Function |
+| SIO 腳位 | 類型 | 電壓 | 介面 | 功能 |
 | --- | --- | --- | --- | --- |
 | `SIO0_IO[0]` | I/O | 1.8V | UART | UART_RX |
 | `SIO0_IO[1]` | I/O | 1.8V | — | UART_TX |
@@ -96,19 +89,18 @@ The 64-pin SIO interface is divided into eight 8-bit ports. All pins are I/O at
 
 ## GPIO
 
-**Driver:** `gpio-dwapb`
+**驅動程式：** `gpio-dwapb`
 
-From user space, use **libgpiod** and its command-line tools:
+在使用者空間中，請使用 **libgpiod** 及其命令列工具：
 
-| Tool | Purpose |
+| 工具 | 用途 |
 | --- | --- |
-| `gpiodetect` | List available GPIO chips |
-| `gpioinfo` | List chips and lines, with state and owning driver |
-| `gpioset` | Set a line's value |
-| `gpioget` | Read a line's value |
+| `gpiodetect` | 列出可用的 GPIO 晶片 |
+| `gpioinfo` | 列出晶片與線路，以及其狀態和所屬的驅動程式 |
+| `gpioset` | 設定線路的值 |
+| `gpioget` | 讀取線路的值 |
 
-Identify the chip and line first — devices appear as `/dev/gpiochip0` and
-similar:
+請先確認晶片與線路；裝置會顯示為 `/dev/gpiochip0` 等名稱：
 
 ```console
 root@modalix:~# gpiodetect
@@ -116,18 +108,15 @@ root@modalix:~# gpioset gpiochip0 17 1
 root@modalix:~# gpioget gpiochip0 17
 ```
 
-For custom applications, use the **libgpiod C API** rather than driving the
-command-line tools.
+開發自訂應用程式時，請使用 **libgpiod C API**，而不是呼叫命令列工具。
 
-Binding: [`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml)
+Binding：[`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml)
 
 ## UART
 
-**Driver:** `snps-dw-apb-uart`
+**驅動程式：** `snps-dw-apb-uart`
 
-A UART node names its SIO block and index — `uart12` is SIO block 1, index 2.
-Each SIO block provides up to **4 UART ports**, each consuming 2 pins, so index
-2 maps to output pins 4 and 5.
+UART 節點的名稱標示了其 SIO 區塊與索引：`uart12` 代表 SIO 區塊 1、索引 2。每個 SIO 區塊最多提供 **4 個 UART 連接埠**，每個連接埠佔用 2 個腳位，因此索引 2 對應到輸出腳位 4 與 5。
 
 ```dts
 uart12: uart@0x0401a000 {
@@ -146,7 +135,7 @@ uart12: uart@0x0401a000 {
 };
 ```
 
-Enable it from an overlay:
+從 overlay 啟用它：
 
 ```dts
 &uart12 {
@@ -154,18 +143,15 @@ Enable it from an overlay:
 };
 ```
 
-Clock, reset and other settings can be overridden in the same overlay. Each SIO
-block implements its own clock, reset, pin and DMA controllers, referenced by
-the node above.
+時脈、重設及其他設定也可以在同一個 overlay 中覆寫。每個 SIO 區塊都有各自的時脈、重設、腳位與 DMA 控制器，並由上方的節點參照。
 
-Binding: [`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml)
+Binding：[`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml)
 
 ## I2C
 
-Two I2C interfaces are exposed on the 40-pin header (J12 on the Waveshare
-carrier card).
+40 針排針（Waveshare 載板上的 J12）上引出了兩個 I2C 介面。
 
-### Confirming the Buses
+### 確認匯流排
 
 ```console
 root@modalix:~# ls /dev/i2c-*
@@ -173,12 +159,12 @@ root@modalix:~# ls /dev/i2c-*
 /dev/i2c-1
 ```
 
-### 40-Pin Header Pinout (J12)
+### 40 針排針腳位定義（J12）
 
-| Pin | Signal | Pin | Signal |
+| 腳位 | 訊號 | 腳位 | 訊號 |
 | --- | --- | --- | --- |
-| 1 | 3.3 V power | 2 | 5 V power |
-| 3 | `I2C1_SDA` | 4 | 5 V power |
+| 1 | 3.3 V 電源 | 2 | 5 V 電源 |
+| 3 | `I2C1_SDA` | 4 | 5 V 電源 |
 | 5 | `I2C1_SCL` | 6 | GND |
 | 7 | `GPIO09_AUD_MCLK` | 8 | `UART1_TXD` |
 | 9 | GND | 10 | `UART1_RXD` |
@@ -197,18 +183,15 @@ root@modalix:~# ls /dev/i2c-*
 | 37 | `SPI1_MOSI` | 38 | `I2S0_SDIN` |
 | 39 | GND | 40 | `I2S0_SDOUT` |
 
-### Driver and Device Tree
+### 驅動程式與 Device Tree
 
-The I2C GPIO expander is supported by the **PCF857x** driver, enabled in
-`arch/arm64/configs/simaai_modalix_defconfig`:
+I2C GPIO 擴充器由 **PCF857x** 驅動程式支援，並已在 `arch/arm64/configs/simaai_modalix_defconfig` 中啟用：
 
 ```text
 CONFIG_GPIO_PCF857X=y
 ```
 
-This covers NXP PCF8574 and PCF8575 I2C GPIO expanders — see
-[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig).
-Enabling bus 0 with a PCF8574 attached:
+此驅動程式涵蓋 NXP PCF8574 與 PCF8575 I2C GPIO 擴充器，請參閱 [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig)。以下範例啟用匯流排 0 並連接一顆 PCF8574：
 
 ```dts
 &i2c00 {
@@ -223,21 +206,18 @@ Enabling bus 0 with a PCF8574 attached:
 };
 ```
 
-### Command-Line Tools
+### 命令列工具
 
-`i2c-tools` ships in the standard build; install it if missing:
+`i2c-tools` 已包含在標準建置中；若缺少，請自行安裝：
 
 ```console
-root@modalix:~# sudo apt update
-root@modalix:~# sudo apt install i2c-tools
+root@modalix:~# apt update
+root@modalix:~# apt install i2c-tools
 ```
 
-Bindings: [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml)
-and [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml)
+Binding：[`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml) 與 [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml)
 
-`i2cdetect` probes every address on a bus and reports which devices respond.
-`-r` uses SMBus read-byte probing, `-y` skips the confirmation prompt, and the
-final argument is the bus number:
+`i2cdetect` 會探測匯流排上的每個位址，並回報哪些裝置有回應。`-r` 使用 SMBus read-byte 方式探測，`-y` 會略過確認提示，最後一個引數則是匯流排編號：
 
 ```console
 root@modalix:~# i2cdetect -r -y 0
@@ -245,28 +225,24 @@ root@modalix:~# i2cdetect -r -y 0
 
 ## SPI
 
-Modalix has two dedicated SPI channels in addition to any SIO block configured
-for SPI. Device overlays for both the NVS SPI and SIO SPI paths, along with the
-SPI device driver and device tree bindings, follow the same overlay pattern
-shown for UART above.
+除了設定為 SPI 的 SIO 區塊之外，Modalix 還具備兩個專用 SPI 通道。NVS SPI 與 SIO SPI 路徑的裝置 overlay，以及 SPI 裝置驅動程式與 device tree binding，都遵循上方 UART 所示的相同 overlay 模式。
 
-## References
+## 參考資料
 
-All of these are public:
+以下資源皆為公開：
 
-| Reference | Where |
+| 參考資料 | 位置 |
 | --- | --- |
-| Building the kernel, device trees and overlays | [Build the BSP from Source](./build-from-source.mdx) |
-| Kernel configuration | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
-| Modalix device trees | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
-| Example overlays | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| 建置核心、device tree 與 overlay | [從原始碼建置 BSP](../software/build-from-source.mdx) |
+| 核心設定 | [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) |
+| Modalix device tree | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
+| 範例 overlay | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
 | GPIO binding | [`snps,dw-apb-gpio.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml) |
 | UART binding | [`snps-dw-apb-uart.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml) |
-| I2C controller binding | [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml) |
-| PCF857x expander binding | [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml) |
+| I2C 控制器 binding | [`snps,designware-i2c.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/i2c/snps,designware-i2c.yaml) |
+| PCF857x 擴充器 binding | [`nxp,pcf8575.yaml`](https://github.com/SiMa-ai/simaai-linux/blob/master/Documentation/devicetree/bindings/gpio/nxp,pcf8575.yaml) |
 
-## Next Steps
+## 後續步驟
 
-- [Carrier Board Bring-up](./carrier-board.mdx) — what needs adaptation and why.
-- [Build the BSP from Source](./build-from-source.mdx) — building and installing
-  a kernel with your overlays.
+- [載板硬體啟動](../design/som-carrier.mdx)：需要調整的項目及原因。
+- [從原始碼建置 BSP](../software/build-from-source.mdx)：建置並安裝包含您 overlay 的核心。
