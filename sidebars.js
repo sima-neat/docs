@@ -112,6 +112,7 @@ const sidebars = {
             'reference/tech-notes/elxr-conversion',
             'reference/tech-notes/bluetooth',
             'reference/tech-notes/ros2',
+            'reference/tech-notes/pcie-card-bringup',
           ],
         },
         'reference/glossary',
