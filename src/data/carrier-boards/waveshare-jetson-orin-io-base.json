@@ -1,0 +1,38 @@
+{
+  "id": "waveshare-jetson-orin-io-base",
+  "vendor": "Waveshare",
+  "model": "JETSON-ORIN-IO-BASE",
+  "reference": true,
+  "ordering": {
+    "partNumber": "24726",
+    "url": "https://www.waveshare.com/jetson-orin-io-base.htm"
+  },
+  "applications": {
+    "en": "Evaluation, robotics",
+    "ja": "評価、ロボティクス",
+    "ko": "평가, 로보틱스",
+    "zh-Hant": "評估、機器人",
+    "uk": "Оцінювання, робототехніка"
+  },
+  "cooling": {
+    "en": "Fan",
+    "ja": "ファン",
+    "ko": "팬",
+    "zh-Hant": "風扇",
+    "uk": "Вентилятор"
+  },
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 1,
+    "usb3": {
+      "en": "5 (4 Type-A, 1 Type-C)",
+      "ja": "5（Type-A × 4、Type-C × 1）",
+      "ko": "5(Type-A 4개, Type-C 1개)",
+      "zh-Hant": "5（4 個 Type-A、1 個 Type-C）",
+      "uk": "5 (4 Type-A, 1 Type-C)"
+    },
+    "m2KeyMx4": 1,
+    "m2KeyMx2": 1,
+    "m2KeyE": 1
+  }
+}

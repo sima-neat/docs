@@ -1,0 +1,43 @@
+---
+title: 第三方載板
+description: 比較採用與 Modalix SoM 相同 260-pin SODIMM 外形規格的現成載板。
+sidebar_position: 5
+---
+
+import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierBoards';
+
+# 第三方載板
+
+Modalix SoM 採用與 NVIDIA Jetson Orin NX 及 Orin Nano 相同的 260-pin SODIMM 外形規格，因此為這些模組設計的載板可以作為您產品的起點，或作為自行設計時的參考。本頁比較其中九款載板的介面。
+
+:::warning 外形規格相同不代表已通過驗證
+SiMa.ai 僅在 Waveshare 載板上完成 Modalix SoM 的硬體啟動。其他載板是依外形規格列出，尚未搭配 Modalix SoM 進行測試。連接之前，請先確認 SoM 與載板之間的電氣腳位相容性，並預期需要調整 device tree。請參閱[載板硬體啟動](./som-carrier.mdx)。
+:::
+
+## 如何閱讀規格
+
+- 表中的數值為各廠商針對其載板所列的規格。載板版本會變更，購買前請先確認廠商的最新文件。
+- 比較表中的破折號（—），或載板規格中未列出的項目，表示本頁沒有該項目的數值，並不代表該載板沒有此介面。
+- 載板上有連接器，不代表該介面可搭配 Modalix SoM 運作。哪些介面可以運作，取決於 SoM 連接到連接器的訊號以及 device tree。請參閱[載板硬體啟動](./som-carrier.mdx)與[低速 I/O](../interfaces/low-speed-io.mdx)。
+- **Modalix SoM** 欄顯示 SoM 對各介面的支援情形。*支援*表示 SoM 已將該介面引出至連接器。*視載板而定*表示該介面可能需要依您的載板進行設定或軟體調整。*不支援*表示無論載板提供什麼，該介面都無法搭配 Modalix SoM 運作。*尚未確認*表示本頁沒有相關資訊。
+
+## 可用的載板
+
+選擇載板名稱即可檢視其規格。訂購資訊欄列出本頁所掌握的廠商料號，以及廠商的產品頁面。
+
+<CarrierBoardList />
+
+Waveshare 載板是參考載板，完整的元件清單請見[載板硬體啟動](./som-carrier.mdx)。
+
+## 載板規格
+
+加入一款載板即可檢視其規格。最多可加入四款載板並排比較，並可使用 × 移除。
+
+<CarrierBoardSpecs />
+
+Modalix SoM Rev 2 引出四組 MIPI CSI 介面，每組 2 lane。由於兩條獨立的 2-lane 控制器路徑無法合併為單一 4-lane 路徑，因此不支援 4-lane MIPI CSI 連接。相機支援也取決於感測器驅動程式與 overlay。請參閱[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)。
+
+## 後續步驟
+
+- [載板硬體啟動](./som-carrier.mdx)：參考載板，以及需要進行軟體調整的項目。
+- [載板設計](./carrier-board.md)：設計自有載板所需的技術資料與步驟。

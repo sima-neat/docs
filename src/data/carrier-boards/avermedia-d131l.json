@@ -1,0 +1,24 @@
+{
+  "id": "avermedia-d131l",
+  "vendor": "AVerMedia",
+  "model": "D131L",
+  "reference": false,
+  "ordering": {
+    "url": "https://shop-us.avermedia.com/collections/industial-solutions"
+  },
+  "applications": {
+    "en": "Edge computing, video conferencing, video systems",
+    "ja": "エッジコンピューティング、ビデオ会議、映像システム",
+    "ko": "엣지 컴퓨팅, 화상 회의, 비디오 시스템",
+    "zh-Hant": "邊緣運算、視訊會議、視訊系統",
+    "uk": "Периферійні обчислення, відеоконференції, відеосистеми"
+  },
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 1,
+    "usb3": 4,
+    "m2KeyMx4": 1,
+    "csi2Lane": 1,
+    "can": 1
+  }
+}

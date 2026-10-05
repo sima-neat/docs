@@ -1,0 +1,15 @@
+{
+  "id": "axiomtek-aie110-onx",
+  "vendor": "Axiomtek",
+  "model": "AIE110-ONX",
+  "reference": false,
+  "ordering": {
+    "url": "https://www.axiomtek.com/Default.aspx?MenuId=Products&FunctionId=ProductView&ItemId=27212&C=AIE110-ONX&upcat=399"
+  },
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 2,
+    "usb3": 2,
+    "usb2": 1
+  }
+}

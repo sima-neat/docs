@@ -49,7 +49,10 @@ const sidebars = {
     ]),
     section('Design Your Hardware', 'design/index', [
       'design/chip-down',
-      section('Carrier Board Design', 'design/carrier-board', ['design/som-carrier']),
+      section('Carrier Board Design', 'design/carrier-board', [
+        'design/som-carrier',
+        'design/third-party-carriers',
+      ]),
     ]),
     section('Build & Customize eLxr', 'software/index', [
       'software/build-from-source',

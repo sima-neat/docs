@@ -49,5 +49,7 @@ These documents are in [Reference Documents](../reference/extra-docs.md).
 
 - [Carrier Board Bring-up](./som-carrier.mdx): the reference carrier board, and
   what needs software adaptation.
+- [Third-Party Carrier Boards](./third-party-carriers.mdx): off-the-shelf boards
+  with the same form factor, compared by interface.
 - [Factory Build and Test](../deployment/factory-build-and-test.mdx): programming
   and testing boards in production.

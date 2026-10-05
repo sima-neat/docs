@@ -1,0 +1,29 @@
+{
+  "id": "auvidea-jnx40s",
+  "vendor": "Auvidea",
+  "model": "JNX40S",
+  "reference": false,
+  "ordering": {
+    "url": "https://auvidea.eu/product/jnx40s-jnx41s-carrier-board-for-nvidia-jetson-orin-nano-orin-nx/"
+  },
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": {
+      "en": "1 with PoE, plus 10 GbE through M.2 Key E",
+      "ja": "1（PoE 対応）、および M.2 Key E 経由の 10 GbE",
+      "ko": "1(PoE 지원), M.2 Key E를 통한 10 GbE 추가",
+      "zh-Hant": "1（支援 PoE），另可透過 M.2 Key E 提供 10 GbE",
+      "uk": "1 з PoE, а також 10 GbE через M.2 Key E"
+    },
+    "usb3": 3,
+    "m2KeyMx4": 1,
+    "m2KeyE": 1,
+    "csi4Lane": 2,
+    "csi2Lane": 4,
+    "uart": 2,
+    "i2c": 3,
+    "i2s": 1,
+    "can": 1,
+    "spi": 1
+  }
+}

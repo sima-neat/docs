@@ -40,4 +40,5 @@ Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板�
 ## 後續步驟
 
 - [載板硬體啟動](./som-carrier.mdx)：參考載板，以及需要進行軟體調整的項目。
+- [第三方載板](./third-party-carriers.mdx)：依介面比較相同外形規格的現成載板。
 - [工廠組裝與測試](../deployment/factory-build-and-test.mdx)：在量產環境中燒錄與測試電路板。

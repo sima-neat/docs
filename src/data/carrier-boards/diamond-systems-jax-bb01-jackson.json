@@ -1,0 +1,38 @@
+{
+  "id": "diamond-systems-jax-bb01-jackson",
+  "vendor": "Diamond Systems",
+  "model": "JAX-BB01 (Jackson)",
+  "reference": false,
+  "ordering": {
+    "url": "https://www.diamondsystems.com/products/jackson"
+  },
+  "temperatureGrade": "-25 °C to +80 °C",
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 2,
+    "usb3": 3,
+    "usb2": 1,
+    "m2KeyMx4": 1,
+    "m2KeyMx2": 1,
+    "m2KeyB": 1,
+    "csi4Lane": {
+      "en": "2 with an expansion card",
+      "ja": "2（拡張カード使用時）",
+      "ko": "2(확장 카드 사용 시)",
+      "zh-Hant": "2（需搭配擴充卡）",
+      "uk": "2 із платою розширення"
+    },
+    "csi2Lane": {
+      "en": "4 with an expansion card",
+      "ja": "4（拡張カード使用時）",
+      "ko": "4(확장 카드 사용 시)",
+      "zh-Hant": "4（需搭配擴充卡）",
+      "uk": "4 із платою розширення"
+    },
+    "uart": 2,
+    "i2c": 1,
+    "gpio": 16,
+    "can": 1,
+    "rs232": 1
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "id": "connect-tech-boson-22",
+  "vendor": "Connect Tech",
+  "model": "Boson-22",
+  "reference": false,
+  "ordering": {
+    "partNumber": "NGX021",
+    "url": "https://connecttech.com/product/boson-22-carrier-board-for-nvidia-jetson-orin-nano/"
+  },
+  "applications": {
+    "en": "Robotics",
+    "ja": "ロボティクス",
+    "ko": "로보틱스",
+    "zh-Hant": "機器人",
+    "uk": "Робототехніка"
+  },
+  "cooling": {
+    "en": "Fan or fanless",
+    "ja": "ファンまたはファンレス",
+    "ko": "팬 또는 팬리스",
+    "zh-Hant": "風扇或無風扇",
+    "uk": "Вентилятор або без вентилятора"
+  },
+  "temperatureGrade": "-40 °C to +85 °C",
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 2,
+    "usb3": 1,
+    "usb2": 1,
+    "m2KeyMx4": 1,
+    "m2KeyE": {
+      "en": "1 with an expansion card",
+      "ja": "1（拡張カード使用時）",
+      "ko": "1(확장 카드 사용 시)",
+      "zh-Hant": "1（需搭配擴充卡）",
+      "uk": "1 із платою розширення"
+    },
+    "csi4Lane": 2,
+    "csi2Lane": 4,
+    "uart": 2,
+    "i2c": 2,
+    "gpio": 8,
+    "can": 1,
+    "spi": 2
+  }
+}

@@ -47,5 +47,7 @@ SoC를 자체 보드에 직접 실장하려면 [칩다운 설계](./chip-down.md
 
 - [캐리어 보드 브링업](./som-carrier.mdx): 레퍼런스 캐리어 보드와 소프트웨어 적응이
   필요한 부분.
+- [서드파티 캐리어 보드](./third-party-carriers.mdx): 동일한 폼 팩터의 기성 보드를
+  인터페이스별로 비교.
 - [공장 빌드 및 테스트](../deployment/factory-build-and-test.mdx): 양산 환경에서의
   보드 프로그래밍 및 테스트.
