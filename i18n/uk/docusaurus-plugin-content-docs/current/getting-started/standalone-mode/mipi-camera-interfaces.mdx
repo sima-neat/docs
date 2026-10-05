@@ -34,7 +34,7 @@ sima$
 Ім’я файлу має таку структуру:
 
 ```text
-modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>.dtbo
 ```
 
 Обирайте кожен компонент відповідно до вашого апаратного забезпечення:
@@ -43,30 +43,40 @@ modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
 | --- | --- | --- |
 | Плата-носій | `connectech`, `seeedstudio`, `waveshare` | Модель плати-носія. |
 | Виробник камери | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems або Leopard Imaging. |
-| Тип датчика | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | Модель сенсора камери. |
+| Тип датчика | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | Модель сенсора камери. |
 | Порт | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | Номер порту MIPI, до якого підключено камеру. |
 
-Наприклад, плата-носій Connectech з датчиком Leopard Imaging IMX477, підключеним до порту 0:
+За замовчуванням Modalix DevKit має плату-носій Waveshare. Наприклад, для камери Arducam IMX477, підключеної до порту 1 Modalix DevKit:
 
 ```console
-sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo ; saveenv ; boot
 ```
 
-Повний перелік доступних файлів `.dtbo`:
+Нижче наведено оверлеї камер у випуску платформи 2.1.3. В інших випусках деякі оверлеї мають інші назви. Щоб переглянути оверлеї на вашій платі, виконайте цю команду в Linux:
+
+```console
+sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
+```
+
+Яку камеру замовляти, які порти є на кожній платі-носії та які режими сенсора відповідають кожному оверлею, див. у розділі [Підтримувані камери MIPI](../../interfaces/supported-cameras.mdx).
 
 ```text
 modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
 modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
 modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
 modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
-modalix-som-connectech-ECON-IMX568-0CAM.dtbo
-modalix-som-connectech-ECON-IMX568-1CAM.dtbo
-modalix-som-connectech-ECON-IMX568-2CAM.dtbo
-modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-3CAM.dtbo
 modalix-som-connectech-ECON-IMX678-0CAM.dtbo
 modalix-som-connectech-ECON-IMX678-1CAM.dtbo
 modalix-som-connectech-ECON-IMX678-2CAM.dtbo
 modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-3CAM.dtbo
 modalix-som-connectech-LI-AR0234-0CAM.dtbo
 modalix-som-connectech-LI-AR0234-1CAM.dtbo
 modalix-som-connectech-LI-AR0234-2CAM.dtbo
@@ -76,28 +86,29 @@ modalix-som-connectech-LI-OG05C10-1CAM.dtbo
 modalix-som-connectech-LI-OG05C10-2CAM.dtbo
 modalix-som-connectech-LI-OG05C10-3CAM.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
-modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-FPGA-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-FPGA-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-ECON-KOBE1-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-KOBE1-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
-modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
-modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-FPGA-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-FPGA-IMX568-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
 modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-ECON-KOBE1-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-KOBE1-IMX568-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-1CAM.dtbo
 modalix-som-waveshare-LI-AR0234-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-DUAL.dtbo

@@ -1,0 +1,48 @@
+{
+  "order": 4,
+  "id": "econ-imx568-kobe1",
+  "vendor": "e-con Systems",
+  "sensor": "Sony IMX568",
+  "overlay": "ECON-KOBE1-IMX568",
+  "variant": {
+    "en": "Camera with the e-con KOBE1 FPGA board",
+    "ja": "e-con KOBE1 FPGA ボード付きカメラ",
+    "ko": "e-con KOBE1 FPGA 보드가 있는 카메라",
+    "zh-Hant": "搭配 e-con KOBE1 FPGA 板的相機",
+    "uk": "Камера з платою e-con KOBE1 FPGA"
+  },
+  "ordering": {
+    "status": "unconfirmed"
+  },
+  "lanes": 2,
+  "modes": [
+    {
+      "width": 2432,
+      "height": 2048,
+      "fps": 51,
+      "bitDepth": 12
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "fps": 74,
+      "bitDepth": 12
+    }
+  ],
+  "overlays": {
+    "connectech": [
+      "0CAM",
+      "1CAM",
+      "2CAM",
+      "3CAM"
+    ],
+    "seeedstudio": [
+      "0CAM",
+      "2CAM"
+    ],
+    "waveshare": [
+      "1CAM",
+      "2CAM"
+    ]
+  }
+}

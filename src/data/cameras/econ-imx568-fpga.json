@@ -1,0 +1,48 @@
+{
+  "order": 3,
+  "id": "econ-imx568-fpga",
+  "vendor": "e-con Systems",
+  "sensor": "Sony IMX568",
+  "overlay": "ECON-FPGA-IMX568",
+  "variant": {
+    "en": "Camera with the e-con FPGA board",
+    "ja": "e-con FPGA ボード付きカメラ",
+    "ko": "e-con FPGA 보드가 있는 카메라",
+    "zh-Hant": "搭配 e-con FPGA 板的相機",
+    "uk": "Камера з платою e-con FPGA"
+  },
+  "ordering": {
+    "status": "unconfirmed"
+  },
+  "lanes": 2,
+  "modes": [
+    {
+      "width": 2432,
+      "height": 2048,
+      "fps": 51,
+      "bitDepth": 12
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "fps": 74,
+      "bitDepth": 12
+    }
+  ],
+  "overlays": {
+    "connectech": [
+      "0CAM",
+      "1CAM",
+      "2CAM",
+      "3CAM"
+    ],
+    "seeedstudio": [
+      "0CAM",
+      "2CAM"
+    ],
+    "waveshare": [
+      "1CAM",
+      "2CAM"
+    ]
+  }
+}

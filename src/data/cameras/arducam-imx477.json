@@ -1,0 +1,48 @@
+{
+  "order": 1,
+  "id": "arducam-imx477",
+  "vendor": "Arducam",
+  "sensor": "Sony IMX477",
+  "overlay": "ARDU-IMX477",
+  "ordering": {
+    "status": "unconfirmed"
+  },
+  "lanes": 2,
+  "modes": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "bitDepth": 12
+    },
+    {
+      "width": 2048,
+      "height": 1080,
+      "fps": 30,
+      "bitDepth": 12
+    },
+    {
+      "width": 4032,
+      "height": 3040,
+      "fps": 10,
+      "bitDepth": 12
+    }
+  ],
+  "overlays": {
+    "connectech": [
+      "0CAM",
+      "1CAM",
+      "2CAM",
+      "3CAM"
+    ],
+    "seeedstudio": [
+      "0CAM",
+      "2CAM"
+    ],
+    "waveshare": [
+      "1CAM",
+      "2CAM",
+      "DUAL"
+    ]
+  }
+}

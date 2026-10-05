@@ -1,0 +1,131 @@
+---
+title: Supported MIPI Cameras
+description: The MIPI cameras that the Modalix BSP has overlays for, with ordering information, carrier board ports, and sensor modes.
+sidebar_position: 2
+---
+
+import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Cameras';
+
+# Supported MIPI Cameras
+
+This page lists the MIPI CSI-2 cameras that the Modalix BSP supports: which
+camera to order, which carrier board ports have an overlay for it, and which
+sensor modes the drivers provide. To configure a camera on your board, see
+[MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx).
+
+:::note Where this information comes from
+The overlays and sensor modes on this page are taken from the kernel source for
+platform release 2.1.3, in
+[simaai-linux](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60).
+They show what the BSP provides, not what SiMa.ai has validated on every
+carrier board. An item marked **Not confirmed** has no published source yet.
+:::
+
+## Cameras and Ordering {#cameras}
+
+The BSP has overlays for five sensors from three vendors. A vendor often sells
+several modules with the same sensor, and they differ in lane count, connector,
+and lens. Order by part number, not by sensor name.
+
+<CameraList />
+
+- Leopard Imaging lists both part numbers above among its cameras for SiMa.ai.
+- The part numbers of the Arducam and e-con Systems cameras that the BSP
+  supports are not published yet. Ask your SiMa.ai representative before you
+  order.
+- e-con Systems supplies the IMX568 camera in three assemblies: the standard
+  camera, the camera with the e-con FPGA board, and the camera with the e-con
+  KOBE1 FPGA board. Each assembly has its own overlay. Use the overlay that
+  matches your assembly.
+
+## Connect a Camera {#connect}
+
+1. Power off the board before you connect or disconnect a camera.
+2. Connect the camera to a MIPI CSI-2 connector on the carrier board. The
+   Modalix DevKit has two.
+3. Note which port you used. The overlay name includes the port.
+4. Select the overlay for your carrier board, camera, and port, as described in
+   [MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx).
+
+Every overlay on this page uses two MIPI data lanes.
+
+The connector on a camera often differs from the connector on the carrier
+board, so you may need an adapter cable. The cable and adapter part numbers for
+each camera are not published yet. Ask the camera vendor or your SiMa.ai
+representative. For the connectors on the reference carrier board, see
+[Carrier Board Bring-up](../design/som-carrier.mdx).
+
+## Carrier Boards and Ports {#ports}
+
+Release 2.1.3 has an overlay for each combination in this table. The overlay
+file name is `modalix-som-<carrier>-<camera>-<port>.dtbo`, for example
+`modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo`.
+
+<CameraOverlays />
+
+- By default, the Modalix DevKit has the Waveshare carrier board, so use the
+  overlays in the Waveshare column.
+- The number in the port is the MIPI CSI interface of the SoM that the
+  connector is wired to. For example, `1CAM` is CSI1. The numbers differ between
+  carrier boards.
+- `DUAL` sets up both Waveshare ports with the same camera model in one
+  overlay.
+- A dash (—) means that there is no overlay for that combination.
+- The carrier name identifies the vendor of the carrier board, not a board
+  model. To compare carrier boards, see
+  [Third-Party Carrier Boards](../design/third-party-carriers.mdx).
+
+The overlays are in the active boot directory of the board. To list the ones
+that your board has:
+
+```console
+sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
+```
+
+### Overlay Names in Earlier Releases {#earlier-releases}
+
+| Release | Camera overlays |
+| --- | --- |
+| 2.1.0 | `ARDU-IMX477`, `ECON-IMX568`, `ECON-IMX678`, `LI-AR0234`, and `LI-OG05C10` |
+| 2.1.1 | Adds `ECON-KOBE1-IMX568` |
+| 2.1.3 | Renames `ECON-IMX568` to `ECON-FPGA-IMX568`, and adds a new `ECON-IMX568` for the standard camera on the Waveshare carrier board |
+
+:::caution The ECON-IMX568 overlay changed in release 2.1.3
+In releases 2.1.0 and 2.1.1, `ECON-IMX568` is the overlay for the camera with
+the e-con FPGA board. From release 2.1.3, that overlay is named
+`ECON-FPGA-IMX568`, and `ECON-IMX568` is the overlay for the standard camera.
+Check the `dtbos` variable in U-Boot after you update.
+:::
+
+## Sensor Modes {#sensor-modes}
+
+These are the modes that the drivers in release 2.1.3 set up for each camera,
+before any scaling.
+
+<CameraModes />
+
+- The data sheet of a camera can list other modes for the same sensor. Do not
+  assume that a mode works because the data sheet lists it.
+- The modes that your board reports are the authority. To list them, run
+  `cam -c <camera> -I`, as described in
+  [MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx).
+
+### ISP Output {#isp-output}
+
+An application receives the output of the ISP, not the raw sensor data. In
+release 2.1.3, the ISP driver offers its output in the NV12, RGB24, and BGRA32
+formats, and reports the sensor mode sizes as its output sizes.
+
+Output sizes that the ISP scales to are not confirmed. To use a different size
+in a Neat application, resize in the preprocessing of the model, as described
+in
+[Use a MIPI Camera](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input).
+
+## Next Steps
+
+- [MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx):
+  select the overlay and validate the camera.
+- [Use a MIPI Camera](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input):
+  read camera frames in a Neat application.
+- [Carrier Board Bring-up](../design/som-carrier.mdx): cameras on your own
+  carrier board.

@@ -1,0 +1,44 @@
+{
+  "order": 6,
+  "id": "li-ar0234",
+  "vendor": "Leopard Imaging",
+  "sensor": "onsemi AR0234",
+  "overlay": "LI-AR0234",
+  "ordering": {
+    "status": "vendor-listed",
+    "partNumber": "LI-AR0234CSC-MIPI-M12",
+    "url": "https://leopardimaging.com/product-category/sima-ai/"
+  },
+  "lanes": 2,
+  "modes": [
+    {
+      "width": 1920,
+      "height": 1200,
+      "fps": 30,
+      "bitDepth": 12
+    },
+    {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "bitDepth": 12
+    }
+  ],
+  "overlays": {
+    "connectech": [
+      "0CAM",
+      "1CAM",
+      "2CAM",
+      "3CAM"
+    ],
+    "seeedstudio": [
+      "0CAM",
+      "2CAM"
+    ],
+    "waveshare": [
+      "1CAM",
+      "2CAM",
+      "DUAL"
+    ]
+  }
+}

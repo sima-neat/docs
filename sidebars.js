@@ -61,6 +61,7 @@ const sidebars = {
     ]),
     section('Interfaces & Peripherals', undefined, [
       'interfaces/low-speed-io',
+      'interfaces/supported-cameras',
       'getting-started/standalone-mode/mipi-camera-interfaces',
       'getting-started/standalone-mode/nvme-storage',
       'reference/tech-notes/bluetooth',

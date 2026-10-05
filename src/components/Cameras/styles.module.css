@@ -1,0 +1,15 @@
+.note {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.unconfirmed {
+  color: var(--ifm-color-emphasis-700);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
