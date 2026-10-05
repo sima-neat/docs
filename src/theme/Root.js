@@ -10,7 +10,7 @@ const LOCALIZED_UI = {
     design: "Design",
     software: "Build eLxr",
     deploy: "Flash & Update",
-    references: "References",
+    references: "Reference Documents",
     webSerial: "Web Serial Console",
     quickStart: "Quick Start",
     buyDevkit: "Buy Your DevKit",
