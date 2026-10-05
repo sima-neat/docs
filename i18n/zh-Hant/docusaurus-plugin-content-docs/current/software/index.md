@@ -20,7 +20,20 @@ SiMa.ai BSP 包含：
 
 Modalix BSP 適用於 Modalix DevKit、Modalix Early Access 套件以及 Modalix PCIe 卡。它建構於 Debian 衍生發行版 [eLxr](https://elxr.org/) 之上。使用者空間透過 `apt` 管理，因此自訂 Modalix 映像檔比較接近封裝 Debian 軟體，而不是撰寫 Yocto recipe。若要將現有的 Yocto DevKit 轉換為 eLxr，請參閱[轉換為 eLxr](../reference/tech-notes/elxr-conversion.mdx)。
 
-原始碼：[simaai-linux](https://github.com/SiMa-ai/simaai-linux)（核心與 device tree）以及 [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)（U-Boot）。
+原始碼：[simaai-linux](https://github.com/SiMa-ai/simaai-linux)（核心與 device tree）、[sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)（U-Boot）以及 [meta-simaai](https://github.com/SiMa-ai/meta-simaai)（Yocto layer）。
+
+## eLxr 或 Yocto {#elxr-or-yocto}
+
+電路板硬體啟動建議採用 eLxr。您也可以使用 meta-simaai layer 及其[映像檔建置手冊](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)，以 Yocto 進行硬體啟動。兩者皆以相同的核心設定，從相同的核心與 U-Boot 原始碼建置，因此驅動程式與 device tree 的工作成果可以直接沿用。
+
+| 工作 | eLxr（建議） | Yocto |
+| --- | --- | --- |
+| 建置核心、U-Boot、device tree、overlay 與核心模組 | [從原始碼建置 BSP](./build-from-source.mdx) | [映像檔建置手冊](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
+| 新增使用者空間軟體 | 使用 `apt` 安裝套件 | 撰寫 recipe |
+| 從原始碼建置完整映像檔 | 尚未提供文件 | [映像檔建置手冊](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)（最小映像檔） |
+| 安全開機與佈建 | 尚未提供文件 | 尚未提供文件 |
+
+如果您現在就需要從原始碼建置完整映像檔，請選擇 Yocto；否則請使用 eLxr。
 
 ## BSP 原始碼的用途
 
@@ -44,6 +57,7 @@ Modalix BSP 適用於 Modalix DevKit、Modalix Early Access 套件以及 Modalix
 | Modalix 建置容器 | [Dockerfile.modalix](./build-from-source.mdx#set-up-the-build-container) |
 | Linux 核心原始碼 | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | U-Boot 原始碼 | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| Yocto layer，包含各電路板專用的 overlay 原始檔 | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 
 ## 本節內容
 

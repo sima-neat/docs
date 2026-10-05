@@ -159,8 +159,11 @@ SiMa Modalix 디바이스 · DDR · SPI 플래시 · eMMC 플래시 · USB 컨�
   업스트림 커널 문서.
 - 커널 트리의 [오버레이 예제](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays).
 
-보드별 오버레이 소스(`.dtso`)는 BSP 저장소의
-`meta-simaai/recipes-kernel/oot-dtbo/files/` 아래에 있습니다.
+보드별 오버레이 소스(`.dtso`)는 Yocto 레이어인
+[meta-simaai](https://github.com/SiMa-ai/meta-simaai)의
+[`recipes-kernel/oot-dtbo/files`](https://github.com/SiMa-ai/meta-simaai/tree/master/recipes-kernel/oot-dtbo/files) 아래에 있습니다.
+보드 브링업에는 eLxr를 권장합니다. Yocto를 사용한 브링업과의 비교는
+[eLxr 또는 Yocto](../software/index.md#elxr-or-yocto)를 참조하십시오.
 
 ## 카메라 {#cameras}
 
@@ -210,6 +213,7 @@ Linux가 카메라 전원 레일의 존재와 전원 공급 여부를 알 수 �
 | 커널, 디바이스 트리 및 오버레이 빌드 | [소스에서 BSP 빌드](../software/build-from-source.mdx) |
 | Modalix 디바이스 트리 | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 | 오버레이 예제 | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Yocto 레이어 및 보드별 오버레이 소스 | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 | 디바이스 트리 사용 모델 | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
 | 오버레이 참고 사항 | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
 

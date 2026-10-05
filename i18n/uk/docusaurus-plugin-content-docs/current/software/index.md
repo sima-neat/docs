@@ -20,7 +20,20 @@ BSP від SiMa.ai містить:
 
 Modalix BSP призначений для Modalix DevKit, комплектів Modalix Early Access і PCIe-карти Modalix. Він побудований на [eLxr](https://elxr.org/) — дистрибутиві, похідному від Debian. Простір користувача керується за допомогою `apt`, тож налаштування образів Modalix більше схоже на пакування програмного забезпечення для Debian, ніж на написання рецептів Yocto. Щоб перевести наявний Yocto DevKit на eLxr, див. [Перехід на eLxr](../reference/tech-notes/elxr-conversion.mdx).
 
-Вихідний код: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (ядро та дерева пристроїв) і [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot).
+Вихідний код: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (ядро та дерева пристроїв), [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot) і [meta-simaai](https://github.com/SiMa-ai/meta-simaai) (шар Yocto).
+
+## eLxr чи Yocto {#elxr-or-yocto}
+
+Для запуску плати рекомендовано використовувати eLxr. Плату також можна запустити з Yocto за допомогою шару meta-simaai і його [посібника зі збирання образу](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst). Обидва шляхи збирають ті самі вихідні коди ядра та U-Boot з тією самою конфігурацією ядра, тому напрацювання щодо драйверів і дерева пристроїв переносяться без змін.
+
+| Завдання | eLxr (рекомендовано) | Yocto |
+| --- | --- | --- |
+| Збирання ядра, U-Boot, дерев пристроїв, оверлеїв і модулів ядра | [Збирання BSP з вихідного коду](./build-from-source.mdx) | [Посібник зі збирання образу](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
+| Додавання програмного забезпечення простору користувача | Встановлення пакетів за допомогою `apt` | Написання рецептів |
+| Збирання повного образу з вихідного коду | Ще не задокументовано | [Посібник зі збирання образу](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) (мінімальний образ) |
+| Безпечне завантаження та ініціалізація | Ще не задокументовано | Ще не задокументовано |
+
+Якщо вам уже зараз потрібно зібрати повний образ із вихідного коду, оберіть Yocto. В іншому разі використовуйте eLxr.
 
 ## Що можна зробити з вихідним кодом BSP
 
@@ -45,6 +58,7 @@ Modalix BSP призначений для Modalix DevKit, комплектів M
 | Контейнер збирання Modalix | [Dockerfile.modalix](./build-from-source.mdx#set-up-the-build-container) |
 | Вихідний код ядра Linux | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | Вихідний код U-Boot | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| Шар Yocto з вихідними файлами оверлеїв для конкретних плат | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 
 ## У цьому розділі
 

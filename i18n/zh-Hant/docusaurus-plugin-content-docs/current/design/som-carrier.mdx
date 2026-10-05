@@ -138,7 +138,7 @@ SiMa Modalix 裝置 · DDR · SPI 快閃記憶體 · eMMC 快閃記憶體 · USB
 - [Device tree 使用模型](https://docs.kernel.org/devicetree/usage-model.html)與 [overlay 說明](https://docs.kernel.org/devicetree/overlay-notes.html)：上游核心文件。
 - 核心原始碼樹中的 [overlay 範例](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)。
 
-各電路板專用的 overlay 原始檔（`.dtso`）位於 BSP 儲存庫的 `meta-simaai/recipes-kernel/oot-dtbo/files/` 下。
+各電路板專用的 overlay 原始檔（`.dtso`）位於 Yocto layer [meta-simaai](https://github.com/SiMa-ai/meta-simaai) 的 [`recipes-kernel/oot-dtbo/files`](https://github.com/SiMa-ai/meta-simaai/tree/master/recipes-kernel/oot-dtbo/files) 下。電路板硬體啟動建議採用 eLxr。若要與使用 Yocto 進行硬體啟動的方式比較，請參閱 [eLxr 或 Yocto](../software/index.md#elxr-or-yocto)。
 
 ## 相機 {#cameras}
 
@@ -181,6 +181,7 @@ SiMa Modalix 裝置 · DDR · SPI 快閃記憶體 · eMMC 快閃記憶體 · USB
 | 建置核心、device tree 與 overlay | [從原始碼建置 BSP](../software/build-from-source.mdx) |
 | Modalix device tree | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 | 範例 overlay | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Yocto layer 與各電路板專用的 overlay 原始檔 | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 | Device tree 使用模型 | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
 | Overlay 說明 | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
 

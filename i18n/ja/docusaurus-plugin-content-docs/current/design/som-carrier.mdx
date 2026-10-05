@@ -159,8 +159,11 @@ SiMa Modalix デバイス · DDR · SPI フラッシュ · eMMC フラッシュ 
   アップストリームのカーネルドキュメント。
 - カーネルツリー内の[オーバーレイの例](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)。
 
-ボード固有のオーバーレイソース（`.dtso`）は、BSP リポジトリの
-`meta-simaai/recipes-kernel/oot-dtbo/files/` にあります。
+ボード固有のオーバーレイソース（`.dtso`）は、Yocto レイヤー
+[meta-simaai](https://github.com/SiMa-ai/meta-simaai) の
+[`recipes-kernel/oot-dtbo/files`](https://github.com/SiMa-ai/meta-simaai/tree/master/recipes-kernel/oot-dtbo/files) にあります。
+ボードの立ち上げには eLxr を推奨します。Yocto での立ち上げとの比較については、
+[eLxr と Yocto](../software/index.md#elxr-or-yocto) を参照してください。
 
 ## カメラ {#cameras}
 
@@ -209,6 +212,7 @@ ISP の構成については、ここではまだ説明していません。
 | カーネル、デバイスツリー、オーバーレイのビルド | [BSP をソースからビルドする](../software/build-from-source.mdx) |
 | Modalix デバイスツリー | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 | オーバーレイの例 | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Yocto レイヤーとボード固有のオーバーレイソース | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 | デバイスツリーの使用モデル | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
 | オーバーレイに関する注記 | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
 

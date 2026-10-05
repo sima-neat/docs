@@ -20,7 +20,20 @@ SiMa.ai の BSP には次のものが含まれます。
 
 Modalix BSP は、Modalix DevKit、Modalix Early Access キット、および Modalix PCIe カードを対象としています。Debian 派生のディストリビューションである [eLxr](https://elxr.org/) をベースに構築されています。ユーザー空間は `apt` で管理されるため、Modalix イメージのカスタマイズは、Yocto レシピの作成よりも Debian ソフトウェアのパッケージングに近い作業になります。既存の Yocto DevKit を eLxr に変換するには、[eLxr への変換](../reference/tech-notes/elxr-conversion.mdx)を参照してください。
 
-ソース：[simaai-linux](https://github.com/SiMa-ai/simaai-linux)（カーネルとデバイスツリー）および [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)（U-Boot）。
+ソース：[simaai-linux](https://github.com/SiMa-ai/simaai-linux)（カーネルとデバイスツリー）、[sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)（U-Boot）、および [meta-simaai](https://github.com/SiMa-ai/meta-simaai)（Yocto レイヤー）。
+
+## eLxr と Yocto {#elxr-or-yocto}
+
+ボードの立ち上げには eLxr を推奨します。meta-simaai レイヤーとその[イメージビルドマニュアル](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)を使用して、Yocto でボードを立ち上げることもできます。どちらも同じカーネルと U-Boot のソースを同じカーネル構成でビルドするため、ドライバーやデバイスツリーの作業はそのまま引き継げます。
+
+| 作業 | eLxr（推奨） | Yocto |
+| --- | --- | --- |
+| カーネル、U-Boot、デバイスツリー、オーバーレイ、カーネルモジュールのビルド | [BSP をソースからビルドする](./build-from-source.mdx) | [イメージビルドマニュアル](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
+| ユーザー空間ソフトウェアの追加 | `apt` でパッケージをインストール | レシピを作成 |
+| ソースから完全なイメージをビルド | まだ文書化されていません | [イメージビルドマニュアル](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)（最小イメージ） |
+| セキュアブートとプロビジョニング | まだ文書化されていません | まだ文書化されていません |
+
+現時点でソースから完全なイメージをビルドする必要がある場合は Yocto を選択してください。それ以外の場合は eLxr を使用してください。
 
 ## BSP ソースでできること
 
@@ -45,6 +58,7 @@ NDA や営業窓口への問い合わせは必要ありません。
 | Modalix ビルドコンテナー | [Dockerfile.modalix](./build-from-source.mdx#set-up-the-build-container) |
 | Linux カーネルソース | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | U-Boot ソース | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| Yocto レイヤー（ボード固有のオーバーレイソースを含む） | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 
 ## このセクションの内容
 

@@ -20,7 +20,20 @@ A SiMa.ai BSP contains:
 
 The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](../reference/tech-notes/elxr-conversion.mdx).
 
-Sources: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (kernel and device trees) and [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot).
+Sources: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (kernel and device trees), [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot), and [meta-simaai](https://github.com/SiMa-ai/meta-simaai) (Yocto layer).
+
+## eLxr or Yocto {#elxr-or-yocto}
+
+eLxr is the preferred path for board bring-up. You can also bring up a board with Yocto, using the meta-simaai layer and its [image build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst). Both build from the same kernel and U-Boot sources with the same kernel configuration, so driver and device-tree work carries over.
+
+| Task | eLxr (preferred) | Yocto |
+| --- | --- | --- |
+| Build the kernel, U-Boot, device trees, overlays, and kernel modules | [Build the BSP from Source](./build-from-source.mdx) | [Image build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
+| Add userspace software | Install packages with `apt` | Write recipes |
+| Build a complete image from source | Not yet documented | [Image build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) (minimal image) |
+| Secure boot and provisioning | Not yet documented | Not yet documented |
+
+Choose Yocto if you need to build a complete image from source today. Otherwise, use eLxr.
 
 ## What You Can Do with the BSP Sources
 
@@ -45,6 +58,7 @@ own drivers do not require an NDA or a sales enquiry.
 | Modalix build container | [Dockerfile.modalix](./build-from-source.mdx#set-up-the-build-container) |
 | Linux kernel source | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | U-Boot source | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| Yocto layer, with board-specific overlay sources | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 
 ## In This Section
 

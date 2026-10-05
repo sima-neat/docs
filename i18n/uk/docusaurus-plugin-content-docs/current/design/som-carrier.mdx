@@ -163,8 +163,11 @@ Ethernet PHY · відеопроцесор HDMI
 - [Приклади оверлеїв](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)
   у дереві ядра.
 
-Вихідні файли оверлеїв для конкретних плат (`.dtso`) зберігаються в репозиторії BSP у
-`meta-simaai/recipes-kernel/oot-dtbo/files/`.
+Вихідні файли оверлеїв для конкретних плат (`.dtso`) зберігаються в шарі Yocto
+[meta-simaai](https://github.com/SiMa-ai/meta-simaai), у каталозі
+[`recipes-kernel/oot-dtbo/files`](https://github.com/SiMa-ai/meta-simaai/tree/master/recipes-kernel/oot-dtbo/files).
+Для запуску плати рекомендовано використовувати eLxr. Порівняння із запуском плати з Yocto
+наведено в розділі [eLxr чи Yocto](../software/index.md#elxr-or-yocto).
 
 ## Камери {#cameras}
 
@@ -214,6 +217,7 @@ Ethernet PHY · відеопроцесор HDMI
 | Збирання ядра, дерев пристроїв і оверлеїв | [Збирання BSP з вихідного коду](../software/build-from-source.mdx) |
 | Дерева пристроїв Modalix | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 | Приклади оверлеїв | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Шар Yocto та вихідні файли оверлеїв для конкретних плат | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 | Модель використання дерева пристроїв | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
 | Примітки щодо оверлеїв | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
 

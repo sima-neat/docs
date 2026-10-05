@@ -20,7 +20,20 @@ SiMa.ai BSP는 다음으로 구성됩니다.
 
 Modalix BSP는 Modalix DevKit, Modalix Early Access 키트 및 Modalix PCIe 카드를 대상으로 합니다. 이 BSP는 Debian에서 파생된 배포판인 [eLxr](https://elxr.org/)을 기반으로 합니다. 사용자 공간은 `apt`로 관리되므로, Modalix 이미지를 사용자 지정하는 작업은 Yocto 레시피 작성보다는 Debian 소프트웨어 패키징에 가깝습니다. 기존 Yocto DevKit을 eLxr로 변환하려면 [eLxr로 변환](../reference/tech-notes/elxr-conversion.mdx)을 참조하십시오.
 
-소스: [simaai-linux](https://github.com/SiMa-ai/simaai-linux)(커널 및 디바이스 트리), [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)(U-Boot).
+소스: [simaai-linux](https://github.com/SiMa-ai/simaai-linux)(커널 및 디바이스 트리), [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)(U-Boot), [meta-simaai](https://github.com/SiMa-ai/meta-simaai)(Yocto 레이어).
+
+## eLxr 또는 Yocto {#elxr-or-yocto}
+
+보드 브링업에는 eLxr를 권장합니다. meta-simaai 레이어와 해당 [이미지 빌드 매뉴얼](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)을 사용하여 Yocto로 보드를 브링업할 수도 있습니다. 두 경로 모두 동일한 커널 및 U-Boot 소스를 동일한 커널 구성으로 빌드하므로, 드라이버와 디바이스 트리 작업은 그대로 이어서 사용할 수 있습니다.
+
+| 작업 | eLxr(권장) | Yocto |
+| --- | --- | --- |
+| 커널, U-Boot, 디바이스 트리, 오버레이 및 커널 모듈 빌드 | [소스에서 BSP 빌드](./build-from-source.mdx) | [이미지 빌드 매뉴얼](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
+| 사용자 공간 소프트웨어 추가 | `apt`로 패키지 설치 | 레시피 작성 |
+| 소스에서 전체 이미지 빌드 | 아직 문서화되지 않음 | [이미지 빌드 매뉴얼](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)(최소 이미지) |
+| 보안 부팅 및 프로비저닝 | 아직 문서화되지 않음 | 아직 문서화되지 않음 |
+
+지금 소스에서 전체 이미지를 빌드해야 한다면 Yocto를 선택하십시오. 그렇지 않으면 eLxr를 사용하십시오.
 
 ## BSP 소스로 할 수 있는 작업
 
@@ -45,6 +58,7 @@ BSP 소스는 다음과 같은 경우에 유용합니다.
 | Modalix 빌드 컨테이너 | [Dockerfile.modalix](./build-from-source.mdx#set-up-the-build-container) |
 | Linux 커널 소스 | [simaai-linux](https://github.com/SiMa-ai/simaai-linux) |
 | U-Boot 소스 | [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) |
+| Yocto 레이어(보드별 오버레이 소스 포함) | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 
 ## 이 섹션의 내용
 

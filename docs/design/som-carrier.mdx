@@ -163,8 +163,11 @@ several carrier boards.
 - [Example overlays](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)
   in the kernel tree.
 
-Board-specific overlay sources (`.dtso`) live in the BSP repository under
-`meta-simaai/recipes-kernel/oot-dtbo/files/`.
+Board-specific overlay sources (`.dtso`) are in the
+[meta-simaai](https://github.com/SiMa-ai/meta-simaai) Yocto layer, under
+[`recipes-kernel/oot-dtbo/files`](https://github.com/SiMa-ai/meta-simaai/tree/master/recipes-kernel/oot-dtbo/files).
+eLxr is the preferred path for board bring-up. To compare it with bringing up
+a board with Yocto, see [eLxr or Yocto](../software/index.md#elxr-or-yocto).
 
 ## Cameras {#cameras}
 
@@ -214,6 +217,7 @@ data highway and ISP configuration are not yet documented here.
 | Building the kernel, device trees and overlays | [Build the BSP from Source](../software/build-from-source.mdx) |
 | Modalix device trees | [`arch/arm64/boot/dts/simaai`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai) |
 | Example overlays | [`dts/simaai/overlays`](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays) |
+| Yocto layer and board-specific overlay sources | [meta-simaai](https://github.com/SiMa-ai/meta-simaai) |
 | Device tree usage model | [docs.kernel.org](https://docs.kernel.org/devicetree/usage-model.html) |
 | Overlay notes | [docs.kernel.org](https://docs.kernel.org/devicetree/overlay-notes.html) |
 
