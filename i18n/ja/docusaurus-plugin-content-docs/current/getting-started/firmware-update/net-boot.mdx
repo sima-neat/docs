@@ -14,6 +14,10 @@ sidebar_position: 2
 - 新しい基板を導入するにあたり、内部ストレージデバイスの摩耗を避けたいと考えているのですね。
 - あなたは、Yocto LinuxのModalix DevKitをeLxrに変換するか、またはeLxrからYocto Linuxに戻しています。変換に特有の前提条件については、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)を参照してください。
 
+:::note
+このガイドでは SiMa.ai が提供するイメージを使用します。また、ボード上で U-Boot プロンプトが動作している必要があります。独自にビルドしたイメージのインストール方法は、このガイドでは説明していません。その場合は、[イメージを eMMC に書き込む](/hardware/deployment/flash-image)を参照してください。
+:::
+
 `sima-cli bootimg`と組み合わせて、`--netboot`オプションを使用します。これにより、ターゲットボード用のブートイメージがダウンロードされ、ホスト上の組み込みTFTPサーバーから提供されます。次に、U-BootでDevKitを構成し、そのTFTPサーバーからブートするように設定し、新しいイメージをeMMCに書き込みます。
 
 <details open>

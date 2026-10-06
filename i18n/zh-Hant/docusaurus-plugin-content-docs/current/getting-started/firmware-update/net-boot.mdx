@@ -14,6 +14,10 @@ sidebar_position: 2
 - 您正在進行新板卡的初始啟動與驗證，並希望避免內部儲存裝置耗損。
 - 您正在將一個 Modalix DevKit 從 Yocto Linux 轉換為 eLxr，或者從 eLxr 轉換回 Yocto Linux。請參閱 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion)，以了解轉換所需的特定先決條件。
 
+:::note
+本指南使用 SiMa.ai 提供的映像檔，且電路板上必須有可運作的 U-Boot 提示字元。本指南不說明如何安裝您自行建置的映像檔；若有此需求，請參閱[將映像檔燒錄到 eMMC](/hardware/deployment/flash-image)。
+:::
+
 使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像，並從主機上的內建 TFTP 伺服器提供該映像。然後，您可以在 U-Boot 中設定 DevKit，以便從該 TFTP 伺服器啟動，並將新的映像刷入 eMMC。
 
 <details open>
