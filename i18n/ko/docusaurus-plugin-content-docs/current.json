@@ -1,4 +1,8 @@
 {
+  "sidebar.systemDocs.link.For AI Agents": {
+    "message": "AI 에이전트용",
+    "description": "The label for link 'For AI Agents' in sidebar 'systemDocs', linking to '/agents'"
+  },
   "sidebar.systemDocs.category.Evaluate & Use a DevKit": {
     "message": "DevKit 평가 및 사용",
     "description": "The label for category 'Evaluate & Use a DevKit' in sidebar 'systemDocs'"

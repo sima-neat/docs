@@ -7,8 +7,9 @@ sidebar_position: 3
 # Carrier Board Design
 
 The Modalix SoM carries the Modalix SoC, LPDDR5 memory, and power on a module
-with board-to-board connectors. You design a carrier board that the SoM plugs
-into, with the connectors, power input, and interfaces your product needs.
+with board-to-board connectors. The SoM plugs into a carrier board, which has
+the connectors, power input, and interfaces your product needs. You can buy a
+carrier board or design your own.
 
 If you want to place the SoC directly on your own board instead, see
 [Chip-Down Design](./chip-down.md).

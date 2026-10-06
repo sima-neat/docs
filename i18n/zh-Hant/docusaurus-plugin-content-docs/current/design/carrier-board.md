@@ -6,7 +6,7 @@ sidebar_position: 3
 
 # 載板設計
 
-Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板對板連接器的模組上。您要設計的是供 SoM 插入的載板，並在其上配置產品所需的連接器、電源輸入與介面。
+Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板對板連接器的模組上。SoM 會插入載板使用，載板上則配置產品所需的連接器、電源輸入與介面。您可以選購現成的載板，或自行設計。
 
 如果您想改為將 SoC 直接放在自己的電路板上，請參閱[Chip-Down 設計](./chip-down.md)。
 
