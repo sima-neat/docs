@@ -1,5 +1,6 @@
 ---
 title: Chip-Down Design
+sidebar_label: "Design with the SoC — Chip-Down"
 description: Design a board with the Modalix SoC placed directly on it, and get the chip-down design guide and collateral.
 sidebar_position: 2
 ---

@@ -66,10 +66,14 @@ NDA や営業窓口への問い合わせは必要ありません。
   カーネル、U-Boot、デバイスツリー、および成果物のインストール。
 - [リリースの互換性](./release-compatibility.mdx)：各プラットフォームリリースの基になっている
   カーネルと U-Boot のコミット。
-- [キャリアボードの立ち上げ](../design/som-carrier.mdx)：サードパーティ製キャリアボード上での
-  Modalix SoM の動作と、ソフトウェアの適合が必要な箇所。
-- [低速 I/O](../interfaces/low-speed-io.mdx)：SIO ブロック上の GPIO、UART、I2C、SPI と、
-  64 ピンすべてのマッピング。
+- [イメージを eMMC に書き込む](../deployment/flash-image.mdx)：独自ビルドの
+  ボード eMMC への書き込み。
+- [工場でのビルドとテスト](../deployment/factory-build-and-test.mdx)：量産時の
+  ボードへの書き込みとテスト。
+
+BSP の作業に関係するハードウェアのトピックについては、
+[キャリアボードの立ち上げ](../design/som-carrier.mdx)と
+[低速 I/O](../interfaces/low-speed-io.mdx) を参照してください。
 
 まずは [BSP をソースからビルドする](./build-from-source.mdx)から始めてください。Docker ビルド環境、
 カーネルと U-Boot の取得と構成、両者のビルド、ボードへのインストール、そしてデバイスツリー、

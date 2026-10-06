@@ -66,10 +66,14 @@ own drivers do not require an NDA or a sales enquiry.
   kernel, U-Boot, device trees, and installing the artifacts.
 - [Release Compatibility](./release-compatibility.mdx) — the kernel and U-Boot
   commit behind each platform release.
-- [Carrier Board Bring-up](../design/som-carrier.mdx) — running a Modalix SoM on a
-  third-party carrier board, and what needs software adaptation.
-- [Low-Speed I/O](../interfaces/low-speed-io.mdx) — GPIO, UART, I2C and SPI on the SIO
-  blocks, with the full 64-pin mapping.
+- [Flash an Image to eMMC](../deployment/flash-image.mdx) — write your own build to the
+  eMMC of a board.
+- [Factory Build and Test](../deployment/factory-build-and-test.mdx) — program and test
+  boards in production.
+
+For the hardware topics that BSP work depends on, see
+[Carrier Board Bring-up](../design/som-carrier.mdx) and
+[Low-Speed I/O](../interfaces/low-speed-io.mdx).
 
 Start with [Build the BSP from Source](./build-from-source.mdx): it covers the
 Docker build environment, fetching and configuring the kernel and U-Boot, building

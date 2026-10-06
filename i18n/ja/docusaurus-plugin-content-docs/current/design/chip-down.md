@@ -1,5 +1,6 @@
 ---
 title: チップダウン設計
+sidebar_label: "SoC で設計する — チップダウン"
 description: Modalix SoC を直接実装したボードを設計します。チップダウン設計ガイドと関連資料の入手方法も説明します。
 sidebar_position: 2
 ---

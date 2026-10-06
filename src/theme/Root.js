@@ -6,10 +6,11 @@ import {useLocation} from "@docusaurus/router";
 const LOCALIZED_UI = {
   en: {
     hardwareDocs: "Hardware documentation",
-    evaluate: "Evaluate",
-    design: "Design",
-    software: "Build eLxr",
-    deploy: "Flash & Update",
+    devkit: "DevKit",
+    somCarrier: "SoM & Carrier",
+    chipDown: "Chip-Down",
+    systemSoftware: "System Software",
+    cameras: "Cameras",
     references: "Reference Documents",
     webSerial: "Web Serial Console",
     quickStart: "Quick Start",
@@ -17,10 +18,11 @@ const LOCALIZED_UI = {
   },
   ko: {
     hardwareDocs: "하드웨어 문서",
-    evaluate: "평가",
-    design: "설계",
-    software: "eLxr 빌드",
-    deploy: "플래시 및 업데이트",
+    devkit: "DevKit",
+    somCarrier: "SoM 및 캐리어",
+    chipDown: "칩다운",
+    systemSoftware: "시스템 소프트웨어",
+    cameras: "카메라",
     references: "참조",
     webSerial: "웹 시리얼 콘솔",
     quickStart: "빠른 시작",
@@ -28,10 +30,11 @@ const LOCALIZED_UI = {
   },
   ja: {
     hardwareDocs: "ハードウェアドキュメント",
-    evaluate: "評価",
-    design: "設計",
-    software: "eLxr のビルド",
-    deploy: "書き込みと更新",
+    devkit: "DevKit",
+    somCarrier: "SoM とキャリア",
+    chipDown: "チップダウン",
+    systemSoftware: "システムソフトウェア",
+    cameras: "カメラ",
     references: "リファレンス",
     webSerial: "Web シリアルコンソール",
     quickStart: "クイックスタート",
@@ -39,10 +42,11 @@ const LOCALIZED_UI = {
   },
   "zh-Hant": {
     hardwareDocs: "硬體文件",
-    evaluate: "評估",
-    design: "設計",
-    software: "建置 eLxr",
-    deploy: "燒錄與更新",
+    devkit: "DevKit",
+    somCarrier: "SoM 與載板",
+    chipDown: "Chip-Down",
+    systemSoftware: "系統軟體",
+    cameras: "相機",
     references: "參考資料",
     webSerial: "網頁序列主控台",
     quickStart: "快速入門",
@@ -50,16 +54,43 @@ const LOCALIZED_UI = {
   },
   uk: {
     hardwareDocs: "Документація апаратного забезпечення",
-    evaluate: "Оцінка",
-    design: "Проєктування",
-    software: "Збірка eLxr",
-    deploy: "Оновлення",
-    references: "Довідкові матеріали",
+    devkit: "DevKit",
+    somCarrier: "SoM і носій",
+    chipDown: "Chip-Down",
+    systemSoftware: "Системне ПЗ",
+    cameras: "Камери",
+    // Short on purpose: a longer label overflows the bar at 1280px.
+    references: "Довідка",
     webSerial: "Вебконсоль послідовного порту",
     quickStart: "Швидкий старт",
     buyDevkit: "Придбати DevKit",
   },
 };
+
+// Which toolbar section a page belongs to, as the path below /hardware. Pages
+// keep their URLs when the sidebar regroups them (sima-neat/docs#80), so a
+// folder is not a section: the first matching rule wins, most specific first.
+const SECTION_RULES = [
+  ["cameras", "/interfaces/supported-cameras"],
+  ["cameras", "/getting-started/standalone-mode/mipi-camera-interfaces"],
+  ["chipDown", "/design/chip-down"],
+  ["devkit", "/reference/tech-notes/elxr-conversion"],
+  ["devkit", "/reference/tech-notes/bluetooth"],
+  ["references", "/interfaces/low-speed-io"],
+  ["devkit", "/getting-started"],
+  ["devkit", "/devkit"],
+  ["devkit", "/tools"],
+  ["somCarrier", "/design"],
+  ["systemSoftware", "/software"],
+  ["systemSoftware", "/deployment"],
+  ["references", "/reference"],
+];
+
+function sectionForPath(page) {
+  const path = page.replace(/\/+$/, "");
+  const rule = SECTION_RULES.find(([, prefix]) => path === prefix || path.startsWith(`${prefix}/`));
+  return rule ? rule[0] : null;
+}
 
 function useShellLocale() {
   const {i18n} = useDocusaurusContext();
@@ -82,49 +113,18 @@ function HardwareSubnav() {
   const locale = useShellLocale();
   const copy = LOCALIZED_UI[locale] || LOCALIZED_UI.en;
   const hardwareBase = useBaseUrl("/hardware");
-  const gettingStartedBase = useBaseUrl("/hardware/getting-started");
-  const firmwareBase = useBaseUrl("/hardware/getting-started/firmware-update");
-  const devkitBase = useBaseUrl("/hardware/devkit");
-  const toolsBase = useBaseUrl("/hardware/tools");
-  const designBase = useBaseUrl("/hardware/design");
-  const softwareBase = useBaseUrl("/hardware/software");
-  const referenceBase = useBaseUrl("/hardware/reference");
   const path = location.pathname;
-  const deploymentBase = useBaseUrl("/hardware/deployment");
-  // Updating with sima-cli is part of DevKit setup, so it belongs to Evaluate.
-  const simaCliUpdate = path.includes(useBaseUrl("/hardware/getting-started/firmware-update/sima-cli"));
-  const deployActive =
-    (path.includes(firmwareBase) && !simaCliUpdate) || path.includes(deploymentBase);
+  const activeSection = path.startsWith(hardwareBase)
+    ? sectionForPath(path.slice(hardwareBase.length))
+    : null;
 
   const links = [
-    {
-      label: copy.evaluate,
-      href: useBaseUrl("/hardware/getting-started"),
-      active:
-        (path.includes(gettingStartedBase) && !deployActive) ||
-        path.includes(devkitBase) ||
-        path.includes(toolsBase),
-    },
-    {
-      label: copy.design,
-      href: useBaseUrl("/hardware/design"),
-      active: path.includes(designBase),
-    },
-    {
-      label: copy.software,
-      href: useBaseUrl("/hardware/software"),
-      active: path.includes(softwareBase),
-    },
-    {
-      label: copy.deploy,
-      href: useBaseUrl("/hardware/getting-started/firmware-update"),
-      active: deployActive,
-    },
-    {
-      label: copy.references,
-      href: useBaseUrl("/hardware/reference/extra-docs"),
-      active: path.includes(referenceBase),
-    },
+    {id: "devkit", label: copy.devkit, href: useBaseUrl("/hardware/getting-started")},
+    {id: "somCarrier", label: copy.somCarrier, href: useBaseUrl("/hardware/design/carrier-board")},
+    {id: "chipDown", label: copy.chipDown, href: useBaseUrl("/hardware/design/chip-down")},
+    {id: "systemSoftware", label: copy.systemSoftware, href: useBaseUrl("/hardware/software")},
+    {id: "cameras", label: copy.cameras, href: useBaseUrl("/hardware/interfaces/supported-cameras")},
+    {id: "references", label: copy.references, href: useBaseUrl("/hardware/reference/extra-docs")},
   ];
 
   const quickStartHref = useBaseUrl("/tools/qsg/index.html");
@@ -142,8 +142,8 @@ function HardwareSubnav() {
         <div className="docs-subnav__links">
           {links.map((link) => (
             <a
-              key={link.label}
-              className={`docs-subnav__link${link.active ? " docs-subnav__link--active" : ""}`}
+              key={link.id}
+              className={`docs-subnav__link${link.id === activeSection ? " docs-subnav__link--active" : ""}`}
               href={link.href}
             >
               {link.label}

@@ -63,7 +63,9 @@ Modalix BSP 適用於 Modalix DevKit、Modalix Early Access 套件以及 Modalix
 
 - [從原始碼建置 BSP](./build-from-source.mdx)：建置環境、核心、U-Boot、device tree，以及安裝建置成品。
 - [版本相容性](./release-compatibility.mdx)：每個平台版本所對應的核心與 U-Boot commit。
-- [載板硬體啟動](../design/som-carrier.mdx)：在第三方載板上執行 Modalix SoM，以及需要軟體調整的項目。
-- [低速 I/O](../interfaces/low-speed-io.mdx)：SIO 區塊上的 GPIO、UART、I2C 與 SPI，並附完整的 64 腳位對應表。
+- [將映像檔燒錄到 eMMC](../deployment/flash-image.mdx)：將您自行建置的映像檔寫入電路板的 eMMC。
+- [工廠組裝與測試](../deployment/factory-build-and-test.mdx)：在量產環境中燒錄與測試電路板。
+
+與 BSP 工作相關的硬體主題，請參閱[載板硬體啟動](../design/som-carrier.mdx)與[低速 I/O](../interfaces/low-speed-io.mdx)。
 
 請從[從原始碼建置 BSP](./build-from-source.mdx) 開始：該頁面涵蓋 Docker 建置環境、取得與設定核心和 U-Boot、建置兩者、將結果安裝到電路板上，以及使用 device tree、overlay 與樹外（out-of-tree）核心模組。

@@ -66,10 +66,14 @@ BSP 소스는 다음과 같은 경우에 유용합니다.
   디바이스 트리 및 아티팩트 설치.
 - [릴리스 호환성](./release-compatibility.mdx) — 각 플랫폼 릴리스의 기반이 되는
   커널 및 U-Boot 커밋.
-- [캐리어 보드 브링업](../design/som-carrier.mdx) — 타사 캐리어 보드에서 Modalix SoM을
-  실행하는 방법과 소프트웨어 적응이 필요한 부분.
-- [저속 I/O](../interfaces/low-speed-io.mdx) — SIO 블록의 GPIO, UART, I2C 및 SPI와
-  전체 64핀 매핑.
+- [eMMC에 이미지 플래싱](../deployment/flash-image.mdx) — 자체 빌드를 보드의
+  eMMC에 기록.
+- [공장 빌드 및 테스트](../deployment/factory-build-and-test.mdx) — 양산 환경에서의
+  보드 프로그래밍 및 테스트.
+
+BSP 작업과 관련된 하드웨어 주제는
+[캐리어 보드 브링업](../design/som-carrier.mdx) 및
+[저속 I/O](../interfaces/low-speed-io.mdx)를 참조하십시오.
 
 [소스에서 BSP 빌드](./build-from-source.mdx)부터 시작하십시오. 이 문서는 Docker 빌드
 환경, 커널 및 U-Boot 소스 가져오기와 구성, 두 구성 요소의 빌드, 결과물의 보드 설치,

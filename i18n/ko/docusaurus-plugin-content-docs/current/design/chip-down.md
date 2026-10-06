@@ -1,5 +1,6 @@
 ---
 title: 칩다운 설계
+sidebar_label: "SoC로 설계하기 — 칩다운"
 description: Modalix SoC를 직접 실장한 보드를 설계하고, 칩다운 설계 가이드와 관련 자료를 확보합니다.
 sidebar_position: 2
 ---

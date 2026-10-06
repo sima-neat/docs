@@ -1,5 +1,6 @@
 ---
 title: Chip-Down 設計
+sidebar_label: "以 SoC 進行設計 — Chip-Down"
 description: 設計直接搭載 Modalix SoC 的電路板，並取得 chip-down 設計指南與技術資料。
 sidebar_position: 2
 ---

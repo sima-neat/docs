@@ -1,11 +1,15 @@
 {
-  "sidebar.systemDocs.category.Evaluate with a DevKit": {
-    "message": "使用 DevKit 評估",
-    "description": "The label for category 'Evaluate with a DevKit' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate & Use a DevKit": {
+    "message": "評估與使用 DevKit",
+    "description": "The label for category 'Evaluate & Use a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "快速入門指南",
     "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "DevKit 型號",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Standalone Mode": {
     "message": "獨立模式",
@@ -15,29 +19,21 @@
     "message": "PCIe 模式",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.DevKit Variants": {
-    "message": "DevKit 型號",
-    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Update & Recover SiMa Images": {
+    "message": "更新與復原 SiMa 映像檔",
+    "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Design Your Hardware": {
-    "message": "設計您的硬體",
-    "description": "The label for category 'Design Your Hardware' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
+    "message": "整合 SoM 與載板",
+    "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Carrier Board Design": {
-    "message": "載板設計",
-    "description": "The label for category 'Carrier Board Design' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build & Deploy Custom System Software": {
+    "message": "建置與部署自訂系統軟體",
+    "description": "The label for category 'Build & Deploy Custom System Software' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Build & Customize eLxr": {
-    "message": "建置與自訂 eLxr",
-    "description": "The label for category 'Build & Customize eLxr' in sidebar 'systemDocs'"
-  },
-  "sidebar.systemDocs.category.Interfaces & Peripherals": {
-    "message": "介面與周邊裝置",
-    "description": "The label for category 'Interfaces & Peripherals' in sidebar 'systemDocs'"
-  },
-  "sidebar.systemDocs.category.Flash, Update & Recover": {
-    "message": "燒錄、更新與復原",
-    "description": "The label for category 'Flash, Update & Recover' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Integrate Cameras & Tune the ISP": {
+    "message": "整合相機與調校 ISP",
+    "description": "The label for category 'Integrate Cameras & Tune the ISP' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Reference & Downloads": {
     "message": "參考資料與下載",
