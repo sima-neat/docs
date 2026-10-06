@@ -69,6 +69,7 @@ const sidebars = {
       'software/release-compatibility',
       'software/build-from-source',
       'software/device-tree',
+      'software/yocto-image',
       'deployment/flash-image',
       'deployment/factory-build-and-test',
     ]),

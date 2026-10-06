@@ -1,0 +1,122 @@
+---
+title: Yocto で完全なイメージをビルドする
+description: 公開されている Yocto レイヤーを使用して、Modalix の完全なイメージをソースからビルドし、書き込むファイルを確認します。
+sidebar_position: 5
+---
+
+# Yocto で完全なイメージをビルドする
+
+公開されている Yocto レイヤー [meta-simaai](https://github.com/SiMa-ai/meta-simaai) を使用すると、
+Modalix ボード用の完全なイメージをソースからビルドできます。1 回のビルドで、U-Boot、カーネル、
+デバイスツリーとオーバーレイ、SiMa.ai のファームウェア、最小構成のルートファイルシステムが、
+書き込み可能な 1 つのファイルとして生成されます。イメージ全体を自分で作成する必要がある場合に
+使用してください。すでに起動するボードでカーネルやデバイスツリーを変更する場合は、
+[BSP をソースからビルドする](./build-from-source.mdx)
+のほうが早く済みます。
+
+:::caution[ハードウェアでは未検証]
+このページは、Yocto レイヤーに含まれるビルドマニュアルを要約したものです。このページのために
+ビルドを実行したわけではなく、生成されたイメージをボードで起動して確認してもいません。
+:::
+
+:::note
+独自のソースから完全な eLxr イメージをビルドする方法は、まだ文書化されていません。
+ボードの立ち上げには、引き続き eLxr を推奨します。
+[eLxr と Yocto](./index.md#elxr-or-yocto) を参照してください。
+:::
+
+## 始める前に {#before-you-start}
+
+- Linux のビルドホストを使用します。レイヤーのマニュアルでは Ubuntu 22.04 を推奨しており、
+  Yocto Project は WSL をサポートしていないとされています。
+- ビルドホストに GitHub の SSH 鍵を設定します。レシピは、SiMa.ai のカーネル、U-Boot、
+  ライブラリのソースを SSH 経由で GitHub から取得します。
+- マニュアルに記載されているホストパッケージをインストールします。
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## レイヤーを取得する {#layers}
+
+このビルドでは、Yocto Project の `scarthgap` リリースを使用します。次のレイヤーを
+1 つのディレクトリにクローンします。
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` および `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+各レイヤーのリポジトリと正確なリビジョンは、レイヤー内の
+[ビルドマニュアル](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
+に記載されています。そのリビジョンを使用してください。SiMa.ai のレイヤーを取得するには、次のようにします。
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## ビルドを設定する {#setup}
+
+このレイヤーには、レイヤーの一覧とビルド構成を設定するテンプレートがあります。
+レイヤーを置いたディレクトリで、次を実行します。
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+最後のコマンドは、ビルドで使用するレイヤーを一覧表示します。`meta-simaai` が
+一覧に含まれていることを確認してください。
+
+## イメージをビルドする {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+テンプレートの既定値は別のボードであるため、コマンドラインで `MACHINE=modalix` を
+指定します。このイメージには、SiMa.ai のファームウェア、カーネルモジュール、OpenSSH、
+swupdate を含む最小構成のルートファイルシステムが含まれます。
+
+## 出力を確認する {#output}
+
+ビルドの出力は、ビルドディレクトリ内の `tmp/deploy/images/modalix` に書き込まれます。
+
+| ファイル | 用途 |
+| --- | --- |
+| `.wic.gz` および `.wic.bmap` | 完全な eMMC イメージとそのブロックマップ。これらを書き込みます。 |
+| `.rootfs.ext4.gz` | ルートファイルシステムのみ |
+| `.cpio.gz` | ネットワークから起動するための、初期 RAM ディスク形式のルートファイルシステム |
+| `Image`、`u-boot.bin`、`.dtb`、`overlays/*.dtbo` | カーネル、U-Boot、デバイスツリー、オーバーレイ |
+
+## パーティション構成 {#partitions}
+
+eMMC イメージには、GPT パーティションテーブルに次のパーティションがあります。
+
+| パーティション | サイズ | 内容 |
+| --- | --- | --- |
+| `u-boot0` および `u-boot1` | 各 2 MB | U-Boot（2 つのコピー） |
+| `boot` | 512 MB、FAT | `boot-0` および `boot-1` ディレクトリ。それぞれにカーネル、デバイスツリー、オーバーレイが含まれます |
+| `platform0` および `platform1` | 各 2 GB、ext4 | ルートファイルシステム（2 つのコピー） |
+| `userdata` | 約 10 GB、ext4 | ユーザーデータ |
+
+## イメージを書き込む {#flash}
+
+[イメージを eMMC に書き込む](../deployment/flash-image.mdx)の説明に従って、
+`.wic.gz` ファイルを `.wic.bmap` ファイルとともにボードの eMMC に書き込みます。
+
+## 次のステップ
+
+- [イメージを eMMC に書き込む](../deployment/flash-image.mdx)：ネットワークまたは SD カードから
+  ボードを起動し、イメージを書き込みます。
+- [ボードサポートパッケージ](./index.md)：ソースと、eLxr と Yocto の
+  比較。
+- [リリースの互換性](./release-compatibility.mdx)：各プラットフォームリリースの基になっている
+  カーネルと U-Boot のコミット。

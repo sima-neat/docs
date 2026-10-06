@@ -251,7 +251,7 @@ sima$ boot
 **燒錄完整映像檔。** 若要將相同的建置安裝到多塊電路板上（包括量產環境），請讓每塊電路板從網路或 SD 卡開機，並將完整映像檔寫入其 eMMC。請參閱[將映像檔燒錄到 eMMC](/hardware/deployment/flash-image)，完整的量產流程則請參閱[工廠組裝與測試](/hardware/deployment/factory-build-and-test)。
 
 :::caution[更新格式在 3.0 版有所變更]
-平台版本 2.x 與 3.0 使用不同的更新機制：3.0 改用 swupdate。本頁目前尚未說明如何以您自己的核心與 U-Boot 建置組裝完整映像檔或更新套件。
+平台版本 2.x 與 3.0 使用不同的更新機制：3.0 改用 swupdate。若要從原始碼建置完整映像檔，請參閱[使用 Yocto 建置完整映像檔](./yocto-image.mdx)。目前尚未提供組裝完整 eLxr 映像檔的說明。
 :::
 
 [韌體更新](/hardware/getting-started/firmware-update)會安裝 SiMa.ai 的標準映像檔。請用它將電路板還原到已知版本，而不是用來部署您自己的建置：它會覆寫您先前安裝的內容。

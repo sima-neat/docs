@@ -1,0 +1,123 @@
+---
+title: Збирання повного образу за допомогою Yocto
+description: Зберіть повний образ Modalix із вихідного коду за допомогою загальнодоступного шару Yocto та знайдіть файли для прошивання.
+sidebar_position: 5
+---
+
+# Збирання повного образу за допомогою Yocto
+
+Загальнодоступний шар Yocto, [meta-simaai](https://github.com/SiMa-ai/meta-simaai),
+збирає повний образ для плати Modalix із вихідного коду. Одна збірка створює
+U-Boot, ядро, дерева пристроїв та оверлеї, мікропрограми SiMa.ai і
+мінімальну кореневу файлову систему в одному файлі, який можна прошити. Використовуйте його,
+коли потрібно створити весь образ самостійно. Щоб змінити ядро або дерево пристроїв на
+платі, яка вже завантажується, швидше скористатися розділом
+[Збирання BSP з вихідного коду](./build-from-source.mdx).
+
+:::caution[Ще не перевірено на обладнанні]
+Ця сторінка підсумовує посібник зі збирання, що міститься в шарі Yocto. Збірку для цієї
+сторінки не виконували, а отриманий образ не завантажували на платі.
+:::
+
+:::note
+Збирання повного образу eLxr із власного вихідного коду ще не задокументовано.
+Для запуску плати, як і раніше, рекомендовано eLxr. Див. розділ
+[eLxr чи Yocto](./index.md#elxr-or-yocto).
+:::
+
+## Перш ніж почати {#before-you-start}
+
+- Використовуйте хост збирання з Linux. Посібник шару рекомендує Ubuntu 22.04 і
+  зазначає, що Yocto Project не підтримує WSL.
+- Розмістіть на хості збирання SSH-ключ GitHub. Рецепти отримують вихідний код ядра,
+  U-Boot і бібліотек SiMa.ai з GitHub через SSH.
+- Установіть пакети хоста, перелічені в посібнику:
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## Отримання шарів {#layers}
+
+Збірка використовує випуск `scarthgap` проєкту Yocto. Клонуйте ці шари
+в один каталог:
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` і `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+Репозиторій і точну ревізію кожного з них наведено в
+[посібнику зі збирання](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
+цього шару. Використовуйте саме ці ревізії. Щоб отримати шар SiMa.ai:
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## Налаштування збірки {#setup}
+
+Шар має шаблон, який заповнює перелік шарів і конфігурацію збірки.
+З каталогу, що містить шари:
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+Остання команда показує шари, які використовує збірка. Перевірте, що `meta-simaai`
+є в переліку.
+
+## Збирання образу {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+Задайте `MACHINE=modalix` у командному рядку, оскільки типове значення шаблону — це
+інша плата. Образ містить мінімальну кореневу файлову систему з мікропрограмами
+SiMa.ai, модулями ядра, OpenSSH і swupdate.
+
+## Де знайти результат {#output}
+
+Збірка записує результат до `tmp/deploy/images/modalix` у каталозі
+збирання.
+
+| Файл | Призначення |
+| --- | --- |
+| `.wic.gz` і `.wic.bmap` | Повний образ eMMC та його карта блоків. Прошивайте саме їх. |
+| `.rootfs.ext4.gz` | Лише коренева файлова система |
+| `.cpio.gz` | Коренева файлова система як початковий RAM-диск, для завантаження з мережі |
+| `Image`, `u-boot.bin`, `.dtb` і `overlays/*.dtbo` | Ядро, U-Boot, дерева пристроїв та оверлеї |
+
+## Схема розділів {#partitions}
+
+Образ eMMC має такі розділи в таблиці розділів GPT:
+
+| Розділ | Розмір | Вміст |
+| --- | --- | --- |
+| `u-boot0` і `u-boot1` | По 2 МБ | U-Boot, у двох копіях |
+| `boot` | 512 МБ, FAT | Каталоги `boot-0` і `boot-1`, кожен із ядром, деревами пристроїв та оверлеями |
+| `platform0` і `platform1` | По 2 ГБ, ext4 | Коренева файлова система, у двох копіях |
+| `userdata` | Близько 10 ГБ, ext4 | Дані користувача |
+
+## Прошивання образу {#flash}
+
+Запишіть файл `.wic.gz` на eMMC плати разом із його файлом `.wic.bmap`, як
+описано в розділі [Прошивання образу на eMMC](../deployment/flash-image.mdx).
+
+## Наступні кроки
+
+- [Прошивання образу на eMMC](../deployment/flash-image.mdx): завантаження плати з
+  мережі або SD-карти та запис образу.
+- [Пакет підтримки плати](./index.md): вихідний код і порівняння eLxr та
+  Yocto.
+- [Сумісність випусків](./release-compatibility.mdx): коміти ядра та U-Boot,
+  що відповідають кожному випуску платформи.

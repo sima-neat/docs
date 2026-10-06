@@ -1,0 +1,100 @@
+---
+title: 使用 Yocto 建置完整映像檔
+description: 使用公開的 Yocto layer 從原始碼建置完整的 Modalix 映像檔，並找出要燒錄的檔案。
+sidebar_position: 5
+---
+
+# 使用 Yocto 建置完整映像檔
+
+公開的 Yocto layer [meta-simaai](https://github.com/SiMa-ai/meta-simaai) 可從原始碼為 Modalix 電路板建置完整的映像檔。一次建置即可產生 U-Boot、核心、device tree 與 overlay、SiMa.ai 韌體，以及最小化的根檔案系統，並整合為一個可燒錄的檔案。當您需要自行產生整個映像檔時，請使用此方式。若只是要在已可開機的電路板上變更核心或 device tree，[從原始碼建置 BSP](./build-from-source.mdx)會更快。
+
+:::caution[尚未在硬體上驗證]
+本頁摘要整理 Yocto layer 中的建置手冊。撰寫本頁時並未實際執行建置，產生的映像檔也尚未在電路板上開機驗證。
+:::
+
+:::note
+目前尚未提供以您自己的原始碼建置完整 eLxr 映像檔的說明。電路板硬體啟動仍建議採用 eLxr。請參閱 [eLxr 或 Yocto](./index.md#elxr-or-yocto)。
+:::
+
+## 開始之前 {#before-you-start}
+
+- 請使用 Linux 建置主機。該 layer 的手冊建議使用 Ubuntu 22.04，並指出 Yocto Project 不支援 WSL。
+- 請在建置主機上設定 GitHub SSH 金鑰。這些 recipe 會透過 SSH 從 GitHub 取得 SiMa.ai 的核心、U-Boot 與程式庫原始碼。
+- 安裝手冊所列的主機套件：
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## 取得 Layer {#layers}
+
+此建置使用 Yocto Project 的 `scarthgap` 版本。請將下列 layer 複製到同一個目錄：
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` 與 `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+各 layer 的儲存庫與確切修訂版本，請見該 layer 中的[建置手冊](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)，並請使用其中指定的修訂版本。若要取得 SiMa.ai 的 layer：
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## 設定建置環境 {#setup}
+
+該 layer 提供範本，可用來填入 layer 清單與建置組態。請在存放各 layer 的目錄中執行：
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+最後一個指令會列出建置所使用的 layer。請確認清單中包含 `meta-simaai`。
+
+## 建置映像檔 {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+由於範本的預設值是另一款電路板，請在指令列指定 `MACHINE=modalix`。此映像檔包含最小化的根檔案系統，其中有 SiMa.ai 韌體、核心模組、OpenSSH 與 swupdate。
+
+## 尋找輸出檔案 {#output}
+
+建置的輸出會寫入建置目錄下的 `tmp/deploy/images/modalix`。
+
+| 檔案 | 用途 |
+| --- | --- |
+| `.wic.gz` 與 `.wic.bmap` | 完整的 eMMC 映像檔及其區塊對應表。請燒錄這兩個檔案。 |
+| `.rootfs.ext4.gz` | 僅根檔案系統 |
+| `.cpio.gz` | 作為初始 RAM 磁碟的根檔案系統，用於從網路開機 |
+| `Image`、`u-boot.bin`、`.dtb` 與 `overlays/*.dtbo` | 核心、U-Boot、device tree 與 overlay |
+
+## 分割區配置 {#partitions}
+
+eMMC 映像檔的 GPT 分割表中包含下列分割區：
+
+| 分割區 | 大小 | 內容 |
+| --- | --- | --- |
+| `u-boot0` 與 `u-boot1` | 各 2 MB | U-Boot，共兩份 |
+| `boot` | 512 MB，FAT | `boot-0` 與 `boot-1` 目錄，各含核心、device tree 與 overlay |
+| `platform0` 與 `platform1` | 各 2 GB，ext4 | 根檔案系統，共兩份 |
+| `userdata` | 約 10 GB，ext4 | 使用者資料 |
+
+## 燒錄映像檔 {#flash}
+
+依照[將映像檔燒錄到 eMMC](../deployment/flash-image.mdx)的說明，將 `.wic.gz` 檔案連同其 `.wic.bmap` 檔案寫入電路板的 eMMC。
+
+## 後續步驟
+
+- [將映像檔燒錄到 eMMC](../deployment/flash-image.mdx)：從網路或 SD 卡啟動電路板並寫入映像檔。
+- [板級支援套件](./index.md)：原始碼，以及 eLxr 與 Yocto 的比較。
+- [版本相容性](./release-compatibility.mdx)：每個平台版本所對應的核心與 U-Boot commit。

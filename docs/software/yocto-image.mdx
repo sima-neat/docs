@@ -1,0 +1,123 @@
+---
+title: Build a Complete Image with Yocto
+description: Build a complete Modalix image from source with the public Yocto layer, and find the files to flash.
+sidebar_position: 5
+---
+
+# Build a Complete Image with Yocto
+
+The public Yocto layer, [meta-simaai](https://github.com/SiMa-ai/meta-simaai),
+builds a complete image for a Modalix board from source. One build produces
+U-Boot, the kernel, the device trees and overlays, the SiMa.ai firmware, and a
+minimal root filesystem, in one file that you can flash. Use it when you need
+to produce the whole image yourself. To change the kernel or a device tree on a
+board that already boots, [Build the BSP from Source](./build-from-source.mdx)
+is faster.
+
+:::caution[Not yet validated on hardware]
+This page summarizes the build manual in the Yocto layer. The build has not been
+run for this page, and the resulting image has not been booted on a board.
+:::
+
+:::note
+Building a complete eLxr image from your own sources is not documented yet.
+eLxr remains the preferred path for board bring-up. See
+[eLxr or Yocto](./index.md#elxr-or-yocto).
+:::
+
+## Before You Start {#before-you-start}
+
+- Use a Linux build host. The layer's manual recommends Ubuntu 22.04, and says
+  that the Yocto Project does not support WSL.
+- Put a GitHub SSH key on the build host. The recipes fetch the SiMa.ai kernel,
+  U-Boot, and library sources from GitHub over SSH.
+- Install the host packages that the manual lists:
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## Get the Layers {#layers}
+
+The build uses the `scarthgap` release of the Yocto Project. Clone these layers
+into one directory:
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` and `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+The [build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
+in the layer gives the repository and the exact revision of each one. Use those
+revisions. To get the SiMa.ai layer:
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## Set Up the Build {#setup}
+
+The layer has a template that fills in the layer list and the build
+configuration. From the directory that holds the layers:
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+The last command lists the layers that the build uses. Check that `meta-simaai`
+is in the list.
+
+## Build the Image {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+Set `MACHINE=modalix` on the command line, because the template's default is a
+different board. The image has a minimal root filesystem with the SiMa.ai
+firmware, the kernel modules, OpenSSH, and swupdate.
+
+## Find the Output {#output}
+
+The build writes its output to `tmp/deploy/images/modalix` in the build
+directory.
+
+| File | Use |
+| --- | --- |
+| `.wic.gz` and `.wic.bmap` | The complete eMMC image and its block map. Flash these. |
+| `.rootfs.ext4.gz` | The root filesystem alone |
+| `.cpio.gz` | The root filesystem as an initial RAM disk, for booting from the network |
+| `Image`, `u-boot.bin`, `.dtb`, and `overlays/*.dtbo` | The kernel, U-Boot, the device trees, and the overlays |
+
+## Partition Layout {#partitions}
+
+The eMMC image has these partitions, in a GPT partition table:
+
+| Partition | Size | Contents |
+| --- | --- | --- |
+| `u-boot0` and `u-boot1` | 2 MB each | U-Boot, in two copies |
+| `boot` | 512 MB, FAT | The `boot-0` and `boot-1` directories, each with a kernel, the device trees, and the overlays |
+| `platform0` and `platform1` | 2 GB each, ext4 | The root filesystem, in two copies |
+| `userdata` | About 10 GB, ext4 | User data |
+
+## Flash the Image {#flash}
+
+Write the `.wic.gz` file to the eMMC of the board with its `.wic.bmap` file, as
+described in [Flash an Image to eMMC](../deployment/flash-image.mdx).
+
+## Next Steps
+
+- [Flash an Image to eMMC](../deployment/flash-image.mdx): boot the board from
+  the network or an SD card and write the image.
+- [Board Support Package](./index.md): the sources, and how eLxr and Yocto
+  compare.
+- [Release Compatibility](./release-compatibility.mdx): the kernel and U-Boot
+  commit behind each platform release.

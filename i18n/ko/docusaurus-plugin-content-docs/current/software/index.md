@@ -30,7 +30,7 @@ Modalix BSP는 Modalix DevKit, Modalix Early Access 키트 및 Modalix PCIe 카�
 | --- | --- | --- |
 | 커널, U-Boot, 디바이스 트리, 오버레이 및 커널 모듈 빌드 | [소스에서 BSP 빌드](./build-from-source.mdx) | [이미지 빌드 매뉴얼](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
 | 사용자 공간 소프트웨어 추가 | `apt`로 패키지 설치 | 레시피 작성 |
-| 소스에서 전체 이미지 빌드 | 아직 문서화되지 않음 | [이미지 빌드 매뉴얼](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)(최소 이미지) |
+| 소스에서 전체 이미지 빌드 | 아직 문서화되지 않음 | [Yocto로 전체 이미지 빌드](./yocto-image.mdx) |
 | 보안 부팅 및 프로비저닝 | 아직 문서화되지 않음 | 아직 문서화되지 않음 |
 
 지금 소스에서 전체 이미지를 빌드해야 한다면 Yocto를 선택하십시오. 그렇지 않으면 eLxr를 사용하십시오.
@@ -68,6 +68,8 @@ BSP 소스는 다음과 같은 경우에 유용합니다.
   드라이버 바인딩을 확인.
 - [릴리스 호환성](./release-compatibility.mdx) — 각 플랫폼 릴리스의 기반이 되는
   커널 및 U-Boot 커밋.
+- [Yocto로 전체 이미지 빌드](./yocto-image.mdx) — 공개 Yocto 레이어로 소스에서
+  이미지 전체를 빌드.
 - [eMMC에 이미지 플래싱](../deployment/flash-image.mdx) — 자체 빌드를 보드의
   eMMC에 기록.
 - [공장 빌드 및 테스트](../deployment/factory-build-and-test.mdx) — 양산 환경에서의
