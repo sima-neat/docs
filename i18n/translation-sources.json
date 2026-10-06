@@ -2,7 +2,7 @@
   "ja": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/design/carrier-board.md": "569a28269381185f8ddbabd679b1ffacb9ad6a83ac489bf50cbdf084261c90cf",
+    "docs/design/carrier-board.md": "1299fdd04be055fc6ab34294b315ff5adfefdf0371c391327711e76014db23e4",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "ca799fc94e5f1c1ea09f53ef5e87bc76ff57667c883659f1eb6804aac692e56e",
     "docs/design/third-party-carriers.mdx": "9af6cf6ba42b08e43f28a2b1799a0e10d29f7b3cf81d7fe687caf0ce8fb43d51",
@@ -41,7 +41,7 @@
   "ko": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/design/carrier-board.md": "569a28269381185f8ddbabd679b1ffacb9ad6a83ac489bf50cbdf084261c90cf",
+    "docs/design/carrier-board.md": "1299fdd04be055fc6ab34294b315ff5adfefdf0371c391327711e76014db23e4",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "ca799fc94e5f1c1ea09f53ef5e87bc76ff57667c883659f1eb6804aac692e56e",
     "docs/design/third-party-carriers.mdx": "9af6cf6ba42b08e43f28a2b1799a0e10d29f7b3cf81d7fe687caf0ce8fb43d51",
@@ -80,7 +80,7 @@
   "uk": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/design/carrier-board.md": "569a28269381185f8ddbabd679b1ffacb9ad6a83ac489bf50cbdf084261c90cf",
+    "docs/design/carrier-board.md": "1299fdd04be055fc6ab34294b315ff5adfefdf0371c391327711e76014db23e4",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "ca799fc94e5f1c1ea09f53ef5e87bc76ff57667c883659f1eb6804aac692e56e",
     "docs/design/third-party-carriers.mdx": "9af6cf6ba42b08e43f28a2b1799a0e10d29f7b3cf81d7fe687caf0ce8fb43d51",
@@ -119,7 +119,7 @@
   "zh-Hant": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/design/carrier-board.md": "569a28269381185f8ddbabd679b1ffacb9ad6a83ac489bf50cbdf084261c90cf",
+    "docs/design/carrier-board.md": "1299fdd04be055fc6ab34294b315ff5adfefdf0371c391327711e76014db23e4",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "ca799fc94e5f1c1ea09f53ef5e87bc76ff57667c883659f1eb6804aac692e56e",
     "docs/design/third-party-carriers.mdx": "9af6cf6ba42b08e43f28a2b1799a0e10d29f7b3cf81d7fe687caf0ce8fb43d51",

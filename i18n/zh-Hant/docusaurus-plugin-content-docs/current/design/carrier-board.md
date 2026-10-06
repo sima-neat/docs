@@ -10,13 +10,30 @@ Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板�
 
 如果您想改為將 SoC 直接放在自己的電路板上，請參閱[Chip-Down 設計](./chip-down.md)。
 
-## 您要設計的內容
+## SoM 提供的項目 {#som-provides}
+
+下列元件位於 Modalix SoM 上，只要載板遵循 260-pin 連接器的腳位配置，即可運作：
+
+- MLSoC Modalix
+- LPDDR5 記憶體
+- eMMC 與 SPI 快閃儲存裝置
+- USB 控制器、Gigabit Ethernet PHY 與 HDMI 視訊處理器
+- 即時時鐘
+
+## 載板提供的項目 {#carrier-provides}
 
 - SoM 與您的介面之間的連接器腳位對應
 - 對 SoM 的電源供應
 - Ethernet、PCIe、USB、MIPI 相機與低速 I/O 等介面
 - 用於除錯與復原的序列埠存取
 - 散熱
+
+## 選購或設計載板 {#choose-or-design}
+
+您可以選購現成的載板，或自行設計：
+
+- 若要選購，請在[第三方載板](./third-party-carriers.mdx)中比較各款載板。Modalix DevKit 採用 Waveshare 載板，也就是參考載板。
+- 若要自行設計，請使用下方的技術資料與設計步驟。
 
 ## 技術資料
 

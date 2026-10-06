@@ -13,13 +13,33 @@ into, with the connectors, power input, and interfaces your product needs.
 If you want to place the SoC directly on your own board instead, see
 [Chip-Down Design](./chip-down.md).
 
-## What You Design
+## What the SoM Provides {#som-provides}
+
+These parts are on the Modalix SoM and work on any carrier board that follows the
+260-pin connector assignment:
+
+- MLSoC Modalix
+- LPDDR5 memory
+- eMMC and SPI flash storage
+- USB controller, Gigabit Ethernet PHY, and HDMI video processor
+- Real-time clock
+
+## What the Carrier Board Provides {#carrier-provides}
 
 - Connector mapping between the SoM and your interfaces
 - Power delivery to the SoM
 - Interfaces such as Ethernet, PCIe, USB, MIPI cameras, and low-speed I/O
 - Serial access for debugging and recovery
 - Cooling
+
+## Choose or Design a Carrier Board {#choose-or-design}
+
+You can buy a carrier board or design your own:
+
+- To buy one, compare boards in [Third-Party Carrier Boards](./third-party-carriers.mdx).
+  The Modalix DevKit uses the Waveshare carrier board, which is the reference
+  carrier board.
+- To design your own, use the collateral and the design steps below.
 
 ## Collateral
 

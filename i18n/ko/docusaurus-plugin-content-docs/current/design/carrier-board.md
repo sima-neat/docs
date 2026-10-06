@@ -12,13 +12,32 @@ Modalix SoM은 Modalix SoC, LPDDR5 메모리 및 전원부를 보드 간 커넥�
 
 SoC를 자체 보드에 직접 실장하려면 [칩다운 설계](./chip-down.md)를 참조하십시오.
 
-## 설계 대상
+## SoM이 제공하는 것 {#som-provides}
+
+다음 부품은 Modalix SoM에 탑재되어 있으며, 260핀 커넥터 할당을 따르는 캐리어 보드라면
+어디서나 동작합니다.
+
+- MLSoC Modalix
+- LPDDR5 메모리
+- eMMC 및 SPI 플래시 스토리지
+- USB 컨트롤러, Gigabit Ethernet PHY, HDMI 비디오 프로세서
+- 실시간 클록
+
+## 캐리어 보드가 제공하는 것 {#carrier-provides}
 
 - SoM과 인터페이스 간의 커넥터 매핑
 - SoM에 대한 전원 공급
 - Ethernet, PCIe, USB, MIPI 카메라, 저속 I/O 등의 인터페이스
 - 디버깅 및 복구를 위한 시리얼 접근
 - 냉각
+
+## 캐리어 보드 선택 또는 설계 {#choose-or-design}
+
+캐리어 보드는 구매하거나 직접 설계할 수 있습니다.
+
+- 구매하려면 [서드파티 캐리어 보드](./third-party-carriers.mdx)에서 보드를 비교하십시오.
+  Modalix DevKit은 레퍼런스 캐리어 보드인 Waveshare 캐리어 보드를 사용합니다.
+- 직접 설계하려면 아래의 관련 자료와 설계 단계를 사용하십시오.
 
 ## 관련 자료
 
