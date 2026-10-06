@@ -71,12 +71,12 @@ const LOCALIZED_UI = {
 // keep their URLs when the sidebar regroups them (sima-neat/docs#80), so a
 // folder is not a section: the first matching rule wins, most specific first.
 const SECTION_RULES = [
-  ["cameras", "/interfaces/supported-cameras"],
   ["cameras", "/getting-started/standalone-mode/mipi-camera-interfaces"],
   ["chipDown", "/design/chip-down"],
   ["devkit", "/reference/tech-notes/elxr-conversion"],
   ["devkit", "/reference/tech-notes/bluetooth"],
   ["references", "/interfaces/low-speed-io"],
+  ["cameras", "/interfaces"],
   ["devkit", "/getting-started"],
   ["devkit", "/devkit"],
   ["devkit", "/tools"],

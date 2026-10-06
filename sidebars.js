@@ -77,6 +77,7 @@ const sidebars = {
     section('Integrate Cameras & Tune the ISP', undefined, [
       'interfaces/supported-cameras',
       'getting-started/standalone-mode/mipi-camera-interfaces',
+      'interfaces/custom-camera',
     ]),
     section('Reference & Downloads', undefined, [
       'reference/extra-docs',

@@ -1,0 +1,81 @@
+---
+title: 整合您自己的相機
+description: MIPI 相機要在 Modalix 電路板上擷取影像所需的條件、要撰寫的 overlay、如何驗證擷取，以及影像品質調校從何開始。
+sidebar_position: 3
+---
+
+# 整合您自己的相機
+
+當您的相機不在[支援的 MIPI 相機](./supported-cameras.mdx)中時，請使用本頁。本頁說明相機要在 Modalix 電路板上輸出影格前必須滿足的條件、您需要撰寫的內容，以及如何檢查每個步驟。不在該清單中的相機即不受支援，請預期需要進行驅動程式與 device tree 的工作，以及另行處理影像品質。
+
+:::caution[尚未在硬體上驗證]
+本頁依據平台版本 2.1.3 的核心原始碼撰寫，目前尚無人依照本頁整合過新的相機。
+:::
+
+## 先確認是否相容 {#check-fit}
+
+| 確認項目 | 平台提供的條件 |
+| --- | --- |
+| MIPI CSI-2 lane | Modalix SoM 的每組 CSI 介面有兩條 data lane。單一介面需要四條 lane 的相機無法運作。 |
+| 介面 | SoM 有四組 CSI 介面，CSI0 至 CSI3。載板會接出其中一部分；Modalix DevKit 接出 CSI1 與 CSI2。 |
+| 連接器與排線 | 相機上的連接器必須能接到載板上的連接器，可能需要轉接器。 |
+| 控制匯流排、時脈、電源與重置 | 感測器需要 I2C 匯流排、參考時脈、電源，通常還需要重置或 power-down 腳位。由哪些腳位提供，取決於載板。 |
+
+關於載板的相機連接器與訊號，請參閱[載板硬體啟動](../design/som-carrier.mdx)。
+
+## 確認驅動程式 {#driver}
+
+核心必須具備該感測器的驅動程式。平台版本 2.1.3 啟用了下列相機感測器的驅動程式：Sony IMX219、IMX415、IMX477、IMX568 與 IMX678、onsemi AR0234，以及 OmniVision OG05C10；另外也啟用了 GMSL 序列器與解序列器的驅動程式 MAX96714、MAX96717、MAX96724 與 MAX9296A。完整清單請見 [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/configs/simaai_modalix_defconfig)。
+
+若使用其他感測器，請將其驅動程式加入核心。請參閱[從原始碼建置 BSP](../software/build-from-source.mdx)。
+
+核心中有驅動程式，並不代表該相機受到支援。具有 overlay 的相機列於[支援的 MIPI 相機](./supported-cameras.mdx)。
+
+## 撰寫 Overlay {#overlay}
+
+請以適用於您的載板與連接埠的支援相機 overlay 為起點，再依您的感測器修改。例如可參考 [`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso)。Overlay 必須完成下列事項：
+
+1. 提供感測器的參考時脈。
+2. 啟用感測器所在的 I2C 匯流排。
+3. 設定相機的 power-down 或重置腳位。
+4. 啟用該連接埠的 CSI 介面及其 D-PHY 與視訊節點。以 1 號埠為例，這些節點為 `csi1`、`mipi_dphy_rx1`、`axi_vdma1`、`v4l2video1` 與 `v4l2vdma1`。
+5. 描述感測器：其 `compatible` 字串、I2C 位址與時脈。
+6. 以 `data-lanes = <1 2>` 與感測器模式的連結頻率，將感測器連接至 CSI 介面。
+
+關於建置、安裝與檢查 overlay，請參閱 [Device Tree 與 Overlay](../software/device-tree.mdx)。
+
+## 驗證擷取 {#validate}
+
+1. 列出相機。您的相機必須出現在清單中：
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. 列出相機提供的格式與尺寸：
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. 擷取一個影格：
+
+   ```console
+   sima@modalix:~$ cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```
+
+若相機不在清單中，請參閱[無法運作時](../software/device-tree.mdx#if-it-fails)。
+
+## 影像品質是另一個步驟 {#image-quality}
+
+相機能夠擷取影格，並不代表已能產生良好的影像。ISP 需要針對每款感測器與鏡頭的調校資料。在平台版本 2.1.3 中，核心的 ISP 驅動程式僅包含 IMX477、IMX568、IMX678 與 OG05C10 的感測器項目。若使用其他感測器，請將 ISP 調校納入規劃。[參考檔案](../reference/extra-docs.md)中的「Modalix 相機與影像訊號處理器（ISP）調校指南」說明了調校方式，該指南可向您的 SiMa.ai 業務代表索取。
+
+## 取得協助 {#help}
+
+若要向 SiMa.ai 洽詢相機整合事宜，請聯絡您的 SiMa.ai 業務代表，或使用 [SiMa.ai 聯絡頁面](https://sima.ai/contact/)。請一併提供感測器與相機模組的料號、載板與連接埠、平台版本，以及每個驗證步驟的結果。
+
+## 後續步驟
+
+- [支援的 MIPI 相機](./supported-cameras.mdx)：已有 overlay 的相機。
+- [Device Tree 與 Overlay](../software/device-tree.mdx)：建置、安裝與檢查 overlay。
+- [MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)：選擇 overlay 與使用多台相機。
