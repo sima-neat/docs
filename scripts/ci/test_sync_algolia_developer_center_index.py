@@ -638,5 +638,18 @@ class DataComponentRecordTests(unittest.TestCase):
                 self.assertIn(f'"{label}"', text, f"{language}.{key}")
 
 
+class CameraShutterTextTest(unittest.TestCase):
+    def test_shutter_type_is_indexed_in_the_page_language(self):
+        camera = {"order": 1, "vendor": "Acme", "sensor": "S1", "shutter": "global", "overlay": "ACME-S1", "modes": []}
+        english = " ".join(MODULE.describe_cameras({"cameras": [camera]}, "en"))
+        japanese = " ".join(MODULE.describe_cameras({"cameras": [camera]}, "ja"))
+        self.assertIn("Acme S1, Global shutter, ACME-S1", english)
+        self.assertIn("グローバルシャッター", japanese)
+
+    def test_camera_without_a_shutter_field_is_unchanged(self):
+        camera = {"order": 1, "vendor": "Acme", "sensor": "S1", "overlay": "ACME-S1", "modes": []}
+        self.assertIn("Acme S1, ACME-S1", " ".join(MODULE.describe_cameras({"cameras": [camera]}, "en")))
+
+
 if __name__ == "__main__":
     unittest.main()

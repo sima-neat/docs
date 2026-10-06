@@ -3,6 +3,7 @@
   "id": "econ-imx678",
   "vendor": "e-con Systems",
   "sensor": "Sony IMX678",
+  "shutter": "rolling",
   "overlay": "ECON-IMX678",
   "ordering": {
     "status": "unconfirmed"

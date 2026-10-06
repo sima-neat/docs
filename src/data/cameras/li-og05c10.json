@@ -3,6 +3,7 @@
   "id": "li-og05c10",
   "vendor": "Leopard Imaging",
   "sensor": "OmniVision OG05C10",
+  "shutter": "global",
   "overlay": "LI-OG05C10",
   "ordering": {
     "status": "vendor-listed",

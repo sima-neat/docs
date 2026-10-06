@@ -3,6 +3,7 @@
   "id": "econ-imx568-fpga",
   "vendor": "e-con Systems",
   "sensor": "Sony IMX568",
+  "shutter": "global",
   "overlay": "ECON-FPGA-IMX568",
   "variant": {
     "en": "Camera with the e-con FPGA board",

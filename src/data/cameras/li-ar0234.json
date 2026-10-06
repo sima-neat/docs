@@ -3,6 +3,7 @@
   "id": "li-ar0234",
   "vendor": "Leopard Imaging",
   "sensor": "onsemi AR0234",
+  "shutter": "global",
   "overlay": "LI-AR0234",
   "ordering": {
     "status": "vendor-listed",

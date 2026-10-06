@@ -3,6 +3,7 @@
   "id": "econ-imx568",
   "vendor": "e-con Systems",
   "sensor": "Sony IMX568",
+  "shutter": "global",
   "overlay": "ECON-IMX568",
   "variant": {
     "en": "Standard camera",

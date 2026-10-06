@@ -3,6 +3,7 @@
   "id": "arducam-imx477",
   "vendor": "Arducam",
   "sensor": "Sony IMX477",
+  "shutter": "rolling",
   "overlay": "ARDU-IMX477",
   "ordering": {
     "status": "unconfirmed"

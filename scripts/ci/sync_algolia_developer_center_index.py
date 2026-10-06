@@ -116,6 +116,14 @@ STATUS_LABELS = {
         "untested": "Не тестувалася",
     },
 }
+# Shutter type of a camera, as a phrase a reader would search for.
+SHUTTER_LABELS = {
+    "en": {"rolling": "Rolling shutter", "global": "Global shutter"},
+    "ja": {"rolling": "ローリングシャッター", "global": "グローバルシャッター"},
+    "ko": {"rolling": "롤링 셔터", "global": "글로벌 셔터"},
+    "zh-Hant": {"rolling": "捲簾快門", "global": "全域快門"},
+    "uk": {"rolling": "Ковзний затвор", "global": "Глобальний затвор"},
+}
 # Carrier-board specification rows, in the order the comparison table shows them. The label
 # is the language-neutral interface name; None means the value is indexed on its own.
 CARRIER_SPEC_LABELS = {
@@ -420,6 +428,7 @@ def describe_cameras(data: dict, language: str) -> list[str]:
                 [
                     join_text([localized_text(camera.get(key), language) for key in ("vendor", "sensor")], " "),
                     localized_text(camera.get("variant"), language),
+                    SHUTTER_LABELS.get(language, SHUTTER_LABELS[DEFAULT_LOCALE]).get(camera.get("shutter"), ""),
                     overlay,
                     # The page prints the part number only when the vendor lists it.
                     localized_text(ordering.get("partNumber"), language)

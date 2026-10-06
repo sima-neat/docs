@@ -36,8 +36,12 @@ const showCamera = (id) => {
 
 // The overlay sources, at the kernel commit of platform release 2.1.3.
 const OVERLAY_SOURCE_PATH = "arch/arm64/boot/dts/simaai/overlays/";
-const OVERLAY_SOURCE_URL = `https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/${OVERLAY_SOURCE_PATH}`;
-const overlayFile = (carrier, camera, port) => `modalix-som-${carrier.id}-${camera.overlay}-${port}.dtbo`;
+const KERNEL_COMMIT = "65aba29989da02d7612da5484dbbcd50643fdd60";
+const OVERLAY_SOURCE_URL = `https://github.com/SiMa-ai/simaai-linux/tree/${KERNEL_COMMIT}/${OVERLAY_SOURCE_PATH}`;
+const overlayName = (carrier, camera, port) => `modalix-som-${carrier.id}-${camera.overlay}-${port}`;
+// Each .dtbo is built from the .dtso of the same name.
+const overlaySourceUrl = (name) =>
+  `https://github.com/SiMa-ai/simaai-linux/blob/${KERNEL_COMMIT}/${OVERLAY_SOURCE_PATH}${name}.dtso`;
 
 // Carrier names as they appear in the overlay file names.
 const CARRIERS = [
@@ -51,6 +55,9 @@ const LOCALIZED_UI = {
     vendor: "Vendor",
     sensor: "Sensor",
     camera: "Camera",
+    shutter: "Shutter",
+    rolling: "Rolling",
+    global: "Global",
     overlayName: "Name in the overlay file",
     partNumber: "Part number",
     unconfirmed: "Not confirmed",
@@ -80,6 +87,9 @@ const LOCALIZED_UI = {
     vendor: "ベンダー",
     sensor: "センサー",
     camera: "カメラ",
+    shutter: "シャッター",
+    rolling: "ローリング",
+    global: "グローバル",
     overlayName: "オーバーレイファイル内の名前",
     partNumber: "型番",
     unconfirmed: "未確認",
@@ -109,6 +119,9 @@ const LOCALIZED_UI = {
     vendor: "벤더",
     sensor: "센서",
     camera: "카메라",
+    shutter: "셔터",
+    rolling: "롤링",
+    global: "글로벌",
     overlayName: "오버레이 파일의 이름",
     partNumber: "부품 번호",
     unconfirmed: "확인되지 않음",
@@ -138,6 +151,9 @@ const LOCALIZED_UI = {
     vendor: "廠商",
     sensor: "感測器",
     camera: "相機",
+    shutter: "快門",
+    rolling: "捲簾快門",
+    global: "全域快門",
     overlayName: "overlay 檔名中的名稱",
     partNumber: "料號",
     unconfirmed: "尚未確認",
@@ -167,6 +183,9 @@ const LOCALIZED_UI = {
     vendor: "Виробник",
     sensor: "Сенсор",
     camera: "Камера",
+    shutter: "Затвор",
+    rolling: "Ковзний",
+    global: "Глобальний",
     overlayName: "Назва у файлі оверлея",
     partNumber: "Номер за каталогом",
     unconfirmed: "Не підтверджено",
@@ -236,6 +255,7 @@ export function CameraList() {
         <tr>
           <th>{copy.vendor}</th>
           <th>{copy.camera}</th>
+          <th>{copy.shutter}</th>
           <th>{copy.overlayName}</th>
           <th>{copy.partNumber}</th>
         </tr>
@@ -249,6 +269,7 @@ export function CameraList() {
                 {cameraName(camera, text)}
               </a>
             </td>
+            <td>{copy[camera.shutter]}</td>
             <td>
               <code>{camera.overlay}</code>
             </td>
@@ -386,6 +407,7 @@ export function CameraSpecs() {
           </thead>
           <tbody>
             {group(copy.general)}
+            {row(copy.shutter, (camera) => copy[camera.shutter])}
             {row(copy.overlayName, (camera) => (
               <code>{camera.overlay}</code>
             ))}
@@ -413,11 +435,16 @@ export function CameraSpecs() {
                 {row(carrier.name, (camera) => {
                   const ports = camera.overlays?.[carrier.id];
                   if (!ports?.length) return null;
-                  return ports.map((port) => (
-                    <div key={port}>
-                      <code className={styles.file}>{overlayFile(carrier, camera, port)}</code>
-                    </div>
-                  ));
+                  return ports.map((port) => {
+                    const name = overlayName(carrier, camera, port);
+                    return (
+                      <div key={port}>
+                        <a href={overlaySourceUrl(name)} target="_blank" rel="noopener noreferrer">
+                          <code className={styles.file}>{name}.dtbo</code>
+                        </a>
+                      </div>
+                    );
+                  });
                 })}
               </React.Fragment>
             ))}

@@ -3,6 +3,7 @@
   "id": "econ-imx568-kobe1",
   "vendor": "e-con Systems",
   "sensor": "Sony IMX568",
+  "shutter": "global",
   "overlay": "ECON-KOBE1-IMX568",
   "variant": {
     "en": "Camera with the e-con KOBE1 FPGA board",
