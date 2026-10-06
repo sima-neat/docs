@@ -1,24 +1,24 @@
 ---
 title: "네트워크 부팅 복구"
-description: "네트워크를 통해 Modalix DevKit를 부팅하고 eMMC에 펌웨어를 플래싱합니다."
+description: "네트워크를 통해 Modalix DevKit을 부팅하고 eMMC에 펌웨어를 플래싱합니다."
 sidebar_position: 2
 ---
 
 # 네트워크 부팅 복구
 
-탈착식 미디어가 아닌 네트워크를 통해 DevKit을 부팅해야 할 때 Net Boot 복구 기능을 사용하세요. 다음의 경우에 유용합니다.
+이동식 미디어가 아닌 네트워크를 통해 DevKit을 부팅해야 할 때 네트워크 부팅 복구 기능을 사용하세요. 다음의 경우에 유용합니다.
 
-- DevKit을 이전 버전의 SDK로 **다운그레이드**해야 합니다.
-- 최신 버전이 아닌 빌드를 설치해야 합니다(예: 사전 릴리스 `develop` 빌드 또는 내부 엔지니어링 이미지).
-- 손상된 부트 로더 또는 파일 시스템이 있는 보드를 복구해야 하는데, SD 카드가 없습니다.
-- 새 보드를 도입하려 하시는데, 내부 저장 장치의 마모를 줄이고 싶으신 것 같습니다.
-- 현재 Modalix DevKit을 Yocto Linux에서 eLxr로, 또는 eLxr에서 다시 Yocto Linux로 변환하고 있습니다. 변환에 필요한 구체적인 요구 사항은 [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion)를 참조하십시오.
+- DevKit을 이전 릴리스의 SDK로 **다운그레이드**해야 합니다.
+- 최신 릴리스가 아닌 빌드를 설치해야 합니다(예: 사전 릴리스 `develop` 빌드 또는 내부 엔지니어링 이미지).
+- 손상된 부트로더 또는 파일 시스템이 있는 보드를 복구해야 하는데, SD 카드가 없습니다.
+- 새 보드를 브링업하려 하시는데, 내부 저장 장치의 마모를 줄이고 싶으신 것 같습니다.
+- 현재 Modalix DevKit을 Yocto Linux에서 eLxr로, 또는 eLxr에서 다시 Yocto Linux로 변환하고 있습니다. 변환에 필요한 구체적인 요구 사항은 [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion)을 참조하십시오.
 
 :::note
 이 가이드는 SiMa.ai가 제공하는 이미지를 사용하며, 보드에서 U-Boot 프롬프트가 동작해야 합니다. 직접 빌드한 이미지를 설치하는 방법은 이 가이드에서 다루지 않습니다. 그 경우에는 [eMMC에 이미지 플래싱](/hardware/deployment/flash-image)을 참조하십시오.
 :::
 
-`sima-cli bootimg`와 함께 `--netboot` 옵션을 사용합니다. 그러면 대상 보드에 대한 부트 이미지를 다운로드하고 호스트에 내장된 TFTP 서버에서 해당 이미지를 제공합니다. 그런 다음 U-Boot에서 DevKit을 구성하여 해당 TFTP 서버에서 부팅하고 새 이미지를 eMMC에 플래시합니다.
+`sima-cli bootimg`와 함께 `--netboot` 옵션을 사용합니다. 그러면 대상 보드에 대한 부트 이미지를 다운로드하고 호스트에 내장된 TFTP 서버에서 해당 이미지를 제공합니다. 그런 다음 U-Boot에서 DevKit을 구성하여 해당 TFTP 서버에서 부팅하고 새 이미지를 eMMC에 플래싱합니다.
 
 <details open>
 <summary><strong>1단계: 물리적 설정</strong></summary>
@@ -30,8 +30,8 @@ sidebar_position: 2
 
 터미널 세션 2개가 필요합니다.
 
-1. DevKit에 연결된 시리얼 콘솔 세션을 사용합니다. 이 세션을 사용하여 U-Boot 환경 변수를 수정하여 DevKit가 네트워크를 통해 부팅되도록 합니다.
-2. 호스트 셸 세션입니다. 이 세션을 사용하여 TFTP 서버를 시작하고 eMMC 플래시를 초기화합니다.
+1. DevKit에 연결된 시리얼 콘솔 세션을 사용합니다. 이 세션을 사용하여 U-Boot 환경 변수를 수정하여 DevKit이 네트워크를 통해 부팅되도록 합니다.
+2. 호스트 셸 세션입니다. 이 세션을 사용하여 TFTP 서버를 시작하고 eMMC 플래싱을 시작합니다.
 :::
 
 1. **DevKit의 이더넷 포트**를 호스트 장치에 직접 연결하고, 호스트의 네트워크 인터페이스를 정적 IP 주소 **192.168.1.10**으로 설정합니다. Modalix 얼리 액세스 DevKit에서는 이더넷 포트 0을 사용합니다.
@@ -42,16 +42,16 @@ sidebar_position: 2
    sima-user@sima-user-machine:~$ sima-cli serial
    ```
 
-3. DevKit에서 네트워크 인터페이스를 기본 정적 IP 주소인 **192.168.1.20**으로 구성합니다. 구성 방법은 [독립 모드 네트워크 설정](/hardware/getting-started/standalone-mode/network)을 따르십시오.
+3. DevKit에서 네트워크 인터페이스를 기본 정적 IP 주소인 **192.168.1.20**으로 구성합니다. 구성 방법은 [독립 실행형 모드 네트워크 설정](/hardware/getting-started/standalone-mode/network)을 따르십시오.
 
 </details>
 
 <details open>
-<summary><strong>2단계. 호스트에서 TFTP Netboot 서버를 시작합니다.</strong></summary>
+<summary><strong>2단계. 호스트에서 TFTP 네트워크 부팅 서버를 시작합니다.</strong></summary>
 
 **요구 사항**
 
-- 호스트와 DevKit는 동일한 물리적 네트워크 또는 직접 이더넷 연결을 통해 연결되어야 합니다.
+- 호스트와 DevKit은 동일한 물리적 네트워크 또는 직접 이더넷 연결을 통해 연결되어야 합니다.
 - 이더넷 연결은 기가비트 인터페이스 이상이어야 합니다(전송 속도는 1000Mbps를 초과해야 함).
 - 호스트는 펌웨어 이미지를 다운로드하기 위해 인터넷에 접속해야 합니다.
 - UDP 포트 **69(TFTP)**는 호스트 방화벽에 의해 차단되어서는 안 됩니다.
@@ -83,7 +83,7 @@ sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boa
 </details>
 
 <details open>
-<summary><strong> 3단계: DevKit을 Netboot로 구성</strong></summary>
+<summary><strong> 3단계: DevKit을 네트워크 부팅으로 구성</strong></summary>
 
 DevKit을 시리얼 콘솔을 통해 호스트에 연결한 상태에서 전원을 껐다가 다시 켜십시오. 전원 재부팅 중에 시리얼 콘솔 연결이 끊어지면 다시 연결하십시오. `Hit any key to stop autoboot` 메시지가 나타날 때까지 기다린 다음 아무 키나 눌러 U-Boot 셸로 들어갑니다.
 
@@ -162,7 +162,7 @@ netboot> f
 플래싱이 완료되면 DevKit의 전원을 껐다가 다시 켜십시오. 그러면 eMMC에서 대상 버전이 부팅됩니다.
 
 :::note
-**네트부팅 중에 DevKit의 IP 주소가 변경된 경우** (예: DHCP가 기본 주소인 `192.168.1.20` 대신 다른 주소를 할당한 경우) `f`는 자체적으로 보드에 연결하지 못합니다. DevKit의 직렬 콘솔에서 새 IP 주소를 확인합니다. 이 주소는 부팅 로그에 출력되며, 네트부팅된 셸에서 `ip addr`로 표시됩니다. 그런 다음 이 주소를 `f`에 명시적으로 전달합니다.
+**네트워크 부팅 중에 DevKit의 IP 주소가 변경된 경우** (예: DHCP가 기본 주소인 `192.168.1.20` 대신 다른 주소를 할당한 경우) `f`는 자체적으로 보드에 연결하지 못합니다. DevKit의 시리얼 콘솔에서 새 IP 주소를 확인합니다. 이 주소는 부팅 로그에 출력되며, 네트워크 부팅된 셸에서 `ip addr`로 표시됩니다. 그런 다음 이 주소를 `f`에 명시적으로 전달합니다.
 
 ```console
 netboot> f <new-ip>
@@ -172,10 +172,10 @@ netboot> f <new-ip>
 </details>
 
 <details open>
-<summary><strong>Troubleshooting</strong></summary>
+<summary><strong>문제 해결</strong></summary>
 
-- DevKit가 네트워크 부팅에 실패하면 호스트와 장치가 동일한 서브넷(`192.168.1.x`)에 있는지 확인하십시오.
-- Modalix 얼리 액세스 게시판에서는 네트워크 부팅을 위해 이더넷 포트 0만 지원됩니다.
+- DevKit이 네트워크 부팅에 실패하면 호스트와 장치가 동일한 서브넷(`192.168.1.x`)에 있는지 확인하십시오.
+- Modalix 얼리 액세스 보드에서는 네트워크 부팅을 위해 이더넷 포트 0만 지원됩니다.
 - Linux 환경에서 호스트 방화벽이 **UDP 포트 69(TFTP)**를 허용하도록 설정되었는지 확인하십시오.
 - DevKit과의 연결 상태를 확인하십시오.
 

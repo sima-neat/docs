@@ -11,7 +11,7 @@ sidebar_position: 3
 :::
 
 :::note
-Для виконання цієї процедури потрібен хост із встановленою останньою версією `sima-cli`. Також потрібна версія мікропрограми **Modalix DevKit**, яка містить файли `.dtbo` для підтримки MIPI.
+Для виконання цієї процедури потрібен хост із встановленою останньою версією `sima-cli`. Також потрібна версія прошивки **Modalix DevKit**, яка містить файли `.dtbo` для підтримки MIPI.
 :::
 
 **Modalix DevKit** містить два інтерфейси MIPI для підключення камери. Порти MIPI розташовані на платі-носії.
@@ -43,7 +43,7 @@ modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>.dtbo
 | --- | --- | --- |
 | Плата-носій | `connectech`, `seeedstudio`, `waveshare` | Модель плати-носія. |
 | Виробник камери | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems або Leopard Imaging. |
-| Тип датчика | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | Модель сенсора камери. |
+| Тип сенсора | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | Модель сенсора камери. |
 | Порт | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | Номер порту MIPI, до якого підключено камеру. |
 
 За замовчуванням Modalix DevKit має плату-носій Waveshare. Наприклад, для камери Arducam IMX477, підключеної до порту 1 Modalix DevKit:

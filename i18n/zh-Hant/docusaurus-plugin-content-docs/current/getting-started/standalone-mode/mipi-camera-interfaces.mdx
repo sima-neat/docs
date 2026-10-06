@@ -29,7 +29,7 @@ Hit any key to stop autoboot:  0
 sima$
 ```
 
-在 U-Boot 中，將 `dtbos` 變數設定為適當的「裝置樹 Blob 覆疊」(`.dtbo`) 檔案。正確的檔案取決於「載板」、「相機製造商」、「感測器類型」和「相機連接埠」。然後儲存環境並啟動至作業系統。
+在 U-Boot 中，將 `dtbos` 變數設定為適當的「Device Tree Blob Overlay」(`.dtbo`) 檔案。正確的檔案取決於「載板」、「相機製造商」、「感測器類型」和「相機連接埠」。然後儲存環境並啟動至作業系統。
 
 檔案名稱遵循以下模式：
 
@@ -43,7 +43,7 @@ modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>.dtbo
 | --- | --- | --- |
 | 載板 | `connectech`, `seeedstudio`, `waveshare` | 載板型號 |
 | 相機製造商 | `ARDU`, `ECON`, `LI` | Arducam、e-con Systems 或 Leopard Imaging |
-| 感測器類型 | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | 相機感光元件型號 |
+| 感測器類型 | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | 相機感測器型號 |
 | 連接埠 | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | 與相機連接的 MIPI 埠號。 |
 
 Modalix DevKit 預設搭載 Waveshare 載板。舉例來說，Modalix DevKit 的 1 號埠連接 Arducam IMX477 相機時：
@@ -131,7 +131,7 @@ modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
    sima@modalix:~$ cam -c 1 -I
    ```
 
-3. 從相機 1 擷取一張圖片：
+3. 從相機 1 擷取一張影像：
 
    ```console
    sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12

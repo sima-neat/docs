@@ -18,7 +18,7 @@ SiMa.ai の BSP には次のものが含まれます。
 
 ## Modalix BSP
 
-Modalix BSP は、Modalix DevKit、Modalix Early Access キット、および Modalix PCIe カードを対象としています。Debian 派生のディストリビューションである [eLxr](https://elxr.org/) をベースに構築されています。ユーザー空間は `apt` で管理されるため、Modalix イメージのカスタマイズは、Yocto レシピの作成よりも Debian ソフトウェアのパッケージングに近い作業になります。既存の Yocto DevKit を eLxr に変換するには、[eLxr への変換](../reference/tech-notes/elxr-conversion.mdx)を参照してください。
+Modalix BSP は、Modalix DevKit、Modalix Early Access キット、および Modalix PCIe カードを対象としています。Debian 派生のディストリビューションである [eLxr](https://elxr.org/) をベースに構築されています。ユーザー空間は `apt` で管理されるため、Modalix イメージのカスタマイズは、Yocto レシピの作成よりも Debian ソフトウェアのパッケージングに近い作業になります。既存の Yocto DevKit を eLxr に変換するには、[eLxr に変換](../reference/tech-notes/elxr-conversion.mdx)を参照してください。
 
 ソース：[simaai-linux](https://github.com/SiMa-ai/simaai-linux)（カーネルとデバイスツリー）、[sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot)（U-Boot）、および [meta-simaai](https://github.com/SiMa-ai/meta-simaai)（Yocto レイヤー）。
 
@@ -45,7 +45,7 @@ Modalix BSP は、Modalix DevKit、Modalix Early Access キット、および Mo
 - **rootfs を置き換える、または拡張する**：独自のアプリケーション、ライブラリ、またはシステムサービスを組み込みます。
 - **リリースをローカルで再現する**：監査や改変のために、DevKit に搭載されているものとまったく同じイメージを再ビルドします。
 
-カスタムビルドをボードに導入するには、[ビルドをデプロイする](./build-from-source.mdx#deploy-your-build)を参照してください。[ファームウェアアップデート](/hardware/getting-started/firmware-update)でインストールされるのは SiMa.ai の標準イメージであり、独自のビルドではありません。
+カスタムビルドをボードに導入するには、[ビルドをデプロイする](./build-from-source.mdx#deploy-your-build)を参照してください。[ファームウェアのアップデート](/hardware/getting-started/firmware-update)でインストールされるのは SiMa.ai の標準イメージであり、独自のビルドではありません。
 
 ## ソースとマニュアル
 
@@ -64,7 +64,7 @@ NDA や営業窓口への問い合わせは必要ありません。
 ## このセクションの内容
 
 - [BSP をソースからビルドする](./build-from-source.mdx)：ビルド環境、
-  カーネル、U-Boot、デバイスツリー、および成果物のインストール。
+  カーネル、U-Boot、デバイスツリー、およびアーティファクトのインストール。
 - [デバイスツリーとオーバーレイ](./device-tree.mdx)：オーバーレイの選択または作成と、
   ドライバーのバインドの確認。
 - [リリースの互換性](./release-compatibility.mdx)：各プラットフォームリリースの基になっている

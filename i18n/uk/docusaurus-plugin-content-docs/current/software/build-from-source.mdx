@@ -165,9 +165,9 @@ root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC
 | Образ ядра | `arch/arm64/boot/Image` |
 | Дерева пристроїв | `arch/arm64/boot/dts/simaai/*.dtb` |
 
-## Збирання оверлею дерева пристроїв (необов’язково)
+## Збирання оверлея дерева пристроїв (необов’язково)
 
-Напишіть вихідний файл оверлею (`.dtso`), а потім скомпілюйте його у двійковий файл (`.dtbo`):
+Напишіть вихідний файл оверлея (`.dtso`), а потім скомпілюйте його у двійковий файл (`.dtbo`):
 
 ```console
 root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
@@ -218,7 +218,7 @@ root@modalix:~# sync
 
 ### Ядро, дерева пристроїв і оверлеї
 
-Спершу визначте активний завантажувальний каталог — це або `boot-0`, або `boot-1`:
+Спершу визначте активний каталог завантаження — це або `boot-0`, або `boot-1`:
 
 ```console
 root@modalix:~# strings /boot/uboot.env | grep boot_path= | cut -f2 -d"="

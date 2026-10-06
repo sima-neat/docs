@@ -19,7 +19,7 @@ sidebar_position: 5
 ## 開始之前 {#before-you-start}
 
 - 請使用 Linux 建置主機。該 layer 的手冊建議使用 Ubuntu 22.04，並指出 Yocto Project 不支援 WSL。
-- 請在建置主機上設定 GitHub SSH 金鑰。這些 recipe 會透過 SSH 從 GitHub 取得 SiMa.ai 的核心、U-Boot 與程式庫原始碼。
+- 請在建置主機上設定 GitHub SSH 金鑰。這些 recipe 會透過 SSH 從 GitHub 取得 SiMa.ai 的核心、U-Boot 與函式庫原始碼。
 - 安裝手冊所列的主機套件：
 
   ```console
@@ -49,7 +49,7 @@ sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.
 
 ## 設定建置環境 {#setup}
 
-該 layer 提供範本，可用來填入 layer 清單與建置組態。請在存放各 layer 的目錄中執行：
+該 layer 提供範本，可用來填入 layer 清單與建置設定。請在存放各 layer 的目錄中執行：
 
 ```console
 sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom

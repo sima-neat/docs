@@ -16,12 +16,12 @@ import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Came
 
 ## 相機與訂購資訊 {#cameras}
 
-BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多款採用相同感測器的模組，這些模組的 lane 數、連接器與鏡頭各不相同。請依料號訂購，而非依感測器名稱訂購。
+BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多款採用相同感測器的模組，這些模組的通道數、連接器與鏡頭各不相同。請依料號訂購，而非依感測器名稱訂購。
 
 <CameraList />
 
 - 上述兩個料號均由 Leopard Imaging 列於其適用於 SiMa.ai 的相機中。
-- BSP 所支援的 Arducam 與 e-con Systems 相機料號尚未公開。訂購前請洽詢您的 SiMa.ai 業務代表。
+- BSP 所支援的 Arducam 與 e-con Systems 相機料號尚未公開。訂購前請洽詢您的 SiMa.ai 聯絡人。
 - e-con Systems 以三種組合提供 IMX568 相機：標準相機、搭配 e-con FPGA 板的相機，以及搭配 e-con KOBE1 FPGA 板的相機。每種組合各有專屬的 overlay，請使用與您的組合相符的 overlay。
 
 ## 連接相機 {#connect}
@@ -31,9 +31,9 @@ BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多�
 3. 記下您使用的連接埠。overlay 名稱中包含連接埠。
 4. 依照[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)的說明，選擇與您的載板、相機及連接埠相符的 overlay。
 
-本頁的所有 overlay 都使用兩條 MIPI data lane。
+本頁的所有 overlay 都使用兩條 MIPI 資料通道。
 
-相機上的連接器通常與載板上的連接器不同，因此您可能需要轉接排線。各相機的排線與轉接器料號尚未公開，請洽詢相機廠商或您的 SiMa.ai 業務代表。關於參考載板上的連接器，請參閱[載板硬體啟動](../design/som-carrier.mdx)。
+相機上的連接器通常與載板上的連接器不同，因此您可能需要轉接排線。各相機的排線與轉接器料號尚未公開，請洽詢相機廠商或您的 SiMa.ai 聯絡人。關於參考載板上的連接器，請參閱[載板硬體啟動](../design/som-carrier.mdx)。
 
 ## 載板與連接埠 {#ports}
 
@@ -81,7 +81,7 @@ sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 
 ISP 縮放後的輸出尺寸尚未確認。若要在 Neat 應用程式中使用不同的尺寸，請依照[使用 MIPI 相機](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)的說明，在模型的前處理中調整尺寸。
 
-相機的影像品質調校是另一項工作。請參閱[參考檔案](../reference/extra-docs.md)中的「Modalix 相機與影像訊號處理器（ISP）調校指南」，該指南可向您的 SiMa.ai 業務代表索取。
+相機的影像品質調校是另一項工作。請參閱[參考檔案](../reference/extra-docs.md)中的「Modalix 相機與影像訊號處理器（ISP）調校指南」，該指南可向您的 SiMa.ai 聯絡人索取。
 
 關於調校的範圍與如何取得指南，請參閱 [ISP 調校](./isp-tuning.mdx)。
 

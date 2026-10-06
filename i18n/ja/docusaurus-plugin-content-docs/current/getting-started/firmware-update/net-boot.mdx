@@ -6,12 +6,12 @@ sidebar_position: 2
 
 # ネットワークブートによる復旧
 
-リムーバブルメディアではなく、ネットワーク経由でDevKitを起動する必要がある場合は、ネットブートリカバリーを使用してください。これは、次のような場合に役立ちます。
+リムーバブルメディアではなく、ネットワーク経由でDevKitを起動する必要がある場合は、ネットワークブートによる復旧を使用してください。これは、次のような場合に役立ちます。
 
 - DevKit を、より古いバージョンの SDK に**ダウングレード**する必要があります。
 - 最新リリース版**ではない**ビルドをインストールする必要があります（たとえば、プレリリース版の`develop`ビルドや、社内向けのエンジニアリングイメージなど）。
 - 破損したブートローダーまたはファイルシステムを持つボードを復旧する必要があり、SDカードが利用できません。
-- 新しい基板を導入するにあたり、内部ストレージデバイスの摩耗を避けたいと考えているのですね。
+- 新しいボードを立ち上げるにあたり、内部ストレージデバイスの摩耗を避けたいと考えています。
 - あなたは、Yocto LinuxのModalix DevKitをeLxrに変換するか、またはeLxrからYocto Linuxに戻しています。変換に特有の前提条件については、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)を参照してください。
 
 :::note
@@ -31,7 +31,7 @@ sidebar_position: 2
 2つのターミナルセッションが必要です。
 
 1. DevKit に接続されたシリアルコンソールセッション。このセッションを使用して、U-Boot の環境変数を変更し、DevKit がネットワーク経由で起動するようにします。
-2. ホストのシェルセッションです。このセッションを使用して、TFTPサーバーを起動し、eMMCフラッシュの初期化を開始します。
+2. ホストのシェルセッションです。このセッションを使用して、TFTPサーバーを起動し、eMMCへの書き込みを開始します。
 :::
 
 1. **DevKitのイーサネットポート**をホストマシンに直接接続し、ホストのネットワークインターフェースを固定IPアドレス**192.168.1.10**に設定します。Modalixの早期アクセス版DevKitでは、イーサネットポート0を使用してください。
@@ -47,7 +47,7 @@ sidebar_position: 2
 </details>
 
 <details open>
-<summary><strong>手順2：ホスト上でTFTP Netbootサーバーを起動します。</strong></summary>
+<summary><strong>ステップ2：ホスト上でTFTP ネットワークブートサーバーを起動します。</strong></summary>
 
 **要件**
 
@@ -64,7 +64,7 @@ sidebar_position: 2
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
 ```
 
-**Linuxについて：**
+**Linux の場合：**
 
 :::warning
 TFTPサーバーは、特権ポートである69にバインドされるため、`sudo` が必要です。
@@ -83,7 +83,7 @@ sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boa
 </details>
 
 <details open>
-<summary><strong>ステップ3：設定を行います。 DevKit Netbootへ</strong></summary>
+<summary><strong>ステップ3：DevKit をネットワークブートするように設定します。</strong></summary>
 
 DevKit をシリアルコンソール経由でホストに接続したまま、電源を入れ直します。電源の入れ直し中にシリアルコンソールの接続が切れた場合は、再接続してください。`Hit any key to stop autoboot` と表示されるまで待ち、任意のキーを押して U-Boot シェルに入ります。
 
@@ -127,7 +127,7 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 </details>
 
 <details open>
-<summary>ステップ4：eMMCをフラッシュします<strong></strong></summary>
+<summary><strong>ステップ4：eMMCに書き込みます</strong></summary>
 
 ホスト上の`--netboot`シェルは、次の2つのコマンドをサポートしています。
 
@@ -136,7 +136,7 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 
 DevKit がネットワークブートを完了するまで待ちます。これには数分かかる場合があります。シリアルコンソールにログインプロンプトが表示されたら、ボードは準備完了です。完全なブートシーケンスを観察するために、シリアルコンソールを接続したままにしておくことをお勧めします。
 
-ホスト端末に戻り、`netboot>` プロンプトが表示されるまで **Enter** キーを押します。オプションで、`c` と入力して、DevKit が接続されていることを確認し、現在のファームウェアバージョンを表示してから、`f` と入力してフラッシュします。
+ホスト端末に戻り、`netboot>` プロンプトが表示されるまで **Enter** キーを押します。オプションで、`c` と入力して、DevKit が接続されていることを確認し、現在のファームウェアバージョンを表示してから、`f` と入力して書き込みます。
 
 ```console
 netboot> f
@@ -152,17 +152,17 @@ netboot> f
 🔧 Initiating eMMC flash [...]
 ```
 
-この画像のサイズは約1.6GBで、転送には数分かかります。進捗状況の例：
+このイメージのサイズは約1.6GBで、転送には数分かかります。進捗状況の例：
 
 ```text
 ↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-フラッシュ処理が完了したら、DevKit の電源を入れ直してください。これにより、eMMCからターゲットバージョンが起動されます。
+書き込みが完了したら、DevKit の電源を入れ直してください。これにより、eMMCからターゲットバージョンが起動されます。
 
 :::note
-**ネットブート中にDevKitのIPアドレスが変更された場合**（たとえば、DHCPによってデフォルトの`192.168.1.20`とは異なるアドレスが割り当てられた場合）、`f`は単独ではボードに到達できません。DevKitのシリアルコンソールで新しいIPアドレスを確認してください。これはブートログに表示され、ネットブートされたシェルで`ip addr`によって示されます。その後、それを`f`に明示的に渡してください。
+**ネットワークブート中にDevKitのIPアドレスが変更された場合**（たとえば、DHCPによってデフォルトの`192.168.1.20`とは異なるアドレスが割り当てられた場合）、`f`は単独ではボードに到達できません。DevKitのシリアルコンソールで新しいIPアドレスを確認してください。これはブートログに表示され、ネットワークブートされたシェルで`ip addr`によって示されます。その後、それを`f`に明示的に渡してください。
 
 ```console
 netboot> f <new-ip>
@@ -172,7 +172,7 @@ netboot> f <new-ip>
 </details>
 
 <details open>
-<summary><strong>Troubleshooting</strong></summary>
+<summary><strong>トラブルシューティング</strong></summary>
 
 - DevKit がネットワークブートに失敗した場合、ホストとデバイスの両方が同じサブネット (`192.168.1.x`) 上にあることを確認してください。
 - Modalixの早期アクセス版では、ネットワークブートに利用できるのはイーサネットポート0のみです。

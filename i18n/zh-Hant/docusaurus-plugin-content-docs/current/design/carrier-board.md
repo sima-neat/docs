@@ -12,19 +12,19 @@ Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板�
 
 ## SoM 提供的項目 {#som-provides}
 
-下列元件位於 Modalix SoM 上，只要載板遵循 260-pin 連接器的腳位配置，即可運作：
+下列元件位於 Modalix SoM 上，只要載板遵循 260 針連接器的腳位配置，即可運作：
 
 - MLSoC Modalix
 - LPDDR5 記憶體
 - eMMC 與 SPI 快閃儲存裝置
-- USB 控制器、Gigabit Ethernet PHY 與 HDMI 視訊處理器
+- USB 控制器、Gigabit 乙太網路 PHY 與 HDMI 視訊處理器
 - 即時時鐘
 
 ## 載板提供的項目 {#carrier-provides}
 
 - SoM 與您的介面之間的連接器腳位對應
 - 對 SoM 的電源供應
-- Ethernet、PCIe、USB、MIPI 相機與低速 I/O 等介面
+- 乙太網路、PCIe、USB、MIPI 相機與低速 I/O 等介面
 - 用於除錯與復原的序列埠存取
 - 散熱
 
@@ -44,7 +44,7 @@ Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板�
 | Modalix 系統模組載板硬體參考 | 連接器腳位、介面對應、電源供應與參考連接。請先閱讀此檔案。 |
 | Modalix 系統模組（SoM）資料手冊 | SoM 的電氣、機械與散熱規格 |
 | 系統模組（SoM）載板啟動指南 | 為新載板供電並進行驗證 |
-| Modalix 系統模組（SoM）散熱設計指南 | 散熱預算與散熱設計，可向您的 SiMa.ai 業務代表索取 |
+| Modalix 系統模組（SoM）散熱設計指南 | 散熱預算與散熱設計，可向您的 SiMa.ai 聯絡人索取 |
 
 ## 設計步驟
 

@@ -20,7 +20,7 @@ SoC, 메모리 및 전원부가 이미 탑재된 모듈을 기반으로 개발�
 - 클록 및 리셋
 - 라우팅 및 튜닝을 포함한 LPDDR5 메모리
 - 부트 스토리지, 그리고 디버깅 및 복구를 위한 시리얼 접근
-- PCIe, MIPI CSI-2, Ethernet 등의 고속 인터페이스와 해당 레이아웃
+- PCIe, MIPI CSI-2, 이더넷 등의 고속 인터페이스와 해당 레이아웃
 - 냉각
 
 ## 설계 패키지 받기 {#design-package}
@@ -37,10 +37,10 @@ SiMa.ai는 칩다운 설계 가이드와 아래 관련 자료를 설계 패키�
 | 문서 | 용도 |
 | --- | --- |
 | Modalix SoC 데이터시트 | 핀 기능, 전원 레일, 신호 타이밍 및 동작 한계 |
-| Modalix PCB 배선 지침 | PCIe, MIPI CSI-2, Ethernet 및 기타 주요 신호선의 레이아웃 규칙 |
-| Modalix DDR 튜닝 가이드 | LPDDR5 라우팅, 종단 및 캘리브레이션 |
-| Modalix 얼리 액세스 DevKit 디자인 패키지 | 칩다운 레퍼런스 설계 |
-| Modalix PCIe HHHL 디자인 패키지 | PCIe 카드용 칩다운 레퍼런스 설계 |
+| Modalix PCB 배선 지침 | PCIe, MIPI CSI-2, 이더넷 및 기타 주요 신호선의 레이아웃 규칙 |
+| Modalix DDR 튜닝 가이드 | LPDDR5 라우팅, 종단 및 보정 |
+| Modalix 얼리 액세스 DevKit 설계 패키지 | 칩다운 레퍼런스 설계 |
+| Modalix PCIe HHHL 설계 패키지 | PCIe 카드용 칩다운 레퍼런스 설계 |
 | Modalix SoM 열 설계 가이드 | 열 예산 및 냉각 설계 |
 
 ## 설계 단계

@@ -12,7 +12,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # SiMa.ai ハードウェアに関するドキュメント
 
-このサイトでは、SiMa.ai MLSoC Modalix製品のハードウェア設定、ファームウェアのワークフロー、および低レベルインターフェイスについて説明します。ソフトウェア、機械学習、およびパイプラインツールについては、別のドキュメントで解説します。
+このサイトでは、SiMa.ai MLSoC Modalix製品のハードウェア設定、ファームウェアのワークフロー、および低レベルインターフェースについて説明します。ソフトウェア、機械学習、およびパイプラインツールについては、別のドキュメントで解説します。
 
 ## 目的に合わせて選ぶ
 
@@ -26,7 +26,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
     <p>Modalix SoM 用のキャリアボードを選ぶか、独自に設計して立ち上げます。</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
-    <h4>SoC を使って設計する</h4>
+    <h4>SoC で設計する</h4>
     <p>Modalix SoC を自社のボードに直接実装します。</p>
   </a>
   <a className="card" href="/hardware/software">
@@ -59,27 +59,27 @@ SiMa.ai は MLSoC Modalix を、チップ単体、モジュール、完成品と
 
 | 製品 | 概要 | ここから始める |
 | --- | --- | --- |
-| MLSoC Modalix | システムオンチップです。独自に設計したボードに実装します。 | [SoC を使って設計する](/hardware/design/chip-down) |
+| MLSoC Modalix | システムオンチップです。独自に設計したボードに実装します。 | [SoC で設計する](/hardware/design/chip-down) |
 | Modalix SoM | SoC、LPDDR5 メモリ、電源を搭載したモジュールです。キャリアボードに差し込んで使用します。 | [SoM とキャリアボードの統合](/hardware/design/carrier-board) |
 | Modalix DevKit | Modalix SoM をキャリアボードに載せ、筐体に収めた評価・開発用キットです。 | [DevKit の評価と利用](/hardware/getting-started) |
 | Modalix PCIe Card | ホストマシンに Modalix の推論機能を追加する、ハーフハイト・ハーフレングスのカードです。 | [PCIe モード](/hardware/getting-started/pcie-mode) |
 
 ### SoM かチップダウンか {#som-or-chip-down}
 
-独自のハードウェアを構築するには、Modalix SoM 用のキャリアボードを設計するか、SoC を直接実装したボードを設計するかを選択します。設計作業、資料、立ち上げ作業がそれぞれ異なります。
+独自のハードウェアを構築するには、Modalix SoM 用のキャリアボードを設計するか、SoC を直接実装したボードを設計するかを選択します。設計作業、関連資料、立ち上げ作業がそれぞれ異なります。
 
 | | チップダウン設計 | キャリアボード設計 |
 | --- | --- | --- |
 | 設計対象 | パッケージ化された Modalix SoC を搭載するボード。メモリ、電源、クロックも含みます | Modalix SoM 用のキャリアボード。SoM には SoC、LPDDR5、電源がすでに搭載されています |
 | 主な設計作業 | 電源シーケンス、クロックとリセット、LPDDR5 の配線とチューニング、高速信号のレイアウト、インターフェース、熱設計 | コネクターのマッピング、電源供給、インターフェース、熱設計 |
-| 資料 | チップダウン設計ガイド、SoC データシート、設計パッケージ（NDA を締結のうえ SiMa.ai が提供します） | 公開されているデータシートと立ち上げガイド |
+| 関連資料 | チップダウン設計ガイド、SoC データシート、設計パッケージ（NDA を締結のうえ SiMa.ai が提供します） | 公開されているデータシートと立ち上げガイド |
 | ソフトウェアの出発点 | Modalix BSP と、ボードレベルの適合作業 | Modalix BSP と、キャリアボードに合わせたデバイスツリーの変更 |
 
 ボードが起動した後は、どちらの方法でも同じシステムソフトウェアを使用します。[カスタムシステムソフトウェアのビルドとデプロイ](/hardware/software)を参照してください。
 
 ## MLSoC Modalixについて
 
-**MLSoC Modalix** は、SiMa.ai の第 2 世代の機械学習システム・オン・チップです。Arm Cortex-A65 アプリケーション・コンプレックス、高スループットの **機械学習アクセラレータ (MLA)**、カメラからの画像入力用の **画像信号プロセッサ (ISP)**、および従来の画像処理ワークロード用の **コンピュータ・ビジョン・ユニット (CVU)** を 1 つのチップに集約しています。
+**MLSoC Modalix** は、SiMa.ai の第 2 世代の機械学習システムオンチップです。Arm Cortex-A65 アプリケーション・コンプレックス、高スループットの **機械学習アクセラレータ (MLA)**、カメラからの画像入力用の **画像信号プロセッサ (ISP)**、および従来の画像処理ワークロード用の **コンピュータビジョンユニット (CVU)** を 1 つのチップに集約しています。
 
 この統合により、個別のアクセラレータ、ホスト CPU、およびカメラブリッジを組み合わせることなく、エッジでマルチモーダル、生成、およびビジョン AI パイプラインを実行できます。Modalix SoM は、キャリアボードおよび製品への統合のために MLSoC Modalix をパッケージ化しており、ここに記載されているすべての DevKit は同じシリコンを使用しています。
 
@@ -109,15 +109,15 @@ SiMa.aiは、エッジAIアプリケーション向けのMLSoC Modalixベース�
 
 ### 機能比較
 
-| 機能 | Modalix開発キット | Modalix PCIeカード | Modalix早期アクセス開発キット |
+| 機能 | Modalix DevKit | Modalix PCIeカード | Modalix Early Access DevKit |
 | --- | --- | --- | --- |
 | **ドキュメントとOS** | | | |
-| 製品概要 | [ビュー](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) | — | [ビュー](https://sima.ai/wp-content/uploads/2026/06/Modalix-MLSoC-Product-Brief_v1.1.pdf) |
+| 製品概要 | [表示](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) | — | [表示](https://sima.ai/wp-content/uploads/2026/06/Modalix-MLSoC-Product-Brief_v1.1.pdf) |
 | プリインストールされたオペレーティングシステム | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) |
 | **計算** | | | |
 | ARMコア | 8コアのArm Cortex-A65、クロック周波数1.4 GHz | 8コアのArm Cortex-A65、クロック周波数1.4 GHz | 8コアのArm Cortex-A65、クロック周波数1.4 GHz |
-| 画像信号プロセッサ（ISP）。 | Arm C-71、1.2 GHz | Arm C-71、1.2 GHz | Arm C-71、1.2 GHz |
-| CVU（コンピュータービジョンユニット） | Synopsys EV74、750 16ビット GOPS | Synopsys EV74、750 16ビット GOPS | Synopsys EV74、750 16ビット GOPS |
+| 画像信号プロセッサ（ISP） | Arm C-71、1.2 GHz | Arm C-71、1.2 GHz | Arm C-71、1.2 GHz |
+| CVU（コンピュータビジョンユニット） | Synopsys EV74、750 16ビット GOPS | Synopsys EV74、750 16ビット GOPS | Synopsys EV74、750 16ビット GOPS |
 | **メモリとストレージ** | | | |
 | RAM サイズ | 32GB LPDDR5 | 32GB LPDDR5 | 64GB LPDDR5 |
 | ストレージ | 16GB eMMC、500GB NVMe | 16GB eMMC | 10GBのeMMC |
@@ -134,15 +134,15 @@ SiMa.aiは、エッジAIアプリケーション向けのMLSoC Modalixベース�
 | グラフィックスコントローラー | [シリコンモーション SM768](https://www.siliconmotion.com/download/3PR/a/SM768_PB_EN_202004.pdf) | ✖ | ✖ |
 | **ビデオコーデック** | | | |
 | H.264/H.265エンコーダー | 4kp60 | 4kp60 | 4kp60 |
-| MJPEGエンコーダ | 4kp30 | 4kp30 | 4kp30 |
+| MJPEGエンコーダー | 4kp30 | 4kp30 | 4kp30 |
 | H.264/H.265 デコーダー | 4kp60 | 4kp60 | 4kp60 |
-| AV1およびMJPEGデコーダー。 | 4kp60 | 4kp60 | 4kp60 |
+| AV1およびMJPEGデコーダー | 4kp60 | 4kp60 | 4kp60 |
 | **フォームファクター** | | | |
 | ホストに接続された PCIe カード | ✖ | ✔ | ✖ |
 
-<a className="docs-button" href="https://sima.ai/contact/" target="_blank" rel="noreferrer"> 開発キットをご注文ください </a>
+<a className="docs-button" href="https://sima.ai/contact/" target="_blank" rel="noreferrer"> DevKit をご注文ください </a>
 
-## デプロイメントアーキテクチャ
+## デプロイアーキテクチャ
 
 MLSoC Modalix は、スタンドアロンモードと PCIe モードという、一般的な 2 種類の開発アーキテクチャをサポートしています。ハードウェアの接続方法とアプリケーションの実行場所に応じて、適切なアーキテクチャを選択してください。
 
@@ -154,7 +154,7 @@ MLSoC Modalix は、スタンドアロンモードと PCIe モードという、
 **主な活用事例**
 
 - **エッジAIアプリケーション**: 中央サーバーやクラウドインフラストラクチャに依存せずに推論を実行します。
-- **コンパクトなデプロイメント**: 追加のホストハードウェアの必要性を低減します。
+- **コンパクトなデプロイ**: 追加のホストハードウェアの必要性を低減します。
 - **電力制約のあるシステム**: バッテリーやソーラーパネルで電力を供給されるリモート監視システムをサポートします。
 
 **利点**
@@ -166,7 +166,7 @@ MLSoC Modalix は、スタンドアロンモードと PCIe モードという、
 **一般的なデータフロー**
 
 1. DevKitは、ネットワークインターフェースまたはセンサーから直接データを受信します。
-2. DevKitは、デバイス上での推論パイプラインを定義する[NEATアプリケーション](https://developer.sima.ai/software)をロードします。
+2. DevKitは、デバイス上での推論パイプラインを定義する[NEATアプリケーション](https://developer.sima.ai/software)を読み込みます。
 3. MLSoC Modalix は、推論を実行し、データをローカルで処理します。
 4. 結果は、ネットワーク接続を介して他のデバイスまたはシステムに送信され、さらなる処理や視覚化が行われます。
 
@@ -190,7 +190,7 @@ PCIeモードでは、Modalix PCIeカードをホストマシンにインスト�
 **一般的なデータ処理フロー**
 
 1. ホストマシンは、センサー、周辺機器、ストレージ、またはネットワークインターフェースからデータを収集します。
-2. Modalix PCIeカードは、推論パイプラインと最適化されたAIモデルをパッケージ化した[NEATアプリケーション](https://developer.sima.ai/software)をロードします。
+2. Modalix PCIeカードは、推論パイプラインと最適化されたAIモデルをパッケージ化した[NEATアプリケーション](https://developer.sima.ai/software)を読み込みます。
 3. ホストは、PCIe経由でデータをModalix PCIeカードに送信します。
 4. ホストは結果を処理するか、下流システムに転送します。
 
@@ -201,7 +201,7 @@ PCIeモードでは、Modalix PCIeカードをホストマシンにインスト�
 
 ## 始めましょう
 
-ご自身の環境に合った方法を選択してください。各ガイドでは、そのモードにおけるシリアルコンソールへのアクセス、ネットワークの起動、およびファームウェアの管理について説明します。
+ご自身の環境に合った方法を選択してください。各ガイドでは、そのモードにおけるシリアルコンソールへのアクセス、ネットワークの立ち上げ、およびファームウェアの管理について説明します。
 
 <div className="card-grid">
   <a className="card" href={useBaseUrl('/tools/qsg/index.html')} target="_blank" rel="noreferrer">
@@ -213,7 +213,7 @@ PCIeモードでは、Modalix PCIeカードをホストマシンにインスト�
     <p>Modalix DevKitまたはModalix SoMベースのシステムを、独立したエッジデバイスとして実行します。</p>
   </a>
   <a className="card" href="/hardware/getting-started/pcie-mode">
-    <h4>PCIeモード</h4>
+    <h4>PCIe モード</h4>
     <p>Modalix PCIeカードをホストマシンにインストールして、推論処理をオフロードします。</p>
   </a>
 </div>

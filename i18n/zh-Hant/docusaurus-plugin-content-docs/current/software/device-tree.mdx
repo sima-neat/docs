@@ -22,7 +22,7 @@ Device tree 只描述硬體，不會加入驅動程式。裝置的驅動程式�
 
 ## 選擇版本隨附的 Overlay {#shipped-overlay}
 
-此版本提供支援相機的 overlay，以及 PCIe 與快閃記憶體組態的 overlay。其原始檔位於核心樹的 [overlays 目錄](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays)。
+此版本提供支援相機的 overlay，以及 PCIe 與快閃記憶體設定的 overlay。其原始檔位於核心原始碼樹的 [overlays 目錄](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays)。
 
 1. 列出電路板上的 overlay：
 
@@ -67,7 +67,7 @@ Device tree 只描述硬體，不會加入驅動程式。裝置的驅動程式�
 
 撰寫 overlay 之前，請先確認核心具備對應的驅動程式。`compatible` 字串必須屬於 [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) 所啟用的驅動程式，或屬於您自行建置並安裝的模組。
 
-若需要較完整的範例，請閱讀核心樹中的相機 overlay，例如 [`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso)。它為感測器加入時脈、設定 I2C 匯流排與 power-down 腳位、啟用 CSI 介面及其視訊節點，並以兩條 data lane 將感測器連接至 CSI 介面。
+若需要較完整的範例，請閱讀核心原始碼樹中的相機 overlay，例如 [`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso)。它為感測器加入時脈、設定 I2C 匯流排與 power-down 腳位、啟用 CSI 介面及其視訊節點，並以兩條資料通道將感測器連接至 CSI 介面。
 
 ## 建置並安裝 Overlay {#build-install}
 
@@ -104,7 +104,7 @@ Device tree 只描述硬體，不會加入驅動程式。裝置的驅動程式�
 | 現象 | 可能原因 | 檢查項目 |
 | --- | --- | --- |
 | 節點不在 `/proc/device-tree` 中 | U-Boot 未套用 overlay | U-Boot 中的 `printenv dtbos`、作用中開機目錄內的檔案，以及 U-Boot 主控台上的錯誤 |
-| 節點存在，但沒有驅動程式繫結 | 核心沒有對應 `compatible` 字串的驅動程式 | 核心組態與 `dmesg` |
+| 節點存在，但沒有驅動程式繫結 | 核心沒有對應 `compatible` 字串的驅動程式 | 核心設定與 `dmesg` |
 | 驅動程式回報錯誤 | 匯流排或位址錯誤，或缺少時脈、電源、重置或 GPIO | `dmesg`，若為 I2C 裝置則另查 `i2cdetect` |
 | 其他裝置停止運作 | 兩個 overlay 變更了相同的節點或相同的腳位 | 一次只套用一個 overlay |
 

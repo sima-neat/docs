@@ -19,7 +19,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 :::note Передумови
 SDK 2.1 або новіший зі встановленим пакетом Palette для підтримки графіки. Також
-майте під рукою технічний опис SoM, технічний опис SoC і посібник Modalix SoM
+майте під рукою технічний паспорт SoM, технічний паспорт SoC і посібник Modalix SoM
 Comparison Guide.
 :::
 
@@ -174,7 +174,7 @@ Ethernet PHY · відеопроцесор HDMI
 ## Камери {#cameras}
 
 Щоб *використовувати* камеру на DevKit, виберіть один із оверлеїв, що постачаються, — див.
-[Інтерфейси камер MIPI](/hardware/getting-started/standalone-mode/mipi-camera-interfaces),
+[MIPI Інтерфейси для підключення камер](/hardware/getting-started/standalone-mode/mipi-camera-interfaces),
 де описано вибір потрібного `.dtbo` і його налаштування в U-Boot.
 
 На власній платі-носії вам, можливо, доведеться натомість *створити* оверлей, оскільки
@@ -206,7 +206,7 @@ Ethernet PHY · відеопроцесор HDMI
 ```
 
 Оголосіть шини живлення камери як регулятори з фіксованою напругою, додані до кореневого вузла
-через фрагмент оверлею, щоб Linux знав, що ці шини існують і на них подано живлення.
+через фрагмент оверлея, щоб Linux знав, що ці шини існують і на них подано живлення.
 
 Почніть із [прикладів оверлеїв](https://github.com/SiMa-ai/simaai-linux/tree/master/arch/arm64/boot/dts/simaai/overlays)
 у дереві ядра. Керування камерою, частота PHY, DMA для другої камери, магістраль
@@ -229,4 +229,4 @@ Ethernet PHY · відеопроцесор HDMI
 ## Наступні кроки
 
 - [Низькошвидкісний ввід-вивід](../interfaces/low-speed-io.mdx) — GPIO, UART, I2C і SPI у блоках SIO.
-- [Інтерфейси камер MIPI](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) — використання камер на DevKit.
+- [MIPI Інтерфейси для підключення камер](/hardware/getting-started/standalone-mode/mipi-camera-interfaces) — використання камер на DevKit.

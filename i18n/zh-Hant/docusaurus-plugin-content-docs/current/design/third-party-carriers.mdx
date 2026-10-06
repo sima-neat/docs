@@ -1,6 +1,6 @@
 ---
 title: 第三方載板
-description: 比較採用與 Modalix SoM 相同 260-pin SODIMM 外形規格的現成載板。
+description: 比較採用與 Modalix SoM 相同 260 針 SODIMM 外形規格的現成載板。
 sidebar_position: 5
 ---
 
@@ -8,7 +8,7 @@ import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierB
 
 # 第三方載板
 
-Modalix SoM 採用與 NVIDIA Jetson Orin NX 及 Orin Nano 相同的 260-pin SODIMM 外形規格，因此為這些模組設計的載板可以作為您產品的起點，或作為自行設計時的參考。本頁比較其中九款載板的介面。
+Modalix SoM 採用與 NVIDIA Jetson Orin NX 及 Orin Nano 相同的 260 針 SODIMM 外形規格，因此為這些模組設計的載板可以作為您產品的起點，或作為自行設計時的參考。本頁比較其中九款載板的介面。
 
 :::warning 外形規格相同不代表已通過驗證
 SiMa.ai 僅在 Waveshare 載板上完成 Modalix SoM 的硬體啟動。其他載板是依外形規格列出，尚未搭配 Modalix SoM 進行測試。連接之前，請先確認 SoM 與載板之間的電氣腳位相容性，並預期需要調整 device tree。請參閱[載板硬體啟動](./som-carrier.mdx)。
@@ -37,7 +37,7 @@ Waveshare 載板是參考載板，完整的元件清單請見[載板硬體啟動
 
 <CarrierBoardSpecs />
 
-Modalix SoM Rev 2 引出四組 MIPI CSI 介面，每組 2 lane。由於兩條獨立的 2-lane 控制器路徑無法合併為單一 4-lane 路徑，因此不支援 4-lane MIPI CSI 連接。相機支援也取決於感測器驅動程式與 overlay。請參閱[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)。
+Modalix SoM Rev 2 引出四組 MIPI CSI 介面，每組 2 通道。由於兩條獨立的 2 通道控制器路徑無法合併為單一 4 通道路徑，因此不支援 4 通道 MIPI CSI 連接。相機支援也取決於感測器驅動程式與 overlay。請參閱[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)。
 
 ## 後續步驟
 

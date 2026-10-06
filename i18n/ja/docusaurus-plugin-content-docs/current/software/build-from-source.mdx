@@ -1,12 +1,12 @@
 ---
 title: BSP をソースからビルドする
-description: 公開ソースから Modalix のカーネル、U-Boot、デバイスツリーをビルドし、成果物をボードにインストールします。
+description: 公開ソースから Modalix のカーネル、U-Boot、デバイスツリーをビルドし、アーティファクトをボードにインストールします。
 sidebar_position: 2
 ---
 
 # BSP をソースからビルドする
 
-Modalix の Linux カーネル、U-Boot、デバイスツリーを自分でビルドし、その成果物をボードに
+Modalix の Linux カーネル、U-Boot、デバイスツリーを自分でビルドし、そのアーティファクトをボードに
 インストールします。ここで使用するものはすべて公開リポジトリです。NDA も営業窓口への問い合わせも必要ありません。
 
 :::note
@@ -158,7 +158,7 @@ root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC
 
 これにより、次のものが生成されます。
 
-| 成果物 | パス |
+| アーティファクト | パス |
 | --- | --- |
 | カーネルイメージ | `arch/arm64/boot/Image` |
 | デバイスツリー | `arch/arm64/boot/dts/simaai/*.dtb` |
@@ -183,7 +183,7 @@ root@sdk:/data/sima-ai-uboot$ make all u-boot-initial-env V=1
 `<u-boot-commit>` を、[リリースの互換性](./release-compatibility.mdx)に記載されている
 お使いのリリースの U-Boot コミットに置き換えてください。イメージは `u-boot.bin` です。
 
-## 成果物をインストールする {#install-the-artifacts}
+## アーティファクトをインストールする {#install-the-artifacts}
 
 ### eMMC のレイアウト
 
@@ -223,7 +223,7 @@ root@modalix:~# strings /boot/uboot.env | grep boot_path= | cut -f2 -d"="
 /boot-0/
 ```
 
-成果物をそのディレクトリにコピーします。
+アーティファクトをそのディレクトリにコピーします。
 
 ```console
 root@sdk:/data$ scp simaai-linux/arch/arm64/boot/Image root@<board-ip>:/boot/boot-0/
@@ -261,7 +261,7 @@ sima$ boot
 
 カスタムビルドをボードに導入する方法は 2 つあり、作業の段階に応じて使い分けます。
 
-**稼働中のボードで反復作業を行う。** 開発中は、[成果物をインストールする](#install-the-artifacts)の
+**稼働中のボードで反復作業を行う。** 開発中は、[アーティファクトをインストールする](#install-the-artifacts)の
 手順のとおりに、カーネルイメージ、デバイスツリー、オーバーレイ、モジュールをすでに起動できるボードにコピーし、
 再起動します。これは最も速いサイクルですが、1 台のボードを手作業で変更するため、再現可能なイメージは残りません。
 
@@ -278,7 +278,7 @@ swupdate に移行します。ソースから完全なイメージをビルド�
 [アップデートパッケージのビルドと適用](../deployment/update-package.mdx)を参照してください。
 :::
 
-[ファームウェアアップデート](/hardware/getting-started/firmware-update)は、SiMa.ai の標準イメージを
+[ファームウェアのアップデート](/hardware/getting-started/firmware-update)は、SiMa.ai の標準イメージを
 インストールします。ボードを既知のリリースに戻す目的で使用し、独自のビルドのデプロイには使用しないでください。
 インストールした内容が上書きされます。
 
@@ -299,4 +299,4 @@ swupdate に移行します。ソースから完全なイメージをビルド�
   対応するソースコミット。
 - [キャリアボードの立ち上げ](../design/som-carrier.mdx)：独自のキャリアボードに合わせた
   デバイスツリーの適合。
-- [eLxr への変換](../reference/tech-notes/elxr-conversion.mdx)：Yocto DevKit を eLxr に移行する方法。
+- [eLxr に変換](../reference/tech-notes/elxr-conversion.mdx)：Yocto DevKit を eLxr に移行する方法。
