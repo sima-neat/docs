@@ -20,13 +20,13 @@ sidebar_position: 2
 - PCIe、MIPI CSI-2 與 Ethernet 等高速介面及其電路佈局
 - 散熱
 
-## Chip-Down 設計指南
+## 取得設計套件 {#design-package}
 
-SiMa.ai 提供 Modalix chip-down 設計指南。如需取得，請聯絡您的 SiMa.ai 業務代表。
+SiMa.ai 將 chip-down 設計指南與下列技術資料作為設計套件提供。取得設計套件前，須先與 SiMa.ai 簽署保密協議（NDA）。如需申請，請聯絡您的 SiMa.ai 業務代表；若您沒有業務代表，請使用 [SiMa.ai 聯絡頁面](https://sima.ai/contact/)。
 
 ## 技術資料
 
-以下檔案同樣可向您的 SiMa.ai 業務代表索取。各檔案的說明請參閱[參考檔案](../reference/extra-docs.md)。
+請連同設計套件一併申請以下檔案。各檔案的說明請參閱[參考檔案](../reference/extra-docs.md)。
 
 | 檔案 | 用途 |
 | --- | --- |
@@ -39,11 +39,11 @@ SiMa.ai 提供 Modalix chip-down 設計指南。如需取得，請聯絡您的 S
 
 ## 設計步驟
 
-1. 取得 chip-down 設計指南與上述技術資料。
+1. 申請設計套件。須簽署 NDA。
 2. 以設計套件作為參考設計，進行電路板設計。
 3. 依照散熱設計指南規劃散熱。
 4. 啟動電路板。Chip-down 的硬體啟動流程（包括記憶體初始化與首次開機）目前尚未公開說明。如需協助，請聯絡您的 SiMa.ai 業務代表。
-5. 使用[建置與自訂 eLxr](../software/index.md) 調整並建置軟體。
+5. 使用[建置與部署自訂系統軟體](../software/index.md)調整並建置軟體。
 
 ## 後續步驟
 

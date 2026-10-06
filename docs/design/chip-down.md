@@ -23,14 +23,16 @@ power, see [Carrier Board Design](./carrier-board.md).
 - High-speed interfaces such as PCIe, MIPI CSI-2, and Ethernet, and their layout
 - Cooling
 
-## Chip-Down Design Guide
+## Get the Design Package {#design-package}
 
-SiMa.ai has a Modalix chip-down design guide. To get it, contact your SiMa.ai
-representative.
+SiMa.ai provides the chip-down design guide and the collateral below as a design
+package. The design package requires a non-disclosure agreement (NDA) with
+SiMa.ai. To request it, contact your SiMa.ai representative. If you do not have
+one, use the [SiMa.ai contact page](https://sima.ai/contact/).
 
 ## Collateral
 
-These documents are also available from your SiMa.ai representative. See
+Request these documents with the design package. See
 [Reference Documents](../reference/extra-docs.md) for a description of each one.
 
 | Document | Use it for |
@@ -44,13 +46,14 @@ These documents are also available from your SiMa.ai representative. See
 
 ## Design Steps
 
-1. Get the chip-down design guide and the collateral above.
+1. Request the design package. It requires an NDA.
 2. Design the board, using the design packages as reference designs.
 3. Plan cooling with the thermal design guide.
 4. Bring up the board. Chip-down bring-up, including memory initialization and
    first boot, is not yet documented publicly. Contact your SiMa.ai representative
    for help.
-5. Adapt and build the software with [Build & Customize eLxr](../software/index.md).
+5. Adapt and build the software with
+   [Build & Deploy Custom System Software](../software/index.md).
 
 ## Next Steps
 
