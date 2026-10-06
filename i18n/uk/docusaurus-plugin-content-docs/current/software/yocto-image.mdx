@@ -15,8 +15,8 @@ U-Boot, ядро, дерева пристроїв та оверлеї, прош�
 [Збирання BSP з вихідного коду](./build-from-source.mdx).
 
 :::caution[Ще не перевірено на обладнанні]
-Ця сторінка підсумовує посібник зі збирання, що міститься в шарі Yocto. Збірку для цієї
-сторінки не виконували, а отриманий образ не завантажували на платі.
+Збирання з цієї сторінки виконали один раз, 2026-10-06, у контейнері Ubuntu 22.04, із шару
+на коміті випуску 2.1.3. Отриманий образ не прошивали на плату й не завантажували.
 :::
 
 :::note
@@ -29,9 +29,19 @@ U-Boot, ядро, дерева пристроїв та оверлеї, прош�
 
 - Використовуйте хост збирання з Linux. Посібник шару рекомендує Ubuntu 22.04 і
   зазначає, що Yocto Project не підтримує WSL.
-- Розмістіть на хості збирання SSH-ключ GitHub. Рецепти отримують вихідний код ядра,
-  U-Boot і бібліотек SiMa.ai з GitHub через SSH.
-- Установіть пакети хоста, перелічені в посібнику:
+- Рецепти отримують вихідний код ядра та U-Boot SiMa.ai з GitHub за SSH-адресами.
+  Розмістіть на хості збирання SSH-ключ GitHub або налаштуйте Git на використання HTTPS
+  для цих адрес:
+
+  ```console
+  sima-user@sima-user-machine:~$ git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  sima-user@sima-user-machine:~$ git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+  ```
+
+- Установіть
+  [пакети хоста збирання](https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#required-packages-for-the-build-host),
+  які Yocto Project наводить для Ubuntu, і зробіть доступною локаль `en_US.UTF-8`.
+  Потім установіть пакети, які додає посібник шару:
 
   ```console
   sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
@@ -52,6 +62,9 @@ U-Boot, ядро, дерева пристроїв та оверлеї, прош�
 - `meta-python-ai`
 - `meta-swupdate`
 - `meta-simaai`
+
+Не змінюйте назви цих каталогів і тримайте каталоги поруч. Шаблон знаходить кожен шар
+за шляхом поруч із каталогом збирання.
 
 Репозиторій і точну ревізію кожного з них наведено в
 [посібнику зі збирання](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
@@ -85,6 +98,13 @@ sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minima
 інша плата. Образ містить мінімальну кореневу файлову систему з прошивкою
 SiMa.ai, модулями ядра, OpenSSH і swupdate.
 
+Конфігурація машини приймає прапорець ліцензії `commercial`, тому збирання додає прошивку
+SiMa.ai без запиту. Перш ніж поширювати образ, прочитайте ліцензію в
+[`licenses/SiMaai-EULA-1.0`](https://github.com/SiMa-ai/meta-simaai/blob/master/licenses/SiMaai-EULA-1.0).
+
+Перше збирання з 12 потоками на 20-ядерній машині тривало близько 35 хвилин і зайняло
+близько 70 ГБ дискового простору.
+
 ## Де знайти результат {#output}
 
 Збірка записує результат до `tmp/deploy/images/modalix` у каталозі
@@ -92,9 +112,9 @@ SiMa.ai, модулями ядра, OpenSSH і swupdate.
 
 | Файл | Призначення |
 | --- | --- |
-| `.wic.gz` і `.wic.bmap` | Повний образ eMMC та його карта блоків. Прошивайте саме їх. |
-| `.rootfs.ext4.gz` | Лише коренева файлова система |
-| `.cpio.gz` | Коренева файлова система як початковий RAM-диск, для завантаження з мережі |
+| `simaai-image-minimal-modalix.rootfs.wic.gz` і `.wic.bmap` | Повний образ eMMC та його карта блоків. Прошивайте саме їх. |
+| `simaai-image-minimal-modalix.rootfs.ext4.gz` | Лише коренева файлова система |
+| `simaai-image-minimal-modalix.rootfs.cpio.gz` | Коренева файлова система як початковий RAM-диск, для завантаження з мережі |
 | `Image`, `u-boot.bin`, `.dtb` і `overlays/*.dtbo` | Ядро, U-Boot, дерева пристроїв та оверлеї |
 
 ## Схема розділів {#partitions}

@@ -2,7 +2,7 @@
   "ja": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/deployment/update-package.mdx": "494f94fa31af68d5b580ef41b7c1a0a4a6cc25ce6d5092fd2d955578ff60ab36",
+    "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "d222bcde0cee6baf30100ae4ef0b9f6fe6714db35556b973ea423a57fd99f681",
@@ -41,13 +41,13 @@
     "docs/software/device-tree.mdx": "d4163e65c3728fc5144feb00bb88b9c4fcae12e784995c5a6c694a392fd5c246",
     "docs/software/index.md": "fbf3657beef5185c10f7eb03393107b322886e7c2b334ff78fe317f9f735e7e2",
     "docs/software/release-compatibility.mdx": "e1e385742351e6ff02041e396c44a0eee3bc5fab53b948ecae5fbf0cf362d9cf",
-    "docs/software/yocto-image.mdx": "d8253536bb25be7784bea3c3648e0c76e232796d7874a4a8ea00d17e9692796e",
+    "docs/software/yocto-image.mdx": "7399e29c58321d580b73ddd518ad04dad1abb59ec51f1bccc41384b83ae2d559",
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "ko": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/deployment/update-package.mdx": "494f94fa31af68d5b580ef41b7c1a0a4a6cc25ce6d5092fd2d955578ff60ab36",
+    "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "d222bcde0cee6baf30100ae4ef0b9f6fe6714db35556b973ea423a57fd99f681",
@@ -86,13 +86,13 @@
     "docs/software/device-tree.mdx": "d4163e65c3728fc5144feb00bb88b9c4fcae12e784995c5a6c694a392fd5c246",
     "docs/software/index.md": "fbf3657beef5185c10f7eb03393107b322886e7c2b334ff78fe317f9f735e7e2",
     "docs/software/release-compatibility.mdx": "e1e385742351e6ff02041e396c44a0eee3bc5fab53b948ecae5fbf0cf362d9cf",
-    "docs/software/yocto-image.mdx": "d8253536bb25be7784bea3c3648e0c76e232796d7874a4a8ea00d17e9692796e",
+    "docs/software/yocto-image.mdx": "7399e29c58321d580b73ddd518ad04dad1abb59ec51f1bccc41384b83ae2d559",
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "uk": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/deployment/update-package.mdx": "494f94fa31af68d5b580ef41b7c1a0a4a6cc25ce6d5092fd2d955578ff60ab36",
+    "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "d222bcde0cee6baf30100ae4ef0b9f6fe6714db35556b973ea423a57fd99f681",
@@ -131,13 +131,13 @@
     "docs/software/device-tree.mdx": "d4163e65c3728fc5144feb00bb88b9c4fcae12e784995c5a6c694a392fd5c246",
     "docs/software/index.md": "fbf3657beef5185c10f7eb03393107b322886e7c2b334ff78fe317f9f735e7e2",
     "docs/software/release-compatibility.mdx": "e1e385742351e6ff02041e396c44a0eee3bc5fab53b948ecae5fbf0cf362d9cf",
-    "docs/software/yocto-image.mdx": "d8253536bb25be7784bea3c3648e0c76e232796d7874a4a8ea00d17e9692796e",
+    "docs/software/yocto-image.mdx": "7399e29c58321d580b73ddd518ad04dad1abb59ec51f1bccc41384b83ae2d559",
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "zh-Hant": {
     "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
     "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
-    "docs/deployment/update-package.mdx": "494f94fa31af68d5b580ef41b7c1a0a4a6cc25ce6d5092fd2d955578ff60ab36",
+    "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "e30c704d6cf09f770fde5d23faa94d622884865a2c723bd2517479d04b2cbe6b",
     "docs/design/som-carrier.mdx": "d222bcde0cee6baf30100ae4ef0b9f6fe6714db35556b973ea423a57fd99f681",
@@ -176,7 +176,7 @@
     "docs/software/device-tree.mdx": "d4163e65c3728fc5144feb00bb88b9c4fcae12e784995c5a6c694a392fd5c246",
     "docs/software/index.md": "fbf3657beef5185c10f7eb03393107b322886e7c2b334ff78fe317f9f735e7e2",
     "docs/software/release-compatibility.mdx": "e1e385742351e6ff02041e396c44a0eee3bc5fab53b948ecae5fbf0cf362d9cf",
-    "docs/software/yocto-image.mdx": "d8253536bb25be7784bea3c3648e0c76e232796d7874a4a8ea00d17e9692796e",
+    "docs/software/yocto-image.mdx": "7399e29c58321d580b73ddd518ad04dad1abb59ec51f1bccc41384b83ae2d559",
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   }
 }

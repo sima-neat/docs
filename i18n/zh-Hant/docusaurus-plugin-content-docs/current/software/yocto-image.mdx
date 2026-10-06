@@ -9,7 +9,7 @@ sidebar_position: 5
 公開的 Yocto layer [meta-simaai](https://github.com/SiMa-ai/meta-simaai) 可從原始碼為 Modalix 電路板建置完整的映像檔。一次建置即可產生 U-Boot、核心、device tree 與 overlay、SiMa.ai 韌體，以及最小化的根檔案系統，並整合為一個可燒錄的檔案。當您需要自行產生整個映像檔時，請使用此方式。若只是要在已可開機的電路板上變更核心或 device tree，[從原始碼建置 BSP](./build-from-source.mdx)會更快。
 
 :::caution[尚未在硬體上驗證]
-本頁摘要整理 Yocto layer 中的建置手冊。撰寫本頁時並未實際執行建置，產生的映像檔也尚未在電路板上開機驗證。
+本頁的建置已於 2026-10-06 在 Ubuntu 22.04 容器中，以該 layer 的 2.1.3 版本提交執行過一次。產生的映像檔尚未燒錄到電路板，也尚未開機驗證。
 :::
 
 :::note
@@ -19,8 +19,14 @@ sidebar_position: 5
 ## 開始之前 {#before-you-start}
 
 - 請使用 Linux 建置主機。該 layer 的手冊建議使用 Ubuntu 22.04，並指出 Yocto Project 不支援 WSL。
-- 請在建置主機上設定 GitHub SSH 金鑰。這些 recipe 會透過 SSH 從 GitHub 取得 SiMa.ai 的核心、U-Boot 與函式庫原始碼。
-- 安裝手冊所列的主機套件：
+- 這些 recipe 會以 SSH URL 從 GitHub 取得 SiMa.ai 的核心與 U-Boot 原始碼。請在建置主機上設定 GitHub SSH 金鑰，或設定 Git 對這些 URL 改用 HTTPS：
+
+  ```console
+  sima-user@sima-user-machine:~$ git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  sima-user@sima-user-machine:~$ git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+  ```
+
+- 安裝 Yocto Project 針對 Ubuntu 列出的[建置主機套件](https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#required-packages-for-the-build-host)，並確保 `en_US.UTF-8` 語系可用。接著安裝該 layer 的手冊另外列出的套件：
 
   ```console
   sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
@@ -40,6 +46,8 @@ sidebar_position: 5
 - `meta-python-ai`
 - `meta-swupdate`
 - `meta-simaai`
+
+請保留這些目錄名稱，並將這些目錄放在同一層。範本會依建置目錄旁的路徑尋找各個 layer。
 
 各 layer 的儲存庫與確切修訂版本，請見該 layer 中的[建置手冊](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)，並請使用其中指定的修訂版本。若要取得 SiMa.ai 的 layer：
 
@@ -67,15 +75,19 @@ sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minima
 
 由於範本的預設值是另一款電路板，請在指令列指定 `MACHINE=modalix`。此映像檔包含最小化的根檔案系統，其中有 SiMa.ai 韌體、核心模組、OpenSSH 與 swupdate。
 
+機器設定已接受 `commercial` 授權旗標，因此建置時不會詢問就納入 SiMa.ai 韌體。發布映像檔之前，請先閱讀 [`licenses/SiMaai-EULA-1.0`](https://github.com/SiMa-ai/meta-simaai/blob/master/licenses/SiMaai-EULA-1.0) 中的授權條款。
+
+在 20 核心的機器上以 12 個建置執行緒進行的首次建置，約需 35 分鐘，並使用約 70 GB 的磁碟空間。
+
 ## 尋找輸出檔案 {#output}
 
 建置的輸出會寫入建置目錄下的 `tmp/deploy/images/modalix`。
 
 | 檔案 | 用途 |
 | --- | --- |
-| `.wic.gz` 與 `.wic.bmap` | 完整的 eMMC 映像檔及其區塊對應表。請燒錄這兩個檔案。 |
-| `.rootfs.ext4.gz` | 僅根檔案系統 |
-| `.cpio.gz` | 作為初始 RAM 磁碟的根檔案系統，用於從網路開機 |
+| `simaai-image-minimal-modalix.rootfs.wic.gz` 與 `.wic.bmap` | 完整的 eMMC 映像檔及其區塊對應表。請燒錄這兩個檔案。 |
+| `simaai-image-minimal-modalix.rootfs.ext4.gz` | 僅根檔案系統 |
+| `simaai-image-minimal-modalix.rootfs.cpio.gz` | 作為初始 RAM 磁碟的根檔案系統，用於從網路開機 |
 | `Image`、`u-boot.bin`、`.dtb` 與 `overlays/*.dtbo` | 核心、U-Boot、device tree 與 overlay |
 
 ## 分割區配置 {#partitions}

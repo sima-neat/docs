@@ -13,8 +13,8 @@ sidebar_position: 3
 [Yocto로 전체 이미지 빌드](../software/yocto-image.mdx)로 빌드한 이미지에 적용됩니다.
 
 :::caution[하드웨어에서 아직 검증되지 않음]
-이 페이지는 플랫폼 릴리스 2.1.3의 Yocto 레이어와 U-Boot 소스를 바탕으로 작성되었습니다.
-이 페이지를 위해 패키지를 빌드하거나 적용해 보지는 않았습니다.
+이 페이지의 패키지는 2026-10-06에 릴리스 2.1.3 커밋의 레이어로 한 번 빌드했습니다.
+보드에 적용해 보지는 않았습니다.
 :::
 
 ## 업데이트 동작 방식 {#how-it-works}
@@ -40,7 +40,7 @@ eMMC에는 U-Boot, 부트 디렉터리, 루트 파일 시스템이 각각 두 �
 sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
 ```
 
-`.swu` 파일은 이미지와 함께 `tmp/deploy/images/modalix`에 생성됩니다. 내용은 다음과 같습니다.
+패키지는 `simaai-image-minimal-upgrade-modalix.rootfs.swu`이며, 이미지와 함께 `tmp/deploy/images/modalix`에 생성됩니다. 내용은 다음과 같습니다.
 
 | 구성 요소 | 파일 |
 | --- | --- |
@@ -54,7 +54,8 @@ sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minima
 공개 레이어에서 `sw-description`은 루트 파일 시스템으로
 `simaai-image-palette-modalix.rootfs.ext4.gz`를 지정하지만, 레시피는
 `simaai-image-minimal`의 루트 파일 시스템을 패키지에 넣습니다. 패키지를 빌드하기 전에
-두 이름을 일치시키십시오.
+두 이름을 일치시키십시오. 이름이 일치하지 않아도 빌드는 성공하며, 불일치는 보고되지
+않습니다.
 :::
 
 ## 패키지 적용 {#apply}

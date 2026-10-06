@@ -13,8 +13,8 @@ sidebar_position: 3
 [Yocto で完全なイメージをビルドする](../software/yocto-image.mdx)でビルドしたイメージを対象としています。
 
 :::caution[ハードウェアでは未検証]
-このページは、プラットフォームリリース 2.1.3 の Yocto レイヤーと U-Boot のソースをもとに
-作成しています。このページのためにパッケージをビルドまたは適用したわけではありません。
+このページのパッケージは、2026-10-06 にリリース 2.1.3 のコミットのレイヤーを使って 1 回
+ビルドしました。ボードへの適用は行っていません。
 :::
 
 ## アップデートの仕組み {#how-it-works}
@@ -41,7 +41,7 @@ eMMC には、U-Boot、ブートディレクトリ、ルートファイルシス
 sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
 ```
 
-`.swu` ファイルは、イメージと同じ `tmp/deploy/images/modalix` に生成されます。内容は次のとおりです。
+パッケージは `simaai-image-minimal-upgrade-modalix.rootfs.swu` で、イメージと同じ `tmp/deploy/images/modalix` に生成されます。内容は次のとおりです。
 
 | 構成要素 | ファイル |
 | --- | --- |
@@ -55,7 +55,8 @@ sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minima
 公開されているレイヤーでは、`sw-description` がルートファイルシステムとして
 `simaai-image-palette-modalix.rootfs.ext4.gz` を指定している一方、レシピは
 `simaai-image-minimal` のルートファイルシステムをパッケージに含めます。パッケージを
-ビルドする前に、この 2 つの名前を一致させてください。
+ビルドする前に、この 2 つの名前を一致させてください。名前が一致していなくてもビルドは成功し、
+不一致は報告されません。
 :::
 
 ## パッケージを適用する {#apply}

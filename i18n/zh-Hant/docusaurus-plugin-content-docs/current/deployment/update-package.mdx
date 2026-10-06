@@ -9,7 +9,7 @@ sidebar_position: 3
 更新套件可在不重新寫入整個 eMMC 的情況下，更換電路板上的軟體。Yocto layer 會將其建置為 SWUpdate 套件，也就是 `.swu` 檔案。電路板會將新軟體寫入目前未使用的那一份、切換過去，並在新軟體無法開機時回到先前的根檔案系統。本頁適用於以[使用 Yocto 建置完整映像檔](../software/yocto-image.mdx)建置的映像檔。
 
 :::caution[尚未在硬體上驗證]
-本頁依據平台版本 2.1.3 的 Yocto layer 與 U-Boot 原始碼撰寫。撰寫本頁時並未實際建置或套用該套件。
+本頁的套件已於 2026-10-06 以該 layer 的 2.1.3 版本提交建置過一次，但尚未套用到電路板。
 :::
 
 ## 更新的運作方式 {#how-it-works}
@@ -30,7 +30,7 @@ eMMC 中存有兩份 U-Boot、兩份開機目錄與兩份根檔案系統，請�
 sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
 ```
 
-`.swu` 檔案與映像檔同樣位於 `tmp/deploy/images/modalix`，其內容如下：
+套件為 `simaai-image-minimal-upgrade-modalix.rootfs.swu`，與映像檔同樣位於 `tmp/deploy/images/modalix`，其內容如下：
 
 | 項目 | 檔案 |
 | --- | --- |
@@ -41,7 +41,7 @@ sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minima
 | 更新描述檔與指令碼 | `sw-description` 與 `update_modalix.sh` |
 
 :::note
-在公開的 layer 中，`sw-description` 將根檔案系統指定為 `simaai-image-palette-modalix.rootfs.ext4.gz`，而 recipe 打包的卻是 `simaai-image-minimal` 的根檔案系統。建置套件前，請先讓這兩個名稱一致。
+在公開的 layer 中，`sw-description` 將根檔案系統指定為 `simaai-image-palette-modalix.rootfs.ext4.gz`，而 recipe 打包的卻是 `simaai-image-minimal` 的根檔案系統。建置套件前，請先讓這兩個名稱一致。即使名稱不一致，建置仍會成功，且不會回報此問題。
 :::
 
 ## 套用套件 {#apply}

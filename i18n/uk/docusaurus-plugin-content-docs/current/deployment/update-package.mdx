@@ -13,8 +13,8 @@ eMMC. Шар Yocto збирає його як пакет SWUpdate — файл `
 образів, зібраних за розділом [Збирання повного образу за допомогою Yocto](../software/yocto-image.mdx).
 
 :::caution[Ще не перевірено на обладнанні]
-Цю сторінку написано на основі шару Yocto та вихідного коду U-Boot для випуску платформи
-2.1.3. Пакет для цієї сторінки не збирали й не застосовували.
+Пакет із цієї сторінки зібрали один раз, 2026-10-06, із шару на коміті випуску 2.1.3.
+На платі його не застосовували.
 :::
 
 ## Як працює оновлення {#how-it-works}
@@ -42,7 +42,7 @@ U-Boot повертається до попередньої кореневої �
 sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
 ```
 
-Файл `.swu` розміщено в `tmp/deploy/images/modalix`, разом з образом. Він містить:
+Пакет — це `simaai-image-minimal-upgrade-modalix.rootfs.swu` у `tmp/deploy/images/modalix`, разом з образом. Він містить:
 
 | Частина | Файли |
 | --- | --- |
@@ -56,7 +56,7 @@ sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minima
 У загальнодоступному шарі `sw-description` називає кореневу файлову систему
 `simaai-image-palette-modalix.rootfs.ext4.gz`, а рецепт пакує кореневу файлову
 систему `simaai-image-minimal`. Перш ніж збирати пакет, узгодьте ці дві
-назви.
+назви. Збирання завершується успішно попри невідповідність і не повідомляє про неї.
 :::
 
 ## Застосування пакета {#apply}

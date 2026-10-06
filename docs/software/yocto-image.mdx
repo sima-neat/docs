@@ -15,8 +15,9 @@ board that already boots, [Build the BSP from Source](./build-from-source.mdx)
 is faster.
 
 :::caution[Not yet validated on hardware]
-This page summarizes the build manual in the Yocto layer. The build has not been
-run for this page, and the resulting image has not been booted on a board.
+The build on this page was run once, on 2026-10-06, in an Ubuntu 22.04
+container, from the layer at its release 2.1.3 commit. The resulting image has
+not been written to a board or booted.
 :::
 
 :::note
@@ -29,9 +30,19 @@ eLxr remains the preferred path for board bring-up. See
 
 - Use a Linux build host. The layer's manual recommends Ubuntu 22.04, and says
   that the Yocto Project does not support WSL.
-- Put a GitHub SSH key on the build host. The recipes fetch the SiMa.ai kernel,
-  U-Boot, and library sources from GitHub over SSH.
-- Install the host packages that the manual lists:
+- The recipes fetch the SiMa.ai kernel and U-Boot sources from GitHub with SSH
+  URLs. Put a GitHub SSH key on the build host, or tell Git to use HTTPS for
+  those URLs:
+
+  ```console
+  sima-user@sima-user-machine:~$ git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  sima-user@sima-user-machine:~$ git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+  ```
+
+- Install the
+  [build host packages](https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#required-packages-for-the-build-host)
+  that the Yocto Project lists for Ubuntu, and make the `en_US.UTF-8` locale
+  available. Then install the packages that the layer's manual adds:
 
   ```console
   sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
@@ -52,6 +63,9 @@ into one directory:
 - `meta-python-ai`
 - `meta-swupdate`
 - `meta-simaai`
+
+Keep these directory names, and keep the directories side by side. The template
+finds each layer by its path next to the build directory.
 
 The [build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
 in the layer gives the repository and the exact revision of each one. Use those
@@ -85,6 +99,14 @@ Set `MACHINE=modalix` on the command line, because the template's default is a
 different board. The image has a minimal root filesystem with the SiMa.ai
 firmware, the kernel modules, OpenSSH, and swupdate.
 
+The machine configuration accepts the `commercial` license flag, so the build
+includes the SiMa.ai firmware without asking. Read the license in
+[`licenses/SiMaai-EULA-1.0`](https://github.com/SiMa-ai/meta-simaai/blob/master/licenses/SiMaai-EULA-1.0)
+before you distribute an image.
+
+One first build, with 12 build threads on a 20-core machine, took about
+35 minutes and used about 70 GB of disk space.
+
 ## Find the Output {#output}
 
 The build writes its output to `tmp/deploy/images/modalix` in the build
@@ -92,9 +114,9 @@ directory.
 
 | File | Use |
 | --- | --- |
-| `.wic.gz` and `.wic.bmap` | The complete eMMC image and its block map. Flash these. |
-| `.rootfs.ext4.gz` | The root filesystem alone |
-| `.cpio.gz` | The root filesystem as an initial RAM disk, for booting from the network |
+| `simaai-image-minimal-modalix.rootfs.wic.gz` and `.wic.bmap` | The complete eMMC image and its block map. Flash these. |
+| `simaai-image-minimal-modalix.rootfs.ext4.gz` | The root filesystem alone |
+| `simaai-image-minimal-modalix.rootfs.cpio.gz` | The root filesystem as an initial RAM disk, for booting from the network |
 | `Image`, `u-boot.bin`, `.dtb`, and `overlays/*.dtbo` | The kernel, U-Boot, the device trees, and the overlays |
 
 ## Partition Layout {#partitions}
