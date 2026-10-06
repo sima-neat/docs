@@ -1,0 +1,79 @@
+---
+title: 建置與套用更新套件
+description: 使用 Yocto layer 為 Modalix 映像檔建置 SWUpdate 套件、套用至電路板，並了解更新無法開機時電路板如何回復。
+sidebar_position: 3
+---
+
+# 建置與套用更新套件
+
+更新套件可在不重新寫入整個 eMMC 的情況下，更換電路板上的軟體。Yocto layer 會將其建置為 SWUpdate 套件，也就是 `.swu` 檔案。電路板會將新軟體寫入目前未使用的那一份、切換過去，並在新軟體無法開機時回到先前的根檔案系統。本頁適用於以[使用 Yocto 建置完整映像檔](../software/yocto-image.mdx)建置的映像檔。
+
+:::caution[尚未在硬體上驗證]
+本頁依據平台版本 2.1.3 的 Yocto layer 與 U-Boot 原始碼撰寫。撰寫本頁時並未實際建置或套用該套件。
+:::
+
+## 更新的運作方式 {#how-it-works}
+
+eMMC 中存有兩份 U-Boot、兩份開機目錄與兩份根檔案系統，請參閱[分割區配置](../software/yocto-image.mdx#partitions)。更新會執行下列動作：
+
+1. 將新的根檔案系統與新的 U-Boot 寫入未使用的那一份。
+2. 將新的核心、device tree 與 overlay 複製到未使用的開機目錄（`boot-0` 或 `boot-1`）。
+3. 將電路板切換至新的那一份，把 U-Boot 環境中的 `upgrade_available` 設為 `1`、`bootcount` 設為 `0`，然後重新開機。
+
+若新軟體開機失敗的次數超過 `bootlimit` 允許的值，U-Boot 會切換回先前的根檔案系統，並清除 `upgrade_available`。
+
+## 建置套件 {#build}
+
+請先建置映像檔，再於相同的建置目錄中建置套件：
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
+```
+
+`.swu` 檔案與映像檔同樣位於 `tmp/deploy/images/modalix`，其內容如下：
+
+| 項目 | 檔案 |
+| --- | --- |
+| 根檔案系統 | 映像檔的 `.rootfs.ext4.gz` 檔案 |
+| U-Boot | `u-boot.bin` 與開機指令碼 `boot.scr.uimg` |
+| 核心 | `Image` 與 `Image.enc` |
+| Device tree 與 overlay | 電路板的 `.dtb` 檔案與所有 `.dtbo` 檔案 |
+| 更新描述檔與指令碼 | `sw-description` 與 `update_modalix.sh` |
+
+:::note
+在公開的 layer 中，`sw-description` 將根檔案系統指定為 `simaai-image-palette-modalix.rootfs.ext4.gz`，而 recipe 打包的卻是 `simaai-image-minimal` 的根檔案系統。建置套件前，請先讓這兩個名稱一致。
+:::
+
+## 套用套件 {#apply}
+
+1. 將 `.swu` 檔案複製到電路板。
+2. 以 root 身分執行 `swupdate`：
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-palette:1.0 -i /tmp/update.swu
+   ```
+
+   `-H` 之後的名稱與修訂版本必須與 `sw-description` 中的項目相符。在公開的 layer 中，兩者分別為 `simaai-image-palette` 與 `1.0`。更新完成後，電路板會重新開機。
+
+3. 重新開機後，檢查執行中映像檔的建置版本：
+
+   ```console
+   root@modalix:~# grep SIMA_BUILD_VERSION /etc/buildinfo
+   ```
+
+## 復原 {#recover}
+
+- 若新映像檔無法開機，U-Boot 會如[更新的運作方式](#how-it-works)所述，自行回到先前的根檔案系統。
+- 若兩份都無法開機，請重新寫入完整的映像檔。請參閱[將映像檔燒錄到 eMMC](./flash-image.mdx)。
+
+## 本頁未涵蓋的內容 {#not-covered}
+
+- eLxr 映像檔的更新套件。
+- 經過簽署的更新套件。
+- 成功開機後，電路板如何將更新標記為正常。
+
+## 後續步驟
+
+- [使用 Yocto 建置完整映像檔](../software/yocto-image.mdx)：建置此套件所更新的映像檔。
+- [將映像檔燒錄到 eMMC](./flash-image.mdx)：將完整的映像檔寫入電路板。
+- [工廠組裝與測試](./factory-build-and-test.mdx)：tRoot 更新測試同樣使用 `swupdate`。

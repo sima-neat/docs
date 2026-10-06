@@ -71,6 +71,7 @@ const sidebars = {
       'software/device-tree',
       'software/yocto-image',
       'deployment/flash-image',
+      'deployment/update-package',
       'deployment/factory-build-and-test',
     ]),
     section('Integrate Cameras & Tune the ISP', undefined, [
