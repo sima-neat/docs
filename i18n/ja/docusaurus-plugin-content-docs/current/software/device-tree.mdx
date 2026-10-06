@@ -65,6 +65,8 @@ sidebar_position: 4
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
@@ -77,6 +79,8 @@ sidebar_position: 4
 
 - `&i2c00` は、ベースデバイスツリー内のラベルによって、変更するノードを選択します。
 - `status = "okay"` は、ベースデバイスツリーで無効になっているノードを有効にします。
+- `#address-cells` と `#size-cells` は、ベースデバイスツリー内のバスの値を繰り返したものです。
+  これらがないと、`dtc` は `reg` を検査できないという警告を出します。
 - 子ノードがデバイスです。`compatible` でドライバーが選択され、`reg` はバス上の
   デバイスのアドレスです。
 

@@ -173,6 +173,13 @@ Write the overlay source (`.dtso`), then compile it to a blob (`.dtbo`):
 root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
 ```
 
+An overlay that uses `#include`, as some camera overlays in the kernel tree do,
+has to go through the C preprocessor first. Run this in the kernel tree:
+
+```console
+root@sdk:/data/simaai-linux$ aarch64-linux-gnu-cpp -nostdinc -I include -I arch/arm64/boot/dts/simaai/overlays -undef -x assembler-with-cpp my-overlay.dtso | dtc -@ -I dts -O dtb -o my-overlay.dtbo -
+```
+
 ## Build U-Boot
 
 ```console

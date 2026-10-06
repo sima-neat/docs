@@ -211,14 +211,20 @@ This covers NXP PCF8574 and PCF8575 I2C GPIO expanders — see
 Enabling bus 0 with a PCF8574 attached:
 
 ```dts
+/dts-v1/;
+/plugin/;
+
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
         reg = <0x27>;
         gpio-controller;
+        #gpio-cells = <2>;
     };
 };
 ```

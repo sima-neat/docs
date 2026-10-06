@@ -64,6 +64,8 @@ Modalix 보드는 기본 디바이스 트리로 부팅한 다음, 카메라처�
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
@@ -76,6 +78,8 @@ Modalix 보드는 기본 디바이스 트리로 부팅한 다음, 카메라처�
 
 - `&i2c00`은 기본 디바이스 트리의 레이블로 변경할 노드를 선택합니다.
 - `status = "okay"`는 기본 디바이스 트리에서 비활성화된 노드를 활성화합니다.
+- `#address-cells`와 `#size-cells`는 기본 디바이스 트리에 있는 버스의 값을 다시 적은 것입니다.
+  이 값이 없으면 `dtc`가 `reg`를 검사할 수 없다는 경고를 출력합니다.
 - 자식 노드가 장치입니다. `compatible`은 드라이버를 선택하고, `reg`는 버스에서의
   장치 주소입니다.
 

@@ -173,6 +173,13 @@ root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC
 root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
 ```
 
+커널 트리의 일부 카메라 오버레이처럼 `#include`를 사용하는 오버레이는 먼저 C 전처리기를
+거쳐야 합니다. 커널 트리에서 다음을 실행합니다.
+
+```console
+root@sdk:/data/simaai-linux$ aarch64-linux-gnu-cpp -nostdinc -I include -I arch/arm64/boot/dts/simaai/overlays -undef -x assembler-with-cpp my-overlay.dtso | dtc -@ -I dts -O dtb -o my-overlay.dtbo -
+```
+
 ## U-Boot 빌드
 
 ```console

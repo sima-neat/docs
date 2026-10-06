@@ -160,6 +160,12 @@ root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC
 root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
 ```
 
+如果 overlay 使用 `#include`（核心原始碼樹中的部分相機 overlay 即是如此），必須先經過 C 前置處理器。請在核心原始碼樹中執行：
+
+```console
+root@sdk:/data/simaai-linux$ aarch64-linux-gnu-cpp -nostdinc -I include -I arch/arm64/boot/dts/simaai/overlays -undef -x assembler-with-cpp my-overlay.dtso | dtc -@ -I dts -O dtb -o my-overlay.dtbo -
+```
+
 ## 建置 U-Boot
 
 ```console

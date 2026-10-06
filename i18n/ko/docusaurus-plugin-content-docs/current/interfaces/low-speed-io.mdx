@@ -208,14 +208,20 @@ CONFIG_GPIO_PCF857X=y
 PCF8574가 연결된 버스 0을 활성화하는 예는 다음과 같습니다.
 
 ```dts
+/dts-v1/;
+/plugin/;
+
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
         reg = <0x27>;
         gpio-controller;
+        #gpio-cells = <2>;
     };
 };
 ```

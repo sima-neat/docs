@@ -210,14 +210,20 @@ CONFIG_GPIO_PCF857X=y
 Увімкнення шини 0 із під’єднаним PCF8574:
 
 ```dts
+/dts-v1/;
+/plugin/;
+
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
         reg = <0x27>;
         gpio-controller;
+        #gpio-cells = <2>;
     };
 };
 ```

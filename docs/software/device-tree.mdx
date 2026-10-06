@@ -67,6 +67,8 @@ This example adds an I2C GPIO expander at address `0x27` on I2C bus 0:
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
@@ -79,6 +81,8 @@ This example adds an I2C GPIO expander at address `0x27` on I2C bus 0:
 
 - `&i2c00` selects the node to change by its label in the base device tree.
 - `status = "okay"` enables a node that the base device tree leaves disabled.
+- `#address-cells` and `#size-cells` repeat the values of the bus in the base
+  device tree. Without them, `dtc` warns that it cannot check `reg`.
 - The child node is the device. `compatible` selects the driver, and `reg` is
   the address of the device on the bus.
 

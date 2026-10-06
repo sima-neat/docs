@@ -194,14 +194,20 @@ CONFIG_GPIO_PCF857X=y
 此驅動程式涵蓋 NXP PCF8574 與 PCF8575 I2C GPIO 擴充器，請參閱 [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig)。以下範例啟用匯流排 0 並連接一顆 PCF8574：
 
 ```dts
+/dts-v1/;
+/plugin/;
+
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
         reg = <0x27>;
         gpio-controller;
+        #gpio-cells = <2>;
     };
 };
 ```

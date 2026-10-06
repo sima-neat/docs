@@ -51,6 +51,8 @@ Device tree 只描述硬體，不會加入驅動程式。裝置的驅動程式�
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
@@ -63,6 +65,7 @@ Device tree 只描述硬體，不會加入驅動程式。裝置的驅動程式�
 
 - `&i2c00` 透過基礎 device tree 中的標籤選取要變更的節點。
 - `status = "okay"` 會啟用基礎 device tree 中未啟用的節點。
+- `#address-cells` 與 `#size-cells` 重複基礎 device tree 中該匯流排的值。若沒有這兩個屬性，`dtc` 會警告無法檢查 `reg`。
 - 子節點即為裝置。`compatible` 用來選擇驅動程式，`reg` 則是裝置在匯流排上的位址。
 
 撰寫 overlay 之前，請先確認核心具備對應的驅動程式。`compatible` 字串必須屬於 [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) 所啟用的驅動程式，或屬於您自行建置並安裝的模組。

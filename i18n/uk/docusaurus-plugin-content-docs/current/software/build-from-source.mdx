@@ -173,6 +173,13 @@ root@sdk:/data/simaai-linux$ make all -j8 ARCH=arm64 LOCALVERSION="-modalix" DTC
 root@sdk:/data$ dtc -@ -I dts -O dtb -o imx415.dtbo imx415.dtso
 ```
 
+Оверлей, який використовує `#include`, як деякі оверлеї камер у дереві ядра, спочатку
+має пройти через препроцесор C. Виконайте в дереві ядра:
+
+```console
+root@sdk:/data/simaai-linux$ aarch64-linux-gnu-cpp -nostdinc -I include -I arch/arm64/boot/dts/simaai/overlays -undef -x assembler-with-cpp my-overlay.dtso | dtc -@ -I dts -O dtb -o my-overlay.dtbo -
+```
+
 ## Збирання U-Boot
 
 ```console

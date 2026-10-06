@@ -207,14 +207,20 @@ CONFIG_GPIO_PCF857X=y
 PCF8574 を接続した状態でバス 0 を有効にする例：
 
 ```dts
+/dts-v1/;
+/plugin/;
+
 &i2c00 {
     status = "okay";
     clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
 
     pcf8574: gpio@27 {
         compatible = "nxp,pcf8574";
         reg = <0x27>;
         gpio-controller;
+        #gpio-cells = <2>;
     };
 };
 ```
