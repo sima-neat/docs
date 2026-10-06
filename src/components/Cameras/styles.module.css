@@ -67,3 +67,13 @@
   text-align: left;
   font-weight: 400;
 }
+
+/* Overlay file names are long; let them wrap inside a column. */
+.file {
+  overflow-wrap: anywhere;
+  font-size: 0.74rem;
+}
+
+.specs td div + div {
+  margin-top: 4px;
+}

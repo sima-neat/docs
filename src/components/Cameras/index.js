@@ -34,6 +34,11 @@ const showCamera = (id) => {
   setSelection([...selection.slice(0, MAX_COMPARE - 1), id]);
 };
 
+// The overlay sources, at the kernel commit of platform release 2.1.3.
+const OVERLAY_SOURCE_PATH = "arch/arm64/boot/dts/simaai/overlays/";
+const OVERLAY_SOURCE_URL = `https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/${OVERLAY_SOURCE_PATH}`;
+const overlayFile = (carrier, camera, port) => `modalix-som-${carrier.id}-${camera.overlay}-${port}.dtbo`;
+
 // Carrier names as they appear in the overlay file names.
 const CARRIERS = [
   {id: "connectech", name: "Connect Tech"},
@@ -58,7 +63,11 @@ const LOCALIZED_UI = {
     largestMode: "Largest mode",
     fastestMode: "Fastest mode",
     allModes: "All modes",
-    portsGroup: "Carrier board ports with an overlay",
+    filesGroup: "Overlay files",
+    location: "Location on the board",
+    or: "or",
+    locationNote: "The active boot directory. In dtbos, give the file name without the path.",
+    kernelSource: "Source in the kernel",
     ordering: "Ordering",
     remove: "Remove from comparison",
     addCamera: "Add a camera…",
@@ -83,7 +92,11 @@ const LOCALIZED_UI = {
     largestMode: "最大のモード",
     fastestMode: "最速のモード",
     allModes: "すべてのモード",
-    portsGroup: "オーバーレイがあるキャリアボードのポート",
+    filesGroup: "オーバーレイファイル",
+    location: "ボード上の場所",
+    or: "または",
+    locationNote: "アクティブなブートディレクトリです。dtbos にはパスを付けずにファイル名だけを指定します。",
+    kernelSource: "カーネル内のソース",
     ordering: "注文情報",
     remove: "比較から削除",
     addCamera: "カメラを追加…",
@@ -108,7 +121,11 @@ const LOCALIZED_UI = {
     largestMode: "가장 큰 모드",
     fastestMode: "가장 빠른 모드",
     allModes: "모든 모드",
-    portsGroup: "오버레이가 있는 캐리어 보드 포트",
+    filesGroup: "오버레이 파일",
+    location: "보드에서의 위치",
+    or: "또는",
+    locationNote: "활성 부트 디렉터리입니다. dtbos에는 경로 없이 파일 이름만 지정합니다.",
+    kernelSource: "커널의 소스",
     ordering: "주문 정보",
     remove: "비교에서 제거",
     addCamera: "카메라 추가…",
@@ -133,7 +150,11 @@ const LOCALIZED_UI = {
     largestMode: "最大的模式",
     fastestMode: "最快的模式",
     allModes: "所有模式",
-    portsGroup: "具有 overlay 的載板連接埠",
+    filesGroup: "overlay 檔案",
+    location: "在電路板上的位置",
+    or: "或",
+    locationNote: "作用中的開機目錄。在 dtbos 中只需指定檔名，不含路徑。",
+    kernelSource: "核心原始碼中的位置",
     ordering: "訂購資訊",
     remove: "從比較中移除",
     addCamera: "新增相機…",
@@ -158,7 +179,11 @@ const LOCALIZED_UI = {
     largestMode: "Найбільший режим",
     fastestMode: "Найшвидший режим",
     allModes: "Усі режими",
-    portsGroup: "Порти плат-носіїв, для яких є оверлей",
+    filesGroup: "Файли оверлеїв",
+    location: "Розташування на платі",
+    or: "або",
+    locationNote: "Активний каталог завантаження. У dtbos вказуйте лише назву файлу, без шляху.",
+    kernelSource: "Вихідний код у ядрі",
     ordering: "Замовлення",
     remove: "Вилучити з порівняння",
     addCamera: "Додати камеру…",
@@ -382,21 +407,35 @@ export function CameraSpecs() {
                 </div>
               )),
             )}
-            {group(copy.portsGroup)}
+            {group(copy.filesGroup)}
             {CARRIERS.map((carrier) => (
               <React.Fragment key={carrier.id}>
                 {row(carrier.name, (camera) => {
                   const ports = camera.overlays?.[carrier.id];
                   if (!ports?.length) return null;
-                  return ports.map((port, index) => (
-                    <React.Fragment key={port}>
-                      {index > 0 && ", "}
-                      <code>{port}</code>
-                    </React.Fragment>
+                  return ports.map((port) => (
+                    <div key={port}>
+                      <code className={styles.file}>{overlayFile(carrier, camera, port)}</code>
+                    </div>
                   ));
                 })}
               </React.Fragment>
             ))}
+            <tr>
+              <th scope="row">{copy.location}</th>
+              <td colSpan={cameras.length}>
+                <code>/boot/boot-0/</code> {copy.or} <code>/boot/boot-1/</code>
+                <span className={styles.note}>{copy.locationNote}</span>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">{copy.kernelSource}</th>
+              <td colSpan={cameras.length}>
+                <a href={OVERLAY_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+                  <code>{OVERLAY_SOURCE_PATH}</code>
+                </a>
+              </td>
+            </tr>
             {group(copy.ordering)}
             {row(copy.partNumber, (camera) => (
               <Ordering camera={camera} copy={copy} />
