@@ -24,9 +24,10 @@ sidebar_position: 4
 
 | 檔案 | 描述 | 取得方式 | 下載 |
 | --- | --- | --- | --- |
-| **Modalix 系統晶片（SoC）產品簡介** | 以下是對 MLSoC Modalix 矽晶片的概觀，其中包含機器學習加速器 (MLA)、影像訊號處理器 (ISP)、電腦視覺單元 (CVU)、視訊編解碼器和 I/O 等元件，並提供其主要效能和功耗資料。首先快速瀏覽，以評估 Modalix 是否適合您的工作負載。 | 公開 | [下載 PDF](https://sima.ai/wp-content/uploads/2026/06/Modalix-MLSoC-Product-Brief_v1.1.pdf) |
-| **Modalix 系統模組（SoM）產品簡介** | 以下是關於 Modalix 系統模組的簡要介紹——這是一種將 SoC 與 LPDDR5、電源以及板對板連接器整合在一起的模組，用於產品整合。當您打算設計一個基於系統模組 (SoM) 的客製化設計，而不是使用完整的 DevKit 時，請從這裡開始。 | 公開 | [下載 PDF](https://sima.ai/wp-content/uploads/2026/03/Modalix-SoM-Product-Brief_06.2.pdf) |
+| **Modalix 系統晶片（SoC）產品簡介** | 以下是對 MLSoC Modalix 矽晶片的概觀，其中包含機器學習加速器 (MLA)、影像訊號處理器 (ISP)、電腦視覺單元 (CVU)、視訊編解碼器和 I/O 等元件，並提供其主要效能和功耗資料。首先快速瀏覽，以評估 Modalix 是否適合您的工作負載。 | 公開 | [下載 PDF](https://sima.ai/wp-content/uploads/2026/07/Modalix-MLSoC-Product-Brief_v1.5.pdf) |
+| **Modalix 系統模組（SoM）產品簡介** | 以下是關於 Modalix 系統模組的簡要介紹——這是一種將 SoC 與 LPDDR5、電源以及板對板連接器整合在一起的模組，用於產品整合。當您打算設計一個基於系統模組 (SoM) 的客製化設計，而不是使用完整的 DevKit 時，請從這裡開始。 | 公開 | [下載 PDF](https://sima.ai/wp-content/uploads/2026/07/Modalix-SoM-Product-Brief_v2.4-1.pdf) |
 | **Modalix 系統模組 (SoM) DevKit 3.0 產品簡介** | 以下是關於 DevKit 的功能、介面和外形規格的摘要。請使用此資訊確認該套件是否符合您在訂購前對評估和原型設計的需求。 | 公開 | [下載 PDF](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) |
+| **Modalix HHHL PCIe 擴充卡產品簡介** | PCIe 擴充卡的功能、記憶體選項、介面和外形規格摘要。訂購前，請用它確認該擴充卡是否適合您的主機系統。 | 公開 | [下載 PDF](https://sima.ai/wp-content/uploads/2026/07/Modalix-PCIe-HHHL-Product-Brief_v1.6-1.pdf) |
 | **Modalix PCIe HHHL 硬體參考資料** | 針對半高/半長（HHHL）Modalix PCIe卡的硬體參考資料——包括連接器和電源細節、機械尺寸，以及主機整合需求。請查閱此資料，以評估該卡是否適用於主機連接的推論系統。 | 需 SiMa.ai 帳號 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_Modalix_PHHHL_Manual_Rev1.00_2-21-2026.pdf) |
 
 ## 設計一個客製化的載板

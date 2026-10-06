@@ -24,9 +24,10 @@ DevKit을 처음 사용하시나요? 여기에서 시작하세요. 이 대화형
 
 | 문서 | 설명 | 이용 방법 | 다운로드 |
 | --- | --- | --- | --- |
-| **Modalix SoC 제품 개요** | MLSoC Modalix 실리콘—머신 러닝 가속기(MLA), 이미지 신호 프로세서(ISP), 컴퓨터 비전 유닛(CVU), 비디오 코덱 및 입출력 장치—의 개괄적인 설명과 주요 성능 및 전력 수치를 제공합니다. Modalix가 워크로드에 적합한지 평가하기 위한 첫 번째 자료입니다. | 공개 | [PDF 다운로드](https://sima.ai/wp-content/uploads/2026/06/Modalix-MLSoC-Product-Brief_v1.1.pdf) |
-| **Modalix SoM 제품 개요** | Modalix 시스템 온 모듈에 대한 개요입니다. 이 모듈은 제품 통합을 위해 LPDDR5, 전원 공급 장치, 보드 간 커넥터와 함께 패키징된 SoC입니다. 완전한 DevKit 대신 SoM을 기반으로 하는 맞춤형 설계를 구상할 때 여기서부터 시작하세요. | 공개 | [PDF 다운로드](https://sima.ai/wp-content/uploads/2026/03/Modalix-SoM-Product-Brief_06.2.pdf) |
+| **Modalix SoC 제품 개요** | MLSoC Modalix 실리콘—머신 러닝 가속기(MLA), 이미지 신호 프로세서(ISP), 컴퓨터 비전 유닛(CVU), 비디오 코덱 및 입출력 장치—의 개괄적인 설명과 주요 성능 및 전력 수치를 제공합니다. Modalix가 워크로드에 적합한지 평가하기 위한 첫 번째 자료입니다. | 공개 | [PDF 다운로드](https://sima.ai/wp-content/uploads/2026/07/Modalix-MLSoC-Product-Brief_v1.5.pdf) |
+| **Modalix SoM 제품 개요** | Modalix 시스템 온 모듈에 대한 개요입니다. 이 모듈은 제품 통합을 위해 LPDDR5, 전원 공급 장치, 보드 간 커넥터와 함께 패키징된 SoC입니다. 완전한 DevKit 대신 SoM을 기반으로 하는 맞춤형 설계를 구상할 때 여기서부터 시작하세요. | 공개 | [PDF 다운로드](https://sima.ai/wp-content/uploads/2026/07/Modalix-SoM-Product-Brief_v2.4-1.pdf) |
 | **Modalix SoM DevKit 3.0 제품 개요** | DevKit의 기능, 인터페이스 및 폼 팩터에 대한 요약입니다. 주문하기 전에 이 키트가 귀사의 평가 및 프로토타입 제작 요구 사항에 부합하는지 확인하는 데 활용하십시오. | 공개 | [PDF 다운로드](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) |
+| **Modalix HHHL PCIe 카드 제품 개요** | PCIe 카드의 기능, 메모리 옵션, 인터페이스 및 폼 팩터에 대한 요약입니다. 주문하기 전에 이 카드가 호스트 시스템에 맞는지 확인하는 데 활용하십시오. | 공개 | [PDF 다운로드](https://sima.ai/wp-content/uploads/2026/07/Modalix-PCIe-HHHL-Product-Brief_v1.6-1.pdf) |
 | **Modalix PCIe HHHL 하드웨어 레퍼런스** | 하프 높이/하프 길이(HHHL) Modalix PCIe 카드에 대한 하드웨어 참조 자료입니다. 여기에는 커넥터 및 전원 정보, 기계적 크기, 호스트 통합 요구 사항이 포함되어 있습니다. 이 자료를 검토하여 호스트에 연결된 추론 시스템에 적합한지 평가하십시오. | SiMa.ai 계정 필요 | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_Modalix_PHHHL_Manual_Rev1.00_2-21-2026.pdf) |
 
 ## 맞춤형 캐리어 보드를 설계합니다.

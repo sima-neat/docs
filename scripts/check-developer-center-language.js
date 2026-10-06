@@ -926,8 +926,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   }
   if (locale === 'zh-Hant') {
     const glossarySource = fs.readFileSync(path.join(translatedDocsRoot, 'reference/glossary.md'), 'utf8');
-    assert.doesNotMatch(glossarySource, /750 MHz/, 'zh-Hant converts GOPS throughput into MHz');
-    assert.match(glossarySource, /750 16 位元 GOPS/);
+    assert.doesNotMatch(glossarySource, /720 MHz/, 'zh-Hant converts GOPS throughput into MHz');
+    assert.match(glossarySource, /720 16 位元 GOPS/);
     assert.doesNotMatch(translatedCorpus, /條紋/, 'zh-Hant translates a MIPI lane as a visual stripe');
     assert.doesNotMatch(translatedCorpus, /港口/, 'zh-Hant translates a hardware port as a maritime harbor');
     assert.doesNotMatch(translatedCorpus, /建立人脈/, 'zh-Hant translates networking as relationship-building');
@@ -943,8 +943,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     );
   }
   if (locale === 'ja') {
-    assert.doesNotMatch(translatedCorpus, /750\s*MHz/, 'ja converts GOPS throughput into MHz');
-    assert.match(translatedCorpus, /750 16ビット GOPS/);
+    assert.doesNotMatch(translatedCorpus, /720\s*MHz/, 'ja converts GOPS throughput into MHz');
+    assert.match(translatedCorpus, /720 16ビット GOPS/);
     const elxrConversionSource = fs.readFileSync(
       path.join(translatedDocsRoot, 'reference/tech-notes/elxr-conversion.mdx'),
       'utf8',
@@ -955,11 +955,11 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   if (locale === 'uk') {
     assert.doesNotMatch(
       translatedCorpus,
-      /750[^\n|.]*операцій[^\n|.]*секунду/i,
+      /720[^\n|.]*операцій[^\n|.]*секунду/i,
       'uk drops the giga scale from GOPS throughput',
     );
     assert.ok(
-      (translatedCorpus.match(/750 16-бітних GOPS/g) || []).length >= 6,
+      (translatedCorpus.match(/720 16-бітних GOPS/g) || []).length >= 6,
       'uk does not consistently preserve the canonical CVU throughput unit',
     );
     assert.doesNotMatch(
@@ -1020,7 +1020,7 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
       );
       assert.doesNotMatch(
         translatedSource,
-        /750\s*(?:MHz|兆赫)/,
+        /720\s*(?:MHz|兆赫)/,
         `${path.relative(docsRoot, translatedDoc)} converts GOPS throughput into a clock frequency`,
       );
     }

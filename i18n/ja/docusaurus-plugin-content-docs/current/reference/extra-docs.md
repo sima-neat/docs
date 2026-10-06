@@ -24,9 +24,10 @@ DevKit を初めてご利用ですか？こちらから始めてください。�
 
 | ドキュメント | 説明 | 入手方法 | ダウンロード |
 | --- | --- | --- | --- |
-| **Modalix SoC 製品概要** | MLSoC Modalixシリコン（機械学習アクセラレータ（MLA）、画像信号プロセッサ（ISP）、コンピュータビジョンユニット（CVU）、ビデオコーデック、および入出力）の概要です。主な性能と消費電力の数値を記載しています。まず、このModalixが、お客様のワークロードに適しているかどうかを確認してください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/06/Modalix-MLSoC-Product-Brief_v1.1.pdf) |
-| **Modalix SoM製品概要** | Modalix システムオンモジュール（SoM）の概要 — LPDDR5、電源、および製品統合用のボード間コネクターを搭載したSoCパッケージです。完全なDevKitではなく、SoMをベースとしたカスタム設計を検討する場合は、ここから始めてください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/03/Modalix-SoM-Product-Brief_06.2.pdf) |
+| **Modalix SoC 製品概要** | MLSoC Modalixシリコン（機械学習アクセラレータ（MLA）、画像信号プロセッサ（ISP）、コンピュータビジョンユニット（CVU）、ビデオコーデック、および入出力）の概要です。主な性能と消費電力の数値を記載しています。まず、このModalixが、お客様のワークロードに適しているかどうかを確認してください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-MLSoC-Product-Brief_v1.5.pdf) |
+| **Modalix SoM製品概要** | Modalix システムオンモジュール（SoM）の概要 — LPDDR5、電源、および製品統合用のボード間コネクターを搭載したSoCパッケージです。完全なDevKitではなく、SoMをベースとしたカスタム設計を検討する場合は、ここから始めてください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-SoM-Product-Brief_v2.4-1.pdf) |
 | **Modalix SoM DevKit 3.0 製品概要** | DevKitの機能、インターフェース、および外観の概要です。注文前に、このキットがお客様の評価およびプロトタイピングのニーズに合致するかどうかを確認するためにご利用ください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) |
+| **Modalix HHHL PCIe カード 製品概要** | PCIe カードの機能、メモリオプション、インターフェース、およびフォームファクターの概要です。注文前に、このカードがお客様のホストシステムに適合するかどうかを確認するためにご利用ください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-PCIe-HHHL-Product-Brief_v1.6-1.pdf) |
 | **Modalix PCIe HHHL ハードウェアリファレンス** | ハーフハイト/ハーフレングス（HHHL）Modalix PCIeカードのハードウェアに関する仕様書 — コネクターと電源の詳細、機械的な寸法、およびホストとの統合要件。この資料を参照して、ホストに接続された推論システムに適したカードかどうかを評価してください。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_Modalix_PHHHL_Manual_Rev1.00_2-21-2026.pdf) |
 
 ## カスタムのキャリアボードを設計する。
