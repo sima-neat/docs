@@ -65,6 +65,8 @@ BSP에는 세 벤더의 센서 다섯 종에 대한 오버레이가 있습니다
   예를 들어 `1CAM`은 CSI1입니다. 숫자는 캐리어 보드마다 다릅니다.
 - `DUAL`은 하나의 오버레이로 Waveshare의 두 포트를 동일한 카메라 모델로
   설정합니다.
+- 모델이 다른 카메라 두 대를 사용하려면 포트마다 오버레이를 하나씩 지정하십시오.
+  [여러 카메라 사용](../getting-started/standalone-mode/mipi-camera-interfaces.mdx#multiple-cameras)을 참조하십시오.
 - 대시(—)는 해당 조합에 대한 오버레이가 없음을 의미합니다.
 - 캐리어 이름은 캐리어 보드의 벤더를 나타내며 보드 모델을 나타내지는 않습니다.
   캐리어 보드를 비교하려면
@@ -115,6 +117,9 @@ ISP가 스케일링하여 출력하는 크기는 확인되지 않았습니다. N
 다른 크기를 사용하려면
 [MIPI 카메라 사용](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)에
 설명된 대로 모델의 전처리에서 크기를 조정하십시오.
+
+카메라의 화질 튜닝은 별도의 작업입니다. [참고 자료](../reference/extra-docs.md)에 있는
+「Modalix 카메라 및 ISP 튜닝 가이드」를 참조하십시오. 이 가이드는 SiMa.ai 담당자를 통해 제공됩니다.
 
 ## 다음 단계
 

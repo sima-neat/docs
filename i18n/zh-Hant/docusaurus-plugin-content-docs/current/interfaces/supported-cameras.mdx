@@ -44,6 +44,7 @@ BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多�
 - Modalix DevKit 預設搭載 Waveshare 載板，因此請使用 Waveshare 欄中的 overlay。
 - 連接埠中的數字代表該連接器所接的 SoM MIPI CSI 介面，例如 `1CAM` 為 CSI1。各載板的數字並不相同。
 - `DUAL` 以單一 overlay 將 Waveshare 的兩個連接埠設定為相同的相機型號。
+- 若要使用兩台不同型號的相機，請為每個連接埠各指定一個 overlay。請參閱[使用多台相機](../getting-started/standalone-mode/mipi-camera-interfaces.mdx#multiple-cameras)。
 - 破折號（—）表示該組合沒有 overlay。
 - 載板名稱代表載板的廠商，而非特定的載板型號。若要比較載板，請參閱[第三方載板](../design/third-party-carriers.mdx)。
 
@@ -79,6 +80,8 @@ sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 應用程式接收的是 ISP 的輸出，而非感測器的原始資料。在版本 2.1.3 中，ISP 驅動程式以 NV12、RGB24 與 BGRA32 格式提供輸出，並以感測器模式的尺寸作為其輸出尺寸。
 
 ISP 縮放後的輸出尺寸尚未確認。若要在 Neat 應用程式中使用不同的尺寸，請依照[使用 MIPI 相機](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)的說明，在模型的前處理中調整尺寸。
+
+相機的影像品質調校是另一項工作。請參閱[參考檔案](../reference/extra-docs.md)中的「Modalix 相機與影像訊號處理器（ISP）調校指南」，該指南可向您的 SiMa.ai 業務代表索取。
 
 ## 後續步驟
 

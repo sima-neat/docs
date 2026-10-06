@@ -70,6 +70,8 @@ file name is `modalix-som-<carrier>-<camera>-<port>.dtbo`, for example
   carrier boards.
 - `DUAL` sets up both Waveshare ports with the same camera model in one
   overlay.
+- To use two cameras of different models, list one overlay for each port. See
+  [Use Multiple Cameras](../getting-started/standalone-mode/mipi-camera-interfaces.mdx#multiple-cameras).
 - A dash (—) means that there is no overlay for that combination.
 - The carrier name identifies the vendor of the carrier board, not a board
   model. To compare carrier boards, see
@@ -120,6 +122,10 @@ Output sizes that the ISP scales to are not confirmed. To use a different size
 in a Neat application, resize in the preprocessing of the model, as described
 in
 [Use a MIPI Camera](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input).
+
+Tuning image quality for a camera is a separate task. See the Modalix Camera & ISP
+Tuning Guide in [Reference Documents](../reference/extra-docs.md), which is available
+from your SiMa.ai representative.
 
 ## Next Steps
 

@@ -136,3 +136,30 @@ modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
    ```console
    sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
    ```
+
+## 複数のカメラを使用する {#multiple-cameras}
+
+複数のカメラを使用するには、`dtbos` にカメラごとのオーバーレイを 1 つずつ、スペースで区切って設定します。U-Boot はリスト内のすべてのオーバーレイを適用します。
+
+カメラのモデルは異なっていてもかまいません。各カメラのモデルとポートに対応するオーバーレイを使用してください。たとえば、Modalix DevKit のポート 1 に e-con Systems の IMX678 カメラ、ポート 2 に Leopard Imaging の OG05C10 カメラを接続した場合：
+
+```console
+sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+sima$ printenv dtbos
+sima$ saveenv ; boot
+```
+
+- 1 つのポートに指定できるオーバーレイは 1 つだけです。
+- `DUAL` オーバーレイは、Waveshare キャリアボードの両方のポートを同じカメラモデルで設定します。`DUAL` オーバーレイか、ポートごとのオーバーレイ 2 つのどちらかを使用し、両方を同時に指定しないでください。
+- どのキャリアボードのどのポートにオーバーレイがあるかは、[対応 MIPI カメラ](../../interfaces/supported-cameras.mdx#ports)を参照してください。
+- すべての組み合わせがテストされているわけではありません。`cam -l` と各カメラからのキャプチャで、お使いの組み合わせを確認してください。
+
+ボードが起動したら、`cam -l` を実行します。カメラごとに 1 つのエントリが表示されます。
+
+この変数は、シリアルコンソールを使わずに Linux から設定することもできます。
+
+```console
+sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ sudo fw_printenv dtbos
+sima@modalix:~$ sudo reboot
+```

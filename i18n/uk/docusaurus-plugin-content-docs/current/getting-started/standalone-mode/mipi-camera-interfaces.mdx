@@ -136,3 +136,30 @@ modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
    ```console
    sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
    ```
+
+## Використання кількох камер {#multiple-cameras}
+
+Щоб використовувати більше ніж одну камеру, задайте в `dtbos` по одному оверлею для кожної камери, розділивши їх пробілами. U-Boot застосовує кожен оверлей зі списку.
+
+Камери можуть бути різних моделей. Використовуйте оверлей, що відповідає моделі та порту кожної камери. Наприклад, для Modalix DevKit із камерою e-con Systems IMX678 на порту 1 і камерою Leopard Imaging OG05C10 на порту 2:
+
+```console
+sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+sima$ printenv dtbos
+sima$ saveenv ; boot
+```
+
+- Для одного порту можна вказати лише один оверлей.
+- Оверлей `DUAL` налаштовує обидва порти плати-носія Waveshare з однаковою моделлю камери. Використовуйте або оверлей `DUAL`, або два оверлеї для окремих портів, але не разом.
+- Для яких портів кожної плати-носія є оверлеї, див. у розділі [Підтримувані камери MIPI](../../interfaces/supported-cameras.mdx#ports).
+- Не всі комбінації протестовано. Перевірте свою за допомогою `cam -l` і захоплення кадру з кожної камери.
+
+Після завантаження плати виконайте `cam -l`. Для кожної камери буде показано один запис.
+
+Цю змінну також можна задати з Linux, без послідовної консолі.
+
+```console
+sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ sudo fw_printenv dtbos
+sima@modalix:~$ sudo reboot
+```

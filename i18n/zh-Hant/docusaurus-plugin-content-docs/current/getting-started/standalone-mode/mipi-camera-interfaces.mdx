@@ -136,3 +136,30 @@ modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
    ```console
    sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
    ```
+
+## 使用多台相機 {#multiple-cameras}
+
+若要使用一台以上的相機，請將 `dtbos` 設定為每台相機各一個 overlay，並以空格分隔。U-Boot 會套用清單中的每個 overlay。
+
+相機可以是不同的型號。請使用與每台相機的型號及連接埠相符的 overlay。舉例來說，Modalix DevKit 的 1 號埠連接 e-con Systems IMX678 相機、2 號埠連接 Leopard Imaging OG05C10 相機時：
+
+```console
+sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+sima$ printenv dtbos
+sima$ saveenv ; boot
+```
+
+- 每個連接埠只能指定一個 overlay。
+- `DUAL` overlay 會將 Waveshare 載板的兩個連接埠設定為相同的相機型號。請擇一使用 `DUAL` overlay 或兩個連接埠各自的 overlay，不要同時指定。
+- 各載板有哪些連接埠提供 overlay，請參閱[支援的 MIPI 相機](../../interfaces/supported-cameras.mdx#ports)。
+- 並非所有組合都經過測試。請使用 `cam -l` 並從每台相機擷取影像，以驗證您的組合。
+
+電路板開機後，請執行 `cam -l`。每台相機會列出一個項目。
+
+您也可以在 Linux 中設定此變數，而不需要序列主控台。
+
+```console
+sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ sudo fw_printenv dtbos
+sima@modalix:~$ sudo reboot
+```

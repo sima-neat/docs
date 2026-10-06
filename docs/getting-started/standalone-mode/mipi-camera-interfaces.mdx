@@ -136,3 +136,30 @@ To validate the interfaces, connect the Modalix DevKit to a display and log in. 
    ```console
    sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
    ```
+
+## Use Multiple Cameras {#multiple-cameras}
+
+To use more than one camera, set `dtbos` to one overlay for each camera, separated by spaces. U-Boot applies every overlay in the list.
+
+The cameras can be different models. Use the overlay that matches the model and port of each camera. For example, for a Modalix DevKit with an e-con Systems IMX678 camera on port 1 and a Leopard Imaging OG05C10 camera on port 2:
+
+```console
+sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+sima$ printenv dtbos
+sima$ saveenv ; boot
+```
+
+- Use one overlay for each port.
+- A `DUAL` overlay sets up both ports of the Waveshare carrier board with the same camera model. Use either a `DUAL` overlay or two port overlays, not both.
+- For the ports that have an overlay on each carrier board, see [Supported MIPI Cameras](../../interfaces/supported-cameras.mdx#ports).
+- Not every combination has been tested. Verify yours with `cam -l` and a capture from each camera.
+
+After the board boots, run `cam -l`. It lists one entry for each camera.
+
+You can also set the variable from Linux, without the serial console:
+
+```console
+sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ sudo fw_printenv dtbos
+sima@modalix:~$ sudo reboot
+```
