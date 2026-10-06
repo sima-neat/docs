@@ -1,0 +1,147 @@
+---
+title: Device Trees and Overlays
+description: Select a device-tree overlay that ships with the release or write your own, load it at boot, and check that the driver binds.
+sidebar_position: 4
+---
+
+# Device Trees and Overlays
+
+A device tree describes the hardware on a board so that the kernel can bind
+drivers to it. A Modalix board boots a base device tree and then applies
+overlays for what you attach to it, such as a camera. This page shows how to
+select an overlay that ships with the release, how to write your own, and how to
+check the result.
+
+:::caution[Not yet validated on hardware]
+This page is written from the kernel and U-Boot sources for platform release
+2.1.3 and from the other guides on this site. The steps have not been run on a
+board as they are written here.
+:::
+
+## How the Board Loads a Device Tree {#how-it-loads}
+
+1. U-Boot loads the base device tree for the board from the active boot
+   directory, `boot-0` or `boot-1`.
+2. U-Boot applies each overlay named in its `dtbos` variable, in the order
+   listed.
+3. The kernel starts with the merged device tree.
+
+A device tree describes hardware. It does not add a driver. The driver for a
+device must already be in the kernel or be installed as a module. See the
+[device tree usage model](https://docs.kernel.org/devicetree/usage-model.html)
+in the kernel documentation.
+
+## Select an Overlay from the Release {#shipped-overlay}
+
+The release has overlays for the supported cameras and for PCIe and flash
+configurations. Their sources are in the
+[overlays directory](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays)
+of the kernel tree.
+
+1. List the overlays on the board:
+
+   ```console
+   sima@modalix:~$ ls /boot/boot-*/*.dtbo
+   ```
+
+2. Interrupt U-Boot, set `dtbos` to the overlay, and boot:
+
+   ```console
+   sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+To apply more than one overlay, separate the names with spaces. For camera
+overlays, see [Supported MIPI Cameras](../interfaces/supported-cameras.mdx).
+
+## Write Your Own Overlay {#write-overlay}
+
+Write an overlay when you attach a device that the release has no overlay for.
+This example adds an I2C GPIO expander at address `0x27` on I2C bus 0:
+
+```dts
+/dts-v1/;
+/plugin/;
+
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+        #gpio-cells = <2>;
+    };
+};
+```
+
+- `&i2c00` selects the node to change by its label in the base device tree.
+- `status = "okay"` enables a node that the base device tree leaves disabled.
+- The child node is the device. `compatible` selects the driver, and `reg` is
+  the address of the device on the bus.
+
+Before you write the overlay, check that the kernel has the driver. The
+`compatible` string must belong to a driver that
+[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig)
+enables, or to a module that you build and install.
+
+For a larger example, read a camera overlay from the kernel tree, such as
+[`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso).
+It adds a clock for the sensor, sets up the I2C bus and the power-down pin,
+enables the CSI interface and its video nodes, and connects the sensor to the
+CSI interface over two data lanes.
+
+## Build and Install the Overlay {#build-install}
+
+1. Compile the overlay source to a `.dtbo` file, as described in
+   [Build the BSP from Source](./build-from-source.mdx).
+2. Copy the `.dtbo` file to the active boot directory of the board.
+3. Add the file to `dtbos` in U-Boot, after the overlays that are already
+   listed:
+
+   ```console
+   sima$ env set dtbos $dtbos my-device.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+## Check the Result {#check}
+
+Check in this order. Each step depends on the one before it.
+
+1. **The overlay was applied.** Find the new node in the device tree that the
+   kernel is using:
+
+   ```console
+   root@modalix:~# find /proc/device-tree -name "gpio@27"
+   ```
+
+2. **The driver bound to the device.** Look for the driver in the kernel log:
+
+   ```console
+   root@modalix:~# dmesg | grep -i pcf857x
+   ```
+
+3. **The device works.** Use the tool for that kind of device. For the GPIO
+   expander, `gpiodetect` lists a new chip. For a camera, `cam -l` lists the
+   camera.
+
+## If It Does Not Work {#if-it-fails}
+
+| What you see | Likely cause | What to check |
+| --- | --- | --- |
+| The node is not in `/proc/device-tree` | U-Boot did not apply the overlay | `printenv dtbos` in U-Boot, the file in the active boot directory, and errors on the U-Boot console |
+| The node is there, but no driver binds | The kernel has no driver for the `compatible` string | The kernel configuration, and `dmesg` |
+| The driver reports an error | The bus or the address is wrong, or a clock, supply, reset, or GPIO is missing | `dmesg`, and `i2cdetect` for an I2C device |
+| Another device stops working | Two overlays change the same node or the same pin | Apply one overlay at a time |
+
+## Next Steps
+
+- [Build the BSP from Source](./build-from-source.mdx): build the kernel, the
+  device trees, and overlays.
+- [Low-Speed I/O](../interfaces/low-speed-io.mdx): pin mapping and device-tree
+  nodes for GPIO, UART, I2C, and SPI.
+- [Modalix DevKit Interface Support](../reference/devkit-interface-support.mdx):
+  which interfaces the release device tree enables.

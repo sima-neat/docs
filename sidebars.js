@@ -68,6 +68,7 @@ const sidebars = {
     section('Build & Deploy Custom System Software', 'software/index', [
       'software/release-compatibility',
       'software/build-from-source',
+      'software/device-tree',
       'deployment/flash-image',
       'deployment/factory-build-and-test',
     ]),

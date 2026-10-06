@@ -1,0 +1,115 @@
+---
+title: Device Tree 與 Overlay
+description: 選擇版本隨附的 device tree overlay 或自行撰寫，於開機時載入，並確認驅動程式已完成繫結。
+sidebar_position: 4
+---
+
+# Device Tree 與 Overlay
+
+Device tree 描述電路板上的硬體，讓核心能將驅動程式繫結到硬體。Modalix 電路板會先以基礎 device tree 開機，再依您所連接的裝置（例如相機）套用 overlay。本頁說明如何選擇版本隨附的 overlay、如何自行撰寫 overlay，以及如何檢查結果。
+
+:::caution[尚未在硬體上驗證]
+本頁依據平台版本 2.1.3 的核心與 U-Boot 原始碼，以及本網站的其他指南撰寫。這些步驟尚未依本頁所述在電路板上實際執行。
+:::
+
+## 電路板如何載入 Device Tree {#how-it-loads}
+
+1. U-Boot 從作用中的開機目錄（`boot-0` 或 `boot-1`）載入電路板的基礎 device tree。
+2. U-Boot 依列出的順序，套用 `dtbos` 變數中指定的每個 overlay。
+3. 核心以合併後的 device tree 啟動。
+
+Device tree 只描述硬體，不會加入驅動程式。裝置的驅動程式必須已包含在核心中，或以模組的形式安裝。請參閱核心文件中的 [device tree 使用模型](https://docs.kernel.org/devicetree/usage-model.html)。
+
+## 選擇版本隨附的 Overlay {#shipped-overlay}
+
+此版本提供支援相機的 overlay，以及 PCIe 與快閃記憶體組態的 overlay。其原始檔位於核心樹的 [overlays 目錄](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays)。
+
+1. 列出電路板上的 overlay：
+
+   ```console
+   sima@modalix:~$ ls /boot/boot-*/*.dtbo
+   ```
+
+2. 中斷 U-Boot，將 `dtbos` 設定為該 overlay，然後開機：
+
+   ```console
+   sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+若要套用多個 overlay，請以空格分隔各名稱。相機 overlay 請參閱[支援的 MIPI 相機](../interfaces/supported-cameras.mdx)。
+
+## 自行撰寫 Overlay {#write-overlay}
+
+當您連接的裝置在版本中沒有對應的 overlay 時，請自行撰寫 overlay。以下範例在 I2C 匯流排 0 的位址 `0x27` 加入一個 I2C GPIO 擴充器：
+
+```dts
+/dts-v1/;
+/plugin/;
+
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+        #gpio-cells = <2>;
+    };
+};
+```
+
+- `&i2c00` 透過基礎 device tree 中的標籤選取要變更的節點。
+- `status = "okay"` 會啟用基礎 device tree 中未啟用的節點。
+- 子節點即為裝置。`compatible` 用來選擇驅動程式，`reg` 則是裝置在匯流排上的位址。
+
+撰寫 overlay 之前，請先確認核心具備對應的驅動程式。`compatible` 字串必須屬於 [`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig) 所啟用的驅動程式，或屬於您自行建置並安裝的模組。
+
+若需要較完整的範例，請閱讀核心樹中的相機 overlay，例如 [`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso)。它為感測器加入時脈、設定 I2C 匯流排與 power-down 腳位、啟用 CSI 介面及其視訊節點，並以兩條 data lane 將感測器連接至 CSI 介面。
+
+## 建置並安裝 Overlay {#build-install}
+
+1. 依照[從原始碼建置 BSP](./build-from-source.mdx)的說明，將 overlay 原始檔編譯為 `.dtbo` 檔案。
+2. 將 `.dtbo` 檔案複製到電路板作用中的開機目錄。
+3. 在 U-Boot 中，將此檔案加入 `dtbos`，排在已列出的 overlay 之後：
+
+   ```console
+   sima$ env set dtbos $dtbos my-device.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+## 檢查結果 {#check}
+
+請依下列順序檢查，每個步驟都以前一個步驟成功為前提。
+
+1. **Overlay 已套用。**在核心使用中的 device tree 內尋找新的節點：
+
+   ```console
+   root@modalix:~# find /proc/device-tree -name "gpio@27"
+   ```
+
+2. **驅動程式已繫結至裝置。**在核心記錄中尋找該驅動程式：
+
+   ```console
+   root@modalix:~# dmesg | grep -i pcf857x
+   ```
+
+3. **裝置可以運作。**請使用該類裝置對應的工具。以 GPIO 擴充器為例，`gpiodetect` 會列出新的晶片；以相機為例，`cam -l` 會列出該相機。
+
+## 無法運作時 {#if-it-fails}
+
+| 現象 | 可能原因 | 檢查項目 |
+| --- | --- | --- |
+| 節點不在 `/proc/device-tree` 中 | U-Boot 未套用 overlay | U-Boot 中的 `printenv dtbos`、作用中開機目錄內的檔案，以及 U-Boot 主控台上的錯誤 |
+| 節點存在，但沒有驅動程式繫結 | 核心沒有對應 `compatible` 字串的驅動程式 | 核心組態與 `dmesg` |
+| 驅動程式回報錯誤 | 匯流排或位址錯誤，或缺少時脈、電源、重置或 GPIO | `dmesg`，若為 I2C 裝置則另查 `i2cdetect` |
+| 其他裝置停止運作 | 兩個 overlay 變更了相同的節點或相同的腳位 | 一次只套用一個 overlay |
+
+## 後續步驟
+
+- [從原始碼建置 BSP](./build-from-source.mdx)：建置核心、device tree 與 overlay。
+- [低速 I/O](../interfaces/low-speed-io.mdx)：GPIO、UART、I2C 與 SPI 的腳位對應及 device tree 節點。
+- [Modalix DevKit 介面支援情形](../reference/devkit-interface-support.mdx)：版本的 device tree 啟用了哪些介面。

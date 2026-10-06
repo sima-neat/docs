@@ -1,0 +1,145 @@
+---
+title: デバイスツリーとオーバーレイ
+description: リリースに含まれるデバイスツリーオーバーレイを選択するか独自に作成し、起動時に読み込ませて、ドライバーがバインドされることを確認します。
+sidebar_position: 4
+---
+
+# デバイスツリーとオーバーレイ
+
+デバイスツリーは、カーネルがドライバーをバインドできるように、ボード上のハードウェアを
+記述するものです。Modalix ボードはベースのデバイスツリーで起動し、その後、カメラなど
+接続したものに応じたオーバーレイを適用します。このページでは、リリースに含まれるオーバーレイの
+選択方法、独自のオーバーレイの作成方法、結果の確認方法を説明します。
+
+:::caution[ハードウェアでは未検証]
+このページは、プラットフォームリリース 2.1.3 のカーネルおよび U-Boot のソースと、このサイトの
+ほかのガイドをもとに作成しています。ここに記載した手順そのものは、ボード上ではまだ
+実行されていません。
+:::
+
+## ボードがデバイスツリーを読み込む仕組み {#how-it-loads}
+
+1. U-Boot は、アクティブなブートディレクトリ（`boot-0` または `boot-1`）からボード用の
+   ベースデバイスツリーを読み込みます。
+2. U-Boot は、`dtbos` 変数に指定された各オーバーレイを、記載された順に適用します。
+3. カーネルは、マージされたデバイスツリーで起動します。
+
+デバイスツリーはハードウェアを記述するものであり、ドライバーを追加するものではありません。
+デバイスのドライバーは、あらかじめカーネルに含まれているか、モジュールとしてインストール
+されている必要があります。カーネルドキュメントの
+[デバイスツリーの使用モデル](https://docs.kernel.org/devicetree/usage-model.html)を参照してください。
+
+## リリースに含まれるオーバーレイを選択する {#shipped-overlay}
+
+リリースには、対応カメラ用のオーバーレイと、PCIe およびフラッシュの構成用のオーバーレイが
+含まれています。ソースは、カーネルツリーの
+[overlays ディレクトリ](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays)
+にあります。
+
+1. ボード上のオーバーレイを一覧表示します。
+
+   ```console
+   sima@modalix:~$ ls /boot/boot-*/*.dtbo
+   ```
+
+2. U-Boot を中断し、`dtbos` にオーバーレイを設定して起動します。
+
+   ```console
+   sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+複数のオーバーレイを適用するには、名前をスペースで区切ります。カメラ用オーバーレイに
+ついては、[対応 MIPI カメラ](../interfaces/supported-cameras.mdx)を参照してください。
+
+## 独自のオーバーレイを作成する {#write-overlay}
+
+リリースにオーバーレイがないデバイスを接続する場合は、オーバーレイを作成します。
+次の例では、I2C バス 0 のアドレス `0x27` に I2C GPIO エクスパンダーを追加します。
+
+```dts
+/dts-v1/;
+/plugin/;
+
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+        #gpio-cells = <2>;
+    };
+};
+```
+
+- `&i2c00` は、ベースデバイスツリー内のラベルによって、変更するノードを選択します。
+- `status = "okay"` は、ベースデバイスツリーで無効になっているノードを有効にします。
+- 子ノードがデバイスです。`compatible` でドライバーが選択され、`reg` はバス上の
+  デバイスのアドレスです。
+
+オーバーレイを作成する前に、カーネルにドライバーがあることを確認してください。
+`compatible` 文字列は、
+[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig)
+で有効になっているドライバー、または自分でビルドしてインストールするモジュールのものである必要があります。
+
+より大きな例としては、カーネルツリーにあるカメラ用オーバーレイ、たとえば
+[`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso)
+を参照してください。このオーバーレイは、センサー用のクロックを追加し、I2C バスとパワーダウンピンを
+設定し、CSI インターフェースとそのビデオノードを有効にして、センサーを 2 本のデータレーンで
+CSI インターフェースに接続します。
+
+## オーバーレイのビルドとインストール {#build-install}
+
+1. [BSP をソースからビルドする](./build-from-source.mdx)の説明に従って、オーバーレイのソースを
+   `.dtbo` ファイルにコンパイルします。
+2. `.dtbo` ファイルを、ボードのアクティブなブートディレクトリにコピーします。
+3. U-Boot で、すでに指定されているオーバーレイの後ろに、このファイルを `dtbos` へ
+   追加します。
+
+   ```console
+   sima$ env set dtbos $dtbos my-device.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+## 結果を確認する {#check}
+
+次の順に確認します。各ステップは、その前のステップが成功していることが前提です。
+
+1. **オーバーレイが適用されている。** カーネルが使用しているデバイスツリーの中から、
+   新しいノードを探します。
+
+   ```console
+   root@modalix:~# find /proc/device-tree -name "gpio@27"
+   ```
+
+2. **ドライバーがデバイスにバインドされている。** カーネルログでドライバーを探します。
+
+   ```console
+   root@modalix:~# dmesg | grep -i pcf857x
+   ```
+
+3. **デバイスが動作している。** そのデバイスの種類に合ったツールを使用します。GPIO
+   エクスパンダーの場合、`gpiodetect` に新しいチップが表示されます。カメラの場合、
+   `cam -l` にカメラが表示されます。
+
+## うまくいかない場合 {#if-it-fails}
+
+| 症状 | 考えられる原因 | 確認する項目 |
+| --- | --- | --- |
+| ノードが `/proc/device-tree` にない | U-Boot がオーバーレイを適用していない | U-Boot での `printenv dtbos`、アクティブなブートディレクトリ内のファイル、U-Boot コンソールのエラー |
+| ノードはあるが、ドライバーがバインドされない | カーネルに `compatible` 文字列に対応するドライバーがない | カーネルの構成と `dmesg` |
+| ドライバーがエラーを報告する | バスまたはアドレスが誤っている、あるいはクロック、電源、リセット、GPIO が不足している | `dmesg`、および I2C デバイスの場合は `i2cdetect` |
+| ほかのデバイスが動作しなくなる | 2 つのオーバーレイが同じノードまたは同じピンを変更している | オーバーレイを 1 つずつ適用する |
+
+## 次のステップ
+
+- [BSP をソースからビルドする](./build-from-source.mdx)：カーネル、デバイスツリー、オーバーレイの
+  ビルド。
+- [低速 I/O](../interfaces/low-speed-io.mdx)：GPIO、UART、I2C、SPI の
+  ピン割り当てとデバイスツリーノード。
+- [Modalix DevKit のインターフェース対応状況](../reference/devkit-interface-support.mdx)：
+  リリースのデバイスツリーで有効になっているインターフェース。

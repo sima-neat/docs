@@ -64,6 +64,8 @@ own drivers do not require an NDA or a sales enquiry.
 
 - [Build the BSP from Source](./build-from-source.mdx) — build environment,
   kernel, U-Boot, device trees, and installing the artifacts.
+- [Device Trees and Overlays](./device-tree.mdx) — select an overlay or write your own,
+  and check that the driver binds.
 - [Release Compatibility](./release-compatibility.mdx) — the kernel and U-Boot
   commit behind each platform release.
 - [Flash an Image to eMMC](../deployment/flash-image.mdx) — write your own build to the

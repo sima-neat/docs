@@ -64,6 +64,8 @@ BSP 소스는 다음과 같은 경우에 유용합니다.
 
 - [소스에서 BSP 빌드](./build-from-source.mdx) — 빌드 환경, 커널, U-Boot,
   디바이스 트리 및 아티팩트 설치.
+- [디바이스 트리 및 오버레이](./device-tree.mdx) — 오버레이를 선택하거나 작성하고,
+  드라이버 바인딩을 확인.
 - [릴리스 호환성](./release-compatibility.mdx) — 각 플랫폼 릴리스의 기반이 되는
   커널 및 U-Boot 커밋.
 - [eMMC에 이미지 플래싱](../deployment/flash-image.mdx) — 자체 빌드를 보드의

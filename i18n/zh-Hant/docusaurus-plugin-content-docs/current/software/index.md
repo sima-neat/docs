@@ -62,6 +62,7 @@ Modalix BSP 適用於 Modalix DevKit、Modalix Early Access 套件以及 Modalix
 ## 本節內容
 
 - [從原始碼建置 BSP](./build-from-source.mdx)：建置環境、核心、U-Boot、device tree，以及安裝建置成品。
+- [Device Tree 與 Overlay](./device-tree.mdx)：選擇或撰寫 overlay，並確認驅動程式已繫結。
 - [版本相容性](./release-compatibility.mdx)：每個平台版本所對應的核心與 U-Boot commit。
 - [將映像檔燒錄到 eMMC](../deployment/flash-image.mdx)：將您自行建置的映像檔寫入電路板的 eMMC。
 - [工廠組裝與測試](../deployment/factory-build-and-test.mdx)：在量產環境中燒錄與測試電路板。
