@@ -4,6 +4,8 @@ description: Запуск модуля Modalix SoM Rev 2 на сторонній
 sidebar_position: 4
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Запуск плати-носія
 
 Модуль Modalix SoM Rev 2 під’єднується до плати-носія через **260-контактний роз’єм SODIMM**
@@ -40,11 +42,11 @@ Comparison Guide.
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-top.png" alt="Плата-носій для SoM, вигляд зверху, з пронумерованими позначками компонентів" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-top.png')} alt="Плата-носій для SoM, вигляд зверху, з пронумерованими позначками компонентів" />
     <figcaption><strong>Рисунок 1.</strong> Плата-носій, вигляд зверху</figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-bottom.png" alt="Плата-носій для SoM, вигляд знизу, з пронумерованими позначками компонентів" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-bottom.png')} alt="Плата-носій для SoM, вигляд знизу, з пронумерованими позначками компонентів" />
     <figcaption><strong>Рисунок 2.</strong> Плата-носій, вигляд знизу</figcaption>
   </figure>
 </div>
@@ -72,14 +74,14 @@ Comparison Guide.
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2, вигляд зверху, кристал MLSoC між двома мікросхемами LPDDR5" />
+    <img src={useBaseUrl('/img/bsp/som-board-top.png')} alt="Modalix SoM Rev 2, вигляд зверху, кристал MLSoC між двома мікросхемами LPDDR5" />
     <figcaption>
       <strong>Рисунок 3.</strong> SoM, вигляд зверху — Modalix SoC, LPDDR5 DRAM (×2),
       PMIC і роз’єм із позолоченими контактами
     </figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2, вигляд знизу, eMMC, SPI-флеш-пам’ять і фізичний рівень Ethernet" />
+    <img src={useBaseUrl('/img/bsp/som-board-bottom.png')} alt="Modalix SoM Rev 2, вигляд знизу, eMMC, SPI-флеш-пам’ять і фізичний рівень Ethernet" />
     <figcaption>
       <strong>Рисунок 4.</strong> SoM, вигляд знизу — 16 ГБ eMMC, SPI-флеш-пам’ять, контролер
       HDMI, Ethernet PHY, контролер USB, генератор тактових сигналів
@@ -98,7 +100,7 @@ Comparison Guide.
 плата-носій може отримати від SoM.
 
 <figure className="doc-figure doc-figure--wide">
-  <img src="/img/bsp/som-block-diagram.png" alt="Функціональна блок-схема Modalix SoM Rev 2, на якій сигнали роз’єму SO-DIMM розведено до Modalix SoC" />
+  <img src={useBaseUrl('/img/bsp/som-block-diagram.png')} alt="Функціональна блок-схема Modalix SoM Rev 2, на якій сигнали роз’єму SO-DIMM розведено до Modalix SoC" />
   <figcaption><strong>Рисунок 5.</strong> Функціональна блок-схема Modalix SoM Rev 2</figcaption>
 </figure>
 

@@ -4,6 +4,8 @@ description: Bring up a Modalix SoM Rev 2 on a third-party carrier board — har
 sidebar_position: 4
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Carrier Board Bring-up
 
 The Modalix SoM Rev 2 connects to a carrier board through a **260-pin SODIMM**
@@ -40,11 +42,11 @@ to the callouts in these views.
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-top.png" alt="SoM carrier board, top view, with numbered component callouts" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-top.png')} alt="SoM carrier board, top view, with numbered component callouts" />
     <figcaption><strong>Figure 1.</strong> Carrier board, top view</figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-bottom.png" alt="SoM carrier board, bottom view, with numbered component callouts" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-bottom.png')} alt="SoM carrier board, bottom view, with numbered component callouts" />
     <figcaption><strong>Figure 2.</strong> Carrier board, bottom view</figcaption>
   </figure>
 </div>
@@ -72,14 +74,14 @@ SO-DIMM edge connector.
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2, top view, showing the MLSoC die between two LPDDR5 packages" />
+    <img src={useBaseUrl('/img/bsp/som-board-top.png')} alt="Modalix SoM Rev 2, top view, showing the MLSoC die between two LPDDR5 packages" />
     <figcaption>
       <strong>Figure 3.</strong> SoM, top view — Modalix SoC, LPDDR5 DRAM (×2),
       PMIC, and the goldfinger connector
     </figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2, bottom view, showing eMMC, SPI flash and the Ethernet PHY" />
+    <img src={useBaseUrl('/img/bsp/som-board-bottom.png')} alt="Modalix SoM Rev 2, bottom view, showing eMMC, SPI flash and the Ethernet PHY" />
     <figcaption>
       <strong>Figure 4.</strong> SoM, bottom view — 16 GB eMMC, SPI flash, HDMI
       controller, Ethernet PHY, USB controller, clock generator
@@ -98,7 +100,7 @@ and how they are routed inside the module. Use it when deciding what your
 carrier board can take from the SoM.
 
 <figure className="doc-figure doc-figure--wide">
-  <img src="/img/bsp/som-block-diagram.png" alt="Functional block diagram of Modalix SoM Rev 2, showing the SO-DIMM connector signals routed to the Modalix SoC" />
+  <img src={useBaseUrl('/img/bsp/som-block-diagram.png')} alt="Functional block diagram of Modalix SoM Rev 2, showing the SO-DIMM connector signals routed to the Modalix SoC" />
   <figcaption><strong>Figure 5.</strong> Modalix SoM Rev 2 functional block diagram</figcaption>
 </figure>
 

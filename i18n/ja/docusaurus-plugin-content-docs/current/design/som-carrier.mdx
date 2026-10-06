@@ -4,6 +4,8 @@ description: サードパーティ製キャリアボード上で Modalix SoM Rev
 sidebar_position: 4
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # キャリアボードの立ち上げ
 
 Modalix SoM Rev 2 は、標準化されたピン割り当てを持つ **260 ピン SODIMM**
@@ -39,11 +41,11 @@ Comparison Guide を手元に用意してください。
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-top.png" alt="SoM キャリアボードの上面図。構成部品に番号付きの吹き出しが付いている" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-top.png')} alt="SoM キャリアボードの上面図。構成部品に番号付きの吹き出しが付いている" />
     <figcaption><strong>図 1.</strong> キャリアボード（上面図）</figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-bottom.png" alt="SoM キャリアボードの底面図。構成部品に番号付きの吹き出しが付いている" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-bottom.png')} alt="SoM キャリアボードの底面図。構成部品に番号付きの吹き出しが付いている" />
     <figcaption><strong>図 2.</strong> キャリアボード（底面図）</figcaption>
   </figure>
 </div>
@@ -71,14 +73,14 @@ SO-DIMM エッジコネクターを介して接続します。
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2 の上面図。2 つの LPDDR5 パッケージの間に MLSoC ダイがある" />
+    <img src={useBaseUrl('/img/bsp/som-board-top.png')} alt="Modalix SoM Rev 2 の上面図。2 つの LPDDR5 パッケージの間に MLSoC ダイがある" />
     <figcaption>
       <strong>図 3.</strong> SoM（上面図）：Modalix SoC、LPDDR5 DRAM（× 2）、
       PMIC、金メッキ端子コネクター
     </figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2 の底面図。eMMC、SPI フラッシュ、イーサネット PHY が示されている" />
+    <img src={useBaseUrl('/img/bsp/som-board-bottom.png')} alt="Modalix SoM Rev 2 の底面図。eMMC、SPI フラッシュ、イーサネット PHY が示されている" />
     <figcaption>
       <strong>図 4.</strong> SoM（底面図）：16 GB eMMC、SPI フラッシュ、HDMI
       コントローラー、イーサネット PHY、USB コントローラー、クロックジェネレーター
@@ -97,7 +99,7 @@ SO-DIMM エッジコネクターを介して接続します。
 どの機能を利用できるかを判断する際に使用してください。
 
 <figure className="doc-figure doc-figure--wide">
-  <img src="/img/bsp/som-block-diagram.png" alt="Modalix SoM Rev 2 の機能ブロック図。SO-DIMM コネクターの信号が Modalix SoC に配線されている様子を示す" />
+  <img src={useBaseUrl('/img/bsp/som-block-diagram.png')} alt="Modalix SoM Rev 2 の機能ブロック図。SO-DIMM コネクターの信号が Modalix SoC に配線されている様子を示す" />
   <figcaption><strong>図 5.</strong> Modalix SoM Rev 2 の機能ブロック図</figcaption>
 </figure>
 

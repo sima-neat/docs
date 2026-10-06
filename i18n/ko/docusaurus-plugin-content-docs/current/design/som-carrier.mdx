@@ -4,6 +4,8 @@ description: 타사 캐리어 보드에서 Modalix SoM Rev 2를 브링업합니�
 sidebar_position: 4
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # 캐리어 보드 브링업
 
 Modalix SoM Rev 2는 표준화된 핀 할당을 갖춘 **260핀 SODIMM** 커넥터를 통해 캐리어
@@ -38,11 +40,11 @@ SoM과 캐리어 보드를 연결하기 전에 두 보드 간의 전기적 핀 �
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-top.png" alt="번호가 매겨진 부품 표시가 있는 SoM 캐리어 보드 윗면" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-top.png')} alt="번호가 매겨진 부품 표시가 있는 SoM 캐리어 보드 윗면" />
     <figcaption><strong>그림 1.</strong> 캐리어 보드 윗면</figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-bottom.png" alt="번호가 매겨진 부품 표시가 있는 SoM 캐리어 보드 아랫면" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-bottom.png')} alt="번호가 매겨진 부품 표시가 있는 SoM 캐리어 보드 아랫면" />
     <figcaption><strong>그림 2.</strong> 캐리어 보드 아랫면</figcaption>
   </figure>
 </div>
@@ -70,14 +72,14 @@ SoM과 캐리어 보드를 연결하기 전에 두 보드 간의 전기적 핀 �
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-top.png" alt="두 LPDDR5 패키지 사이에 MLSoC 다이가 있는 Modalix SoM Rev 2 윗면" />
+    <img src={useBaseUrl('/img/bsp/som-board-top.png')} alt="두 LPDDR5 패키지 사이에 MLSoC 다이가 있는 Modalix SoM Rev 2 윗면" />
     <figcaption>
       <strong>그림 3.</strong> SoM 윗면 — Modalix SoC, LPDDR5 DRAM(×2),
       PMIC 및 골드핑거 커넥터
     </figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-bottom.png" alt="eMMC, SPI 플래시 및 이더넷 PHY가 보이는 Modalix SoM Rev 2 아랫면" />
+    <img src={useBaseUrl('/img/bsp/som-board-bottom.png')} alt="eMMC, SPI 플래시 및 이더넷 PHY가 보이는 Modalix SoM Rev 2 아랫면" />
     <figcaption>
       <strong>그림 4.</strong> SoM 아랫면 — 16 GB eMMC, SPI 플래시, HDMI
       컨트롤러, 이더넷 PHY, USB 컨트롤러, 클록 생성기
@@ -96,7 +98,7 @@ SoM과 캐리어 보드를 연결하기 전에 두 보드 간의 전기적 핀 �
 가져올 수 있는지 결정할 때 참고하십시오.
 
 <figure className="doc-figure doc-figure--wide">
-  <img src="/img/bsp/som-block-diagram.png" alt="SO-DIMM 커넥터 신호가 Modalix SoC로 라우팅되는 모습을 보여 주는 Modalix SoM Rev 2 기능 블록 다이어그램" />
+  <img src={useBaseUrl('/img/bsp/som-block-diagram.png')} alt="SO-DIMM 커넥터 신호가 Modalix SoC로 라우팅되는 모습을 보여 주는 Modalix SoM Rev 2 기능 블록 다이어그램" />
   <figcaption><strong>그림 5.</strong> Modalix SoM Rev 2 기능 블록 다이어그램</figcaption>
 </figure>
 

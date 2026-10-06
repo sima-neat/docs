@@ -83,10 +83,62 @@ for (const [locale, sources] of Object.entries(translationSources)) {
   }
 }
 const expectedSidebarMessages = {
-  ko: ['시작하기', '빠른 시작 가이드', '독립 실행형 모드', 'PCIe 모드', '펌웨어 업데이트', 'DevKit 변형', '도구', '참조', '기술 노트'],
-  ja: ['はじめに', 'クイックスタートガイド', 'スタンドアロンモード', 'PCIe モード', 'ファームウェア更新', 'DevKit バリエーション', 'ツール', 'リファレンス', '技術ノート'],
-  'zh-Hant': ['開始使用', '快速入門指南', '獨立模式', 'PCIe 模式', '韌體更新', 'DevKit 型號', '工具', '參考資料', '技術說明'],
-  uk: ['Початок роботи', 'Посібник зі швидкого старту', 'Автономний режим', 'Режим PCIe', 'Оновлення прошивки', 'Варіанти DevKit', 'Інструменти', 'Довідкові матеріали', 'Технічні нотатки'],
+  ko: [
+    'AI 에이전트용',
+    'DevKit 평가 및 사용',
+    '빠른 시작 가이드',
+    'DevKit 변형',
+    '독립 실행형 모드',
+    'PCIe 모드',
+    'SiMa 이미지 업데이트 및 복구',
+    'SoM 및 캐리어 보드 통합',
+    '사용자 지정 시스템 소프트웨어 빌드 및 배포',
+    '카메라 통합 및 ISP 튜닝',
+    '참조 및 다운로드',
+    '기술 노트',
+  ],
+  ja: [
+    'AI エージェント向け',
+    'DevKit の評価と利用',
+    'クイックスタートガイド',
+    'DevKit バリエーション',
+    'スタンドアロンモード',
+    'PCIe モード',
+    'SiMa イメージの更新と復旧',
+    'SoM とキャリアボードの統合',
+    'カスタムシステムソフトウェアのビルドとデプロイ',
+    'カメラの統合と ISP のチューニング',
+    'リファレンスとダウンロード',
+    '技術ノート',
+  ],
+  'zh-Hant': [
+    'AI 代理程式專用',
+    '評估與使用 DevKit',
+    '快速入門指南',
+    'DevKit 型號',
+    '獨立模式',
+    'PCIe 模式',
+    '更新與復原 SiMa 映像檔',
+    '整合 SoM 與載板',
+    '建置與部署自訂系統軟體',
+    '整合相機與調校 ISP',
+    '參考資料與下載',
+    '技術說明',
+  ],
+  uk: [
+    'Для ШІ-агентів',
+    'Оцінювання та використання DevKit',
+    'Посібник зі швидкого старту',
+    'Варіанти DevKit',
+    'Автономний режим',
+    'Режим PCIe',
+    'Оновлення та відновлення образів SiMa',
+    'Інтеграція SoM і плати-носія',
+    'Збирання та розгортання власного системного ПЗ',
+    'Інтеграція камер і налаштування ISP',
+    'Довідкові матеріали та завантаження',
+    'Технічні нотатки',
+  ],
 };
 const expectedBannerQuickStartLabels = {
   en: 'Quick Start',
@@ -126,14 +178,17 @@ const modeTabLabels = {
   uk: ['Автономний режим', 'Режим PCIe'],
 };
 const sidebarTranslationKeys = [
-  'sidebar.systemDocs.category.Getting Started',
+  'sidebar.systemDocs.link.For AI Agents',
+  'sidebar.systemDocs.category.Evaluate & Use a DevKit',
   'sidebar.systemDocs.link.Quick Start Guide',
+  'sidebar.systemDocs.category.DevKit Variants',
   'sidebar.systemDocs.category.Standalone Mode',
   'sidebar.systemDocs.category.PCIe Mode',
-  'sidebar.systemDocs.category.Firmware Update',
-  'sidebar.systemDocs.category.DevKit Variants',
-  'sidebar.systemDocs.category.Tools',
-  'sidebar.systemDocs.category.References',
+  'sidebar.systemDocs.category.Update & Recover SiMa Images',
+  'sidebar.systemDocs.category.Integrate a SoM & Carrier Board',
+  'sidebar.systemDocs.category.Build & Deploy Custom System Software',
+  'sidebar.systemDocs.category.Integrate Cameras & Tune the ISP',
+  'sidebar.systemDocs.category.Reference & Downloads',
   'sidebar.systemDocs.category.Tech Notes',
 ];
 const context = {window: {}};
@@ -523,9 +578,9 @@ assert.match(mobileSearchSource, /aria-label=\{searchCopy\.close\}/);
 assert.doesNotMatch(mobileSearchSource, /aria-label="(?:Search Developer Center|Close search)"/);
 assert.ok(
   fs.readFileSync(
-    path.join(docsRoot, 'i18n/ko/docusaurus-plugin-content-docs/current/reference/bsp.md'),
+    path.join(docsRoot, 'i18n/ko/docusaurus-plugin-content-docs/current/software/index.md'),
     'utf8',
-  ).includes('소스 레이어: [swsoc-simaai-elxr-doc]'),
+  ).includes('소스: [simaai-linux](https://github.com/SiMa-ai/simaai-linux)'),
   'Korean BSP translation must preserve the source repository identifier',
 );
 const japaneseNetworkSource = fs.readFileSync(
@@ -537,13 +592,6 @@ const japaneseNetworkSource = fs.readFileSync(
 );
 assert.match(japaneseNetworkSource, /バージョン 2\.0 以前にのみ適用されます[^]*?\n:::\n\n1\./);
 assert.match(japaneseNetworkSource, /   :::warning\n   このファイル[^]*?\n   :::/);
-assert.match(
-  fs.readFileSync(
-    path.join(docsRoot, 'i18n/ja/docusaurus-plugin-content-docs/current/reference/bsp.md'),
-    'utf8',
-  ),
-  /いずれかの方法を使用して、DevKit に書き込みます/,
-);
 assert.match(
   fs.readFileSync(
     path.join(
@@ -697,7 +745,7 @@ assert.match(
 assert.doesNotMatch(rootThemeSource, /WIP_DEADLINE|WipBanner|wip-banner/);
 assert.doesNotMatch(rootThemeSource, /localePrefix/);
 assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/getting-started"\)/);
-assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/devkit\/modalix-devkit"\)/);
+assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/design\/carrier-board"\)/);
 assert.doesNotMatch(localDeveloperCenterSource, /curl[^\n]+\|\s*grep -Fq/);
 assert.match(localDeveloperCenterSource, /response="\$\(curl[\s\S]*grep -Fq[\s\S]*<<<"\$\{response\}"/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);

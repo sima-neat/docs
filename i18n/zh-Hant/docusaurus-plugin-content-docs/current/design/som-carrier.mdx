@@ -4,6 +4,8 @@ description: 在第三方載板上啟動 Modalix SoM Rev 2：硬體概觀、需�
 sidebar_position: 4
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # 載板硬體啟動
 
 Modalix SoM Rev 2 透過採用標準化腳位配置的 **260 針 SODIMM** 連接器連接到載板，並可搭配任何與 NVIDIA Jetson Orin NX 或 Orin Nano 相容的載板使用。
@@ -32,11 +34,11 @@ SDK 2.1 或更新版本，並已安裝 Palette 套件以提供圖形支援。您
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-top.png" alt="SoM 載板頂視圖，附有編號的元件標示" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-top.png')} alt="SoM 載板頂視圖，附有編號的元件標示" />
     <figcaption><strong>圖 1.</strong> 載板頂視圖</figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/carrier-board-bottom.png" alt="SoM 載板底視圖，附有編號的元件標示" />
+    <img src={useBaseUrl('/img/bsp/carrier-board-bottom.png')} alt="SoM 載板底視圖，附有編號的元件標示" />
     <figcaption><strong>圖 2.</strong> 載板底視圖</figcaption>
   </figure>
 </div>
@@ -62,13 +64,13 @@ SDK 2.1 或更新版本，並已安裝 Palette 套件以提供圖形支援。您
 
 <div className="figure-grid">
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-top.png" alt="Modalix SoM Rev 2 頂視圖，顯示位於兩顆 LPDDR5 封裝之間的 MLSoC 晶粒" />
+    <img src={useBaseUrl('/img/bsp/som-board-top.png')} alt="Modalix SoM Rev 2 頂視圖，顯示位於兩顆 LPDDR5 封裝之間的 MLSoC 晶粒" />
     <figcaption>
       <strong>圖 3.</strong> SoM 頂視圖：Modalix SoC、LPDDR5 DRAM（×2）、PMIC 以及金手指連接器
     </figcaption>
   </figure>
   <figure className="doc-figure">
-    <img src="/img/bsp/som-board-bottom.png" alt="Modalix SoM Rev 2 底視圖，顯示 eMMC、SPI 快閃記憶體與乙太網路 PHY" />
+    <img src={useBaseUrl('/img/bsp/som-board-bottom.png')} alt="Modalix SoM Rev 2 底視圖，顯示 eMMC、SPI 快閃記憶體與乙太網路 PHY" />
     <figcaption>
       <strong>圖 4.</strong> SoM 底視圖：16 GB eMMC、SPI 快閃記憶體、HDMI 控制器、乙太網路 PHY、USB 控制器、時脈產生器
     </figcaption>
@@ -84,7 +86,7 @@ SDK 2.1 或更新版本，並已安裝 Palette 套件以提供圖形支援。您
 功能方塊圖顯示了哪些介面會引出到 SO-DIMM 連接器，以及這些介面在模組內部如何佈線。在決定您的載板可從 SoM 取用哪些介面時，請參考此圖。
 
 <figure className="doc-figure doc-figure--wide">
-  <img src="/img/bsp/som-block-diagram.png" alt="Modalix SoM Rev 2 功能方塊圖，顯示 SO-DIMM 連接器訊號如何佈線至 Modalix SoC" />
+  <img src={useBaseUrl('/img/bsp/som-block-diagram.png')} alt="Modalix SoM Rev 2 功能方塊圖，顯示 SO-DIMM 連接器訊號如何佈線至 Modalix SoC" />
   <figcaption><strong>圖 5.</strong> Modalix SoM Rev 2 功能方塊圖</figcaption>
 </figure>
 
