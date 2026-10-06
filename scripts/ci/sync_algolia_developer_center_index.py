@@ -404,7 +404,7 @@ def describe_carrier_boards(data: dict, language: str) -> list[str]:
 
 
 def describe_cameras(data: dict, language: str) -> list[str]:
-    """CameraList, CameraOverlays, and CameraModes: cameras by their "order" field."""
+    """CameraList, CameraSpecs, and CameraOverlays: cameras by their "order" field."""
     cameras = sorted(
         data["cameras"],
         key=lambda camera: camera["order"] if isinstance(camera.get("order"), (int, float)) else float("inf"),

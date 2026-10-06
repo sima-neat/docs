@@ -4,7 +4,7 @@ description: The MIPI cameras that the Modalix BSP has overlays for, with orderi
 sidebar_position: 2
 ---
 
-import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Cameras';
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
 
 # Supported MIPI Cameras
 
@@ -25,7 +25,8 @@ carrier board. An item marked **Not confirmed** has no published source yet.
 
 The BSP has overlays for five sensors from three vendors. A vendor often sells
 several modules with the same sensor, and they differ in lane count, connector,
-and lens. Order by part number, not by sensor name.
+and lens. Order by part number, not by sensor name. Select a camera to view its
+specifications.
 
 <CameraList />
 
@@ -37,6 +38,14 @@ and lens. Order by part number, not by sensor name.
   camera, the camera with the e-con FPGA board, and the camera with the e-con
   KOBE1 FPGA board. Each assembly has its own overlay. Use the overlay that
   matches your assembly.
+
+## Camera Specifications {#specifications}
+
+Add a camera to view its specifications. Add up to four cameras to compare them
+side by side, and use × to remove one. The sensor modes are the modes that the
+drivers in release 2.1.3 set up for each camera, before any scaling.
+
+<CameraSpecs />
 
 ## Connect a Camera {#connect}
 
@@ -101,10 +110,8 @@ Check the `dtbos` variable in U-Boot after you update.
 
 ## Sensor Modes {#sensor-modes}
 
-These are the modes that the drivers in release 2.1.3 set up for each camera,
-before any scaling.
-
-<CameraModes />
+The sensor modes of each camera are in
+[Camera Specifications](#specifications).
 
 - The data sheet of a camera can list other modes for the same sensor. Do not
   assume that a mode works because the data sheet lists it.

@@ -4,7 +4,7 @@ description: Modalix BSP 提供 overlay 的 MIPI 相機，以及訂購資訊、�
 sidebar_position: 2
 ---
 
-import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Cameras';
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
 
 # 支援的 MIPI 相機
 
@@ -16,13 +16,19 @@ import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Came
 
 ## 相機與訂購資訊 {#cameras}
 
-BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多款採用相同感測器的模組，這些模組的通道數、連接器與鏡頭各不相同。請依料號訂購，而非依感測器名稱訂購。
+BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多款採用相同感測器的模組，這些模組的通道數、連接器與鏡頭各不相同。請依料號訂購，而非依感測器名稱訂購。選擇相機即可檢視其規格。
 
 <CameraList />
 
 - 上述兩個料號均由 Leopard Imaging 列於其適用於 SiMa.ai 的相機中。
 - BSP 所支援的 Arducam 與 e-con Systems 相機料號尚未公開。訂購前請洽詢您的 SiMa.ai 聯絡人。
 - e-con Systems 以三種組合提供 IMX568 相機：標準相機、搭配 e-con FPGA 板的相機，以及搭配 e-con KOBE1 FPGA 板的相機。每種組合各有專屬的 overlay，請使用與您的組合相符的 overlay。
+
+## 相機規格 {#specifications}
+
+加入一款相機即可檢視其規格。最多可加入四款相機並排比較，並可使用 × 移除。感測器模式是版本 2.1.3 的驅動程式為各相機設定的模式，為縮放前的數值。
+
+<CameraSpecs />
 
 ## 連接相機 {#connect}
 
@@ -68,9 +74,7 @@ sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 
 ## 感測器模式 {#sensor-modes}
 
-以下是版本 2.1.3 的驅動程式為各相機設定的模式，為縮放前的數值。
-
-<CameraModes />
+各相機的感測器模式列於[相機規格](#specifications)。
 
 - 相機的資料手冊可能會列出相同感測器的其他模式。請勿因資料手冊列出某個模式，就認定該模式可以運作。
 - 以您的電路板所回報的模式為準。若要列出這些模式，請依照[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)的說明執行 `cam -c <camera> -I`。

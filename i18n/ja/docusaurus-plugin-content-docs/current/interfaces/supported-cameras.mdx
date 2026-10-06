@@ -4,7 +4,7 @@ description: Modalix BSP にオーバーレイがある MIPI カメラと、そ�
 sidebar_position: 2
 ---
 
-import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Cameras';
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
 
 # 対応 MIPI カメラ
 
@@ -24,7 +24,8 @@ import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Came
 
 BSP には、3 社のベンダーによる 5 種類のセンサー向けのオーバーレイがあります。ベンダーは
 同じセンサーを搭載したモジュールを複数販売していることが多く、レーン数、コネクター、
-レンズが異なります。センサー名ではなく型番で注文してください。
+レンズが異なります。センサー名ではなく型番で注文してください。カメラを選択すると、
+その仕様が表示されます。
 
 <CameraList />
 
@@ -34,6 +35,14 @@ BSP には、3 社のベンダーによる 5 種類のセンサー向けのオ�
 - e-con Systems は IMX568 カメラを 3 種類の構成で提供しています。標準カメラ、
   e-con FPGA ボード付きカメラ、e-con KOBE1 FPGA ボード付きカメラです。構成ごとに
   専用のオーバーレイがあります。お使いの構成に合ったオーバーレイを使用してください。
+
+## カメラの仕様 {#specifications}
+
+カメラを追加すると、その仕様が表示されます。最大 4 つのカメラを追加して並べて比較でき、
+× で削除できます。センサーモードは、リリース 2.1.3 のドライバーが各カメラに対して設定する、
+スケーリング前のモードです。
+
+<CameraSpecs />
 
 ## カメラの接続 {#connect}
 
@@ -97,10 +106,7 @@ sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 
 ## センサーモード {#sensor-modes}
 
-リリース 2.1.3 のドライバーが各カメラに対して設定する、スケーリング前のモードを
-以下に示します。
-
-<CameraModes />
+各カメラのセンサーモードは、[カメラの仕様](#specifications)に記載しています。
 
 - カメラのデータシートには、同じセンサーのほかのモードが記載されていることがあります。
   データシートに記載されているからといって、そのモードが動作するとは限りません。

@@ -13,3 +13,57 @@
 .nowrap {
   white-space: nowrap;
 }
+
+.specs {
+  margin: 1.2rem 0;
+  scroll-margin-top: calc(var(--ifm-navbar-height) + 4rem);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 0.8rem;
+}
+
+.toolbar select {
+  max-width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--ifm-color-emphasis-400);
+  border-radius: 6px;
+  background: var(--ifm-background-surface-color);
+  color: inherit;
+  font: inherit;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.remove {
+  margin-left: 6px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.remove:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.groupRow th {
+  text-align: left;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.specs tbody th[scope='row'] {
+  text-align: left;
+  font-weight: 400;
+}

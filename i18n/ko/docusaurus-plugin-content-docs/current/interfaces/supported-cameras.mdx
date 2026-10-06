@@ -4,7 +4,7 @@ description: Modalix BSP에 오버레이가 있는 MIPI 카메라와 주문 정�
 sidebar_position: 2
 ---
 
-import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Cameras';
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
 
 # 지원되는 MIPI 카메라
 
@@ -24,7 +24,8 @@ import {CameraList, CameraOverlays, CameraModes} from '@site/src/components/Came
 
 BSP에는 세 벤더의 센서 다섯 종에 대한 오버레이가 있습니다. 벤더는 같은 센서를
 탑재한 모듈을 여러 개 판매하는 경우가 많으며, 이들은 레인 수, 커넥터, 렌즈가
-서로 다릅니다. 센서 이름이 아니라 부품 번호로 주문하십시오.
+서로 다릅니다. 센서 이름이 아니라 부품 번호로 주문하십시오. 카메라를 선택하면 해당
+사양을 볼 수 있습니다.
 
 <CameraList />
 
@@ -34,6 +35,14 @@ BSP에는 세 벤더의 센서 다섯 종에 대한 오버레이가 있습니다
 - e-con Systems는 IMX568 카메라를 세 가지 구성으로 공급합니다. 표준 카메라,
   e-con FPGA 보드가 있는 카메라, e-con KOBE1 FPGA 보드가 있는 카메라입니다.
   구성마다 전용 오버레이가 있습니다. 사용 중인 구성에 맞는 오버레이를 사용하십시오.
+
+## 카메라 사양 {#specifications}
+
+카메라를 추가하면 해당 사양을 볼 수 있습니다. 카메라를 4개까지 추가해 나란히 비교할 수
+있으며, ×로 제거할 수 있습니다. 센서 모드는 릴리스 2.1.3의 드라이버가 각 카메라에 대해
+설정하는 모드이며, 스케일링 이전의 값입니다.
+
+<CameraSpecs />
 
 ## 카메라 연결 {#connect}
 
@@ -96,10 +105,7 @@ sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 
 ## 센서 모드 {#sensor-modes}
 
-다음은 릴리스 2.1.3의 드라이버가 각 카메라에 대해 설정하는 모드이며, 스케일링
-이전의 값입니다.
-
-<CameraModes />
+각 카메라의 센서 모드는 [카메라 사양](#specifications)에 나와 있습니다.
 
 - 카메라의 데이터시트에는 같은 센서의 다른 모드가 나와 있을 수 있습니다.
   데이터시트에 나와 있다고 해서 해당 모드가 동작한다고 가정하지 마십시오.
