@@ -77,6 +77,7 @@ const sidebars = {
     ]),
     section('Reference & Downloads', undefined, [
       'reference/extra-docs',
+      'reference/devkit-interface-support',
       'interfaces/low-speed-io',
       'reference/glossary',
       section('Tech Notes', 'reference/tech-notes/index', [
