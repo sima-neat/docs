@@ -14,45 +14,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 이 사이트는 SiMa.ai MLSoC Modalix 제품의 하드웨어 설정, 펌웨어 워크플로우 및 저수준 인터페이스에 대한 정보를 제공합니다. 소프트웨어, 머신 러닝 및 파이프라인 도구에 대한 설명서는 별도로 제공됩니다.
 
-## 경로 선택
-
-<div className="card-grid">
-  <a className="card" href="/hardware/getting-started">
-    <h4>DevKit 평가 및 사용</h4>
-    <p>Modalix DevKit 또는 PCIe 카드를 설정하고 최신 상태로 유지하며 개발을 시작합니다.</p>
-  </a>
-  <a className="card" href="/hardware/design/carrier-board">
-    <h4>SoM 및 캐리어 보드 통합</h4>
-    <p>Modalix SoM용 캐리어 보드를 선택하거나 직접 설계하여 브링업합니다.</p>
-  </a>
-  <a className="card" href="/hardware/design/chip-down">
-    <h4>SoC로 설계하기</h4>
-    <p>Modalix SoC를 자체 보드에 직접 실장합니다.</p>
-  </a>
-  <a className="card" href="/hardware/software">
-    <h4>사용자 지정 시스템 소프트웨어 빌드 및 배포</h4>
-    <p>커널, U-Boot, 디바이스 트리를 빌드하고 자체 이미지를 플래싱합니다.</p>
-  </a>
-  <a className="card" href="/hardware/interfaces/supported-cameras">
-    <h4>카메라 통합</h4>
-    <p>지원되는 MIPI 카메라를 선택하고 연결한 다음 오버레이를 선택합니다.</p>
-  </a>
-</div>
-
-필요한 내용을 이미 알고 계십니까?
-
-- [커널, U-Boot 및 디바이스 트리 빌드](/hardware/software/build-from-source)
-- [디바이스 트리 오버레이 작성](/hardware/software/device-tree)
-- [릴리스에 해당하는 소스 커밋 찾기](/hardware/software/release-compatibility)
-- [자체 이미지를 보드에 플래싱](/hardware/deployment/flash-image)
-- [업데이트 패키지 빌드](/hardware/deployment/update-package)
-- [캐리어 보드 비교](/hardware/design/third-party-carriers)
-- [GPIO, UART, I2C 및 SPI 핀 매핑](/hardware/interfaces/low-speed-io)
-- [MIPI 카메라 구성](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
-- [DevKit 업데이트 또는 복구](/hardware/getting-started/firmware-update)
-- [양산 환경에서 보드 플래싱 및 테스트](/hardware/deployment/factory-build-and-test)
-- [데이터시트 또는 설계 문서 찾기](/hardware/reference/extra-docs)
-
 ## SiMa.ai 하드웨어 한눈에 보기 {#hardware-at-a-glance}
 
 SiMa.ai는 MLSoC Modalix를 칩, 모듈, 완제품 형태로 제공합니다. 보유하고 있거나 사용할 예정인 폼 팩터에서 시작하십시오.
@@ -198,6 +159,49 @@ PCIe 모드에서는 Modalix PCIe 카드를 호스트 장치에 설치합니다.
 
 </TabItem>
 </Tabs>
+
+## 경로 선택
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>DevKit 평가 및 사용</h4>
+    <p>Modalix DevKit 또는 PCIe 카드를 설정하고 최신 상태로 유지하며 개발을 시작합니다.</p>
+  </a>
+  <a className="card" href="/hardware/design/carrier-board">
+    <h4>SoM 및 캐리어 보드 통합</h4>
+    <p>Modalix SoM용 캐리어 보드를 선택하거나 직접 설계하여 브링업합니다.</p>
+  </a>
+  <a className="card" href="/hardware/design/chip-down">
+    <h4>SoC로 설계하기</h4>
+    <p>Modalix SoC를 자체 보드에 직접 실장합니다.</p>
+  </a>
+  <a className="card" href="/hardware/software">
+    <h4>사용자 지정 시스템 소프트웨어 빌드 및 배포</h4>
+    <p>커널, U-Boot, 디바이스 트리를 빌드하고 자체 이미지를 플래싱합니다.</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>카메라 통합</h4>
+    <p>지원되는 MIPI 카메라를 선택하고 연결한 다음 오버레이를 선택합니다.</p>
+  </a>
+  <a className="card" href="/hardware/reference/extra-docs">
+    <h4>참조 및 다운로드</h4>
+    <p>제품 개요, 데이터시트, 설계 가이드, 핀 맵, 기술 노트를 찾습니다.</p>
+  </a>
+</div>
+
+필요한 내용을 이미 알고 계십니까?
+
+- [커널, U-Boot 및 디바이스 트리 빌드](/hardware/software/build-from-source)
+- [디바이스 트리 오버레이 작성](/hardware/software/device-tree)
+- [릴리스에 해당하는 소스 커밋 찾기](/hardware/software/release-compatibility)
+- [자체 이미지를 보드에 플래싱](/hardware/deployment/flash-image)
+- [업데이트 패키지 빌드](/hardware/deployment/update-package)
+- [캐리어 보드 비교](/hardware/design/third-party-carriers)
+- [GPIO, UART, I2C 및 SPI 핀 매핑](/hardware/interfaces/low-speed-io)
+- [MIPI 카메라 구성](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [DevKit 업데이트 또는 복구](/hardware/getting-started/firmware-update)
+- [양산 환경에서 보드 플래싱 및 테스트](/hardware/deployment/factory-build-and-test)
+- [데이터시트 또는 설계 문서 찾기](/hardware/reference/extra-docs)
 
 ## 시작하기
 

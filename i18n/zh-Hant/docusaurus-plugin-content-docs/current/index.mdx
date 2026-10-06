@@ -14,45 +14,6 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 請使用此網站來了解 SiMa.ai MLSoC Modalix 產品的硬體設定、韌體流程和低階介面。軟體、機器學習和管線工具的說明文件將另行提供。
 
-## 選擇您的路徑
-
-<div className="card-grid">
-  <a className="card" href="/hardware/getting-started">
-    <h4>評估與使用 DevKit</h4>
-    <p>設定 Modalix DevKit 或 PCIe 卡、保持更新，並開始進行開發。</p>
-  </a>
-  <a className="card" href="/hardware/design/carrier-board">
-    <h4>整合 SoM 與載板</h4>
-    <p>為 Modalix SoM 選擇載板，或自行設計並完成硬體啟動。</p>
-  </a>
-  <a className="card" href="/hardware/design/chip-down">
-    <h4>以 SoC 進行設計</h4>
-    <p>將 Modalix SoC 直接放在您自己的電路板上。</p>
-  </a>
-  <a className="card" href="/hardware/software">
-    <h4>建置與部署自訂系統軟體</h4>
-    <p>建置核心、U-Boot 與 device tree，並燒錄您自己的映像檔。</p>
-  </a>
-  <a className="card" href="/hardware/interfaces/supported-cameras">
-    <h4>整合相機</h4>
-    <p>選擇支援的 MIPI 相機、完成連接，並選擇對應的 overlay。</p>
-  </a>
-</div>
-
-已經知道您需要什麼了嗎？
-
-- [建置核心、U-Boot 與 device tree](/hardware/software/build-from-source)
-- [撰寫 device tree overlay](/hardware/software/device-tree)
-- [查詢某個版本對應的原始碼 commit](/hardware/software/release-compatibility)
-- [將您自己的映像檔燒錄到電路板](/hardware/deployment/flash-image)
-- [建置更新套件](/hardware/deployment/update-package)
-- [比較載板](/hardware/design/third-party-carriers)
-- [對應 GPIO、UART、I2C 與 SPI 腳位](/hardware/interfaces/low-speed-io)
-- [設定 MIPI 相機](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
-- [更新或復原 DevKit](/hardware/getting-started/firmware-update)
-- [在量產環境中燒錄與測試電路板](/hardware/deployment/factory-build-and-test)
-- [尋找資料手冊或設計資料](/hardware/reference/extra-docs)
-
 ## SiMa.ai 硬體總覽 {#hardware-at-a-glance}
 
 SiMa.ai 以晶片、模組與完整產品等形式提供 MLSoC Modalix。請從您現有或計畫採用的外形規格開始。
@@ -198,6 +159,49 @@ MLSoC Modalix 支援兩種常見的開發架構：獨立模式和 PCIe 模式。
 
 </TabItem>
 </Tabs>
+
+## 選擇您的路徑
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>評估與使用 DevKit</h4>
+    <p>設定 Modalix DevKit 或 PCIe 卡、保持更新，並開始進行開發。</p>
+  </a>
+  <a className="card" href="/hardware/design/carrier-board">
+    <h4>整合 SoM 與載板</h4>
+    <p>為 Modalix SoM 選擇載板，或自行設計並完成硬體啟動。</p>
+  </a>
+  <a className="card" href="/hardware/design/chip-down">
+    <h4>以 SoC 進行設計</h4>
+    <p>將 Modalix SoC 直接放在您自己的電路板上。</p>
+  </a>
+  <a className="card" href="/hardware/software">
+    <h4>建置與部署自訂系統軟體</h4>
+    <p>建置核心、U-Boot 與 device tree，並燒錄您自己的映像檔。</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>整合相機</h4>
+    <p>選擇支援的 MIPI 相機、完成連接，並選擇對應的 overlay。</p>
+  </a>
+  <a className="card" href="/hardware/reference/extra-docs">
+    <h4>參考資料與下載</h4>
+    <p>尋找產品簡介、資料手冊、設計指南、腳位對應表與技術說明。</p>
+  </a>
+</div>
+
+已經知道您需要什麼了嗎？
+
+- [建置核心、U-Boot 與 device tree](/hardware/software/build-from-source)
+- [撰寫 device tree overlay](/hardware/software/device-tree)
+- [查詢某個版本對應的原始碼 commit](/hardware/software/release-compatibility)
+- [將您自己的映像檔燒錄到電路板](/hardware/deployment/flash-image)
+- [建置更新套件](/hardware/deployment/update-package)
+- [比較載板](/hardware/design/third-party-carriers)
+- [對應 GPIO、UART、I2C 與 SPI 腳位](/hardware/interfaces/low-speed-io)
+- [設定 MIPI 相機](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [更新或復原 DevKit](/hardware/getting-started/firmware-update)
+- [在量產環境中燒錄與測試電路板](/hardware/deployment/factory-build-and-test)
+- [尋找資料手冊或設計資料](/hardware/reference/extra-docs)
 
 ## 開始使用
 
