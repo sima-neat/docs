@@ -18,27 +18,62 @@ Use this site for hardware setup, firmware workflows, and low-level interfaces f
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>Evaluate a DevKit</h4>
-    <p>Set up a Modalix DevKit or PCIe card and start developing.</p>
+    <h4>Evaluate & Use a DevKit</h4>
+    <p>Set up a Modalix DevKit or PCIe card, keep it updated, and start developing.</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>Design a SoM Carrier Board</h4>
-    <p>Build a custom board around the Modalix SoM.</p>
+    <h4>Integrate a SoM & Carrier Board</h4>
+    <p>Choose a carrier board for the Modalix SoM, or design and bring up your own.</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
     <h4>Design with the SoC</h4>
     <p>Put the Modalix SoC directly on your own board.</p>
   </a>
+  <a className="card" href="/hardware/software">
+    <h4>Build & Deploy Custom System Software</h4>
+    <p>Build the kernel, U-Boot, and device trees, and flash your own image.</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>Integrate Cameras</h4>
+    <p>Choose a supported MIPI camera, connect it, and select its overlay.</p>
+  </a>
 </div>
 
 Already know what you need?
 
-- [Build a custom eLxr image](/hardware/software/build-from-source)
+- [Build the kernel, U-Boot, and device trees](/hardware/software/build-from-source)
 - [Find the source commit for a release](/hardware/software/release-compatibility)
+- [Flash your own image to a board](/hardware/deployment/flash-image)
+- [Compare carrier boards](/hardware/design/third-party-carriers)
 - [Map GPIO, UART, I2C, and SPI pins](/hardware/interfaces/low-speed-io)
 - [Configure MIPI cameras](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
-- [Update or recover a board](/hardware/getting-started/firmware-update)
+- [Update or recover a DevKit](/hardware/getting-started/firmware-update)
 - [Flash and test boards in production](/hardware/deployment/factory-build-and-test)
+- [Find a datasheet or design document](/hardware/reference/extra-docs)
+
+## SiMa.ai Hardware at a Glance {#hardware-at-a-glance}
+
+SiMa.ai offers MLSoC Modalix as a chip, on a module, and in complete products. Start from the form factor that you have or plan to use.
+
+| Product | What it is | Start here |
+| --- | --- | --- |
+| MLSoC Modalix | The system-on-chip. You place it on a board that you design. | [Design with the SoC](/hardware/design/chip-down) |
+| Modalix SoM | A module with the SoC, LPDDR5 memory, and power. It plugs into a carrier board. | [Integrate a SoM & Carrier Board](/hardware/design/carrier-board) |
+| Modalix DevKit | A Modalix SoM on a carrier board, in an enclosure, for evaluation and development. | [Evaluate & Use a DevKit](/hardware/getting-started) |
+| Modalix PCIe Card | A half-height, half-length card that adds Modalix inference to a host machine. | [PCIe Mode](/hardware/getting-started/pcie-mode) |
+
+### SoM or Chip-Down {#som-or-chip-down}
+
+To build your own hardware, choose between a carrier board for the Modalix SoM and a board with the SoC placed directly on it. They need different design work, different collateral, and different bring-up.
+
+| | Chip-down design | Carrier board design |
+| --- | --- | --- |
+| What you design | A board with the packaged Modalix SoC on it, including memory, power, and clocks | A carrier board for the Modalix SoM, which already carries the SoC, LPDDR5, and power |
+| Main design work | Power sequencing, clocks and reset, LPDDR5 routing and tuning, high-speed layout, interfaces, thermals | Connector mapping, power delivery, interfaces, thermals |
+| Collateral | Chip-down design guide, SoC datasheet, and design packages, available from SiMa.ai on request | Public datasheets and bring-up guide |
+| Software starting point | The Modalix BSP, with board-level adaptation | The Modalix BSP, with device-tree changes for your carrier |
+
+After the board boots, both paths use the same system software. See [Build & Deploy Custom System Software](/hardware/software).
 
 ## About the MLSoC Modalix
 

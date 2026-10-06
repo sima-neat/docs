@@ -18,27 +18,62 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>評估 DevKit</h4>
-    <p>設定 Modalix DevKit 或 PCIe 卡，開始進行開發。</p>
+    <h4>評估與使用 DevKit</h4>
+    <p>設定 Modalix DevKit 或 PCIe 卡、保持更新，並開始進行開發。</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>設計 SoM 載板</h4>
-    <p>圍繞 Modalix SoM 打造自訂電路板。</p>
+    <h4>整合 SoM 與載板</h4>
+    <p>為 Modalix SoM 選擇載板，或自行設計並完成硬體啟動。</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
     <h4>直接採用 SoC 進行設計</h4>
     <p>將 Modalix SoC 直接放在您自己的電路板上。</p>
   </a>
+  <a className="card" href="/hardware/software">
+    <h4>建置與部署自訂系統軟體</h4>
+    <p>建置核心、U-Boot 與 device tree，並燒錄您自己的映像檔。</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>整合相機</h4>
+    <p>選擇支援的 MIPI 相機、完成連接，並選擇對應的 overlay。</p>
+  </a>
 </div>
 
 已經知道您需要什麼了嗎？
 
-- [建置自訂 eLxr 映像檔](/hardware/software/build-from-source)
+- [建置核心、U-Boot 與 device tree](/hardware/software/build-from-source)
 - [查詢某個版本對應的原始碼 commit](/hardware/software/release-compatibility)
+- [將您自己的映像檔燒錄到電路板](/hardware/deployment/flash-image)
+- [比較載板](/hardware/design/third-party-carriers)
 - [對應 GPIO、UART、I2C 與 SPI 腳位](/hardware/interfaces/low-speed-io)
 - [設定 MIPI 相機](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
-- [更新或復原電路板](/hardware/getting-started/firmware-update)
+- [更新或復原 DevKit](/hardware/getting-started/firmware-update)
 - [在量產環境中燒錄與測試電路板](/hardware/deployment/factory-build-and-test)
+- [尋找資料手冊或設計資料](/hardware/reference/extra-docs)
+
+## SiMa.ai 硬體總覽 {#hardware-at-a-glance}
+
+SiMa.ai 以晶片、模組與完整產品等形式提供 MLSoC Modalix。請從您現有或計畫採用的外形規格開始。
+
+| 產品 | 說明 | 從這裡開始 |
+| --- | --- | --- |
+| MLSoC Modalix | 系統單晶片。您將它放在自行設計的電路板上。 | [直接採用 SoC 進行設計](/hardware/design/chip-down) |
+| Modalix SoM | 搭載 SoC、LPDDR5 記憶體與電源的模組，可插入載板使用。 | [整合 SoM 與載板](/hardware/design/carrier-board) |
+| Modalix DevKit | 將 Modalix SoM 安裝於載板並置於機殼內，用於評估與開發。 | [評估與使用 DevKit](/hardware/getting-started) |
+| Modalix PCIe Card | 半高半長的介面卡，可為主機加入 Modalix 推論能力。 | [PCIe 模式](/hardware/getting-started/pcie-mode) |
+
+### SoM 或 Chip-Down {#som-or-chip-down}
+
+若要打造您自己的硬體，請在 Modalix SoM 的載板與直接搭載 SoC 的電路板之間擇一。兩者所需的設計工作、技術資料與硬體啟動流程都不相同。
+
+| | Chip-down 設計 | 載板設計 |
+| --- | --- | --- |
+| 您要設計的內容 | 搭載封裝後 Modalix SoC 的電路板，包括記憶體、電源與時脈 | Modalix SoM 的載板；SoM 本身已包含 SoC、LPDDR5 與電源 |
+| 主要設計工作 | 電源時序、時脈與重置、LPDDR5 佈線與調校、高速電路佈局、介面、散熱 | 連接器腳位對應、電源供應、介面、散熱 |
+| 技術資料 | Chip-down 設計指南、SoC 資料手冊與設計套件，可向 SiMa.ai 申請取得 | 公開的資料手冊與硬體啟動指南 |
+| 軟體起點 | Modalix BSP，並進行板級調整 | Modalix BSP，並針對您的載板修改 device tree |
+
+電路板能夠開機之後，兩條路徑都使用相同的系統軟體。請參閱[建置與部署自訂系統軟體](/hardware/software)。
 
 ## 關於 MLSoC Modalix
 

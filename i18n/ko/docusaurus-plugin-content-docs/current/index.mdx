@@ -18,27 +18,62 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>DevKit 평가</h4>
-    <p>Modalix DevKit 또는 PCIe 카드를 설정하고 개발을 시작합니다.</p>
+    <h4>DevKit 평가 및 사용</h4>
+    <p>Modalix DevKit 또는 PCIe 카드를 설정하고 최신 상태로 유지하며 개발을 시작합니다.</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>SoM 캐리어 보드 설계</h4>
-    <p>Modalix SoM을 중심으로 맞춤형 보드를 제작합니다.</p>
+    <h4>SoM 및 캐리어 보드 통합</h4>
+    <p>Modalix SoM용 캐리어 보드를 선택하거나 직접 설계하여 브링업합니다.</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
     <h4>SoC 기반 설계</h4>
     <p>Modalix SoC를 자체 보드에 직접 실장합니다.</p>
   </a>
+  <a className="card" href="/hardware/software">
+    <h4>사용자 지정 시스템 소프트웨어 빌드 및 배포</h4>
+    <p>커널, U-Boot, 디바이스 트리를 빌드하고 자체 이미지를 플래싱합니다.</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>카메라 통합</h4>
+    <p>지원되는 MIPI 카메라를 선택하고 연결한 다음 오버레이를 선택합니다.</p>
+  </a>
 </div>
 
 필요한 내용을 이미 알고 계십니까?
 
-- [맞춤형 eLxr 이미지 빌드](/hardware/software/build-from-source)
+- [커널, U-Boot 및 디바이스 트리 빌드](/hardware/software/build-from-source)
 - [릴리스에 해당하는 소스 커밋 찾기](/hardware/software/release-compatibility)
+- [자체 이미지를 보드에 플래싱](/hardware/deployment/flash-image)
+- [캐리어 보드 비교](/hardware/design/third-party-carriers)
 - [GPIO, UART, I2C 및 SPI 핀 매핑](/hardware/interfaces/low-speed-io)
 - [MIPI 카메라 구성](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
-- [보드 업데이트 또는 복구](/hardware/getting-started/firmware-update)
+- [DevKit 업데이트 또는 복구](/hardware/getting-started/firmware-update)
 - [양산 환경에서 보드 플래싱 및 테스트](/hardware/deployment/factory-build-and-test)
+- [데이터시트 또는 설계 문서 찾기](/hardware/reference/extra-docs)
+
+## SiMa.ai 하드웨어 한눈에 보기 {#hardware-at-a-glance}
+
+SiMa.ai는 MLSoC Modalix를 칩, 모듈, 완제품 형태로 제공합니다. 보유하고 있거나 사용할 예정인 폼 팩터에서 시작하십시오.
+
+| 제품 | 설명 | 시작 위치 |
+| --- | --- | --- |
+| MLSoC Modalix | 시스템 온 칩입니다. 직접 설계한 보드에 실장합니다. | [SoC 기반 설계](/hardware/design/chip-down) |
+| Modalix SoM | SoC, LPDDR5 메모리, 전원부를 탑재한 모듈입니다. 캐리어 보드에 장착합니다. | [SoM 및 캐리어 보드 통합](/hardware/design/carrier-board) |
+| Modalix DevKit | Modalix SoM을 캐리어 보드에 장착하고 인클로저에 담은 평가 및 개발용 키트입니다. | [DevKit 평가 및 사용](/hardware/getting-started) |
+| Modalix PCIe Card | 호스트 머신에 Modalix 추론 기능을 추가하는 하프 하이트, 하프 렝스 카드입니다. | [PCIe 모드](/hardware/getting-started/pcie-mode) |
+
+### SoM 또는 칩다운 {#som-or-chip-down}
+
+자체 하드웨어를 구축하려면 Modalix SoM용 캐리어 보드와 SoC를 직접 실장한 보드 중 하나를 선택하십시오. 방식에 따라 설계 작업, 필요한 자료, 브링업 절차가 모두 다릅니다.
+
+| | 칩다운 설계 | 캐리어 보드 설계 |
+| --- | --- | --- |
+| 설계 대상 | 메모리, 전원 및 클록을 포함하여 패키지된 Modalix SoC를 실장한 보드 | SoC, LPDDR5 및 전원부가 이미 탑재된 Modalix SoM용 캐리어 보드 |
+| 주요 설계 작업 | 전원 시퀀싱, 클록 및 리셋, LPDDR5 라우팅 및 튜닝, 고속 레이아웃, 인터페이스, 열 설계 | 커넥터 매핑, 전원 공급, 인터페이스, 열 설계 |
+| 자료 | 칩다운 설계 가이드, SoC 데이터시트 및 설계 패키지(요청 시 SiMa.ai에서 제공) | 공개 데이터시트 및 브링업 가이드 |
+| 소프트웨어 출발점 | 보드 수준 적응을 적용한 Modalix BSP | 캐리어 보드에 맞게 디바이스 트리를 변경한 Modalix BSP |
+
+보드가 부팅된 이후에는 두 방식 모두 동일한 시스템 소프트웨어를 사용합니다. [사용자 지정 시스템 소프트웨어 빌드 및 배포](/hardware/software)를 참조하십시오.
 
 ## MLSoC Modalix에 대하여
 

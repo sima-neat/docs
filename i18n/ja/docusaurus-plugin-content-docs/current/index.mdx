@@ -18,27 +18,62 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>DevKit を評価する</h4>
-    <p>Modalix DevKit または PCIe カードをセットアップして、開発を始めます。</p>
+    <h4>DevKit の評価と利用</h4>
+    <p>Modalix DevKit または PCIe カードをセットアップし、最新の状態に保ちながら開発を始めます。</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>SoM キャリアボードを設計する</h4>
-    <p>Modalix SoM を中心にカスタムボードを構築します。</p>
+    <h4>SoM とキャリアボードの統合</h4>
+    <p>Modalix SoM 用のキャリアボードを選ぶか、独自に設計して立ち上げます。</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
     <h4>SoC を使って設計する</h4>
     <p>Modalix SoC を自社のボードに直接実装します。</p>
   </a>
+  <a className="card" href="/hardware/software">
+    <h4>カスタムシステムソフトウェアのビルドとデプロイ</h4>
+    <p>カーネル、U-Boot、デバイスツリーをビルドし、独自のイメージを書き込みます。</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>カメラの統合</h4>
+    <p>対応する MIPI カメラを選び、接続して、オーバーレイを選択します。</p>
+  </a>
 </div>
 
 必要なものがすでに決まっている場合は、次のページを参照してください。
 
-- [カスタム eLxr イメージをビルドする](/hardware/software/build-from-source)
+- [カーネル、U-Boot、デバイスツリーをビルドする](/hardware/software/build-from-source)
 - [リリースに対応するソースコミットを調べる](/hardware/software/release-compatibility)
+- [独自のイメージをボードに書き込む](/hardware/deployment/flash-image)
+- [キャリアボードを比較する](/hardware/design/third-party-carriers)
 - [GPIO、UART、I2C、SPI のピンを割り当てる](/hardware/interfaces/low-speed-io)
 - [MIPI カメラを設定する](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
-- [ボードをアップデートまたは復旧する](/hardware/getting-started/firmware-update)
+- [DevKit をアップデートまたは復旧する](/hardware/getting-started/firmware-update)
 - [量産時にボードへの書き込みとテストを行う](/hardware/deployment/factory-build-and-test)
+- [データシートや設計資料を探す](/hardware/reference/extra-docs)
+
+## SiMa.ai ハードウェアの概要 {#hardware-at-a-glance}
+
+SiMa.ai は MLSoC Modalix を、チップ単体、モジュール、完成品として提供しています。お持ちの、または使用を予定しているフォームファクターから始めてください。
+
+| 製品 | 概要 | ここから始める |
+| --- | --- | --- |
+| MLSoC Modalix | システムオンチップです。独自に設計したボードに実装します。 | [SoC を使って設計する](/hardware/design/chip-down) |
+| Modalix SoM | SoC、LPDDR5 メモリ、電源を搭載したモジュールです。キャリアボードに差し込んで使用します。 | [SoM とキャリアボードの統合](/hardware/design/carrier-board) |
+| Modalix DevKit | Modalix SoM をキャリアボードに載せ、筐体に収めた評価・開発用キットです。 | [DevKit の評価と利用](/hardware/getting-started) |
+| Modalix PCIe Card | ホストマシンに Modalix の推論機能を追加する、ハーフハイト・ハーフレングスのカードです。 | [PCIe モード](/hardware/getting-started/pcie-mode) |
+
+### SoM かチップダウンか {#som-or-chip-down}
+
+独自のハードウェアを構築するには、Modalix SoM 用のキャリアボードを設計するか、SoC を直接実装したボードを設計するかを選択します。設計作業、資料、立ち上げ作業がそれぞれ異なります。
+
+| | チップダウン設計 | キャリアボード設計 |
+| --- | --- | --- |
+| 設計対象 | パッケージ化された Modalix SoC を搭載するボード。メモリ、電源、クロックも含みます | Modalix SoM 用のキャリアボード。SoM には SoC、LPDDR5、電源がすでに搭載されています |
+| 主な設計作業 | 電源シーケンス、クロックとリセット、LPDDR5 の配線とチューニング、高速信号のレイアウト、インターフェース、熱設計 | コネクターのマッピング、電源供給、インターフェース、熱設計 |
+| 資料 | チップダウン設計ガイド、SoC データシート、設計パッケージ（SiMa.ai にご依頼いただければ提供します） | 公開されているデータシートと立ち上げガイド |
+| ソフトウェアの出発点 | Modalix BSP と、ボードレベルの適合作業 | Modalix BSP と、キャリアボードに合わせたデバイスツリーの変更 |
+
+ボードが起動した後は、どちらの方法でも同じシステムソフトウェアを使用します。[カスタムシステムソフトウェアのビルドとデプロイ](/hardware/software)を参照してください。
 
 ## MLSoC Modalixについて
 
