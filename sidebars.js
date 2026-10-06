@@ -78,6 +78,7 @@ const sidebars = {
       'interfaces/supported-cameras',
       'getting-started/standalone-mode/mipi-camera-interfaces',
       'interfaces/custom-camera',
+      'interfaces/isp-tuning',
     ]),
     section('Reference & Downloads', undefined, [
       'reference/extra-docs',
