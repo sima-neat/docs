@@ -10,7 +10,7 @@ import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierB
 
 Modalix SoM은 NVIDIA Jetson Orin NX 및 Orin Nano와 동일한 260핀 SODIMM 폼 팩터를
 사용합니다. 따라서 이들 모듈용으로 제작된 캐리어 보드는 제품의 출발점이나 자체 설계의
-참고 자료로 활용할 수 있습니다. 이 페이지에서는 그중 9개 보드의 인터페이스를 비교합니다.
+참고 자료로 활용할 수 있습니다. 이 페이지에서는 그중 8개 보드의 인터페이스를 비교합니다.
 
 :::warning 폼 팩터가 같다고 검증된 것은 아닙니다
 SiMa.ai가 Modalix SoM 브링업을 수행한 보드는 Waveshare 보드뿐입니다. 나머지 보드는
@@ -42,12 +42,17 @@ SoM과 캐리어 보드 간의 전기적 핀 호환성을 확인하고, 디바�
 보드 이름을 선택하면 해당 사양을 볼 수 있습니다. 주문 정보 열에는 이 페이지가 보유한
 벤더 부품 번호와 벤더의 제품 페이지가 나와 있습니다.
 
-수록된 보드는 Waveshare JETSON-ORIN-IO-BASE, AVerMedia D131L, Auvidea JNX40S, Axiomtek AIE110-ONX, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP, Seeed Studio reComputer J401입니다.
+수록된 보드는 Waveshare JETSON-ORIN-IO-BASE, AVerMedia D131L, Auvidea JNX40S, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP, Seeed Studio reComputer J401입니다.
 
 <CarrierBoardList />
 
 Waveshare 보드는 레퍼런스 캐리어 보드입니다. 전체 구성 요소 목록은
 [캐리어 보드 브링업](./som-carrier.mdx)에 있습니다.
+
+:::caution 지원되는 모듈을 확인하십시오
+Leopard Imaging은 LI-ONX-CB-4CAM-FP를 Jetson Orin NX 전용으로 명시하며, Jetson Orin Nano
+모듈이 손상될 수 있다고 경고합니다. Modalix SoM을 연결하기 전에 벤더에 문의하십시오.
+:::
 
 ## 보드 사양
 

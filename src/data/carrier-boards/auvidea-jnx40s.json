@@ -4,8 +4,10 @@
   "model": "JNX40S",
   "reference": false,
   "ordering": {
+    "partNumber": "70716",
     "url": "https://auvidea.eu/product/jnx40s-jnx41s-carrier-board-for-nvidia-jetson-orin-nano-orin-nx/"
   },
+  "temperatureGrade": "0 °C to +70 °C",
   "interfaces": {
     "hdmi": 1,
     "ethernet": {
@@ -16,9 +18,10 @@
       "uk": "1 з PoE, а також 10 GbE через M.2 Key E"
     },
     "usb3": 3,
+    "usb2": 2,
     "m2KeyMx4": 1,
     "m2KeyE": 1,
-    "csi4Lane": 2,
+    "m2KeyB": 1,
     "csi2Lane": 4,
     "uart": 2,
     "i2c": 3,

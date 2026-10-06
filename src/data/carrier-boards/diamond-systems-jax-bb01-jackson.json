@@ -13,8 +13,7 @@
     "usb3": 3,
     "usb2": 1,
     "m2KeyMx4": 1,
-    "m2KeyMx2": 1,
-    "m2KeyB": 1,
+    "m2KeyE": 1,
     "csi4Lane": {
       "en": "2 with an expansion card",
       "ja": "2（拡張カード使用時）",
@@ -29,10 +28,10 @@
       "zh-Hant": "4（需搭配擴充卡）",
       "uk": "4 із платою розширення"
     },
-    "uart": 2,
+    "uart": 1,
     "i2c": 1,
     "gpio": 16,
     "can": 1,
-    "rs232": 1
+    "rs232": 2
   }
 }

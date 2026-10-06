@@ -11,7 +11,7 @@ import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierB
 The Modalix SoM uses the same 260-pin SODIMM form factor as the NVIDIA Jetson
 Orin NX and Orin Nano, so a carrier board built for those modules can be a
 starting point for your product or a reference for your own design. This page
-compares the interfaces on nine of them.
+compares the interfaces on eight of them.
 
 :::warning Form factor is not validation
 SiMa.ai has brought up the Modalix SoM on the Waveshare board only. The other
@@ -45,12 +45,18 @@ board before connecting them, and expect to adapt the device tree. See
 Select a board name to view its specifications. The ordering column gives the
 vendor's part number, where this page has one, and the vendor's product page.
 
-The boards are the Waveshare JETSON-ORIN-IO-BASE, AVerMedia D131L, Auvidea JNX40S, Axiomtek AIE110-ONX, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP, and Seeed Studio reComputer J401.
+The boards are the Waveshare JETSON-ORIN-IO-BASE, AVerMedia D131L, Auvidea JNX40S, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP, and Seeed Studio reComputer J401.
 
 <CarrierBoardList />
 
 The Waveshare board is the reference carrier board. Its full component list is
 in [Carrier Board Bring-up](./som-carrier.mdx).
+
+:::caution Check the supported modules
+Leopard Imaging lists the LI-ONX-CB-4CAM-FP for the Jetson Orin NX only, and
+warns that it can damage a Jetson Orin Nano module. Ask the vendor before you
+connect a Modalix SoM to it.
+:::
 
 ## Board Specifications
 

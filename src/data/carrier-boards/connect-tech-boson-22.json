@@ -28,16 +28,10 @@
     "usb3": 1,
     "usb2": 1,
     "m2KeyMx4": 1,
-    "m2KeyE": {
-      "en": "1 with an expansion card",
-      "ja": "1（拡張カード使用時）",
-      "ko": "1(확장 카드 사용 시)",
-      "zh-Hant": "1（需搭配擴充卡）",
-      "uk": "1 із платою розширення"
-    },
+    "m2KeyE": 1,
     "csi4Lane": 2,
     "csi2Lane": 4,
-    "uart": 2,
+    "uart": 3,
     "i2c": 2,
     "gpio": 8,
     "can": 1,

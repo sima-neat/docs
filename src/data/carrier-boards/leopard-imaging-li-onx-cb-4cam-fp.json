@@ -13,10 +13,13 @@
     "zh-Hant": "相機",
     "uk": "Камери"
   },
+  "temperatureGrade": "-20 °C to +60 °C",
   "interfaces": {
     "ethernet": 1,
     "usb3": 3,
-    "csi2Lane": 3,
+    "m2KeyMx4": 1,
+    "m2KeyE": 1,
+    "csi2Lane": 4,
     "uart": 1,
     "can": 1
   }

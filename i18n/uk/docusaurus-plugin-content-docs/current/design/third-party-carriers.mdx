@@ -11,7 +11,7 @@ import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierB
 Modalix SoM використовує той самий 260-контактний формфактор SODIMM, що й NVIDIA Jetson
 Orin NX та Orin Nano, тому плата-носій, створена для цих модулів, може стати
 відправною точкою для вашого продукту або зразком для власного проєкту. На цій сторінці
-порівнюються інтерфейси дев’яти таких плат.
+порівнюються інтерфейси восьми таких плат.
 
 :::warning Формфактор не означає перевірку
 SiMa.ai виконала запуск Modalix SoM лише на платі Waveshare. Інші плати наведено
@@ -45,12 +45,18 @@ SoM і плату-носій, перевірте електричну суміс
 Виберіть назву плати, щоб переглянути її характеристики. У стовпці замовлення наведено
 номер за каталогом виробника, якщо він є на цій сторінці, і сторінку продукту у виробника.
 
-Це такі плати: Waveshare JETSON-ORIN-IO-BASE, AVerMedia D131L, Auvidea JNX40S, Axiomtek AIE110-ONX, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP і Seeed Studio reComputer J401.
+Це такі плати: Waveshare JETSON-ORIN-IO-BASE, AVerMedia D131L, Auvidea JNX40S, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP і Seeed Studio reComputer J401.
 
 <CarrierBoardList />
 
 Плата Waveshare є еталонною платою-носієм. Повний перелік її компонентів наведено
 в розділі [Запуск плати-носія](./som-carrier.mdx).
+
+:::caution Перевірте підтримувані модулі
+Leopard Imaging зазначає, що LI-ONX-CB-4CAM-FP призначена лише для Jetson Orin NX, і
+попереджає, що вона може пошкодити модуль Jetson Orin Nano. Перш ніж під’єднувати
+Modalix SoM, зверніться до виробника.
+:::
 
 ## Характеристики плат
 
