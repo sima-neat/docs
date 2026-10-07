@@ -160,7 +160,7 @@ After the board boots, run `cam -l`. It lists one entry for each camera.
 You can also set the variable from Linux, without the serial console:
 
 ```console
-sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
-sima@modalix:~$ sudo fw_printenv dtbos
+sima@modalix:~$ fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ fw_printenv dtbos
 sima@modalix:~$ sudo reboot
 ```

@@ -160,7 +160,7 @@ sima$ saveenv ; boot
 この変数は、シリアルコンソールを使わずに Linux から設定することもできます。
 
 ```console
-sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
-sima@modalix:~$ sudo fw_printenv dtbos
+sima@modalix:~$ fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ fw_printenv dtbos
 sima@modalix:~$ sudo reboot
 ```
