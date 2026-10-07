@@ -55,6 +55,18 @@ Request these documents with the design package. See
 5. Adapt and build the software with
    [Build & Deploy Custom System Software](../software/index.md).
 
+## Milestones {#milestones}
+
+A chip-down project usually passes these milestones. This is an outline. The
+procedures for each milestone come with the design package or from your SiMa.ai
+representative.
+
+1. **Design.** Schematics and layout, from the design package.
+2. **Review.** Review the design with SiMa.ai before you build boards.
+3. **Fabrication.** Build and assemble the first boards.
+4. **First power-on and boot.** Bring up power, memory, and the first boot.
+5. **Validation.** Check each interface, and the software on the board.
+
 ## Next Steps
 
 - [Low-Speed I/O](../interfaces/low-speed-io.mdx): GPIO, UART, I2C, and SPI pin
