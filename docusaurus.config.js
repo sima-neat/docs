@@ -132,6 +132,9 @@ const config = {
           },
           {from: '/hardware/reference/bsp/carrier-board', to: '/hardware/design/som-carrier'},
           {from: '/hardware/reference/bsp/low-speed-io', to: '/hardware/interfaces/low-speed-io'},
+          // The design folder has no index page. Send a shortened URL to the
+          // entry page of the section.
+          {from: '/hardware/design', to: '/hardware/design/carrier-board'},
         ],
       },
     ],
