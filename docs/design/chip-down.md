@@ -62,7 +62,8 @@ procedures for each milestone come with the design package or from your SiMa.ai
 representative.
 
 1. **Design.** Schematics and layout, from the design package.
-2. **Review.** Review the design with SiMa.ai before you build boards.
+2. **Review.** Review the design with SiMa.ai before you build boards. Request
+   the review through your SiMa.ai representative.
 3. **Fabrication.** Build and assemble the first boards.
 4. **First power-on and boot.** Bring up power, memory, and the first boot.
 5. **Validation.** Check each interface, and the software on the board.
