@@ -3,6 +3,9 @@
   "vendor": "Connect Tech",
   "model": "Boson-22",
   "reference": false,
+  "broughtUp": {
+    "release": "2.1.0"
+  },
   "ordering": {
     "partNumber": "NGX021",
     "url": "https://connecttech.com/product/boson-22-carrier-board-for-nvidia-jetson-orin-nano/"

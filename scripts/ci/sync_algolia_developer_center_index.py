@@ -77,6 +77,7 @@ STATUS_LABELS = {
         "unconfirmed": "Not confirmed",
         "carrier": "Carrier-dependent",
         "reference": "Reference board",
+        "broughtUp": "Brought up",
         "untested": "Not tested",
     },
     "ja": {
@@ -86,6 +87,7 @@ STATUS_LABELS = {
         "unconfirmed": "未確認",
         "carrier": "キャリアボードに依存",
         "reference": "リファレンスボード",
+        "broughtUp": "立ち上げ済み",
         "untested": "未確認",
     },
     "ko": {
@@ -95,6 +97,7 @@ STATUS_LABELS = {
         "unconfirmed": "확인되지 않음",
         "carrier": "캐리어 보드에 따라 다름",
         "reference": "레퍼런스 보드",
+        "broughtUp": "브링업 완료",
         "untested": "테스트되지 않음",
     },
     "zh-Hant": {
@@ -104,6 +107,7 @@ STATUS_LABELS = {
         "unconfirmed": "尚未確認",
         "carrier": "視載板而定",
         "reference": "參考載板",
+        "broughtUp": "已完成硬體啟動",
         "untested": "尚未測試",
     },
     "uk": {
@@ -113,6 +117,7 @@ STATUS_LABELS = {
         "unconfirmed": "Не підтверджено",
         "carrier": "Залежить від плати-носія",
         "reference": "Еталонна плата",
+        "broughtUp": "Запущена",
         "untested": "Не тестувалася",
     },
 }
@@ -356,10 +361,13 @@ def join_text(parts: list[str], separator: str) -> str:
 
 
 def describe_carrier_boards(data: dict, language: str) -> list[str]:
-    """CarrierBoardList and CarrierBoardSpecs: the reference board first, then by vendor."""
+    """CarrierBoardList and CarrierBoardSpecs: the reference board, the boards brought up, then by vendor."""
     boards = sorted(
         data["boards"],
-        key=lambda board: (not board.get("reference"), str(board.get("vendor", "")).casefold()),
+        key=lambda board: (
+            0 if board.get("reference") else 1 if board.get("broughtUp") else 2,
+            str(board.get("vendor", "")).casefold(),
+        ),
     )
 
     def name(board: dict) -> str:
@@ -370,7 +378,10 @@ def describe_carrier_boards(data: dict, language: str) -> list[str]:
             [
                 name(board),
                 localized_text((board.get("ordering") or {}).get("partNumber"), language),
-                status_label("reference" if board.get("reference") else "untested", language),
+                status_label(
+                    "reference" if board.get("reference") else "broughtUp" if board.get("broughtUp") else "untested",
+                    language,
+                ),
             ],
             ", ",
         )

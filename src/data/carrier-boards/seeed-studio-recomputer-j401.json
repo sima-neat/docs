@@ -3,6 +3,9 @@
   "vendor": "Seeed Studio",
   "model": "reComputer J401",
   "reference": false,
+  "broughtUp": {
+    "release": "2.1.0"
+  },
   "ordering": {
     "partNumber": "102110769",
     "url": "https://www.seeedstudio.com/reComputer-J401-Carrier-Board-for-Jetson-Orin-NX-Orin-Nano-p-5636.html"

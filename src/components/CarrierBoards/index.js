@@ -7,10 +7,12 @@ import SOM_SUPPORT from "@site/src/data/modalix-som-interface-support.json";
 // One JSON file per board in src/data/carrier-boards. Adding a file adds the
 // board to the list and to the specification table.
 const context = require.context("@site/src/data/carrier-boards", false, /\.json$/);
+const rank = (board) => (board.reference ? 0 : board.broughtUp ? 1 : 2);
 const BOARDS = context
   .keys()
   .map((key) => context(key))
-  .sort((a, b) => Number(b.reference) - Number(a.reference) || a.vendor.localeCompare(b.vendor));
+  // The reference board first, then the boards that SiMa.ai has brought up, then by vendor.
+  .sort((a, b) => rank(a) - rank(b) || a.vendor.localeCompare(b.vendor));
 
 const MAX_COMPARE = 4;
 
@@ -76,6 +78,7 @@ const LOCALIZED_UI = {
     csi4Lane: "MIPI CSI, 4-lane",
     csi2Lane: "MIPI CSI, 2-lane",
     reference: "Reference board, brought up by SiMa.ai",
+    broughtUp: (release) => `Brought up by SiMa.ai on platform release ${release} or later`,
     untested: "Not tested with the Modalix SoM",
     ordering: "Ordering",
     vendorPage: "Vendor product page",
@@ -88,6 +91,7 @@ const LOCALIZED_UI = {
     board: "Board",
     status: "Status",
     referenceShort: "Reference board",
+    broughtUpShort: "Brought up",
     untestedShort: "Not tested",
     remove: "Remove from comparison",
     addBoard: "Add a board…",
@@ -110,6 +114,7 @@ const LOCALIZED_UI = {
     csi4Lane: "MIPI CSI、4 レーン",
     csi2Lane: "MIPI CSI、2 レーン",
     reference: "リファレンスボード（SiMa.ai が立ち上げ済み）",
+    broughtUp: (release) => `SiMa.ai が立ち上げ済み（プラットフォームリリース ${release} 以降）`,
     untested: "Modalix SoM での動作は未確認",
     ordering: "注文情報",
     vendorPage: "ベンダーの製品ページ",
@@ -122,6 +127,7 @@ const LOCALIZED_UI = {
     board: "ボード",
     status: "ステータス",
     referenceShort: "リファレンスボード",
+    broughtUpShort: "立ち上げ済み",
     untestedShort: "未確認",
     remove: "比較から削除",
     addBoard: "ボードを追加…",
@@ -144,6 +150,7 @@ const LOCALIZED_UI = {
     csi4Lane: "MIPI CSI, 4레인",
     csi2Lane: "MIPI CSI, 2레인",
     reference: "레퍼런스 보드(SiMa.ai 브링업 완료)",
+    broughtUp: (release) => `SiMa.ai 브링업 완료(플랫폼 릴리스 ${release} 이상)`,
     untested: "Modalix SoM으로 테스트되지 않음",
     ordering: "주문 정보",
     vendorPage: "벤더 제품 페이지",
@@ -156,6 +163,7 @@ const LOCALIZED_UI = {
     board: "보드",
     status: "상태",
     referenceShort: "레퍼런스 보드",
+    broughtUpShort: "브링업 완료",
     untestedShort: "테스트되지 않음",
     remove: "비교에서 제거",
     addBoard: "보드 추가…",
@@ -178,6 +186,7 @@ const LOCALIZED_UI = {
     csi4Lane: "MIPI CSI，4-lane",
     csi2Lane: "MIPI CSI，2-lane",
     reference: "參考載板，已由 SiMa.ai 完成硬體啟動",
+    broughtUp: (release) => `已由 SiMa.ai 完成硬體啟動（平台版本 ${release} 起）`,
     untested: "尚未搭配 Modalix SoM 測試",
     ordering: "訂購資訊",
     vendorPage: "廠商產品頁面",
@@ -190,6 +199,7 @@ const LOCALIZED_UI = {
     board: "載板",
     status: "狀態",
     referenceShort: "參考載板",
+    broughtUpShort: "已完成硬體啟動",
     untestedShort: "尚未測試",
     remove: "從比較中移除",
     addBoard: "新增載板…",
@@ -212,6 +222,7 @@ const LOCALIZED_UI = {
     csi4Lane: "MIPI CSI, 4 лінії",
     csi2Lane: "MIPI CSI, 2 лінії",
     reference: "Еталонна плата, запущена SiMa.ai",
+    broughtUp: (release) => `Запущена SiMa.ai на випуску платформи ${release} або новішому`,
     untested: "Не тестувалася з Modalix SoM",
     ordering: "Замовлення",
     vendorPage: "Сторінка продукту у виробника",
@@ -224,6 +235,7 @@ const LOCALIZED_UI = {
     board: "Плата",
     status: "Статус",
     referenceShort: "Еталонна плата",
+    broughtUpShort: "Запущена",
     untestedShort: "Не тестувалася",
     remove: "Вилучити з порівняння",
     addBoard: "Додати плату…",
@@ -299,7 +311,9 @@ export function CarrierBoardList() {
                 {board.model}
               </a>
             </td>
-            <td>{board.reference ? copy.referenceShort : copy.untestedShort}</td>
+            <td>
+              {board.reference ? copy.referenceShort : board.broughtUp ? copy.broughtUpShort : copy.untestedShort}
+            </td>
             <td>
               <Ordering board={board} copy={copy} />
             </td>
@@ -372,8 +386,12 @@ export function CarrierBoardSpecs() {
               <td />
               {boards.map((board) => (
                 <td key={board.id}>
-                  <span className={board.reference ? styles.badgeReference : styles.badge}>
-                    {board.reference ? copy.reference : copy.untested}
+                  <span className={board.reference || board.broughtUp ? styles.badgeReference : styles.badge}>
+                    {board.reference
+                      ? copy.reference
+                      : board.broughtUp
+                        ? copy.broughtUp(board.broughtUp.release)
+                        : copy.untested}
                   </span>
                 </td>
               ))}
