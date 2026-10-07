@@ -10,6 +10,12 @@
     "partNumber": "LI-OG05C10-MIPI-102H",
     "url": "https://leopardimaging.com/product-category/sima-ai/"
   },
+  "documents": [
+    {
+      "kind": "datasheet",
+      "url": "https://leopardimaging.com/wp-content/uploads/2025/07/LI-OG05C10-MIPI-102H_Datasheet.pdf"
+    }
+  ],
   "lanes": 2,
   "modes": [
     {

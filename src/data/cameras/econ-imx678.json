@@ -8,6 +8,12 @@
   "ordering": {
     "status": "unconfirmed"
   },
+  "documents": [
+    {
+      "kind": "modulePage",
+      "url": "https://www.e-consystems.com/camera-modules/4k-sony-starvis2-imx678-low-light-camera-module.asp"
+    }
+  ],
   "lanes": 2,
   "modes": [
     {

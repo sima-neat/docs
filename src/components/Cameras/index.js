@@ -76,6 +76,10 @@ const LOCALIZED_UI = {
     locationNote: "The active boot directory. In dtbos, give the file name without the path.",
     kernelSource: "Source in the kernel",
     ordering: "Ordering",
+    vendorDocuments: "Vendor documents",
+    datasheet: "Datasheet (PDF)",
+    selectionGuide: "Selection guide (PDF)",
+    modulePage: "Module page",
     remove: "Remove from comparison",
     addCamera: "Add a camera…",
     full: "The comparison holds four cameras. Remove one to add another.",
@@ -108,6 +112,10 @@ const LOCALIZED_UI = {
     locationNote: "アクティブなブートディレクトリです。dtbos にはパスを付けずにファイル名だけを指定します。",
     kernelSource: "カーネル内のソース",
     ordering: "注文情報",
+    vendorDocuments: "ベンダーの資料",
+    datasheet: "データシート (PDF)",
+    selectionGuide: "選定ガイド (PDF)",
+    modulePage: "モジュールのページ",
     remove: "比較から削除",
     addCamera: "カメラを追加…",
     full: "比較できるカメラは 4 つまでです。追加するには 1 つ削除してください。",
@@ -140,6 +148,10 @@ const LOCALIZED_UI = {
     locationNote: "활성 부트 디렉터리입니다. dtbos에는 경로 없이 파일 이름만 지정합니다.",
     kernelSource: "커널의 소스",
     ordering: "주문 정보",
+    vendorDocuments: "벤더 문서",
+    datasheet: "데이터시트(PDF)",
+    selectionGuide: "선택 가이드(PDF)",
+    modulePage: "모듈 페이지",
     remove: "비교에서 제거",
     addCamera: "카메라 추가…",
     full: "비교에는 카메라를 4개까지 담을 수 있습니다. 추가하려면 하나를 제거하십시오.",
@@ -172,6 +184,10 @@ const LOCALIZED_UI = {
     locationNote: "作用中的開機目錄。在 dtbos 中只需指定檔名，不含路徑。",
     kernelSource: "核心原始碼中的位置",
     ordering: "訂購資訊",
+    vendorDocuments: "廠商資料",
+    datasheet: "資料手冊 (PDF)",
+    selectionGuide: "選型指南 (PDF)",
+    modulePage: "模組頁面",
     remove: "從比較中移除",
     addCamera: "新增相機…",
     full: "比較表最多可容納四款相機。請先移除一款再新增。",
@@ -204,6 +220,10 @@ const LOCALIZED_UI = {
     locationNote: "Активний каталог завантаження. У dtbos вказуйте лише назву файлу, без шляху.",
     kernelSource: "Вихідний код у ядрі",
     ordering: "Замовлення",
+    vendorDocuments: "Документи виробника",
+    datasheet: "Технічний паспорт (PDF)",
+    selectionGuide: "Посібник із вибору (PDF)",
+    modulePage: "Сторінка модуля",
     remove: "Вилучити з порівняння",
     addCamera: "Додати камеру…",
     full: "Порівняння вміщує чотири камери. Вилучіть одну, щоб додати іншу.",
@@ -467,6 +487,17 @@ export function CameraSpecs() {
             {row(copy.partNumber, (camera) => (
               <Ordering camera={camera} copy={copy} />
             ))}
+            {row(copy.vendorDocuments, (camera) =>
+              camera.documents?.length
+                ? camera.documents.map((document) => (
+                    <div key={document.url}>
+                      <a href={document.url} target="_blank" rel="noopener noreferrer">
+                        {copy[document.kind]}
+                      </a>
+                    </div>
+                  ))
+                : null,
+            )}
           </tbody>
         </table>
       )}

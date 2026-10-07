@@ -8,6 +8,12 @@
   "ordering": {
     "status": "unconfirmed"
   },
+  "documents": [
+    {
+      "kind": "selectionGuide",
+      "url": "https://cdn.arducam.com/wp-content/uploads/2020/09/imx477-selection-guide.pdf"
+    }
+  ],
   "lanes": 2,
   "modes": [
     {

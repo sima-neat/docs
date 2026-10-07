@@ -15,6 +15,12 @@
   "ordering": {
     "status": "unconfirmed"
   },
+  "documents": [
+    {
+      "kind": "modulePage",
+      "url": "https://www.e-consystems.com/camera-modules/5mp-sony-pregius-imx568-global-shutter-camera-module.asp"
+    }
+  ],
   "lanes": 2,
   "modes": [
     {
