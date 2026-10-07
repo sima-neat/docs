@@ -27,6 +27,10 @@
     "message": "Оновлення та відновлення образів SiMa",
     "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
+  "sidebar.systemDocs.link.Next Step: Develop Software": {
+    "message": "Наступний крок: розробка ПЗ",
+    "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
+  },
   "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
     "message": "Інтеграція SoM і плати-носія",
     "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"

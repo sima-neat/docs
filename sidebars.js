@@ -57,6 +57,11 @@ const sidebars = {
         'reference/tech-notes/elxr-conversion',
       ]),
       'tools/web-serial-console',
+      {
+        type: 'link',
+        label: 'Next Step: Develop Software',
+        href: 'https://developer.sima.ai/software',
+      },
     ]),
     section('Integrate a SoM & Carrier Board', 'design/carrier-board', [
       'design/third-party-carriers',

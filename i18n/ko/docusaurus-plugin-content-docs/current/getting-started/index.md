@@ -10,6 +10,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 처음 Modalix DevKit을 설정하거나 기존 DevKit을 개발 환경으로 준비할 때 여기서 시작하세요.
 
+이 섹션은 플랫폼 릴리스 %platform_version%에 적용됩니다.
+
 <div class="overview-link-columns">
   <section class="overview-link-panel overview-link-panel-start">
     <h2>처음 설정</h2>
@@ -37,3 +39,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
     </ul>
   </section>
 </div>
+
+## 다음 단계: 소프트웨어 개발 {#develop-software}
+
+DevKit 설정을 마쳤으면 [소프트웨어 문서](https://developer.sima.ai/software)로 이동하여 DevKit에서 실행할 애플리케이션을 개발하십시오.

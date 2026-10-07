@@ -27,6 +27,10 @@
     "message": "SiMa イメージの更新と復旧",
     "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
+  "sidebar.systemDocs.link.Next Step: Develop Software": {
+    "message": "次のステップ: ソフトウェア開発",
+    "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
+  },
   "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
     "message": "SoM とキャリアボードの統合",
     "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"
