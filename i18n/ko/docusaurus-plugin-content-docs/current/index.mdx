@@ -20,12 +20,12 @@ SiMa.ai는 MLSoC Modalix를 칩, 모듈, 완제품 형태로 제공합니다. �
 
 | 제품 | 설명 | 시작 위치 |
 | --- | --- | --- |
-| MLSoC Modalix | 시스템 온 칩입니다. 직접 설계한 보드에 실장합니다. | [SoC로 설계하기](/hardware/design/chip-down) |
-| Modalix SoM | SoC, LPDDR5 메모리, 전원부를 탑재한 모듈입니다. 캐리어 보드에 장착합니다. | [SoM 및 캐리어 보드 통합](/hardware/design/carrier-board) |
-| Modalix DevKit | Modalix SoM을 캐리어 보드에 장착하고 인클로저에 담은 평가 및 개발용 키트입니다. | [DevKit 평가 및 사용](/hardware/getting-started) |
+| MLSoC Modalix | 시스템 온 칩입니다. 직접 설계한 보드에 실장합니다. | [SoC로 구축하기](/hardware/design/chip-down) |
+| Modalix SoM | SoC, LPDDR5 메모리, 전원부를 탑재한 모듈입니다. 캐리어 보드에 장착합니다. | [SoM으로 구축하기](/hardware/design/carrier-board) |
+| Modalix DevKit | Modalix SoM을 캐리어 보드에 장착하고 인클로저에 담은 평가 및 개발용 키트입니다. | [DevKit 평가](/hardware/getting-started) |
 | Modalix PCIe 카드 | 호스트 머신에 Modalix 추론 기능을 추가하는 하프 높이, 하프 길이 카드입니다. | [PCIe 모드](/hardware/getting-started/pcie-mode) |
 
-이들 중 어느 것에서든 시스템 소프트웨어를 변경하거나 카메라를 추가하려면 [사용자 지정 시스템 소프트웨어 빌드 및 배포](/hardware/software) 및 [카메라 통합](/hardware/interfaces/supported-cameras)을 참조하십시오.
+이들 중 어느 것에서든 시스템 소프트웨어를 변경하거나 카메라를 추가하려면 [시스템 소프트웨어 빌드](/hardware/software) 및 [카메라 통합](/hardware/interfaces/supported-cameras)을 참조하십시오.
 
 ### SoM 또는 칩다운 {#som-or-chip-down}
 
@@ -38,7 +38,7 @@ SiMa.ai는 MLSoC Modalix를 칩, 모듈, 완제품 형태로 제공합니다. �
 | 관련 자료 | 칩다운 설계 가이드, SoC 데이터시트 및 설계 패키지(NDA 체결 후 SiMa.ai에서 제공) | 공개 데이터시트 및 브링업 가이드 |
 | 소프트웨어 출발점 | 보드 수준 적응을 적용한 Modalix BSP | 캐리어 보드에 맞게 디바이스 트리를 변경한 Modalix BSP |
 
-보드가 부팅된 이후에는 두 방식 모두 동일한 시스템 소프트웨어를 사용합니다. [사용자 지정 시스템 소프트웨어 빌드 및 배포](/hardware/software)를 참조하십시오.
+보드가 부팅된 이후에는 두 방식 모두 동일한 시스템 소프트웨어를 사용합니다. [시스템 소프트웨어 빌드](/hardware/software)를 참조하십시오.
 
 ## MLSoC Modalix에 대하여
 
@@ -166,19 +166,19 @@ PCIe 모드에서는 Modalix PCIe 카드를 호스트 장치에 설치합니다.
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>DevKit 평가 및 사용</h4>
+    <h4>DevKit 평가</h4>
     <p>Modalix DevKit 또는 PCIe 카드를 설정하고 최신 상태로 유지하며 개발을 시작합니다.</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>SoM 및 캐리어 보드 통합</h4>
+    <h4>SoM으로 구축하기</h4>
     <p>Modalix SoM용 캐리어 보드를 선택하거나 직접 설계하여 브링업합니다.</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
-    <h4>SoC로 설계하기</h4>
+    <h4>SoC로 구축하기</h4>
     <p>Modalix SoC를 자체 보드에 직접 실장합니다.</p>
   </a>
   <a className="card" href="/hardware/software">
-    <h4>사용자 지정 시스템 소프트웨어 빌드 및 배포</h4>
+    <h4>시스템 소프트웨어 빌드</h4>
     <p>커널, U-Boot, 디바이스 트리를 빌드하고 자체 이미지를 플래싱합니다.</p>
   </a>
   <a className="card" href="/hardware/interfaces/supported-cameras">

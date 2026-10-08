@@ -1,6 +1,6 @@
 ---
 title: Chip-Down 設計
-sidebar_label: "以 SoC 進行設計 — Chip-Down"
+sidebar_label: "使用 SoC 開發"
 description: 設計直接搭載 Modalix SoC 的電路板，並取得 chip-down 設計指南與技術資料。
 sidebar_position: 2
 ---
@@ -43,7 +43,7 @@ SiMa.ai 將 chip-down 設計指南與下列技術資料作為設計套件提供�
 2. 以設計套件作為參考設計，進行電路板設計。
 3. 依照散熱設計指南規劃散熱。
 4. 啟動電路板。Chip-down 的硬體啟動流程（包括記憶體初始化與首次開機）目前尚未公開說明。如需協助，請聯絡您的 SiMa.ai 聯絡人。
-5. 使用[建置與部署自訂系統軟體](../software/index.md)調整並建置軟體。
+5. 使用[建置系統軟體](../software/index.md)調整並建置軟體。
 
 ## 里程碑 {#milestones}
 

@@ -20,12 +20,12 @@ SiMa.ai offers MLSoC Modalix as a chip, on a module, and in complete products. S
 
 | Product | What it is | Start here |
 | --- | --- | --- |
-| MLSoC Modalix | The system-on-chip. You place it on a board that you design. | [Design with the SoC](/hardware/design/chip-down) |
-| Modalix SoM | A module with the SoC, LPDDR5 memory, and power. It plugs into a carrier board. | [Integrate a SoM & Carrier Board](/hardware/design/carrier-board) |
-| Modalix DevKit | A Modalix SoM on a carrier board, in an enclosure, for evaluation and development. | [Evaluate & Use a DevKit](/hardware/getting-started) |
+| MLSoC Modalix | The system-on-chip. You place it on a board that you design. | [Build with the SoC](/hardware/design/chip-down) |
+| Modalix SoM | A module with the SoC, LPDDR5 memory, and power. It plugs into a carrier board. | [Build with the SoM](/hardware/design/carrier-board) |
+| Modalix DevKit | A Modalix SoM on a carrier board, in an enclosure, for evaluation and development. | [Evaluate a DevKit](/hardware/getting-started) |
 | Modalix PCIe Card | A half-height, half-length card that adds Modalix inference to a host machine. | [PCIe Mode](/hardware/getting-started/pcie-mode) |
 
-To change the system software or add a camera on any of these, see [Build & Deploy Custom System Software](/hardware/software) and [Integrate Cameras](/hardware/interfaces/supported-cameras).
+To change the system software or add a camera on any of these, see [Build System Software](/hardware/software) and [Integrate Cameras](/hardware/interfaces/supported-cameras).
 
 ### SoM or Chip-Down {#som-or-chip-down}
 
@@ -38,7 +38,7 @@ To build your own hardware, choose between a carrier board for the Modalix SoM a
 | Collateral | Chip-down design guide, SoC datasheet, and design packages, available from SiMa.ai under NDA | Public datasheets and bring-up guide |
 | Software starting point | The Modalix BSP, with board-level adaptation | The Modalix BSP, with device-tree changes for your carrier |
 
-After the board boots, both paths use the same system software. See [Build & Deploy Custom System Software](/hardware/software).
+After the board boots, both paths use the same system software. See [Build System Software](/hardware/software).
 
 ## About the MLSoC Modalix
 
@@ -170,19 +170,19 @@ In PCIe mode, the Modalix PCIe Card is installed in a host machine. Use this mod
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>Evaluate & Use a DevKit</h4>
+    <h4>Evaluate a DevKit</h4>
     <p>Set up a Modalix DevKit or PCIe card, keep it updated, and start developing.</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>Integrate a SoM & Carrier Board</h4>
+    <h4>Build with the SoM</h4>
     <p>Choose a carrier board for the Modalix SoM, or design and bring up your own.</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
-    <h4>Design with the SoC</h4>
+    <h4>Build with the SoC</h4>
     <p>Put the Modalix SoC directly on your own board.</p>
   </a>
   <a className="card" href="/hardware/software">
-    <h4>Build & Deploy Custom System Software</h4>
+    <h4>Build System Software</h4>
     <p>Build the kernel, U-Boot, and device trees, and flash your own image.</p>
   </a>
   <a className="card" href="/hardware/interfaces/supported-cameras">

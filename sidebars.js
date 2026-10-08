@@ -19,14 +19,7 @@ const sidebars = {
   systemDocs: [
     // Platform Overview. The label comes from sidebar_label in the page.
     'index',
-    {
-      // Lives at the site root (src/pages/agents.md), not under /hardware:
-      // it spans hardware setup AND the software/SDK onboarding.
-      type: 'link',
-      label: 'For AI Agents',
-      href: '/agents',
-    },
-    section('Evaluate & Use a DevKit', 'getting-started/index', [
+    section('Evaluate a DevKit', 'getting-started/index', [
       {
         type: 'link',
         label: 'Quick Start Guide',
@@ -63,14 +56,14 @@ const sidebars = {
         href: 'https://developer.sima.ai/software',
       },
     ]),
-    section('Integrate a SoM & Carrier Board', 'design/carrier-board', [
+    section('Build with the SoM', 'design/carrier-board', [
       'design/third-party-carriers',
       'design/som-carrier',
     ]),
-    // Design with the SoC — Chip-Down. One page, so not a category; the label
+    // Build with the SoC (chip-down). One page, so not a category; the label
     // comes from sidebar_label in the page.
     'design/chip-down',
-    section('Build & Deploy Custom System Software', 'software/index', [
+    section('Build System Software', 'software/index', [
       'software/release-compatibility',
       'software/elxr-packages',
       'software/build-from-source',
@@ -80,7 +73,7 @@ const sidebars = {
       'deployment/update-package',
       'deployment/factory-build-and-test',
     ]),
-    section('Integrate Cameras & Tune the ISP', undefined, [
+    section('Integrate Cameras', undefined, [
       'interfaces/supported-cameras',
       'getting-started/standalone-mode/mipi-camera-interfaces',
       'interfaces/custom-camera',

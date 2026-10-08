@@ -20,12 +20,12 @@ SiMa.ai 以晶片、模組與完整產品等形式提供 MLSoC Modalix。請從�
 
 | 產品 | 說明 | 從這裡開始 |
 | --- | --- | --- |
-| MLSoC Modalix | 系統單晶片。您將它放在自行設計的電路板上。 | [以 SoC 進行設計](/hardware/design/chip-down) |
-| Modalix SoM | 搭載 SoC、LPDDR5 記憶體與電源的模組，可插入載板使用。 | [整合 SoM 與載板](/hardware/design/carrier-board) |
-| Modalix DevKit | 將 Modalix SoM 安裝於載板並置於機殼內，用於評估與開發。 | [評估與使用 DevKit](/hardware/getting-started) |
+| MLSoC Modalix | 系統單晶片。您將它放在自行設計的電路板上。 | [使用 SoC 開發](/hardware/design/chip-down) |
+| Modalix SoM | 搭載 SoC、LPDDR5 記憶體與電源的模組，可插入載板使用。 | [使用 SoM 開發](/hardware/design/carrier-board) |
+| Modalix DevKit | 將 Modalix SoM 安裝於載板並置於機殼內，用於評估與開發。 | [評估 DevKit](/hardware/getting-started) |
 | Modalix PCIe 卡 | 半高半長的介面卡，可為主機加入 Modalix 推論能力。 | [PCIe 模式](/hardware/getting-started/pcie-mode) |
 
-若要在其中任一產品上變更系統軟體或加入相機，請參閱[建置與部署自訂系統軟體](/hardware/software)與[整合相機](/hardware/interfaces/supported-cameras)。
+若要在其中任一產品上變更系統軟體或加入相機，請參閱[建置系統軟體](/hardware/software)與[整合相機](/hardware/interfaces/supported-cameras)。
 
 ### SoM 或 Chip-Down {#som-or-chip-down}
 
@@ -38,7 +38,7 @@ SiMa.ai 以晶片、模組與完整產品等形式提供 MLSoC Modalix。請從�
 | 技術資料 | Chip-down 設計指南、SoC 資料手冊與設計套件，簽署 NDA 後可向 SiMa.ai 取得 | 公開的資料手冊與硬體啟動指南 |
 | 軟體起點 | Modalix BSP，並進行板級調整 | Modalix BSP，並針對您的載板修改 device tree |
 
-電路板能夠開機之後，兩條路徑都使用相同的系統軟體。請參閱[建置與部署自訂系統軟體](/hardware/software)。
+電路板能夠開機之後，兩條路徑都使用相同的系統軟體。請參閱[建置系統軟體](/hardware/software)。
 
 ## 關於 MLSoC Modalix
 
@@ -166,19 +166,19 @@ MLSoC Modalix 支援兩種常見的開發架構：獨立模式和 PCIe 模式。
 
 <div className="card-grid">
   <a className="card" href="/hardware/getting-started">
-    <h4>評估與使用 DevKit</h4>
+    <h4>評估 DevKit</h4>
     <p>設定 Modalix DevKit 或 PCIe 卡、保持更新，並開始進行開發。</p>
   </a>
   <a className="card" href="/hardware/design/carrier-board">
-    <h4>整合 SoM 與載板</h4>
+    <h4>使用 SoM 開發</h4>
     <p>為 Modalix SoM 選擇載板，或自行設計並完成硬體啟動。</p>
   </a>
   <a className="card" href="/hardware/design/chip-down">
-    <h4>以 SoC 進行設計</h4>
+    <h4>使用 SoC 開發</h4>
     <p>將 Modalix SoC 直接放在您自己的電路板上。</p>
   </a>
   <a className="card" href="/hardware/software">
-    <h4>建置與部署自訂系統軟體</h4>
+    <h4>建置系統軟體</h4>
     <p>建置核心、U-Boot 與 device tree，並燒錄您自己的映像檔。</p>
   </a>
   <a className="card" href="/hardware/interfaces/supported-cameras">

@@ -1,11 +1,7 @@
 {
-  "sidebar.systemDocs.link.For AI Agents": {
-    "message": "Для ШІ-агентів",
-    "description": "The label for link 'For AI Agents' in sidebar 'systemDocs', linking to '/agents'"
-  },
-  "sidebar.systemDocs.category.Evaluate & Use a DevKit": {
-    "message": "Оцінювання та використання DevKit",
-    "description": "The label for category 'Evaluate & Use a DevKit' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "Оцінювання DevKit",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "Посібник зі швидкого старту",
@@ -31,17 +27,17 @@
     "message": "Наступний крок: розробка ПЗ",
     "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
-    "message": "Інтеграція SoM і плати-носія",
-    "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "Розробка на основі SoM",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Build & Deploy Custom System Software": {
-    "message": "Збирання та розгортання власного системного ПЗ",
-    "description": "The label for category 'Build & Deploy Custom System Software' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "Збирання системного ПЗ",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Integrate Cameras & Tune the ISP": {
-    "message": "Інтеграція камер і налаштування ISP",
-    "description": "The label for category 'Integrate Cameras & Tune the ISP' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "Інтеграція камер",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Reference & Downloads": {
     "message": "Довідкові матеріали та завантаження",

@@ -1,6 +1,6 @@
 ---
 title: Chip-Down Design
-sidebar_label: "Design with the SoC — Chip-Down"
+sidebar_label: "Build with the SoC"
 description: Design a board with the Modalix SoC placed directly on it, and get the chip-down design guide and collateral.
 sidebar_position: 2
 ---
@@ -53,7 +53,7 @@ Request these documents with the design package. See
    first boot, is not yet documented publicly. Contact your SiMa.ai representative
    for help.
 5. Adapt and build the software with
-   [Build & Deploy Custom System Software](../software/index.md).
+   [Build System Software](../software/index.md).
 
 ## Milestones {#milestones}
 

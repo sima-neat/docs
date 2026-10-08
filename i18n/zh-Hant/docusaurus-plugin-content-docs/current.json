@@ -1,11 +1,7 @@
 {
-  "sidebar.systemDocs.link.For AI Agents": {
-    "message": "AI 代理程式專用",
-    "description": "The label for link 'For AI Agents' in sidebar 'systemDocs', linking to '/agents'"
-  },
-  "sidebar.systemDocs.category.Evaluate & Use a DevKit": {
-    "message": "評估與使用 DevKit",
-    "description": "The label for category 'Evaluate & Use a DevKit' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "評估 DevKit",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "快速入門指南",
@@ -31,17 +27,17 @@
     "message": "下一步：開發軟體",
     "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
-    "message": "整合 SoM 與載板",
-    "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "使用 SoM 開發",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Build & Deploy Custom System Software": {
-    "message": "建置與部署自訂系統軟體",
-    "description": "The label for category 'Build & Deploy Custom System Software' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "建置系統軟體",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Integrate Cameras & Tune the ISP": {
-    "message": "整合相機與調校 ISP",
-    "description": "The label for category 'Integrate Cameras & Tune the ISP' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "整合相機",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Reference & Downloads": {
     "message": "參考資料與下載",

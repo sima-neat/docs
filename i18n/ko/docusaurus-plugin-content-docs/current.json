@@ -1,11 +1,7 @@
 {
-  "sidebar.systemDocs.link.For AI Agents": {
-    "message": "AI 에이전트용",
-    "description": "The label for link 'For AI Agents' in sidebar 'systemDocs', linking to '/agents'"
-  },
-  "sidebar.systemDocs.category.Evaluate & Use a DevKit": {
-    "message": "DevKit 평가 및 사용",
-    "description": "The label for category 'Evaluate & Use a DevKit' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "DevKit 평가",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "빠른 시작 가이드",
@@ -31,17 +27,17 @@
     "message": "다음 단계: 소프트웨어 개발",
     "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
-    "message": "SoM 및 캐리어 보드 통합",
-    "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "SoM으로 구축하기",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Build & Deploy Custom System Software": {
-    "message": "사용자 지정 시스템 소프트웨어 빌드 및 배포",
-    "description": "The label for category 'Build & Deploy Custom System Software' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "시스템 소프트웨어 빌드",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Integrate Cameras & Tune the ISP": {
-    "message": "카메라 통합 및 ISP 튜닝",
-    "description": "The label for category 'Integrate Cameras & Tune the ISP' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "카메라 통합",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Reference & Downloads": {
     "message": "참조 및 다운로드",

@@ -1,11 +1,7 @@
 {
-  "sidebar.systemDocs.link.For AI Agents": {
-    "message": "AI エージェント向け",
-    "description": "The label for link 'For AI Agents' in sidebar 'systemDocs', linking to '/agents'"
-  },
-  "sidebar.systemDocs.category.Evaluate & Use a DevKit": {
-    "message": "DevKit の評価と利用",
-    "description": "The label for category 'Evaluate & Use a DevKit' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "DevKit の評価",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "クイックスタートガイド",
@@ -31,17 +27,17 @@
     "message": "次のステップ: ソフトウェア開発",
     "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Integrate a SoM & Carrier Board": {
-    "message": "SoM とキャリアボードの統合",
-    "description": "The label for category 'Integrate a SoM & Carrier Board' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "SoM で構築する",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Build & Deploy Custom System Software": {
-    "message": "カスタムシステムソフトウェアのビルドとデプロイ",
-    "description": "The label for category 'Build & Deploy Custom System Software' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "システムソフトウェアのビルド",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Integrate Cameras & Tune the ISP": {
-    "message": "カメラの統合と ISP のチューニング",
-    "description": "The label for category 'Integrate Cameras & Tune the ISP' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "カメラの統合",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Reference & Downloads": {
     "message": "リファレンスとダウンロード",
