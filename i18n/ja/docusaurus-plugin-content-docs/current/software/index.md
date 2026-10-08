@@ -29,7 +29,7 @@ Modalix BSP は、Modalix DevKit、Modalix Early Access キット、および Mo
 | 作業 | eLxr（推奨） | Yocto |
 | --- | --- | --- |
 | カーネル、U-Boot、デバイスツリー、オーバーレイ、カーネルモジュールのビルド | [BSP をソースからビルドする](./build-from-source.mdx) | [イメージビルドマニュアル](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
-| ユーザー空間ソフトウェアの追加 | `apt` でパッケージをインストール | レシピを作成 |
+| ユーザー空間ソフトウェアの追加 | [eLxr にパッケージとサービスを追加する](./elxr-packages.mdx) | レシピを作成 |
 | ソースから完全なイメージをビルド | まだ文書化されていません | [Yocto で完全なイメージをビルドする](./yocto-image.mdx) |
 | アップデートパッケージのビルド | まだ文書化されていません | [アップデートパッケージのビルドと適用](../deployment/update-package.mdx) |
 | セキュアブートとプロビジョニング | まだ文書化されていません | まだ文書化されていません |
@@ -69,6 +69,8 @@ NDA や営業窓口への問い合わせは必要ありません。
   ドライバーのバインドの確認。
 - [リリースの互換性](./release-compatibility.mdx)：各プラットフォームリリースの基になっている
   カーネルと U-Boot のコミット。
+- [eLxr にパッケージとサービスを追加する](./elxr-packages.mdx)：パッケージのインストール、独自のサービスの
+  パッケージ化、アップデートが変更に与える影響。
 - [Yocto で完全なイメージをビルドする](./yocto-image.mdx)：公開されている Yocto レイヤーによる、
   ソースからのイメージ全体のビルド。
 - [イメージを eMMC に書き込む](../deployment/flash-image.mdx)：独自ビルドの

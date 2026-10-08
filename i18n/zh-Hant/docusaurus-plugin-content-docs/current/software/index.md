@@ -29,7 +29,7 @@ Modalix BSP 適用於 Modalix DevKit、Modalix 搶先體驗版套件以及 Modal
 | 工作 | eLxr（建議） | Yocto |
 | --- | --- | --- |
 | 建置核心、U-Boot、device tree、overlay 與核心模組 | [從原始碼建置 BSP](./build-from-source.mdx) | [映像檔建置手冊](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
-| 新增使用者空間軟體 | 使用 `apt` 安裝套件 | 撰寫 recipe |
+| 新增使用者空間軟體 | [在 eLxr 上新增套件與服務](./elxr-packages.mdx) | 撰寫 recipe |
 | 從原始碼建置完整映像檔 | 尚未提供文件 | [使用 Yocto 建置完整映像檔](./yocto-image.mdx) |
 | 建置更新套件 | 尚未提供文件 | [建置與套用更新套件](../deployment/update-package.mdx) |
 | 安全開機與佈建 | 尚未提供文件 | 尚未提供文件 |
@@ -65,6 +65,7 @@ Modalix BSP 適用於 Modalix DevKit、Modalix 搶先體驗版套件以及 Modal
 - [從原始碼建置 BSP](./build-from-source.mdx)：建置環境、核心、U-Boot、device tree，以及安裝建置成品。
 - [Device Tree 與 Overlay](./device-tree.mdx)：選擇或撰寫 overlay，並確認驅動程式已繫結。
 - [版本相容性](./release-compatibility.mdx)：每個平台版本所對應的核心與 U-Boot commit。
+- [在 eLxr 上新增套件與服務](./elxr-packages.mdx)：安裝套件、封裝您自己的服務，以及更新對您所做變更的影響。
 - [使用 Yocto 建置完整映像檔](./yocto-image.mdx)：使用公開的 Yocto layer 從原始碼建置整個映像檔。
 - [將映像檔燒錄到 eMMC](../deployment/flash-image.mdx)：將您自行建置的映像檔寫入電路板的 eMMC。
 - [建置與套用更新套件](../deployment/update-package.mdx)：為 Yocto 映像檔封裝更新，以及電路板的回復方式。

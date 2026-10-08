@@ -1,0 +1,168 @@
+---
+title: Add Packages and Services on eLxr
+description: Install a Debian package on an eLxr board, package your own service as a .deb file, and see what a firmware update does to your changes.
+sidebar_position: 3
+---
+
+# Add Packages and Services on eLxr
+
+The Modalix image is built on eLxr, a Debian-derived distribution. You add
+software to a board the Debian way: as packages that you install with `apt`.
+This page shows how to install a package, how to package your own service, and
+what a firmware update does to your changes.
+
+:::caution[Not yet validated on hardware]
+This page is written from the public SiMa.ai repositories. The example package
+was built and installed in a Debian container. The steps have not been run on a
+board as they are written here.
+:::
+
+## Install a Package {#install}
+
+1. Connect the board to a network that reaches the package repositories.
+2. Update the package lists:
+
+   ```console
+   sima@modalix:~$ sudo apt update
+   ```
+
+3. Install the package. For example, to install the I2C tools:
+
+   ```console
+   sima@modalix:~$ sudo apt install i2c-tools
+   ```
+
+SiMa.ai delivers its own software to the board as Debian packages. To list the
+SiMa.ai packages on a board:
+
+```console
+sima@modalix:~$ dpkg -l | grep simaai
+```
+
+## Package Your Own Service {#package-service}
+
+To run your own program as a service, build a Debian package for it. The
+package installs the files, and its post-installation script enables the
+service. This example packages a program named `my-app`.
+
+1. On your build host, create this directory tree. Put your program in
+   `usr/bin/my-app`. It must run on the board, so build it for arm64. See
+   [Build the BSP from Source](./build-from-source.mdx#set-up-the-build-container)
+   for the build container.
+
+   ```text
+   my-app/
+   ├── DEBIAN/
+   │   ├── control
+   │   └── postinst
+   ├── lib/systemd/system/my-app.service
+   └── usr/bin/my-app
+   ```
+
+2. Write `DEBIAN/control`. `Depends` lists the packages that your program
+   needs:
+
+   ```text
+   Package: my-app
+   Version: 1.0.0
+   Section: utils
+   Priority: optional
+   Architecture: arm64
+   Depends: python3
+   Maintainer: Your Name <you@example.com>
+   Description: Example service for a Modalix board
+   ```
+
+3. Write the unit file, `lib/systemd/system/my-app.service`:
+
+   ```ini
+   [Unit]
+   Description=My application
+   After=network.target
+
+   [Service]
+   Type=simple
+   ExecStart=/usr/bin/my-app
+   Restart=on-failure
+   RestartSec=5
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+4. Write `DEBIAN/postinst`. It enables and starts the service when the package
+   is installed:
+
+   ```sh
+   #!/bin/sh
+   set -e
+   if [ -d /run/systemd/system ]; then
+       systemctl daemon-reload
+       systemctl enable my-app.service
+       systemctl restart my-app.service
+   fi
+   ```
+
+5. Make the script and the program executable, and build the package:
+
+   ```console
+   sima-user@sima-user-machine:~$ chmod 0755 my-app/DEBIAN/postinst my-app/usr/bin/my-app
+   sima-user@sima-user-machine:~$ dpkg-deb --root-owner-group --build my-app my-app_1.0.0_arm64.deb
+   ```
+
+6. Copy the package to the board and install it. `apt` also installs the
+   packages that it depends on:
+
+   ```console
+   sima-user@sima-user-machine:~$ scp my-app_1.0.0_arm64.deb sima@<board-ip>:/tmp/
+   sima@modalix:~$ sudo apt install /tmp/my-app_1.0.0_arm64.deb
+   ```
+
+7. Check that the service runs, and read its log:
+
+   ```console
+   sima@modalix:~$ systemctl status my-app.service
+   sima@modalix:~$ journalctl -u my-app.service
+   ```
+
+For a complete package of this kind, see the
+[MIPI camera utility](https://github.com/sima-neat/insight/tree/main/mipi-util)
+in the SiMa.ai Insight repository.
+
+## What a Firmware Update Does to Your Changes {#updates}
+
+`sima-cli update` works differently in each release line, so your packages are
+treated differently.
+
+| Platform release | What the update does | Your packages and services |
+| --- | --- | --- |
+| 2.1 | Upgrades the SiMa.ai packages in place. It does not write a new image. | Not confirmed. Check them after an update. |
+| 3.0 and later | Writes a complete root filesystem to the inactive slot, and boots from it. | Kept in an overlay on `/data`, unless the update clears the overlay. If it does, install them again. |
+
+- In release 2.1, the update resets the U-Boot environment. Set `dtbos` and any
+  other variable that you changed again after the update.
+- Recovering a board, or writing a complete image to it, removes your packages
+  in every release.
+- Keep your `.deb` files and a list of what you installed, so that you can
+  install them again.
+- In release 3.0 and later, `sima-cli update --inspect` shows what the overlay
+  holds.
+
+Platform release 3.0 is not released yet. Its behavior is described here from
+the [system update guide](https://github.com/sima-neat/sima-cli/blob/main/docs/sima-cli/guides/system-updates.md)
+of `sima-cli`, and can change.
+
+## Not Covered {#not-covered}
+
+- Building a complete eLxr image that already contains your packages. See
+  [eLxr or Yocto](./index.md#elxr-or-yocto).
+- Publishing your packages in your own package repository.
+
+## Next Steps
+
+- [Build the BSP from Source](./build-from-source.mdx): build the kernel, U-Boot,
+  and device trees.
+- [Device Trees and Overlays](./device-tree.mdx): describe new hardware to the
+  kernel.
+- [Firmware Update](../getting-started/firmware-update/index.mdx): update a board
+  with a SiMa.ai image.

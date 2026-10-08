@@ -29,7 +29,7 @@ eLxr is the preferred path for board bring-up. You can also bring up a board wit
 | Task | eLxr (preferred) | Yocto |
 | --- | --- | --- |
 | Build the kernel, U-Boot, device trees, overlays, and kernel modules | [Build the BSP from Source](./build-from-source.mdx) | [Image build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst) |
-| Add userspace software | Install packages with `apt` | Write recipes |
+| Add userspace software | [Add Packages and Services on eLxr](./elxr-packages.mdx) | Write recipes |
 | Build a complete image from source | Not yet documented | [Build a Complete Image with Yocto](./yocto-image.mdx) |
 | Build an update package | Not yet documented | [Build and Apply an Update Package](../deployment/update-package.mdx) |
 | Secure boot and provisioning | Not yet documented | Not yet documented |
@@ -69,6 +69,8 @@ own drivers do not require an NDA or a sales enquiry.
   and check that the driver binds.
 - [Release Compatibility](./release-compatibility.mdx) — the kernel and U-Boot
   commit behind each platform release.
+- [Add Packages and Services on eLxr](./elxr-packages.mdx) — install a package, package
+  your own service, and what an update does to your changes.
 - [Build a Complete Image with Yocto](./yocto-image.mdx) — build a whole image from source
   with the public Yocto layer.
 - [Flash an Image to eMMC](../deployment/flash-image.mdx) — write your own build to the

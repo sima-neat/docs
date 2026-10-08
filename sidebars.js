@@ -72,6 +72,7 @@ const sidebars = {
     'design/chip-down',
     section('Build & Deploy Custom System Software', 'software/index', [
       'software/release-compatibility',
+      'software/elxr-packages',
       'software/build-from-source',
       'software/device-tree',
       'software/yocto-image',
