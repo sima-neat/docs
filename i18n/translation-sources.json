@@ -1,7 +1,7 @@
 {
   "ja": {
-    "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
-    "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
+    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "de8fa4b521471c7953be40e526d0a338209e5eb520c16d12d667af847e85a4ee",
@@ -46,8 +46,8 @@
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "ko": {
-    "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
-    "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
+    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "de8fa4b521471c7953be40e526d0a338209e5eb520c16d12d667af847e85a4ee",
@@ -92,8 +92,8 @@
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "uk": {
-    "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
-    "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
+    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "de8fa4b521471c7953be40e526d0a338209e5eb520c16d12d667af847e85a4ee",
@@ -138,8 +138,8 @@
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "zh-Hant": {
-    "docs/deployment/factory-build-and-test.mdx": "9f46d3008f6af966458585a199d81bda52dc56cbffe5af8cd2d69e00792216c7",
-    "docs/deployment/flash-image.mdx": "faa5c0e922a7eb9bc5048a36a961981c6a8c12f75fd54f9035886729f5c79012",
+    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "b9aef37232569ef17a06f505709ad81d7e0ce176fe308d3feff4c8468fd4d754",
     "docs/design/chip-down.md": "de8fa4b521471c7953be40e526d0a338209e5eb520c16d12d667af847e85a4ee",

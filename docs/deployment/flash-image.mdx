@@ -26,7 +26,11 @@ only the kernel, device trees, or U-Boot on a board that already boots, see
   | Image | Files |
   | --- | --- |
   | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
-  | Yocto | `simaai-image-palette-modalix.wic.gz` and `simaai-image-palette-modalix.wic.bmap` |
+  | Yocto | `simaai-image-minimal-modalix.rootfs.wic.gz` and `simaai-image-minimal-modalix.rootfs.wic.bmap` |
+
+  The Yocto file names are the ones that
+  [Build a Complete Image with Yocto](../software/yocto-image.mdx) produces.
+  Another image recipe gives other names.
 
 - Either a host with Ethernet and a TFTP server, or an SD card.
 
@@ -113,7 +117,7 @@ same with `sima-cli`, which downloads and serves a published release for you.
    For Yocto, copy both the `.wic.gz` and `.wic.bmap` files, then:
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk1
    ```
 
    Then repair the partition table. The image is smaller than the card, so the
@@ -141,16 +145,32 @@ same with `sima-cli`, which downloads and serves a published release for you.
 Run these steps on the board, as root, while it is booted from the network or
 the SD card.
 
-1. Copy the `.wic.gz` and `.wic.bmap` files from the host to `/tmp` on the board:
+1. Copy the image from the host to `/tmp` on the board.
+
+   For eLxr:
 
    ```console
-   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   sima-user@sima-user-machine:~$ scp elxr-palette-modalix-<version>-arm64.img root@192.168.1.20:/tmp/
    ```
 
-2. Write the image to the eMMC (`/dev/mmcblk0`):
+   For Yocto, copy both the `.wic.gz` and `.wic.bmap` files:
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   sima-user@sima-user-machine:~$ scp simaai-image-minimal-modalix.rootfs.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. Write the image to the eMMC (`/dev/mmcblk0`).
+
+   For eLxr:
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk0 bs=4M status=progress conv=fsync
+   ```
+
+   For Yocto:
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk0
    ```
 
 3. Repair the partition table:

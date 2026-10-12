@@ -25,7 +25,10 @@ DevKit を SiMa.ai の公開リリースにアップデートする場合は、�
   | イメージ | ファイル |
   | --- | --- |
   | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
-  | Yocto | `simaai-image-palette-modalix.wic.gz` と `simaai-image-palette-modalix.wic.bmap` |
+  | Yocto | `simaai-image-minimal-modalix.rootfs.wic.gz` と `simaai-image-minimal-modalix.rootfs.wic.bmap` |
+
+  Yocto のファイル名は、[Yocto で完全なイメージをビルドする](../software/yocto-image.mdx)で
+  生成されるものです。別のイメージレシピでは、ファイル名が異なります。
 
 - イーサネットと TFTP サーバーを備えたホスト、または SD カードのいずれか。
 
@@ -111,7 +114,7 @@ sima$ boot
    Yocto の場合は、`.wic.gz` ファイルと `.wic.bmap` ファイルの両方をコピーしてから、次を実行します。
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk1
    ```
 
    次に、パーティションテーブルを修復します。イメージはカードより小さいため、`parted` で移動するまで
@@ -139,16 +142,32 @@ sima$ boot
 以下の手順は、ボードがネットワークまたは SD カードから起動している状態で、ボード上で root として
 実行します。
 
-1. `.wic.gz` ファイルと `.wic.bmap` ファイルを、ホストからボードの `/tmp` にコピーします。
+1. イメージをホストからボードの `/tmp` にコピーします。
+
+   eLxr の場合：
 
    ```console
-   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   sima-user@sima-user-machine:~$ scp elxr-palette-modalix-<version>-arm64.img root@192.168.1.20:/tmp/
+   ```
+
+   Yocto の場合は、`.wic.gz` ファイルと `.wic.bmap` ファイルの両方をコピーします。
+
+   ```console
+   sima-user@sima-user-machine:~$ scp simaai-image-minimal-modalix.rootfs.wic.* root@192.168.1.20:/tmp/
    ```
 
 2. イメージを eMMC（`/dev/mmcblk0`）に書き込みます。
 
+   eLxr の場合：
+
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk0 bs=4M status=progress conv=fsync
+   ```
+
+   Yocto の場合：
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk0
    ```
 
 3. パーティションテーブルを修復します。

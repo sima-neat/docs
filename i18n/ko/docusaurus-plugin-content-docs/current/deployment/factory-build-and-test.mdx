@@ -224,10 +224,12 @@ root@modalix:~# stress-ng --cpu 0 --verify -t 1m --log-brief --log-file /tmp/cpu
 ### 8. MIPI 카메라
 
 1. 테스트할 포트의 카메라 오버레이를 로드합니다. 재부팅하고 자동 부팅을 중단한 다음
-   `dtbos`를 설정합니다. 첫 번째 포트에 IMX477을 연결하는 경우는 다음과 같습니다.
+   `dtbos`를 설정합니다. 오버레이 이름의 형식은
+   `modalix-som-<carrier>-<camera>-<port>.dtbo`입니다. Modalix DevKit의 첫 번째 카메라 포트에
+   Arducam IMX477을 연결하는 경우는 다음과 같습니다.
 
    ```console
-   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ env set dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
    sima$ saveenv
    ```
 

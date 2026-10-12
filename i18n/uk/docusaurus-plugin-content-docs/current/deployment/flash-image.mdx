@@ -26,7 +26,11 @@ sidebar_position: 1
   | Образ | Файли |
   | --- | --- |
   | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
-  | Yocto | `simaai-image-palette-modalix.wic.gz` і `simaai-image-palette-modalix.wic.bmap` |
+  | Yocto | `simaai-image-minimal-modalix.rootfs.wic.gz` і `simaai-image-minimal-modalix.rootfs.wic.bmap` |
+
+  Назви файлів Yocto — це ті, які створює
+  [Збирання повного образу за допомогою Yocto](../software/yocto-image.mdx).
+  Інший рецепт образу дає інші назви.
 
 - Хост з Ethernet і сервером TFTP або SD-карта.
 
@@ -113,7 +117,7 @@ sima$ boot
    Для Yocto скопіюйте обидва файли `.wic.gz` і `.wic.bmap`, а потім виконайте:
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk1
    ```
 
    Потім виправте таблицю розділів. Образ менший за карту, тому
@@ -141,16 +145,32 @@ sima$ boot
 Виконайте ці кроки на платі від імені root, поки вона завантажена з мережі або
 з SD-карти.
 
-1. Скопіюйте файли `.wic.gz` і `.wic.bmap` із хоста до `/tmp` на платі:
+1. Скопіюйте образ із хоста до `/tmp` на платі.
+
+   Для eLxr:
 
    ```console
-   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   sima-user@sima-user-machine:~$ scp elxr-palette-modalix-<version>-arm64.img root@192.168.1.20:/tmp/
    ```
 
-2. Запишіть образ на eMMC (`/dev/mmcblk0`):
+   Для Yocto скопіюйте обидва файли, `.wic.gz` і `.wic.bmap`:
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   sima-user@sima-user-machine:~$ scp simaai-image-minimal-modalix.rootfs.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. Запишіть образ на eMMC (`/dev/mmcblk0`).
+
+   Для eLxr:
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk0 bs=4M status=progress conv=fsync
+   ```
+
+   Для Yocto:
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk0
    ```
 
 3. Виправте таблицю розділів:

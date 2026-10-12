@@ -225,10 +225,12 @@ The host prints a success message with the transmitted and received frame counts
 ### 8. MIPI Cameras
 
 1. Load the camera overlays for the ports under test. Reboot, interrupt autoboot,
-   and set `dtbos`. For an IMX477 on the first port:
+   and set `dtbos`. Overlay names have the form
+   `modalix-som-<carrier>-<camera>-<port>.dtbo`. For an Arducam IMX477 on the first
+   camera port of a Modalix DevKit:
 
    ```console
-   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ env set dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
    sima$ saveenv
    ```
 

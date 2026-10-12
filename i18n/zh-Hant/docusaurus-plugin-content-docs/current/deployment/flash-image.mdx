@@ -19,7 +19,9 @@ sidebar_position: 1
   | 映像檔 | 檔案 |
   | --- | --- |
   | eLxr | `elxr-palette-modalix-<version>-arm64.img` |
-  | Yocto | `simaai-image-palette-modalix.wic.gz` 與 `simaai-image-palette-modalix.wic.bmap` |
+  | Yocto | `simaai-image-minimal-modalix.rootfs.wic.gz` 與 `simaai-image-minimal-modalix.rootfs.wic.bmap` |
+
+  Yocto 的檔名是[使用 Yocto 建置完整映像檔](../software/yocto-image.mdx)所產生的檔名。使用其他映像檔 recipe 時，檔名會不同。
 
 - 一台具備乙太網路與 TFTP 伺服器的主機，或一張 SD 卡。
 
@@ -94,7 +96,7 @@ sima$ boot
    Yocto 則請複製 `.wic.gz` 與 `.wic.bmap` 兩個檔案，然後執行：
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk1
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk1
    ```
 
    接著修復分割表。由於映像檔比記憶卡小，在 `parted` 移動備份 GPT 標頭之前，該標頭並不位於裝置的尾端：
@@ -118,16 +120,32 @@ sima$ boot
 
 請在電路板從網路或 SD 卡開機的狀態下，以 root 身分在電路板上執行下列步驟。
 
-1. 將 `.wic.gz` 與 `.wic.bmap` 檔案從主機複製到電路板的 `/tmp`：
+1. 將映像檔從主機複製到電路板的 `/tmp`。
+
+   eLxr：
 
    ```console
-   sima-user@sima-user-machine:~$ scp simaai-image-palette-modalix.wic.* root@192.168.1.20:/tmp/
+   sima-user@sima-user-machine:~$ scp elxr-palette-modalix-<version>-arm64.img root@192.168.1.20:/tmp/
    ```
 
-2. 將映像檔寫入 eMMC（`/dev/mmcblk0`）：
+   Yocto 則請複製 `.wic.gz` 與 `.wic.bmap` 兩個檔案：
 
    ```console
-   root@modalix:~# bmaptool copy /tmp/simaai-image-palette-modalix.wic.gz /dev/mmcblk0
+   sima-user@sima-user-machine:~$ scp simaai-image-minimal-modalix.rootfs.wic.* root@192.168.1.20:/tmp/
+   ```
+
+2. 將映像檔寫入 eMMC（`/dev/mmcblk0`）。
+
+   eLxr：
+
+   ```console
+   root@modalix:~# dd if=/tmp/elxr-palette-modalix-<version>-arm64.img of=/dev/mmcblk0 bs=4M status=progress conv=fsync
+   ```
+
+   Yocto：
+
+   ```console
+   root@modalix:~# bmaptool copy /tmp/simaai-image-minimal-modalix.rootfs.wic.gz /dev/mmcblk0
    ```
 
 3. 修復分割表：

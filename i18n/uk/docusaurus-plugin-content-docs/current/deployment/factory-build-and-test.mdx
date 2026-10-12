@@ -224,10 +224,12 @@ root@modalix:~# stress-ng --cpu 0 --verify -t 1m --log-brief --log-file /tmp/cpu
 ### 8. Камери MIPI
 
 1. Завантажте оверлеї камер для тестованих портів. Перезавантажте плату, перервіть автоматичне завантаження
-   та встановіть `dtbos`. Для IMX477 на першому порту:
+   та встановіть `dtbos`. Назви оверлеїв мають форму
+   `modalix-som-<carrier>-<camera>-<port>.dtbo`. Для Arducam IMX477 на першому порту камери
+   Modalix DevKit:
 
    ```console
-   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ env set dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
    sima$ saveenv
    ```
 

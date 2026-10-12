@@ -192,10 +192,10 @@ root@modalix:~# stress-ng --cpu 0 --verify -t 1m --log-brief --log-file /tmp/cpu
 
 ### 8. MIPI 相機
 
-1. 為受測連接埠載入相機 overlay。重新開機，中斷自動開機，並設定 `dtbos`。以第一個連接埠上的 IMX477 為例：
+1. 為受測連接埠載入相機 overlay。重新開機，中斷自動開機，並設定 `dtbos`。overlay 名稱的格式為 `modalix-som-<carrier>-<camera>-<port>.dtbo`。以 Modalix DevKit 第一個相機連接埠上的 Arducam IMX477 為例：
 
    ```console
-   sima$ env set dtbos imx477-0.dtbo isp-0.dtbo
+   sima$ env set dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
    sima$ saveenv
    ```
 
