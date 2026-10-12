@@ -88,6 +88,13 @@ sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
 最後のコマンドは、ビルドで使用するレイヤーを一覧表示します。`meta-simaai` が
 一覧に含まれていることを確認してください。
 
+:::warning[これは開発用イメージです]
+レイヤーのビルドテンプレートは、開発向けのイメージを作成する `debug-tweaks` イメージ機能を有効にします。
+また、イメージには `root` ユーザーと `sima` ユーザーの既定のパスワードが設定されています。
+製品を出荷する前に、`conf/local.conf` の `EXTRA_IMAGE_FEATURES` から `debug-tweaks` を削除し、
+独自のパスワードを設定してください。
+:::
+
 ## イメージをビルドする {#build}
 
 ```console

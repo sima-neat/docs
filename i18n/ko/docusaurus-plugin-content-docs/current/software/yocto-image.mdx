@@ -87,6 +87,13 @@ sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
 마지막 명령은 빌드에서 사용하는 레이어를 나열합니다. 목록에 `meta-simaai`가
 있는지 확인하십시오.
 
+:::warning[개발용 이미지입니다]
+레이어의 빌드 템플릿은 개발에 적합한 이미지를 만드는 `debug-tweaks` 이미지 기능을 활성화합니다.
+또한 이미지에는 `root` 및 `sima` 사용자의 기본 암호가 설정되어 있습니다.
+제품을 출하하기 전에 `conf/local.conf`의 `EXTRA_IMAGE_FEATURES`에서 `debug-tweaks`를 제거하고
+자체 암호를 설정하십시오.
+:::
+
 ## 이미지 빌드 {#build}
 
 ```console

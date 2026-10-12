@@ -89,6 +89,14 @@ sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
 The last command lists the layers that the build uses. Check that `meta-simaai`
 is in the list.
 
+:::warning[This is a development image]
+The layer's build template enables the `debug-tweaks` image feature, which
+makes an image suitable for development, and the image has default passwords
+for the `root` and `sima` users. Before you ship a product, remove
+`debug-tweaks` from `EXTRA_IMAGE_FEATURES` in `conf/local.conf`, and set your
+own passwords.
+:::
+
 ## Build the Image {#build}
 
 ```console

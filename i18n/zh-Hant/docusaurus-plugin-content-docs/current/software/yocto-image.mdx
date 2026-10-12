@@ -67,6 +67,10 @@ sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
 
 最後一個指令會列出建置所使用的 layer。請確認清單中包含 `meta-simaai`。
 
+:::warning[這是開發用映像檔]
+該 layer 的建置範本會啟用 `debug-tweaks` 映像檔功能，以產生適合開發的映像檔，而且映像檔已為 `root` 與 `sima` 使用者設定預設密碼。產品出貨前，請從 `conf/local.conf` 的 `EXTRA_IMAGE_FEATURES` 移除 `debug-tweaks`，並設定您自己的密碼。
+:::
+
 ## 建置映像檔 {#build}
 
 ```console
