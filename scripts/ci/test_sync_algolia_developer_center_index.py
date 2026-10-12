@@ -562,7 +562,7 @@ class DataComponentRecordTests(unittest.TestCase):
             "import {Widget} from '@site/src/components/Widget'; # Widget Body.",
         )
 
-    def test_large_data_is_cut_before_the_prose(self) -> None:
+    def test_large_data_fills_the_room_and_long_prose_leaves_the_reserved_share(self) -> None:
         limit = MODULE.DEFAULT_MAX_RECORD_BYTES
         boards = {
             f"board-{index:04d}.json": {
@@ -599,9 +599,36 @@ class DataComponentRecordTests(unittest.TestCase):
         self.assertGreater(MODULE.record_size(short), limit - 8)
         self.assertNotIn("Vendor0399 Model-0399", short["content"])
 
-        # Prose that already fills the record keeps every byte it had; no table text displaces it.
+        # Prose that fills the record gives up the reserved share, so that values found only
+        # in the table stay searchable. The prose still comes first.
+        long = with_data[("en", "long.mdx")]
+        long_prose_only = without_data[("en", "long.mdx")]["content"]
         self.assertTrue(without_data[("en", "long.mdx")]["content_truncated"])
-        self.assertEqual(with_data[("en", "long.mdx")], without_data[("en", "long.mdx")])
+        self.assertTrue(long["content_truncated"])
+        self.assertGreater(MODULE.record_size(long), limit - 8)
+        marker = " Vendor0000 Model-0000, Reference board; "
+        self.assertIn(marker, long["content"])
+        kept_prose, table_text = long["content"].split(marker, 1)
+        self.assertTrue(long_prose_only.startswith(kept_prose))
+        self.assertGreater(len(kept_prose), len(long_prose_only) // 2)
+        self.assertGreaterEqual(len((marker + table_text).encode("utf-8")), MODULE.DERIVED_RESERVED_BYTES - 8)
+
+    def test_table_text_that_fits_the_reserved_share_is_kept_whole(self) -> None:
+        limit = MODULE.DEFAULT_MAX_RECORD_BYTES
+        long_prose = "Довга проза, яка заповнює запис. " * 400
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, {"long.mdx": CARRIERS_DOC.replace("Carrier prose.", long_prose)})
+            write_data(root)
+            record = generate(root)[("en", "long.mdx")]
+            write_docs(root, {"short.mdx": CARRIERS_DOC})
+            table_text = generate(root)[("en", "short.mdx")]["content"].split("Carrier prose. ", 1)[1]
+
+        self.assertLessEqual(MODULE.record_size(record), limit)
+        self.assertLess(len(table_text.encode("utf-8")), MODULE.DERIVED_RESERVED_BYTES)
+        self.assertTrue(record["content_truncated"])
+        self.assertTrue(record["content"].endswith(table_text))
+        self.assertTrue(record["content"].startswith("import"))
 
     def test_missing_data_leaves_records_as_before(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

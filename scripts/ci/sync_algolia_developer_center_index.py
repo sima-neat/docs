@@ -33,6 +33,9 @@ SECTION_LABELS = {
 }
 I18N_DOCS_SUBDIR = Path("docusaurus-plugin-content-docs/current")
 DEFAULT_MAX_RECORD_BYTES = 9_500
+# Share of a record kept for table text that a component renders from JSON, when the page's
+# prose alone would fill the record. Capped at half of the record.
+DERIVED_RESERVED_BYTES = 4_000
 DEFAULT_BATCH_SIZE = 500
 DEFAULT_TASK_TIMEOUT_SECONDS = 300
 DEFAULT_TASK_POLL_INTERVAL_SECONDS = 1
@@ -305,24 +308,49 @@ def record_size(record: dict) -> int:
     return len(json.dumps(record, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
 
-def fit_record(record: dict, max_record_bytes: int) -> tuple[dict, bool]:
-    if record_size(record) <= max_record_bytes:
-        return record, False
+def join_content(prose: str, derived: str) -> str:
+    return " ".join(part for part in (prose, derived) if part)
 
-    content = str(record.get("content", ""))
+
+def longest_fitting_content(record: dict, build, upper: int, max_record_bytes: int) -> str:
+    """Return build(n) for the largest n in 0..upper whose record fits the size limit."""
     lo = 0
-    hi = len(content)
-    best = ""
+    hi = upper
+    best = build(0)
     while lo <= hi:
         mid = (lo + hi) // 2
         candidate = dict(record)
-        candidate["content"] = content[:mid]
+        candidate["content"] = build(mid)
         candidate["content_truncated"] = True
         if record_size(candidate) <= max_record_bytes:
             best = candidate["content"]
             lo = mid + 1
         else:
             hi = mid - 1
+    return best
+
+
+def fit_record(record: dict, max_record_bytes: int, derived: str = "") -> tuple[dict, bool]:
+    """Cut the record's content to the size limit. `derived` is the table text at the end of
+    the content: the prose is cut first, down to what leaves the reserved share for the table
+    text, and the table text then fills the room that is left."""
+    if record_size(record) <= max_record_bytes:
+        return record, False
+
+    content = str(record.get("content", ""))
+    if derived and content.endswith(derived):
+        prose = content[: len(content) - len(derived)].rstrip()
+        reserved = min(DERIVED_RESERVED_BYTES, max_record_bytes // 2)
+        tail = derived.encode("utf-8")[:reserved].decode("utf-8", errors="ignore")
+        kept = longest_fitting_content(
+            record, lambda n: join_content(prose[:n], tail), len(prose), max_record_bytes
+        )
+        prose = kept[: len(kept) - len(tail)].rstrip() if kept.endswith(tail) else ""
+        best = longest_fitting_content(
+            record, lambda n: join_content(prose, derived[:n]), len(derived), max_record_bytes
+        )
+    else:
+        best = longest_fitting_content(record, lambda n: content[:n], len(content), max_record_bytes)
 
     record["content"] = best
     record["content_truncated"] = True
@@ -595,13 +623,11 @@ def generate_records(
                 continue
 
             # Tables that a component renders from JSON are not in the Markdown source.
-            # There is one record per page, so their text goes after the prose: when the
-            # record is over the size limit, fit_record cuts from the end and the derived
-            # text gives way before the page's own words do.
-            content = body[:20_000]
-            derived = data_component_text(raw, repo_root, language)
-            if derived:
-                content = f"{content} {derived}"[:20_000]
+            # There is one record per page, so their text goes after the prose. When the
+            # record is over the size limit, fit_record keeps a reserved share for it, so
+            # that values found only in a table stay searchable on a long page.
+            derived = data_component_text(raw, repo_root, language)[:20_000]
+            content = join_content(body[:20_000], derived)
 
             title = title_from_markdown(path, raw)
             route = route_relative_to_site_base(url, site_base_url)
@@ -619,7 +645,7 @@ def generate_records(
                 "content": content,
                 "hierarchy": {"lvl0": section, "lvl1": title},
             }
-            record, was_trimmed = fit_record(record, max_record_bytes)
+            record, was_trimmed = fit_record(record, max_record_bytes, derived)
             trimmed += int(was_trimmed)
             max_seen = max(max_seen, record_size(record))
             records.append(record)
