@@ -1,0 +1,38 @@
+---
+title: Modalix DevKit 介面支援情形
+description: 平台版本所支援的 Modalix DevKit 介面，以及各介面對應的連接器、SoM 訊號與 device tree。
+sidebar_position: 2
+---
+
+import {BoardSupportTable} from '@site/src/components/BoardSupport';
+
+# Modalix DevKit 介面支援情形
+
+本頁列出 Modalix DevKit 的介面。每個介面都會說明電路板上的連接器、其背後的 Modalix SoM 訊號，以及平台版本 2.1.3 的 device tree 如何處理。DevKit 是將 Modalix SoM 安裝在 Waveshare 載板上的產品，因此本表僅適用於這個組合。
+
+:::caution[尚未在硬體上驗證]
+本頁依據平台版本 2.1.3 的核心原始碼與本網站的其他頁面撰寫，目前尚無任何一列有硬體測試紀錄。
+:::
+
+## 介面 {#interfaces}
+
+本表涵蓋序列主控台、Gigabit 乙太網路、USB、HDMI、NVMe 儲存裝置、MIPI CSI-2 相機、I2C、GPIO、SPI、I2S 音訊、Bluetooth、eMMC、即時時鐘與 CAN。若介面有對應的指南，其名稱會連結至該指南。
+
+<BoardSupportTable />
+
+## 如何閱讀狀態 {#status}
+
+- **支援**：此版本在這塊電路板上提供該介面。可能是 SoM 的 device tree 已啟用，或是該元件位於 SoM 上而不需設定。
+- **需要 overlay**：硬體已具備，但此版本的 device tree 未啟用。請依照 [Device Tree 與 Overlay](../software/device-tree.mdx) 的說明加入 device tree overlay。
+- **不支援**：該介面無法搭配 Modalix SoM 運作。
+- **尚未確認**：本頁沒有相關資訊。
+
+## 其他電路板 {#other-boards}
+
+SoM 訊號在每款載板上都相同，但連接器與 overlay 不同。若使用其他載板，請從[第三方載板](../design/third-party-carriers.mdx)與[載板硬體啟動](../design/som-carrier.mdx)開始。
+
+## 後續步驟
+
+- [低速 I/O](../interfaces/low-speed-io.mdx)：GPIO、UART、I2C 與 SPI 的腳位對應及 device tree 範例。
+- [支援的 MIPI 相機](../interfaces/supported-cameras.mdx)：DevKit 連接埠適用的相機 overlay。
+- [從原始碼建置 BSP](../software/build-from-source.mdx)：建置並安裝 overlay。

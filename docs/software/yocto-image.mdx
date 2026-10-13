@@ -1,0 +1,155 @@
+---
+title: Build a Complete Image with Yocto
+description: Build a complete Modalix image from source with the public Yocto layer, and find the files to flash.
+sidebar_position: 5
+---
+
+# Build a Complete Image with Yocto
+
+The public Yocto layer, [meta-simaai](https://github.com/SiMa-ai/meta-simaai),
+builds a complete image for a Modalix board from source. One build produces
+U-Boot, the kernel, the device trees and overlays, the SiMa.ai firmware, and a
+minimal root filesystem, in one file that you can flash. Use it when you need
+to produce the whole image yourself. To change the kernel or a device tree on a
+board that already boots, [Build the BSP from Source](./build-from-source.mdx)
+is faster.
+
+:::caution[Not yet validated on hardware]
+The build on this page was run once, on 2026-10-06, in an Ubuntu 22.04
+container, from the layer at its release 2.1.3 commit. The resulting image has
+not been written to a board or booted.
+:::
+
+:::note
+Building a complete eLxr image from your own sources is not documented yet.
+eLxr remains the preferred path for board bring-up. See
+[eLxr or Yocto](./index.md#elxr-or-yocto).
+:::
+
+## Before You Start {#before-you-start}
+
+- Use a Linux build host. The layer's manual recommends Ubuntu 22.04, and says
+  that the Yocto Project does not support WSL.
+- The recipes fetch the SiMa.ai kernel and U-Boot sources from GitHub with SSH
+  URLs. Put a GitHub SSH key on the build host, or tell Git to use HTTPS for
+  those URLs:
+
+  ```console
+  sima-user@sima-user-machine:~$ git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  sima-user@sima-user-machine:~$ git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+  ```
+
+- Install the
+  [build host packages](https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#required-packages-for-the-build-host)
+  that the Yocto Project lists for Ubuntu, and make the `en_US.UTF-8` locale
+  available. Then install the packages that the layer's manual adds:
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## Get the Layers {#layers}
+
+The build uses the `scarthgap` release of the Yocto Project. Clone these layers
+into one directory:
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` and `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+Keep these directory names, and keep the directories side by side. The template
+finds each layer by its path next to the build directory.
+
+The [build manual](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
+in the layer gives the repository and the exact revision of each one. Use those
+revisions. To get the SiMa.ai layer:
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## Set Up the Build {#setup}
+
+The layer has a template that fills in the layer list and the build
+configuration. From the directory that holds the layers:
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+The last command lists the layers that the build uses. Check that `meta-simaai`
+is in the list.
+
+:::warning[This is a development image]
+The layer's build template enables the `debug-tweaks` image feature, which
+makes an image suitable for development, and the image has default passwords
+for the `root` and `sima` users. Before you ship a product, remove
+`debug-tweaks` from `EXTRA_IMAGE_FEATURES` in `conf/local.conf`, and set your
+own passwords.
+:::
+
+## Build the Image {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+Set `MACHINE=modalix` on the command line, because the template's default is a
+different board. The image has a minimal root filesystem with the SiMa.ai
+firmware, the kernel modules, OpenSSH, and swupdate.
+
+The machine configuration accepts the `commercial` license flag, so the build
+includes the SiMa.ai firmware without asking. Read the license in
+[`licenses/SiMaai-EULA-1.0`](https://github.com/SiMa-ai/meta-simaai/blob/master/licenses/SiMaai-EULA-1.0)
+before you distribute an image.
+
+One first build, with 12 build threads on a 20-core machine, took about
+35 minutes and used about 70 GB of disk space.
+
+## Find the Output {#output}
+
+The build writes its output to `tmp/deploy/images/modalix` in the build
+directory.
+
+| File | Use |
+| --- | --- |
+| `simaai-image-minimal-modalix.rootfs.wic.gz` and `.wic.bmap` | The complete eMMC image and its block map. Flash these. |
+| `simaai-image-minimal-modalix.rootfs.ext4.gz` | The root filesystem alone |
+| `simaai-image-minimal-modalix.rootfs.cpio.gz` | The root filesystem as an initial RAM disk, for booting from the network |
+| `Image`, `u-boot.bin`, `.dtb`, and `overlays/*.dtbo` | The kernel, U-Boot, the device trees, and the overlays |
+
+## Partition Layout {#partitions}
+
+The eMMC image has these partitions, in a GPT partition table:
+
+| Partition | Size | Contents |
+| --- | --- | --- |
+| `u-boot0` and `u-boot1` | 2 MB each | U-Boot, in two copies |
+| `boot` | 512 MB, FAT | The `boot-0` and `boot-1` directories, each with a kernel, the device trees, and the overlays |
+| `platform0` and `platform1` | 2 GB each, ext4 | The root filesystem, in two copies |
+| `userdata` | About 10 GB, ext4 | User data |
+
+## Flash the Image {#flash}
+
+Write the `.wic.gz` file to the eMMC of the board with its `.wic.bmap` file, as
+described in [Flash an Image to eMMC](../deployment/flash-image.mdx).
+
+## Next Steps
+
+- [Flash an Image to eMMC](../deployment/flash-image.mdx): boot the board from
+  the network or an SD card and write the image.
+- [Build and Apply an Update Package](../deployment/update-package.mdx): update a
+  board without writing the whole eMMC again.
+- [Board Support Package](./index.md): the sources, and how eLxr and Yocto
+  compare.
+- [Release Compatibility](./release-compatibility.mdx): the kernel and U-Boot
+  commit behind each platform release.

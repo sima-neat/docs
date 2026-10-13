@@ -1,0 +1,146 @@
+---
+title: 디바이스 트리 및 오버레이
+description: 릴리스에 포함된 디바이스 트리 오버레이를 선택하거나 직접 작성하고, 부팅 시 로드하여 드라이버가 바인딩되는지 확인합니다.
+sidebar_position: 4
+---
+
+# 디바이스 트리 및 오버레이
+
+디바이스 트리는 커널이 드라이버를 바인딩할 수 있도록 보드의 하드웨어를 기술합니다.
+Modalix 보드는 기본 디바이스 트리로 부팅한 다음, 카메라처럼 연결한 장치에 맞는 오버레이를
+적용합니다. 이 페이지에서는 릴리스에 포함된 오버레이를 선택하는 방법, 직접 오버레이를
+작성하는 방법, 결과를 확인하는 방법을 설명합니다.
+
+:::caution[하드웨어에서 아직 검증되지 않음]
+이 페이지는 플랫폼 릴리스 2.1.3의 커널 및 U-Boot 소스와 이 사이트의 다른 가이드를
+바탕으로 작성되었습니다. 여기에 적힌 절차 그대로는 아직 보드에서 실행해 보지
+않았습니다.
+:::
+
+## 보드가 디바이스 트리를 로드하는 방식 {#how-it-loads}
+
+1. U-Boot가 활성 부트 디렉터리(`boot-0` 또는 `boot-1`)에서 보드의 기본 디바이스 트리를
+   로드합니다.
+2. U-Boot가 `dtbos` 변수에 지정된 각 오버레이를 나열된 순서대로 적용합니다.
+3. 커널이 병합된 디바이스 트리로 시작합니다.
+
+디바이스 트리는 하드웨어를 기술할 뿐, 드라이버를 추가하지는 않습니다. 장치의
+드라이버는 이미 커널에 포함되어 있거나 모듈로 설치되어 있어야 합니다. 커널 문서의
+[디바이스 트리 사용 모델](https://docs.kernel.org/devicetree/usage-model.html)을 참조하십시오.
+
+## 릴리스의 오버레이 선택 {#shipped-overlay}
+
+릴리스에는 지원되는 카메라용 오버레이와 PCIe 및 플래시 구성용 오버레이가 있습니다.
+소스는 커널 트리의
+[overlays 디렉터리](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays)에
+있습니다.
+
+1. 보드에 있는 오버레이를 나열합니다.
+
+   ```console
+   sima@modalix:~$ ls /boot/boot-*/*.dtbo
+   ```
+
+2. U-Boot를 중단하고 `dtbos`를 해당 오버레이로 설정한 다음 부팅합니다.
+
+   ```console
+   sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+오버레이를 두 개 이상 적용하려면 이름을 공백으로 구분하십시오. 카메라 오버레이는
+[지원되는 MIPI 카메라](../interfaces/supported-cameras.mdx)를 참조하십시오.
+
+## 직접 오버레이 작성 {#write-overlay}
+
+릴리스에 오버레이가 없는 장치를 연결할 때는 오버레이를 작성합니다.
+다음 예에서는 I2C 버스 0의 주소 `0x27`에 I2C GPIO 확장기를 추가합니다.
+
+```dts
+/dts-v1/;
+/plugin/;
+
+&i2c00 {
+    status = "okay";
+    clock-frequency = <400000>;
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    pcf8574: gpio@27 {
+        compatible = "nxp,pcf8574";
+        reg = <0x27>;
+        gpio-controller;
+        #gpio-cells = <2>;
+    };
+};
+```
+
+- `&i2c00`은 기본 디바이스 트리의 레이블로 변경할 노드를 선택합니다.
+- `status = "okay"`는 기본 디바이스 트리에서 비활성화된 노드를 활성화합니다.
+- `#address-cells`와 `#size-cells`는 기본 디바이스 트리에 있는 버스의 값을 다시 적은 것입니다.
+  이 값이 없으면 `dtc`가 `reg`를 검사할 수 없다는 경고를 출력합니다.
+- 자식 노드가 장치입니다. `compatible`은 드라이버를 선택하고, `reg`는 버스에서의
+  장치 주소입니다.
+
+오버레이를 작성하기 전에 커널에 드라이버가 있는지 확인하십시오. `compatible` 문자열은
+[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/master/arch/arm64/configs/simaai_modalix_defconfig)에서
+활성화된 드라이버이거나, 직접 빌드하여 설치하는 모듈의 것이어야 합니다.
+
+더 큰 예로는 커널 트리의 카메라 오버레이, 예를 들어
+[`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso)을
+참조하십시오. 이 오버레이는 센서용 클록을 추가하고, I2C 버스와 파워다운 핀을 설정하며,
+CSI 인터페이스와 비디오 노드를 활성화하고, 센서를 데이터 레인 두 개로 CSI 인터페이스에
+연결합니다.
+
+## 오버레이 빌드 및 설치 {#build-install}
+
+1. [소스에서 BSP 빌드](./build-from-source.mdx)에 설명된 대로 오버레이 소스를
+   `.dtbo` 파일로 컴파일합니다.
+2. `.dtbo` 파일을 보드의 활성 부트 디렉터리에 복사합니다.
+3. U-Boot에서 이미 나열된 오버레이 뒤에 이 파일을 `dtbos`에 추가합니다.
+
+   ```console
+   sima$ env set dtbos $dtbos my-device.dtbo
+   sima$ saveenv
+   sima$ boot
+   ```
+
+## 결과 확인 {#check}
+
+다음 순서로 확인하십시오. 각 단계는 앞 단계가 성공해야 의미가 있습니다.
+
+1. **오버레이가 적용되었는지 확인합니다.** 커널이 사용 중인 디바이스 트리에서 새 노드를
+   찾습니다.
+
+   ```console
+   root@modalix:~# find /proc/device-tree -name "gpio@27"
+   ```
+
+2. **드라이버가 장치에 바인딩되었는지 확인합니다.** 커널 로그에서 드라이버를 찾습니다.
+
+   ```console
+   root@modalix:~# dmesg | grep -i pcf857x
+   ```
+
+3. **장치가 동작하는지 확인합니다.** 해당 종류의 장치에 맞는 도구를 사용합니다. GPIO
+   확장기의 경우 `gpiodetect`에 새 칩이 나열됩니다. 카메라의 경우 `cam -l`에 카메라가
+   나열됩니다.
+
+## 동작하지 않는 경우 {#if-it-fails}
+
+| 증상 | 가능한 원인 | 확인할 항목 |
+| --- | --- | --- |
+| 노드가 `/proc/device-tree`에 없음 | U-Boot가 오버레이를 적용하지 않음 | U-Boot의 `printenv dtbos`, 활성 부트 디렉터리의 파일, U-Boot 콘솔의 오류 |
+| 노드는 있지만 드라이버가 바인딩되지 않음 | 커널에 `compatible` 문자열에 맞는 드라이버가 없음 | 커널 구성과 `dmesg` |
+| 드라이버가 오류를 보고함 | 버스 또는 주소가 잘못되었거나 클록, 전원, 리셋, GPIO가 누락됨 | `dmesg`, I2C 장치의 경우 `i2cdetect` |
+| 다른 장치가 동작하지 않게 됨 | 두 오버레이가 같은 노드 또는 같은 핀을 변경함 | 오버레이를 하나씩 적용 |
+
+## 다음 단계
+
+- [소스에서 BSP 빌드](./build-from-source.mdx): 커널, 디바이스 트리, 오버레이
+  빌드.
+- [저속 I/O](../interfaces/low-speed-io.mdx): GPIO, UART, I2C, SPI의
+  핀 매핑과 디바이스 트리 노드.
+- [Modalix DevKit 인터페이스 지원 현황](../reference/devkit-interface-support.mdx):
+  릴리스의 디바이스 트리에서 활성화된 인터페이스.

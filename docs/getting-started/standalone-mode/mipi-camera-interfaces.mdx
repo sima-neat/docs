@@ -34,7 +34,7 @@ In U-Boot, set the `dtbos` variable to the appropriate **Device Tree Blob Overla
 The filename follows this pattern:
 
 ```text
-modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>CAM.dtbo
+modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>.dtbo
 ```
 
 Select each component based on your hardware:
@@ -43,30 +43,40 @@ Select each component based on your hardware:
 | --- | --- | --- |
 | Carrier Board | `connectech`, `seeedstudio`, `waveshare` | The carrier board model |
 | Camera Manufacturer | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems, or Leopard Imaging |
-| Sensor Type | `IMX477`, `IMX568`, `IMX678`, `AR0234`, `OG05C10` | The camera sensor model |
+| Sensor Type | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | The camera sensor model |
 | Port | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | The MIPI port number connected to the camera |
 
-For example, a Connectech carrier board with a Leopard Imaging IMX477 sensor connected to port 0:
+By default, the Modalix DevKit has the Waveshare carrier board. For example, for an Arducam IMX477 camera connected to port 1 of a Modalix DevKit:
 
 ```console
-sima$ setenv dtbos modalix-som-connectech-LI-IMX477-0CAM.dtbo ; saveenv ; boot
+sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo ; saveenv ; boot
 ```
 
-The full list of available `.dtbo` files is:
+The camera overlays in platform release 2.1.3 are listed below. Other releases use different names for some overlays. To list the overlays on your board, run this command from Linux:
+
+```console
+sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
+```
+
+For the camera to order, the ports on each carrier board, and the sensor modes behind each overlay, see [Supported MIPI Cameras](../../interfaces/supported-cameras.mdx).
 
 ```text
 modalix-som-connectech-ARDU-IMX477-0CAM.dtbo
 modalix-som-connectech-ARDU-IMX477-1CAM.dtbo
 modalix-som-connectech-ARDU-IMX477-2CAM.dtbo
 modalix-som-connectech-ARDU-IMX477-3CAM.dtbo
-modalix-som-connectech-ECON-IMX568-0CAM.dtbo
-modalix-som-connectech-ECON-IMX568-1CAM.dtbo
-modalix-som-connectech-ECON-IMX568-2CAM.dtbo
-modalix-som-connectech-ECON-IMX568-3CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-FPGA-IMX568-3CAM.dtbo
 modalix-som-connectech-ECON-IMX678-0CAM.dtbo
 modalix-som-connectech-ECON-IMX678-1CAM.dtbo
 modalix-som-connectech-ECON-IMX678-2CAM.dtbo
 modalix-som-connectech-ECON-IMX678-3CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-0CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-1CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-2CAM.dtbo
+modalix-som-connectech-ECON-KOBE1-IMX568-3CAM.dtbo
 modalix-som-connectech-LI-AR0234-0CAM.dtbo
 modalix-som-connectech-LI-AR0234-1CAM.dtbo
 modalix-som-connectech-LI-AR0234-2CAM.dtbo
@@ -76,28 +86,29 @@ modalix-som-connectech-LI-OG05C10-1CAM.dtbo
 modalix-som-connectech-LI-OG05C10-2CAM.dtbo
 modalix-som-connectech-LI-OG05C10-3CAM.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
-modalix-som-seeedstudio-ARDU-IMX477-1CAM.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX568-1CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-FPGA-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-FPGA-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
-modalix-som-seeedstudio-ECON-IMX678-1CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
+modalix-som-seeedstudio-ECON-KOBE1-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-KOBE1-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
-modalix-som-seeedstudio-LI-AR0234-1CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
-modalix-som-seeedstudio-LI-OG05C10-1CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-2CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-DUAL.dtbo
+modalix-som-waveshare-ECON-FPGA-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-FPGA-IMX568-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX568-1CAM.dtbo
 modalix-som-waveshare-ECON-IMX568-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-1CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
+modalix-som-waveshare-ECON-KOBE1-IMX568-1CAM.dtbo
+modalix-som-waveshare-ECON-KOBE1-IMX568-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-1CAM.dtbo
 modalix-som-waveshare-LI-AR0234-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-DUAL.dtbo
@@ -125,3 +136,31 @@ To validate the interfaces, connect the Modalix DevKit to a display and log in. 
    ```console
    sima@modalix:~$ rm -rf frame* && cam -c 1 --capture=1 -F -s pixelformat=NV12
    ```
+
+## Use Multiple Cameras {#multiple-cameras}
+
+To use more than one camera, set `dtbos` to one overlay for each camera, separated by spaces. U-Boot applies every overlay in the list. This works from platform release 2.1.0.
+
+The cameras can be different models. Use the overlay that matches the model and port of each camera. For example, for a Modalix DevKit with an e-con Systems IMX678 camera on port 1 and a Leopard Imaging OG05C10 camera on port 2:
+
+```console
+sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
+sima$ printenv dtbos
+sima$ saveenv ; boot
+```
+
+- Use one overlay for each port.
+- The order of the overlays does not matter.
+- A `DUAL` overlay sets up both ports of the Waveshare carrier board with the same camera model. Use either a `DUAL` overlay or two port overlays, not both.
+- For the ports that have an overlay on each carrier board, see [Supported MIPI Cameras](../../interfaces/supported-cameras.mdx#ports).
+- Not every combination has been tested. Verify yours with `cam -l` and a capture from each camera.
+
+After the board boots, run `cam -l`. It lists one entry for each camera.
+
+You can also set the variable from Linux, without the serial console:
+
+```console
+sima@modalix:~$ fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ fw_printenv dtbos
+sima@modalix:~$ sudo reboot
+```

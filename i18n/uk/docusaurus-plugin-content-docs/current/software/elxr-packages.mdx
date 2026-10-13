@@ -1,0 +1,168 @@
+---
+title: Додавання пакетів і служб в eLxr
+description: Установіть пакет Debian на плату з eLxr, запакуйте власну службу у файл .deb і дізнайтеся, що оновлення прошивки робить із вашими змінами.
+sidebar_position: 3
+---
+
+# Додавання пакетів і служб в eLxr
+
+Образ Modalix побудовано на eLxr — дистрибутиві, похідному від Debian. Програмне забезпечення
+додають на плату так само, як у Debian: у вигляді пакетів, які встановлюють за допомогою `apt`.
+На цій сторінці показано, як установити пакет, як запакувати власну службу та що оновлення
+прошивки робить із вашими змінами.
+
+:::caution[Ще не перевірено на обладнанні]
+Цю сторінку написано на основі загальнодоступних репозиторіїв SiMa.ai. Приклад пакета зібрали
+та встановили в контейнері Debian. Кроки в тому вигляді, у якому їх тут наведено, на платі
+не виконували.
+:::
+
+## Установлення пакета {#install}
+
+1. Під’єднайте плату до мережі, з якої доступні репозиторії пакетів.
+2. Оновіть списки пакетів:
+
+   ```console
+   sima@modalix:~$ sudo apt update
+   ```
+
+3. Установіть пакет. Наприклад, щоб установити інструменти I2C:
+
+   ```console
+   sima@modalix:~$ sudo apt install i2c-tools
+   ```
+
+SiMa.ai постачає власне програмне забезпечення на плату у вигляді пакетів Debian. Щоб переглянути
+пакети SiMa.ai на платі:
+
+```console
+sima@modalix:~$ dpkg -l | grep simaai
+```
+
+## Пакування власної служби {#package-service}
+
+Щоб запускати власну програму як службу, зберіть для неї пакет Debian. Пакет установлює
+файли, а його сценарій після встановлення вмикає службу. У цьому прикладі пакується програма
+з назвою `my-app`.
+
+1. На хості збирання створіть таке дерево каталогів. Розмістіть програму в
+   `usr/bin/my-app`. Вона має працювати на платі, тому зберіть її для arm64. Про контейнер
+   збирання див. у розділі
+   [Збирання BSP з вихідного коду](./build-from-source.mdx#set-up-the-build-container).
+
+   ```text
+   my-app/
+   ├── DEBIAN/
+   │   ├── control
+   │   └── postinst
+   ├── lib/systemd/system/my-app.service
+   └── usr/bin/my-app
+   ```
+
+2. Створіть `DEBIAN/control`. У полі `Depends` перелічено пакети, потрібні вашій
+   програмі:
+
+   ```text
+   Package: my-app
+   Version: 1.0.0
+   Section: utils
+   Priority: optional
+   Architecture: arm64
+   Depends: python3
+   Maintainer: Your Name <you@example.com>
+   Description: Example service for a Modalix board
+   ```
+
+3. Створіть файл юніта `lib/systemd/system/my-app.service`:
+
+   ```ini
+   [Unit]
+   Description=My application
+   After=network.target
+
+   [Service]
+   Type=simple
+   ExecStart=/usr/bin/my-app
+   Restart=on-failure
+   RestartSec=5
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+4. Створіть `DEBIAN/postinst`. Під час установлення пакета цей сценарій вмикає та запускає
+   службу:
+
+   ```sh
+   #!/bin/sh
+   set -e
+   if [ -d /run/systemd/system ]; then
+       systemctl daemon-reload
+       systemctl enable my-app.service
+       systemctl restart my-app.service
+   fi
+   ```
+
+5. Зробіть сценарій і програму виконуваними та зберіть пакет:
+
+   ```console
+   sima-user@sima-user-machine:~$ chmod 0755 my-app/DEBIAN/postinst my-app/usr/bin/my-app
+   sima-user@sima-user-machine:~$ dpkg-deb --root-owner-group --build my-app my-app_1.0.0_arm64.deb
+   ```
+
+6. Скопіюйте пакет на плату та встановіть його. `apt` також установлює пакети, від яких він
+   залежить:
+
+   ```console
+   sima-user@sima-user-machine:~$ scp my-app_1.0.0_arm64.deb sima@<board-ip>:/tmp/
+   sima@modalix:~$ sudo apt install /tmp/my-app_1.0.0_arm64.deb
+   ```
+
+7. Перевірте, що служба працює, і прочитайте її журнал:
+
+   ```console
+   sima@modalix:~$ systemctl status my-app.service
+   sima@modalix:~$ journalctl -u my-app.service
+   ```
+
+Повний приклад такого пакета — це
+[утиліта для камер MIPI](https://github.com/sima-neat/insight/tree/main/mipi-util)
+у репозиторії SiMa.ai Insight.
+
+## Що оновлення прошивки робить із вашими змінами {#updates}
+
+`sima-cli update` працює по-різному в кожній лінійці випусків, тому з вашими пакетами він
+поводиться по-різному.
+
+| Випуск платформи | Що робить оновлення | Ваші пакети та служби |
+| --- | --- | --- |
+| 2.1 | Оновлює пакети SiMa.ai на місці. Новий образ не записується. | Не підтверджено. Перевірте їх після оновлення. |
+| 3.0 і новіші | Записує повну кореневу файлову систему в неактивний слот і завантажується з нього. | Зберігаються в оверлейній файловій системі на `/data`, якщо оновлення не очищує її. Якщо очищує, установіть їх знову. |
+
+- У випуску 2.1 оновлення скидає середовище U-Boot. Після оновлення знову задайте `dtbos`
+  та інші змінні, які ви змінювали.
+- Відновлення плати або запис на неї повного образу видаляє ваші пакети
+  в будь-якому випуску.
+- Зберігайте свої файли `.deb` і перелік установленого, щоб можна було
+  встановити їх знову.
+- У випуску 3.0 і новіших `sima-cli update --inspect` показує, що містить оверлейна
+  файлова система.
+
+Випуск платформи 3.0 ще не вийшов. Його поведінку тут описано за
+[посібником з оновлення системи](https://github.com/sima-neat/sima-cli/blob/main/docs/sima-cli/guides/system-updates.md)
+для `sima-cli`, і вона може змінитися.
+
+## Що не охоплено {#not-covered}
+
+- Збирання повного образу eLxr, який уже містить ваші пакети. Див.
+  [eLxr чи Yocto](./index.md#elxr-or-yocto).
+- Публікація пакетів у власному репозиторії пакетів.
+
+## Наступні кроки
+
+- [Збирання BSP з вихідного коду](./build-from-source.mdx): збирання ядра, U-Boot
+  і дерев пристроїв.
+- [Дерева пристроїв та оверлеї](./device-tree.mdx): опис нового обладнання для
+  ядра.
+- [Оновлення прошивки](../getting-started/firmware-update/index.mdx): оновлення плати
+  образом SiMa.ai.

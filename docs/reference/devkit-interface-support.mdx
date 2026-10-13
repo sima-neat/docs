@@ -1,0 +1,53 @@
+---
+title: Modalix DevKit Interface Support
+description: Which interfaces of the Modalix DevKit the platform release supports, with the connector, the SoM signals, and the device tree behind each one.
+sidebar_position: 2
+---
+
+import {BoardSupportTable} from '@site/src/components/BoardSupport';
+
+# Modalix DevKit Interface Support
+
+This page lists the interfaces of the Modalix DevKit. For each one, it shows the
+connector on the board, the Modalix SoM signals behind it, and what the device
+tree of platform release 2.1.3 does with it. The DevKit is a Modalix SoM on the
+Waveshare carrier board, so the table applies to that combination only.
+
+:::caution[Not yet validated on hardware]
+This page is written from the kernel source for platform release 2.1.3 and from
+the other pages of this site. No row has a recorded hardware test yet.
+:::
+
+## Interfaces {#interfaces}
+
+The table covers the serial console, Gigabit Ethernet, USB, HDMI, NVMe storage,
+MIPI CSI-2 cameras, I2C, GPIO, SPI, I2S audio, Bluetooth, eMMC, the real-time
+clock, and CAN. The name of an interface links to its guide, where there is one.
+
+<BoardSupportTable />
+
+## How to Read the Status {#status}
+
+- **Supported**: the release provides the interface on this board. Either the
+  SoM device tree enables it, or the part is on the SoM and needs no setup.
+- **Needs an overlay**: the hardware is there, but the release device tree does
+  not enable it. Add a device-tree overlay, as described in
+  [Device Trees and Overlays](../software/device-tree.mdx).
+- **Not supported**: the interface does not work with the Modalix SoM.
+- **Not confirmed**: this page has no information.
+
+## Other Boards {#other-boards}
+
+The SoM signals are the same on every carrier board. The connectors and the
+overlays differ. For another carrier board, start from
+[Third-Party Carrier Boards](../design/third-party-carriers.mdx) and
+[Carrier Board Bring-up](../design/som-carrier.mdx).
+
+## Next Steps
+
+- [Low-Speed I/O](../interfaces/low-speed-io.mdx): pin mapping and device-tree
+  examples for GPIO, UART, I2C, and SPI.
+- [Supported MIPI Cameras](../interfaces/supported-cameras.mdx): the camera
+  overlays for the DevKit ports.
+- [Build the BSP from Source](../software/build-from-source.mdx): build and
+  install an overlay.

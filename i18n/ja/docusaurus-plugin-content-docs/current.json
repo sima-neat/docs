@@ -1,11 +1,15 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "はじめに",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "DevKit の評価",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "クイックスタートガイド",
     "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "DevKit バリエーション",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Standalone Mode": {
     "message": "スタンドアロンモード",
@@ -15,21 +19,29 @@
     "message": "PCIe モード",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "ファームウェア更新",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Update & Recover SiMa Images": {
+    "message": "SiMa イメージの更新と復旧",
+    "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.DevKit Variants": {
-    "message": "DevKit バリエーション",
-    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.link.Next Step: Develop Software": {
+    "message": "次のステップ: ソフトウェア開発",
+    "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "ツール",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "SoM で構築する",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "リファレンス",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "システムソフトウェアのビルド",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "カメラの統合",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "リファレンスとダウンロード",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "技術ノート",

@@ -1,0 +1,39 @@
+{
+  "order": 2,
+  "id": "econ-imx568",
+  "vendor": "e-con Systems",
+  "sensor": "Sony IMX568",
+  "shutter": "global",
+  "overlay": "ECON-IMX568",
+  "variant": {
+    "en": "Standard camera",
+    "ja": "標準カメラ",
+    "ko": "표준 카메라",
+    "zh-Hant": "標準相機",
+    "uk": "Стандартна камера"
+  },
+  "ordering": {
+    "status": "unconfirmed"
+  },
+  "documents": [
+    {
+      "kind": "modulePage",
+      "url": "https://www.e-consystems.com/camera-modules/5mp-sony-pregius-imx568-global-shutter-camera-module.asp"
+    }
+  ],
+  "lanes": 2,
+  "modes": [
+    {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30,
+      "bitDepth": 12
+    }
+  ],
+  "overlays": {
+    "waveshare": [
+      "1CAM",
+      "2CAM"
+    ]
+  }
+}

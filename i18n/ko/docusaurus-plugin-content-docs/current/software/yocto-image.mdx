@@ -1,0 +1,151 @@
+---
+title: Yocto로 전체 이미지 빌드
+description: 공개 Yocto 레이어로 Modalix의 전체 이미지를 소스에서 빌드하고, 플래싱할 파일을 찾습니다.
+sidebar_position: 5
+---
+
+# Yocto로 전체 이미지 빌드
+
+공개 Yocto 레이어인 [meta-simaai](https://github.com/SiMa-ai/meta-simaai)는
+Modalix 보드용 전체 이미지를 소스에서 빌드합니다. 한 번의 빌드로 U-Boot, 커널,
+디바이스 트리와 오버레이, SiMa.ai 펌웨어, 최소 루트 파일 시스템이 플래싱 가능한 하나의
+파일로 만들어집니다. 이미지 전체를 직접 만들어야 할 때 사용하십시오. 이미 부팅되는
+보드에서 커널이나 디바이스 트리를 변경하려면
+[소스에서 BSP 빌드](./build-from-source.mdx)가
+더 빠릅니다.
+
+:::caution[하드웨어에서 아직 검증되지 않음]
+이 페이지의 빌드는 2026-10-06에 Ubuntu 22.04 컨테이너에서, 릴리스 2.1.3 커밋의 레이어로 한 번
+실행했습니다. 만들어진 이미지를 보드에 플래싱하거나 부팅해 보지는 않았습니다.
+:::
+
+:::note
+자체 소스로 전체 eLxr 이미지를 빌드하는 방법은 아직 문서화되지 않았습니다.
+보드 브링업에는 여전히 eLxr를 권장합니다.
+[eLxr 또는 Yocto](./index.md#elxr-or-yocto)를 참조하십시오.
+:::
+
+## 시작하기 전에 {#before-you-start}
+
+- Linux 빌드 호스트를 사용하십시오. 레이어의 매뉴얼은 Ubuntu 22.04를 권장하며,
+  Yocto Project가 WSL을 지원하지 않는다고 명시합니다.
+- 레시피는 SiMa.ai 커널과 U-Boot 소스를 SSH URL로 GitHub에서 가져옵니다. 빌드 호스트에
+  GitHub SSH 키를 설정하거나, 이 URL에 HTTPS를 사용하도록 Git을 설정하십시오.
+
+  ```console
+  sima-user@sima-user-machine:~$ git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  sima-user@sima-user-machine:~$ git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+  ```
+
+- Yocto Project가 Ubuntu용으로 나열한
+  [빌드 호스트 패키지](https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#required-packages-for-the-build-host)를
+  설치하고 `en_US.UTF-8` 로캘을 사용할 수 있게 하십시오. 그런 다음 레이어의 매뉴얼이
+  추가로 나열한 패키지를 설치하십시오.
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## 레이어 가져오기 {#layers}
+
+이 빌드는 Yocto Project의 `scarthgap` 릴리스를 사용합니다. 다음 레이어를 하나의
+디렉터리에 클론하십시오.
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` 및 `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+이 디렉터리 이름을 그대로 유지하고, 디렉터리를 같은 위치에 나란히 두십시오. 템플릿은
+빌드 디렉터리 옆의 경로로 각 레이어를 찾습니다.
+
+각 레이어의 저장소와 정확한 리비전은 레이어에 포함된
+[빌드 매뉴얼](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)에
+나와 있습니다. 해당 리비전을 사용하십시오. SiMa.ai 레이어를 가져오려면 다음을 실행하십시오.
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## 빌드 설정 {#setup}
+
+이 레이어에는 레이어 목록과 빌드 구성을 채워 주는 템플릿이 있습니다.
+레이어가 있는 디렉터리에서 다음을 실행하십시오.
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+마지막 명령은 빌드에서 사용하는 레이어를 나열합니다. 목록에 `meta-simaai`가
+있는지 확인하십시오.
+
+:::warning[개발용 이미지입니다]
+레이어의 빌드 템플릿은 개발에 적합한 이미지를 만드는 `debug-tweaks` 이미지 기능을 활성화합니다.
+또한 이미지에는 `root` 및 `sima` 사용자의 기본 암호가 설정되어 있습니다.
+제품을 출하하기 전에 `conf/local.conf`의 `EXTRA_IMAGE_FEATURES`에서 `debug-tweaks`를 제거하고
+자체 암호를 설정하십시오.
+:::
+
+## 이미지 빌드 {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+템플릿의 기본값은 다른 보드이므로 명령줄에서 `MACHINE=modalix`를 지정하십시오.
+이 이미지에는 SiMa.ai 펌웨어, 커널 모듈, OpenSSH, swupdate를 포함한 최소 루트 파일
+시스템이 들어 있습니다.
+
+머신 구성이 `commercial` 라이선스 플래그를 허용하므로, 빌드는 확인을 요청하지 않고
+SiMa.ai 펌웨어를 포함합니다. 이미지를 배포하기 전에
+[`licenses/SiMaai-EULA-1.0`](https://github.com/SiMa-ai/meta-simaai/blob/master/licenses/SiMaai-EULA-1.0)의
+라이선스를 읽으십시오.
+
+20코어 머신에서 빌드 스레드 12개로 실행한 첫 빌드는 약 35분이 걸렸고 디스크 공간을
+약 70GB 사용했습니다.
+
+## 출력 찾기 {#output}
+
+빌드 결과는 빌드 디렉터리의 `tmp/deploy/images/modalix`에 기록됩니다.
+
+| 파일 | 용도 |
+| --- | --- |
+| `simaai-image-minimal-modalix.rootfs.wic.gz` 및 `.wic.bmap` | 전체 eMMC 이미지와 블록 맵. 이 파일들을 플래싱합니다. |
+| `simaai-image-minimal-modalix.rootfs.ext4.gz` | 루트 파일 시스템만 |
+| `simaai-image-minimal-modalix.rootfs.cpio.gz` | 네트워크 부팅용 초기 RAM 디스크 형식의 루트 파일 시스템 |
+| `Image`, `u-boot.bin`, `.dtb`, `overlays/*.dtbo` | 커널, U-Boot, 디바이스 트리, 오버레이 |
+
+## 파티션 구성 {#partitions}
+
+eMMC 이미지에는 GPT 파티션 테이블에 다음 파티션이 있습니다.
+
+| 파티션 | 크기 | 내용 |
+| --- | --- | --- |
+| `u-boot0` 및 `u-boot1` | 각 2 MB | U-Boot, 사본 두 개 |
+| `boot` | 512 MB, FAT | `boot-0` 및 `boot-1` 디렉터리. 각각 커널, 디바이스 트리, 오버레이 포함 |
+| `platform0` 및 `platform1` | 각 2 GB, ext4 | 루트 파일 시스템, 사본 두 개 |
+| `userdata` | 약 10 GB, ext4 | 사용자 데이터 |
+
+## 이미지 플래싱 {#flash}
+
+[eMMC에 이미지 플래싱](../deployment/flash-image.mdx)에 설명된 대로
+`.wic.gz` 파일을 `.wic.bmap` 파일과 함께 보드의 eMMC에 기록하십시오.
+
+## 다음 단계
+
+- [eMMC에 이미지 플래싱](../deployment/flash-image.mdx): 네트워크 또는 SD 카드로 보드를
+  부팅하고 이미지를 기록합니다.
+- [업데이트 패키지 빌드 및 적용](../deployment/update-package.mdx): eMMC 전체를 다시
+  기록하지 않고 보드를 업데이트합니다.
+- [보드 지원 패키지](./index.md): 소스, 그리고 eLxr와 Yocto의
+  비교.
+- [릴리스 호환성](./release-compatibility.mdx): 각 플랫폼 릴리스의 기반이 되는
+  커널 및 U-Boot 커밋.

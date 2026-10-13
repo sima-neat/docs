@@ -8,6 +8,12 @@ sidebar_position: 5
 
 DevKitのファームウェアを最新の状態に保ち、起動しないデバイスを復旧するか、特定のファームウェアバージョンをインストールしてください。
 
+このセクションは、プラットフォームリリース %platform_version% を対象としています。
+
+:::note
+このセクションのガイドでは、SiMa.ai が提供するイメージをインストールします。独自にビルドしたイメージを書き込むには、[イメージを eMMC に書き込む](/hardware/deployment/flash-image)を参照してください。
+:::
+
 :::note
 続行する前に、`sima-cli` をインストールまたはアップグレードしてください。これらのガイドは、最新の `sima-cli` バージョンで使用することを目的としています。
 :::
@@ -18,20 +24,20 @@ Modalix DevKitをSDK 1.7から2.0にアップグレードするには、追加�
 
 ## オペレーティングシステム {#os}
 
-SiMa.ai Modalix DevKitは、DebianをベースとしたディストリビューションであるeLxr Linuxを搭載しています。**2025年12月中旬以降に出荷される**ユニットには、eLxrがプリインストールされています。それ以前（2025年12月中旬以前）に出荷されるModalixユニットには、Yoctoがプリインストールされており、[「eLxrへの変換」](/hardware/reference/tech-notes/elxr-conversion)の記事に従って、eLxrに変換できます。
+SiMa.ai Modalix DevKitは、DebianをベースとしたディストリビューションであるeLxr Linuxを搭載しています。**2025年12月中旬以降に出荷される**ユニットには、eLxrがプリインストールされています。それ以前（2025年12月中旬以前）に出荷されるModalixユニットには、Yoctoがプリインストールされており、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)の記事に従って、eLxrに変換できます。
 
 eLxrは、Modalixプラットフォームでの開発に使用されるDebianベースのOSです。その特徴は以下のとおりです。
 
 - 完全な Debian パッケージ管理システム (`apt`)
 - 開発およびデバッグのための、より広範なユーザー環境
-- デバイス上で直接ツールを構築およびインストールできる機能
+- デバイス上で直接ツールをビルドおよびインストールできる機能
 - クロスコンパイルなしで、より迅速な反復開発が可能
 - より多様なライブラリやフレームワークで構成されるエコシステム
 
 以下のファームウェア更新手順を使用して、DevKitのファームウェアを更新したり、起動可能なリカバリーメディアを作成したり、ネットワーク経由でファームウェアを再書き込みしたりできます。
 
 :::tip
-お使いのDevKitがインターネットに接続できない場合は、ホストベースのワークフローを使用してください。ホストから起動し、eMMCにファームウェアを書き込むには、**Net Boot Recovery**を使用するか、取り外し可能なブートメディアを準備するには、**Create Boot Image**を使用します。ホストマシンは、ローカルにファームウェアイメージがすでに存在しない限り、ファームウェアイメージをダウンロードするためにインターネットに接続する必要があります。
+お使いのDevKitがインターネットに接続できない場合は、ホストベースのワークフローを使用してください。ホストから起動し、eMMCにファームウェアを書き込むには、**ネットワークブートによる復旧**を使用するか、取り外し可能なブートメディアを準備するには、**ブートイメージの作成**を使用します。ホストマシンは、ローカルにファームウェアイメージがすでに存在しない限り、ファームウェアイメージをダウンロードするためにインターネットに接続する必要があります。
 :::
 
 <div class="overview-link-columns overview-link-columns-single">
@@ -39,8 +45,8 @@ eLxrは、Modalixプラットフォームでの開発に使用されるDebianベ
     <h2>更新方法の選択</h2>
     <p>お使いのDevKitの状態と、インストールする必要があるファームウェアに合ったパスを選択してください。</p>
     <ul class="overview-link-list">
-      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/sima-cli"><strong>sima-cliを使用した更新</strong><span>ネットワーク経由で、動作中のDevKitを更新します。これは、現在のファームウェア更新のデフォルトのパスです。</span></a></li>
-      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/net-boot"><strong>ネットブートによるリカバリ</strong><span>ダウングレード、プレリリースビルド、破損したシステム、eLxrへの変換、またはeMMCへの書き込みに、TFTPネットブートを使用します。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/sima-cli"><strong>sima-cli を使用したアップデート</strong><span>ネットワーク経由で、動作中のDevKitを更新します。これは、現在のファームウェア更新のデフォルトのパスです。</span></a></li>
+      <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/net-boot"><strong>ネットワークブートによる復旧</strong><span>ダウングレード、プレリリースビルド、破損したシステム、eLxrへの変換、またはeMMCへの書き込みに、TFTPネットワークブートを使用します。</span></a></li>
       <li><a class="overview-link-card" href="/hardware/getting-started/firmware-update/boot-image"><strong>ブートイメージの作成</strong><span>リカバリまたはリムーバブルメディアのセットアップのために、ブート可能なSDカード、USBドライブ、またはNVMeイメージを作成します。</span></a></li>
     </ul>
   </section>

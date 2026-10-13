@@ -6,19 +6,23 @@ import {useLocation} from "@docusaurus/router";
 const LOCALIZED_UI = {
   en: {
     hardwareDocs: "Hardware documentation",
-    gettingStarted: "Getting Started",
-    devkitVariants: "DevKit Variants",
-    tools: "Tools",
-    references: "References",
+    devkit: "DevKit",
+    somCarrier: "SoM & Carrier",
+    chipDown: "Chip-Down",
+    systemSoftware: "System Software",
+    cameras: "Cameras",
+    references: "Reference Documents",
     webSerial: "Web Serial Console",
     quickStart: "Quick Start",
     buyDevkit: "Buy Your DevKit",
   },
   ko: {
     hardwareDocs: "하드웨어 문서",
-    gettingStarted: "시작하기",
-    devkitVariants: "DevKit 변형",
-    tools: "도구",
+    devkit: "DevKit",
+    somCarrier: "SoM 및 캐리어",
+    chipDown: "칩다운",
+    systemSoftware: "시스템 소프트웨어",
+    cameras: "카메라",
     references: "참조",
     webSerial: "웹 시리얼 콘솔",
     quickStart: "빠른 시작",
@@ -26,9 +30,11 @@ const LOCALIZED_UI = {
   },
   ja: {
     hardwareDocs: "ハードウェアドキュメント",
-    gettingStarted: "はじめに",
-    devkitVariants: "DevKit バリエーション",
-    tools: "ツール",
+    devkit: "DevKit",
+    somCarrier: "SoM とキャリア",
+    chipDown: "チップダウン",
+    systemSoftware: "システムソフトウェア",
+    cameras: "カメラ",
     references: "リファレンス",
     webSerial: "Web シリアルコンソール",
     quickStart: "クイックスタート",
@@ -36,9 +42,11 @@ const LOCALIZED_UI = {
   },
   "zh-Hant": {
     hardwareDocs: "硬體文件",
-    gettingStarted: "開始使用",
-    devkitVariants: "DevKit 型號",
-    tools: "工具",
+    devkit: "DevKit",
+    somCarrier: "SoM 與載板",
+    chipDown: "Chip-Down",
+    systemSoftware: "系統軟體",
+    cameras: "相機",
     references: "參考資料",
     webSerial: "網頁序列主控台",
     quickStart: "快速入門",
@@ -46,15 +54,43 @@ const LOCALIZED_UI = {
   },
   uk: {
     hardwareDocs: "Документація апаратного забезпечення",
-    gettingStarted: "Початок роботи",
-    devkitVariants: "Варіанти DevKit",
-    tools: "Інструменти",
-    references: "Довідкові матеріали",
+    devkit: "DevKit",
+    somCarrier: "SoM і носій",
+    chipDown: "Chip-Down",
+    systemSoftware: "Системне ПЗ",
+    cameras: "Камери",
+    // Short on purpose: a longer label overflows the bar at 1280px.
+    references: "Довідка",
     webSerial: "Вебконсоль послідовного порту",
     quickStart: "Швидкий старт",
     buyDevkit: "Придбати DevKit",
   },
 };
+
+// Which toolbar section a page belongs to, as the path below /hardware. Pages
+// keep their URLs when the sidebar regroups them (sima-neat/docs#80), so a
+// folder is not a section: the first matching rule wins, most specific first.
+const SECTION_RULES = [
+  ["cameras", "/getting-started/standalone-mode/mipi-camera-interfaces"],
+  ["chipDown", "/design/chip-down"],
+  ["devkit", "/reference/tech-notes/elxr-conversion"],
+  ["devkit", "/reference/tech-notes/bluetooth"],
+  ["references", "/interfaces/low-speed-io"],
+  ["cameras", "/interfaces"],
+  ["devkit", "/getting-started"],
+  ["devkit", "/devkit"],
+  ["devkit", "/tools"],
+  ["somCarrier", "/design"],
+  ["systemSoftware", "/software"],
+  ["systemSoftware", "/deployment"],
+  ["references", "/reference"],
+];
+
+function sectionForPath(page) {
+  const path = page.replace(/\/+$/, "");
+  const rule = SECTION_RULES.find(([, prefix]) => path === prefix || path.startsWith(`${prefix}/`));
+  return rule ? rule[0] : null;
+}
 
 function useShellLocale() {
   const {i18n} = useDocusaurusContext();
@@ -77,32 +113,18 @@ function HardwareSubnav() {
   const locale = useShellLocale();
   const copy = LOCALIZED_UI[locale] || LOCALIZED_UI.en;
   const hardwareBase = useBaseUrl("/hardware");
-  const gettingStartedBase = useBaseUrl("/hardware/getting-started");
-  const devkitBase = useBaseUrl("/hardware/devkit");
-  const toolsBase = useBaseUrl("/hardware/tools");
-  const referenceBase = useBaseUrl("/hardware/reference");
+  const path = location.pathname;
+  const activeSection = path.startsWith(hardwareBase)
+    ? sectionForPath(path.slice(hardwareBase.length))
+    : null;
 
   const links = [
-    {
-      label: copy.gettingStarted,
-      href: useBaseUrl("/hardware/getting-started"),
-      active: location.pathname.includes(gettingStartedBase),
-    },
-    {
-      label: copy.devkitVariants,
-      href: useBaseUrl("/hardware/devkit/modalix-devkit"),
-      active: location.pathname.includes(devkitBase),
-    },
-    {
-      label: copy.tools,
-      href: useBaseUrl("/hardware/tools/web-serial-console"),
-      active: location.pathname.includes(toolsBase),
-    },
-    {
-      label: copy.references,
-      href: useBaseUrl("/hardware/reference/bsp"),
-      active: location.pathname.includes(referenceBase),
-    },
+    {id: "devkit", label: copy.devkit, href: useBaseUrl("/hardware/getting-started")},
+    {id: "somCarrier", label: copy.somCarrier, href: useBaseUrl("/hardware/design/carrier-board")},
+    {id: "chipDown", label: copy.chipDown, href: useBaseUrl("/hardware/design/chip-down")},
+    {id: "systemSoftware", label: copy.systemSoftware, href: useBaseUrl("/hardware/software")},
+    {id: "cameras", label: copy.cameras, href: useBaseUrl("/hardware/interfaces/supported-cameras")},
+    {id: "references", label: copy.references, href: useBaseUrl("/hardware/reference/extra-docs")},
   ];
 
   const quickStartHref = useBaseUrl("/tools/qsg/index.html");
@@ -120,8 +142,8 @@ function HardwareSubnav() {
         <div className="docs-subnav__links">
           {links.map((link) => (
             <a
-              key={link.label}
-              className={`docs-subnav__link${link.active ? " docs-subnav__link--active" : ""}`}
+              key={link.id}
+              className={`docs-subnav__link${link.id === activeSection ? " docs-subnav__link--active" : ""}`}
               href={link.href}
             >
               {link.label}

@@ -11,10 +11,10 @@ sidebar_position: 3
 ## 矽晶與運算
 
 **CVU**
-：**電腦視覺單元 (Computer Vision Unit)。** 這是晶片上的加速器，專門用於處理傳統的視覺工作負載（濾鏡、轉換、影像處理核心）。MLSoC Modalix 整合了一個 Synopsys EV74 CVU，運算效能為 750 16 位元 GOPS。
+：**電腦視覺單元 (Computer Vision Unit)。** 這是晶片上的加速器，專門用於處理傳統的視覺工作負載（濾鏡、轉換、影像處理核心）。MLSoC Modalix 整合了一個 Synopsys EV74 CVU，運算效能為 720 16 位元 GOPS。
 
 **ISP**
-：**影像訊號處理器 (Image Signal Processor)。** 這是晶片上的模組，用於將原始相機感測器輸出（拜耳陣列、單色等）轉換為可用的影像。MLSoC Modalix 使用一個 ARM C-71 ISP，其運作頻率為 1.2 GHz。
+：**影像訊號處理器 (Image Signal Processor)。** 這是晶片上的模組，用於將原始相機感測器輸出（拜耳陣列、單色等）轉換為可用的影像。MLSoC Modalix 使用一個 Arm Mali-C71AE ISP，其運作頻率為 1.2 GHz。
 
 **MLA**
 ：**機器學習加速器 (Machine Learning Accelerator)。** 這是晶片上的模組，用於執行神經網路推論。MLA 是 MLSoC Modalix 的主要差異化因素，也是 NEAT 應用程式的目標。
@@ -34,7 +34,7 @@ sidebar_position: 3
 ## 系統軟體
 
 **BSP**
-：**板級支援套件 (Board Support Package)。** 這是低階軟體的集合，包含啟動載入程式、核心、裝置樹、驅動程式和根檔案系統，可讓 SiMa.ai 板從開機到可使用的 Linux 使用者空間。請參閱 [板級支援套件](./bsp)。
+：**板級支援套件 (Board Support Package)。** 這是低階軟體的集合，包含啟動載入程式、核心、裝置樹、驅動程式和根檔案系統，可讓 SiMa.ai 板從開機到可使用的 Linux 使用者空間。請參閱 [板級支援套件](../software/index.md)。
 
 **eLxr**
 ：一種 [Debian 衍生 Linux 發行版](https://elxr.org/)，用於作為 2025 年 12 月中旬之後出貨的 Modalix DevKit 上的預設執行階段。使用者空間透過 `apt` 進行管理。

@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -253,6 +254,428 @@ class LocalizedRecordTests(unittest.TestCase):
             ]
         )
         client.browse_source_object_ids.assert_not_called()
+
+
+SITE = "https://build.neat.sima.ai"
+I18N_DOCS = Path("docusaurus-plugin-content-docs") / "current"
+
+PLAIN_DOC = (
+    "---\ntitle: Plain\n---\n\nimport Tabs from '@theme/Tabs';\n\n# Plain Page\n\n"
+    "Prose with `code`, a [link](./x.md), and <Tabs>tabs</Tabs>.\n"
+)
+PLAIN_DOC_JA = "import Tabs from '@theme/Tabs';\n\n# 普通のページ\n\n本文です。\n"
+# Output of generate_records() for the two plain docs above, captured from the script before
+# it indexed JSON-backed tables. A doc that imports no data-driven component must still
+# produce exactly these bytes.
+PLAIN_RECORDS_BASELINE = (
+    '[{"objectID": "hardware:a43251b7bd9b35a93cac9b7b4a5b4f606e37666c", "source": "hardware", '
+    '"language": "en", "url": "https://build.neat.sima.ai/hardware/interfaces/plain", '
+    '"route": "/hardware/interfaces/plain", "path": "interfaces/plain.mdx", "section": "Hardware", '
+    '"category": "Hardware", "title": "Plain Page", '
+    '"content": "import Tabs from \'@theme/Tabs\'; # Plain Page Prose with code, a link, and tabs .", '
+    '"hierarchy": {"lvl0": "Hardware", "lvl1": "Plain Page"}}, '
+    '{"objectID": "hardware:6a1f01b6cf6dd4b0b61ed4c4aecc40f957f23872", "source": "hardware", '
+    '"language": "ja", "url": "https://build.neat.sima.ai/ja/hardware/interfaces/plain", '
+    '"route": "/ja/hardware/interfaces/plain", "path": "interfaces/plain.mdx", "section": "ハードウェア", '
+    '"category": "ハードウェア", "title": "普通のページ", '
+    '"content": "import Tabs from \'@theme/Tabs\'; # 普通のページ 本文です。", '
+    '"hierarchy": {"lvl0": "ハードウェア", "lvl1": "普通のページ"}}]'
+)
+
+CARRIERS_DOC = (
+    "import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierBoards';\n\n"
+    "# Carriers\n\nCarrier prose.\n\n<CarrierBoardList />\n\n<CarrierBoardSpecs />\n"
+)
+CAMERAS_DOC = (
+    "import {\n  CameraList,\n  CameraOverlays,\n  CameraModes,\n} from \"@site/src/components/Cameras\";\n\n"
+    "# Cameras\n\nCamera prose.\n\n<CameraList />\n\n<CameraOverlays />\n\n<CameraModes />\n"
+)
+SUPPORT_DOC = (
+    "import {BoardSupportTable} from '@site/src/components/BoardSupport';\n\n"
+    "# Interface Support\n\nSupport prose.\n\n<BoardSupportTable />\n"
+)
+DATA_DOCS = {
+    "design/carriers.mdx": CARRIERS_DOC,
+    "interfaces/cameras.mdx": CAMERAS_DOC,
+    "reference/support.mdx": SUPPORT_DOC,
+}
+PROSE = {
+    "design/carriers.mdx": (
+        "import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierBoards'; "
+        "# Carriers Carrier prose."
+    ),
+    "interfaces/cameras.mdx": (
+        'import { CameraList, CameraOverlays, CameraModes, } from "@site/src/components/Cameras"; '
+        "# Cameras Camera prose."
+    ),
+    "reference/support.mdx": (
+        "import {BoardSupportTable} from '@site/src/components/BoardSupport'; "
+        "# Interface Support Support prose."
+    ),
+}
+
+# File names are chosen so that file order differs from the order the pages show.
+BOARDS = {
+    "a-acme.json": {
+        "id": "acme",
+        "vendor": "acme",
+        "model": "AX-9",
+        "reference": False,
+        "temperatureGrade": "-40 °C to +85 °C",
+        "interfaces": {
+            "ethernet": {"en": "2 with PoE", "ja": "2（PoE 対応）"},
+            "m2KeyE": {"en": "1 with an expansion card"},
+            "notShown": 7,
+        },
+    },
+    "b-zeta.json": {
+        "id": "zeta",
+        "vendor": "Zeta Boards",
+        "model": "ZB-1",
+        "reference": True,
+        "ordering": {"partNumber": "ZB1-REF", "url": "https://example.com/zb1"},
+        "cooling": {"en": "Fan", "ja": "ファン"},
+        "interfaces": {"hdmi": 1, "can": 2},
+    },
+    "c-bolt.json": {"id": "bolt", "vendor": "Bolt", "model": "B7", "reference": False},
+}
+SOM_SUPPORT = {
+    "hdmi": {"status": "supported"},
+    "csi4Lane": {
+        "status": "unsupported",
+        "note": {"en": "Two paths cannot be combined", "ja": "まとめることはできません"},
+    },
+    "can": {"status": "unsupported"},
+}
+CAMERAS = {
+    "a-lumen.json": {
+        "order": 2,
+        "id": "lumen",
+        "vendor": "Lumen",
+        "sensor": "Sony IMX000",
+        "overlay": "LUM-IMX000",
+        "ordering": {"status": "vendor-listed", "partNumber": "LUM-IMX000-MIPI-1"},
+        "modes": [{"width": 1920, "height": 1080, "fps": 29.4, "bitDepth": 12}],
+        "overlays": {"waveshare": ["1CAM", "DUAL"]},
+    },
+    "b-optix.json": {
+        "order": 1,
+        "id": "optix",
+        "vendor": "Optix",
+        "sensor": "onsemi AR0000",
+        "variant": {"en": "Standard camera", "ja": "標準カメラ"},
+        "overlay": "OPT-AR0000",
+        "ordering": {"status": "unconfirmed", "partNumber": "HIDDEN-PN"},
+        "modes": [{"width": 4056, "height": 3040, "fps": 30, "bitDepth": 10}],
+        "overlays": {"connectech": ["0CAM", "3CAM"]},
+    },
+}
+BOARD_SUPPORT = {
+    "id": "devkit",
+    "release": "9.9.9",
+    "rows": [
+        {
+            "id": "nvme",
+            "name": {"en": "NVMe storage", "ja": "NVMe ストレージ"},
+            "connector": "M.2 Key M slot",
+            "som": "`PCIe0`",
+            "deviceTree": "`pcie0_rc`",
+            "status": "supported",
+        },
+        {
+            "id": "can",
+            "name": "CAN",
+            "connector": "—",
+            "deviceTree": "—",
+            "status": "unsupported",
+            "note": {"en": "Not wired on this board.", "ja": "このボードでは配線されていません。"},
+        },
+        {"id": "csi", "name": "MIPI CSI-2", "deviceTree": "`csi1`, `csi2`", "status": "overlay"},
+    ],
+}
+
+
+def write_json(path: Path, value: object) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def write_docs(root: Path, docs: dict[str, str], locale: str = "en") -> None:
+    base = root / "docs" if locale == "en" else root / "i18n" / locale / I18N_DOCS
+    for rel, text in docs.items():
+        (base / rel).parent.mkdir(parents=True, exist_ok=True)
+        (base / rel).write_text(text, encoding="utf-8")
+
+
+def write_data(root: Path, boards: dict | None = None) -> None:
+    data = root / "src" / "data"
+    for name, board in (BOARDS if boards is None else boards).items():
+        write_json(data / "carrier-boards" / name, board)
+    write_json(data / "modalix-som-interface-support.json", SOM_SUPPORT)
+    for name, camera in CAMERAS.items():
+        write_json(data / "cameras" / name, camera)
+    write_json(data / "board-support" / "modalix-devkit.json", BOARD_SUPPORT)
+
+
+def generate(root: Path, max_record_bytes: int = MODULE.DEFAULT_MAX_RECORD_BYTES) -> dict[tuple[str, str], dict]:
+    records, _ = MODULE.generate_records(root / "docs", SITE, max_record_bytes, root / "i18n")
+    return {(record["language"], record["path"]): record for record in records}
+
+
+class DataComponentRecordTests(unittest.TestCase):
+    def assert_in_order(self, text: str, *terms: str) -> None:
+        positions = [text.find(term) for term in terms]
+        self.assertNotIn(-1, positions, f"missing one of {terms!r} in {text!r}")
+        self.assertEqual(positions, sorted(positions), f"{terms!r} out of order in {text!r}")
+
+    def test_component_table_names_a_describe_function_and_relative_sources(self) -> None:
+        for module, component in MODULE.DATA_COMPONENTS.items():
+            self.assertTrue(callable(getattr(MODULE, component["describe"])), module)
+            for pattern in component["sources"].values():
+                self.assertTrue(pattern.startswith("src/data/") and pattern.endswith(".json"), pattern)
+
+    def test_english_records_contain_the_table_text(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, DATA_DOCS)
+            write_data(root)
+            records = generate(root)
+            again = generate(root)
+
+        self.assertEqual(records, again)
+        derived = {}
+        for rel, prose in PROSE.items():
+            content = records[("en", rel)]["content"]
+            self.assertTrue(content.startswith(prose + " "), content)
+            self.assertNotIn("content_truncated", records[("en", rel)])
+            derived[rel] = content[len(prose) + 1 :]
+            # Plain text: no JSON syntax, no code backticks, no URLs or internal keys.
+            for noise in ('{"', '":', "`", "https://", "notShown", "m2KeyE", "bitDepth"):
+                self.assertNotIn(noise, derived[rel])
+
+        carriers = derived["design/carriers.mdx"]
+        # The reference board first, then by vendor without regard to case.
+        self.assert_in_order(carriers, "Zeta Boards ZB-1, ZB1-REF, Reference board", "acme AX-9, Not tested", "Bolt B7, Not tested")
+        self.assert_in_order(
+            carriers,
+            "Modalix SoM: HDMI Supported; MIPI CSI 4-lane Not supported, Two paths cannot be combined; CAN Not supported",
+            "Zeta Boards ZB-1: Fan, HDMI 1, CAN 2",
+            "acme AX-9: -40 °C to +85 °C, Ethernet 2 with PoE, M.2 Key E 1 with an expansion card",
+        )
+
+        cameras = derived["interfaces/cameras.mdx"]
+        # Cameras by their "order" field, not by file name.
+        self.assert_in_order(
+            cameras,
+            "Optix onsemi AR0000, Standard camera, OPT-AR0000;",
+            "Lumen Sony IMX000, LUM-IMX000, LUM-IMX000-MIPI-1.",
+            "OPT-AR0000: connectech 0CAM 3CAM;",
+            "LUM-IMX000: waveshare 1CAM DUAL.",
+            "OPT-AR0000: 4056 × 3040 30 fps 10-bit;",
+            "LUM-IMX000: 1920 × 1080 29.4 fps 12-bit",
+        )
+        # The page hides a part number that the vendor does not list.
+        self.assertNotIn("HIDDEN-PN", cameras)
+
+        # Rows in file order; code marks and empty-cell dashes are dropped.
+        self.assertEqual(
+            derived["reference/support.mdx"],
+            "NVMe storage: M.2 Key M slot, PCIe0, pcie0_rc, Supported; "
+            "CAN: Not supported, Not wired on this board; "
+            "MIPI CSI-2: csi1, csi2, Needs an overlay",
+        )
+
+    def test_translated_records_use_the_page_locale_and_fall_back_to_english(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, DATA_DOCS)
+            write_docs(root, DATA_DOCS, "ja")
+            write_data(root)
+            records = generate(root)
+
+        carriers = records[("ja", "design/carriers.mdx")]["content"]
+        self.assertEqual(records[("ja", "design/carriers.mdx")]["language"], "ja")
+        for term in (
+            "Zeta Boards ZB-1, ZB1-REF, リファレンスボード",
+            "acme AX-9, 未確認",
+            "Ethernet 2（PoE 対応）",
+            "ファン",
+            "CAN 非対応",
+            "まとめることはできません",
+            # No Japanese value in the data: the English one is used.
+            "M.2 Key E 1 with an expansion card",
+        ):
+            self.assertIn(term, carriers)
+        for english in ("2 with PoE", "Not supported", "Reference board", "Two paths"):
+            self.assertNotIn(english, carriers)
+
+        cameras = records[("ja", "interfaces/cameras.mdx")]["content"]
+        self.assertIn("Optix onsemi AR0000, 標準カメラ, OPT-AR0000", cameras)
+        self.assertIn("LUM-IMX000-MIPI-1", cameras)
+        self.assertNotIn("Standard camera", cameras)
+
+        support = records[("ja", "reference/support.mdx")]["content"]
+        self.assertTrue(
+            support.endswith(
+                "NVMe ストレージ: M.2 Key M slot, PCIe0, pcie0_rc, 対応; "
+                "CAN: 非対応, このボードでは配線されていません; "
+                "MIPI CSI-2: csi1, csi2, オーバーレイが必要"
+            ),
+            support,
+        )
+        # The English page keeps the English values.
+        self.assertIn("NVMe storage: M.2 Key M slot", records[("en", "reference/support.mdx")]["content"])
+        self.assertNotIn("ストレージ", records[("en", "reference/support.mdx")]["content"])
+
+    def test_doc_without_component_import_matches_the_baseline_bytes(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, {"interfaces/plain.mdx": PLAIN_DOC})
+            write_docs(root, {"interfaces/plain.mdx": PLAIN_DOC_JA}, "ja")
+            records, _ = MODULE.generate_records(
+                root / "docs", SITE, MODULE.DEFAULT_MAX_RECORD_BYTES, root / "i18n"
+            )
+            self.assertEqual(json.dumps(records, ensure_ascii=False), PLAIN_RECORDS_BASELINE)
+
+            # The data and the data-driven pages next to it change nothing for this doc.
+            write_data(root)
+            write_docs(root, DATA_DOCS)
+            write_docs(root, DATA_DOCS, "ja")
+            records, _ = MODULE.generate_records(
+                root / "docs", SITE, MODULE.DEFAULT_MAX_RECORD_BYTES, root / "i18n"
+            )
+            plain = [record for record in records if record["path"] == "interfaces/plain.mdx"]
+            self.assertEqual(json.dumps(plain, ensure_ascii=False), PLAIN_RECORDS_BASELINE)
+
+    def test_component_named_only_in_a_code_fence_or_unknown_is_ignored(self) -> None:
+        fenced = "# Authoring\n\n```mdx\nimport {CameraList} from '@site/src/components/Cameras';\n```\n\nBody.\n"
+        unknown = "import {Widget} from '@site/src/components/Widget';\n\n# Widget\n\nBody.\n"
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, {"fenced.mdx": fenced, "unknown.mdx": unknown})
+            write_data(root)
+            records = generate(root)
+
+        self.assertEqual(records[("en", "fenced.mdx")]["content"], "# Authoring Body.")
+        self.assertEqual(
+            records[("en", "unknown.mdx")]["content"],
+            "import {Widget} from '@site/src/components/Widget'; # Widget Body.",
+        )
+
+    def test_large_data_fills_the_room_and_long_prose_leaves_the_reserved_share(self) -> None:
+        limit = MODULE.DEFAULT_MAX_RECORD_BYTES
+        boards = {
+            f"board-{index:04d}.json": {
+                "id": f"board-{index}",
+                "vendor": f"Vendor{index:04d}",
+                "model": f"Model-{index:04d}",
+                "reference": index == 0,
+                "interfaces": {"ethernet": {"en": "2 with PoE " * 20}, "can": index},
+            }
+            for index in range(400)
+        }
+        short_prose = "Short carrier prose. " * 20
+        long_prose = "Long carrier prose that fills the record. " * 400
+        docs = {
+            "short.mdx": CARRIERS_DOC.replace("Carrier prose.", short_prose),
+            "long.mdx": CARRIERS_DOC.replace("Carrier prose.", long_prose),
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, docs)
+            without_data = generate(root)
+            write_data(root, boards)
+            with_data = generate(root)
+
+        for record in with_data.values():
+            self.assertLessEqual(MODULE.record_size(record), limit)
+
+        # Room left after the prose is filled with table text, starting with the first item.
+        short = with_data[("en", "short.mdx")]
+        prose = without_data[("en", "short.mdx")]["content"]
+        self.assertNotIn("content_truncated", without_data[("en", "short.mdx")])
+        self.assertTrue(short["content"].startswith(prose + " Vendor0000 Model-0000, Reference board; "))
+        self.assertTrue(short["content_truncated"])
+        self.assertGreater(MODULE.record_size(short), limit - 8)
+        self.assertNotIn("Vendor0399 Model-0399", short["content"])
+
+        # Prose that fills the record gives up the reserved share, so that values found only
+        # in the table stay searchable. The prose still comes first.
+        long = with_data[("en", "long.mdx")]
+        long_prose_only = without_data[("en", "long.mdx")]["content"]
+        self.assertTrue(without_data[("en", "long.mdx")]["content_truncated"])
+        self.assertTrue(long["content_truncated"])
+        self.assertGreater(MODULE.record_size(long), limit - 8)
+        marker = " Vendor0000 Model-0000, Reference board; "
+        self.assertIn(marker, long["content"])
+        kept_prose, table_text = long["content"].split(marker, 1)
+        self.assertTrue(long_prose_only.startswith(kept_prose))
+        self.assertGreater(len(kept_prose), len(long_prose_only) // 2)
+        self.assertGreaterEqual(len((marker + table_text).encode("utf-8")), MODULE.DERIVED_RESERVED_BYTES - 8)
+
+    def test_table_text_that_fits_the_reserved_share_is_kept_whole(self) -> None:
+        limit = MODULE.DEFAULT_MAX_RECORD_BYTES
+        long_prose = "Довга проза, яка заповнює запис. " * 400
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, {"long.mdx": CARRIERS_DOC.replace("Carrier prose.", long_prose)})
+            write_data(root)
+            record = generate(root)[("en", "long.mdx")]
+            write_docs(root, {"short.mdx": CARRIERS_DOC})
+            table_text = generate(root)[("en", "short.mdx")]["content"].split("Carrier prose. ", 1)[1]
+
+        self.assertLessEqual(MODULE.record_size(record), limit)
+        self.assertLess(len(table_text.encode("utf-8")), MODULE.DERIVED_RESERVED_BYTES)
+        self.assertTrue(record["content_truncated"])
+        self.assertTrue(record["content"].endswith(table_text))
+        self.assertTrue(record["content"].startswith("import"))
+
+    def test_missing_data_leaves_records_as_before(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_docs(root, DATA_DOCS)
+            write_docs(root, DATA_DOCS, "ja")
+            records = generate(root)
+
+            for (language, rel), record in records.items():
+                self.assertEqual(record["content"], PROSE[rel], (language, rel))
+                self.assertNotIn("content_truncated", record)
+
+            # One source of a component missing: the other is still indexed.
+            write_json(root / "src" / "data" / "carrier-boards" / "b-zeta.json", BOARDS["b-zeta.json"])
+            records = generate(root)
+
+        self.assertEqual(
+            records[("en", "design/carriers.mdx")]["content"],
+            PROSE["design/carriers.mdx"] + " Zeta Boards ZB-1, ZB1-REF, Reference board. Zeta Boards ZB-1: Fan, HDMI 1, CAN 2",
+        )
+        self.assertEqual(records[("en", "interfaces/cameras.mdx")]["content"], PROSE["interfaces/cameras.mdx"])
+
+    def test_status_words_match_the_components(self) -> None:
+        # The script does not read the components, so this guards its copy of their status
+        # words against drift. It reads the real tree and is skipped where that is absent.
+        components = SCRIPT.resolve().parents[2] / "src" / "components"
+        sources = [components / module / "index.js" for module in MODULE.DATA_COMPONENTS]
+        if not all(path.is_file() for path in sources):
+            self.skipTest("component sources not found")
+        text = "\n".join(path.read_text(encoding="utf-8") for path in sources)
+        for language, labels in MODULE.STATUS_LABELS.items():
+            self.assertEqual(set(labels), set(MODULE.STATUS_LABELS["en"]), language)
+            for key, label in labels.items():
+                self.assertIn(f'"{label}"', text, f"{language}.{key}")
+
+
+class CameraShutterTextTest(unittest.TestCase):
+    def test_shutter_type_is_indexed_in_the_page_language(self):
+        camera = {"order": 1, "vendor": "Acme", "sensor": "S1", "shutter": "global", "overlay": "ACME-S1", "modes": []}
+        english = " ".join(MODULE.describe_cameras({"cameras": [camera]}, "en"))
+        japanese = " ".join(MODULE.describe_cameras({"cameras": [camera]}, "ja"))
+        self.assertIn("Acme S1, Global shutter, ACME-S1", english)
+        self.assertIn("グローバルシャッター", japanese)
+
+    def test_camera_without_a_shutter_field_is_unchanged(self):
+        camera = {"order": 1, "vendor": "Acme", "sensor": "S1", "overlay": "ACME-S1", "modes": []}
+        self.assertIn("Acme S1, ACME-S1", " ".join(MODULE.describe_cameras({"cameras": [camera]}, "en")))
 
 
 if __name__ == "__main__":

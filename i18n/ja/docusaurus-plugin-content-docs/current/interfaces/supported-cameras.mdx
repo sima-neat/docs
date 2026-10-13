@@ -1,0 +1,141 @@
+---
+title: 対応 MIPI カメラ
+description: Modalix BSP にオーバーレイがある MIPI カメラと、その注文情報、キャリアボードのポート、センサーモード。
+sidebar_position: 2
+---
+
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
+
+# 対応 MIPI カメラ
+
+このページでは、Modalix BSP が対応している MIPI CSI-2 カメラについて、注文すべき
+カメラ、オーバーレイがあるキャリアボードのポート、ドライバーが提供するセンサーモードを
+示します。ボード上でカメラを設定するには、
+[MIPI カメラインターフェース](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)を参照してください。
+
+:::note この情報の出典
+このページのオーバーレイとセンサーモードは、プラットフォームリリース 2.1.3 のカーネルソース
+（[simaai-linux](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60)）
+から取得したものです。BSP が提供する内容を示すものであり、SiMa.ai がすべての
+キャリアボードで検証した内容ではありません。**未確認** と記載した項目には、公開された情報源がまだありません。
+:::
+
+## カメラと注文情報 {#cameras}
+
+BSP には、3 社のベンダーによる 5 種類のセンサー向けのオーバーレイがあります。ベンダーは
+同じセンサーを搭載したモジュールを複数販売していることが多く、レーン数、コネクター、
+レンズが異なります。センサー名ではなく型番で注文してください。カメラを選択すると、
+その仕様が表示されます。
+
+<CameraList />
+
+- 上記の 2 つの型番は、Leopard Imaging が SiMa.ai 向けカメラとして掲載しているものです。
+- BSP が対応している Arducam および e-con Systems のカメラの型番は、まだ公開されて
+  いません。注文する前に SiMa.ai の担当者にお問い合わせください。
+- e-con Systems は IMX568 カメラを 3 種類の構成で提供しています。標準カメラ、
+  e-con FPGA ボード付きカメラ、e-con KOBE1 FPGA ボード付きカメラです。構成ごとに
+  専用のオーバーレイがあります。お使いの構成に合ったオーバーレイを使用してください。
+
+## カメラの仕様 {#specifications}
+
+カメラを追加すると、その仕様が表示されます。最大 4 つのカメラを追加して並べて比較でき、
+× で削除できます。センサーモードは、リリース 2.1.3 のドライバーが各カメラに対して設定する、
+スケーリング前のモードです。
+
+<CameraSpecs />
+
+## カメラの接続 {#connect}
+
+1. カメラを接続または取り外す前に、ボードの電源を切ります。
+2. カメラをキャリアボードの MIPI CSI-2 コネクターに接続します。Modalix DevKit には
+   2 つあります。
+3. 使用したポートを控えておきます。オーバーレイ名にはポートが含まれます。
+4. [MIPI カメラインターフェース](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)の
+   説明に従って、キャリアボード、カメラ、ポートに合ったオーバーレイを選択します。
+
+このページのオーバーレイはすべて、MIPI データレーンを 2 本使用します。
+
+カメラ側のコネクターはキャリアボード側のコネクターと異なることが多いため、変換ケーブルが
+必要になる場合があります。各カメラのケーブルおよびアダプターの型番は、まだ公開されていません。
+カメラのベンダーまたは SiMa.ai の担当者にお問い合わせください。リファレンスキャリアボードの
+コネクターについては、
+[キャリアボードの立ち上げ](../design/som-carrier.mdx)を参照してください。
+
+## キャリアボードとポート {#ports}
+
+リリース 2.1.3 には、この表の各組み合わせに対応するオーバーレイがあります。オーバーレイの
+ファイル名は `modalix-som-<carrier>-<camera>-<port>.dtbo` で、たとえば
+`modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo` となります。
+
+<CameraOverlays />
+
+- Modalix DevKit は、既定で Waveshare のキャリアボードを搭載しています。そのため、
+  Waveshare 列のオーバーレイを使用してください。
+- ポートの数字は、コネクターが配線されている SoM の MIPI CSI インターフェースを
+  示します。たとえば、`1CAM` は CSI1 です。数字はキャリアボードによって異なります。
+- `DUAL` は、1 つのオーバーレイで Waveshare の両方のポートを同じカメラモデルで
+  設定します。
+- モデルの異なる 2 台のカメラを使用するには、ポートごとにオーバーレイを 1 つずつ指定します。
+  [複数のカメラを使用する](../getting-started/standalone-mode/mipi-camera-interfaces.mdx#multiple-cameras)を参照してください。
+- ダッシュ（—）は、その組み合わせに対応するオーバーレイがないことを示します。
+- キャリア名はキャリアボードのベンダーを示すもので、ボードのモデルを示すものでは
+  ありません。キャリアボードを比較するには、
+  [サードパーティー製キャリアボード](../design/third-party-carriers.mdx)を参照してください。
+
+オーバーレイは、ボードのアクティブなブートディレクトリにあります。お使いのボードにある
+オーバーレイを一覧表示するには、次のコマンドを実行します。
+
+```console
+sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
+```
+
+### 以前のリリースでのオーバーレイ名 {#earlier-releases}
+
+| リリース | カメラ用オーバーレイ |
+| --- | --- |
+| 2.1.0 | `ARDU-IMX477`、`ECON-IMX568`、`ECON-IMX678`、`LI-AR0234`、`LI-OG05C10` |
+| 2.1.1 | `ECON-KOBE1-IMX568` を追加 |
+| 2.1.3 | `ECON-IMX568` を `ECON-FPGA-IMX568` に名称変更し、Waveshare キャリアボード上の標準カメラ用として新しい `ECON-IMX568` を追加 |
+
+:::caution リリース 2.1.3 で ECON-IMX568 オーバーレイが変更されました
+リリース 2.1.0 および 2.1.1 では、`ECON-IMX568` は e-con FPGA ボード付きカメラ用の
+オーバーレイです。リリース 2.1.3 以降、このオーバーレイの名前は `ECON-FPGA-IMX568` となり、
+`ECON-IMX568` は標準カメラ用のオーバーレイになります。アップデート後に、U-Boot の
+`dtbos` 変数を確認してください。
+:::
+
+## センサーモード {#sensor-modes}
+
+各カメラのセンサーモードは、[カメラの仕様](#specifications)に記載しています。
+
+- カメラのデータシートには、同じセンサーのほかのモードが記載されていることがあります。
+  データシートに記載されているからといって、そのモードが動作するとは限りません。
+- お使いのボードが報告するモードが正となります。一覧表示するには、
+  [MIPI カメラインターフェース](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)の
+  説明に従って `cam -c <camera> -I` を実行します。
+
+### ISP の出力 {#isp-output}
+
+アプリケーションが受け取るのは、センサーの RAW データではなく ISP の出力です。リリース
+2.1.3 では、ISP ドライバーは NV12、RGB24、BGRA32 の各フォーマットで出力を提供し、
+センサーモードのサイズを出力サイズとして報告します。
+
+ISP がスケーリングして出力するサイズは未確認です。Neat アプリケーションで別のサイズを
+使用するには、
+[MIPI カメラを使用する](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)の
+説明に従って、モデルの前処理でリサイズします。
+
+カメラの画質チューニングは別の作業です。[参考文献](../reference/extra-docs.md)に掲載されている
+「Modalix カメラおよび ISP のチューニングガイド」を参照してください。このガイドは SiMa.ai の担当者から入手できます。
+
+チューニングの内容とガイドの入手方法については、[ISP のチューニング](./isp-tuning.mdx)を参照してください。
+
+## 次のステップ
+
+- [MIPI カメラインターフェース](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)：
+  オーバーレイの選択とカメラの検証。
+- [MIPI カメラを使用する](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)：
+  Neat アプリケーションでのカメラフレームの読み取り。
+- [独自のカメラを統合する](./custom-camera.mdx)：このページにないカメラ。
+- [キャリアボードの立ち上げ](../design/som-carrier.mdx)：独自のキャリアボードでの
+  カメラ。
