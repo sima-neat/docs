@@ -10,6 +10,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Почніть тут, коли вперше налаштовуєте Modalix DevKit або готуєте наявний DevKit до розробки.
 
+Цей розділ стосується випуску платформи %platform_version%.
+
 <div class="overview-link-columns">
   <section class="overview-link-panel overview-link-panel-start">
     <h2>Первинне налаштування</h2>
@@ -37,3 +39,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
     </ul>
   </section>
 </div>
+
+## Наступний крок: розробка ПЗ {#develop-software}
+
+Коли DevKit налаштовано, перейдіть до [документації з програмного забезпечення](https://developer.sima.ai/software), щоб розробляти застосунки для DevKit.

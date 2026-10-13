@@ -1,5 +1,6 @@
 ---
 title: SiMa.ai Hardware Documentation
+sidebar_label: "Platform Overview"
 description: Hardware setup, firmware, and low-level interfaces for SiMa.ai MLSoC Modalix products.
 sidebar_position: 1
 slug: /
@@ -12,6 +13,32 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 # SiMa.ai Hardware Documentation
 
 Use this site for hardware setup, firmware workflows, and low-level interfaces for SiMa.ai MLSoC Modalix products. Software, ML, and pipeline tooling are documented separately.
+
+## SiMa.ai Hardware at a Glance {#hardware-at-a-glance}
+
+SiMa.ai offers MLSoC Modalix as a chip, on a module, and in complete products. Start from the form factor that you have or plan to use.
+
+| Product | What it is | Start here |
+| --- | --- | --- |
+| MLSoC Modalix | The system-on-chip. You place it on a board that you design. | [Build with the SoC](/hardware/design/chip-down) |
+| Modalix SoM | A module with the SoC, LPDDR5 memory, and power. It plugs into a carrier board. | [Build with the SoM](/hardware/design/carrier-board) |
+| Modalix DevKit | A Modalix SoM on a carrier board, in an enclosure, for evaluation and development. | [Evaluate a DevKit](/hardware/getting-started) |
+| Modalix PCIe Card | A half-height, half-length card that adds Modalix inference to a host machine. | [PCIe Mode](/hardware/getting-started/pcie-mode) |
+
+To change the system software or add a camera on any of these, see [Build System Software](/hardware/software) and [Integrate Cameras](/hardware/interfaces/supported-cameras).
+
+### SoM or Chip-Down {#som-or-chip-down}
+
+To build your own hardware, choose between a carrier board for the Modalix SoM and a board with the SoC placed directly on it. They need different design work, different collateral, and different bring-up.
+
+| | Chip-down design | Carrier board design |
+| --- | --- | --- |
+| What you design | A board with the packaged Modalix SoC on it, including memory, power, and clocks | A carrier board for the Modalix SoM, which already carries the SoC, LPDDR5, and power |
+| Main design work | Power sequencing, clocks and reset, LPDDR5 routing and tuning, high-speed layout, interfaces, thermals | Connector mapping, power delivery, interfaces, thermals |
+| Collateral | Chip-down design guide, SoC datasheet, and design packages, available from SiMa.ai under NDA | Public datasheets and bring-up guide |
+| Software starting point | The Modalix BSP, with board-level adaptation | The Modalix BSP, with device-tree changes for your carrier |
+
+After the board boots, both paths use the same system software. See [Build System Software](/hardware/software).
 
 ## About the MLSoC Modalix
 
@@ -52,24 +79,24 @@ SiMa.ai offers MLSoC Modalix-based development kits and PCIe products for edge A
 | Feature | Modalix DevKit | Modalix PCIe Card | Modalix Early Access DevKit |
 | --- | --- | --- | --- |
 | **Documentation & OS** | | | |
-| Product Brief | [view](https://sima.ai/wp-content/uploads/2025/12/Modalix-DevKit-Product-Brief_04.2.pdf) | — | [view](https://sima.ai/wp-content/uploads/2025/12/Modalix-SoC-Product-Brief_05.3.pdf) |
+| Product Brief | [view](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) | [view](https://sima.ai/wp-content/uploads/2026/07/Modalix-PCIe-HHHL-Product-Brief_v1.6-1.pdf) | [view](https://sima.ai/wp-content/uploads/2026/07/Modalix-MLSoC-Product-Brief_v1.5.pdf) |
 | Preloaded Operating System | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) | [eLxr Linux](/hardware/getting-started/firmware-update#os) |
 | **Compute** | | | |
 | ARM Cores | 8x Arm Cortex-A65 @ 1.4 GHz | 8x Arm Cortex-A65 @ 1.4 GHz | 8x Arm Cortex-A65 @ 1.4 GHz |
-| ISP (Image Signal Processor) | Arm C-71 @ 1.2 GHz | Arm C-71 @ 1.2 GHz | Arm C-71 @ 1.2 GHz |
-| CVU (Computer Vision Unit) | Synopsys EV74 @ 750 16-bit GOPS | Synopsys EV74 @ 750 16-bit GOPS | Synopsys EV74 @ 750 16-bit GOPS |
+| ISP (Image Signal Processor) | Arm Mali-C71AE @ 1.2 GHz | Arm Mali-C71AE @ 1.2 GHz | Arm Mali-C71AE @ 1.2 GHz |
+| CVU (Computer Vision Unit) | Synopsys EV74 @ 720 16-bit GOPS | Synopsys EV74 @ 720 16-bit GOPS | Synopsys EV74 @ 720 16-bit GOPS |
 | **Memory & Storage** | | | |
-| RAM Size | 32 GB LPDDR5 | 32 GB LPDDR5 | 64 GB LPDDR5 |
-| Storage | 16 GB eMMC, 500 GB NVMe | 16 GB eMMC | 10 GB eMMC |
+| RAM Size | 16 GB LPDDR5 (32 GB on earlier kits) | 8 GB or 16 GB LPDDR5 | 64 GB LPDDR5 |
+| Storage | 16 GB eMMC, 500 GB NVMe | 32 GB eMMC | 10 GB eMMC |
 | SD Card Slot | ✖ | ✔ | ✔ |
 | **Networking** | | | |
-| Ethernet | 1x 1GbE | 1x 1GbE | 1x 1GbE (end0), 1x 10GbE (end1), 2x 10GbE SFP+ (end2/3) |
+| Ethernet | 1x 1GbE | 1x 10GbE | 1x 1GbE (end0), 1x 10GbE (end1), 2x 10GbE SFP+ (end2/3) |
 | **Camera Inputs** | | | |
 | MIPI CSI | 2x 2-lane MIPI CSI | ✖ | 4x 4-lane MIPI CSI |
 | GMSL2 over FAKRA | ✖ | 2x GMSL2 over FAKRA | ✖ |
 | **I/O & Display** | | | |
 | GPIO / Headers | 40-pin GPIO header | ✖ | 40-pin GPIO header |
-| USB | 4 USB 3.0 ports | ✖ | ✖ |
+| USB | 4 USB 3.2 ports | ✖ | ✖ |
 | HDMI | 1 HDMI 1.4 port | ✖ | ✖ |
 | Graphics Controller | [Silicon Motion SM768](https://www.siliconmotion.com/download/3PR/a/SM768_PB_EN_202004.pdf) | ✖ | ✖ |
 | **Video Codecs** | | | |
@@ -138,6 +165,49 @@ In PCIe mode, the Modalix PCIe Card is installed in a host machine. Use this mod
 
 </TabItem>
 </Tabs>
+
+## Choose Your Path
+
+<div className="card-grid">
+  <a className="card" href="/hardware/getting-started">
+    <h4>Evaluate a DevKit</h4>
+    <p>Set up a Modalix DevKit or PCIe card, keep it updated, and start developing.</p>
+  </a>
+  <a className="card" href="/hardware/design/carrier-board">
+    <h4>Build with the SoM</h4>
+    <p>Choose a carrier board for the Modalix SoM, or design and bring up your own.</p>
+  </a>
+  <a className="card" href="/hardware/design/chip-down">
+    <h4>Build with the SoC</h4>
+    <p>Put the Modalix SoC directly on your own board.</p>
+  </a>
+  <a className="card" href="/hardware/software">
+    <h4>Build System Software</h4>
+    <p>Build the kernel, U-Boot, and device trees, and flash your own image.</p>
+  </a>
+  <a className="card" href="/hardware/interfaces/supported-cameras">
+    <h4>Integrate Cameras</h4>
+    <p>Choose a supported MIPI camera, connect it, and select its overlay.</p>
+  </a>
+  <a className="card" href="/hardware/reference/extra-docs">
+    <h4>Reference & Downloads</h4>
+    <p>Find product briefs, datasheets, design guides, pin maps, and tech notes.</p>
+  </a>
+</div>
+
+Already know what you need?
+
+- [Build the kernel, U-Boot, and device trees](/hardware/software/build-from-source)
+- [Write a device-tree overlay](/hardware/software/device-tree)
+- [Find the source commit for a release](/hardware/software/release-compatibility)
+- [Flash your own image to a board](/hardware/deployment/flash-image)
+- [Build an update package](/hardware/deployment/update-package)
+- [Compare carrier boards](/hardware/design/third-party-carriers)
+- [Map GPIO, UART, I2C, and SPI pins](/hardware/interfaces/low-speed-io)
+- [Configure MIPI cameras](/hardware/getting-started/standalone-mode/mipi-camera-interfaces)
+- [Update or recover a DevKit](/hardware/getting-started/firmware-update)
+- [Flash and test boards in production](/hardware/deployment/factory-build-and-test)
+- [Find a datasheet or design document](/hardware/reference/extra-docs)
 
 ## Get Started
 

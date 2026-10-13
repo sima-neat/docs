@@ -1,11 +1,15 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "시작하기",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "DevKit 평가",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "빠른 시작 가이드",
     "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "DevKit 변형",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Standalone Mode": {
     "message": "독립 실행형 모드",
@@ -15,21 +19,29 @@
     "message": "PCIe 모드",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "펌웨어 업데이트",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Update & Recover SiMa Images": {
+    "message": "SiMa 이미지 업데이트 및 복구",
+    "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.DevKit Variants": {
-    "message": "DevKit 변형",
-    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.link.Next Step: Develop Software": {
+    "message": "다음 단계: 소프트웨어 개발",
+    "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "도구",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "SoM으로 구축하기",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "참조",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "시스템 소프트웨어 빌드",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "카메라 통합",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "참조 및 다운로드",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "기술 노트",

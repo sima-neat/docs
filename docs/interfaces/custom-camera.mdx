@@ -1,0 +1,115 @@
+---
+title: Integrate Your Own Camera
+description: What a MIPI camera needs before it can capture on a Modalix board, the overlay to write, how to validate capture, and where image-quality tuning starts.
+sidebar_position: 3
+---
+
+# Integrate Your Own Camera
+
+Use this page when your camera is not in
+[Supported MIPI Cameras](./supported-cameras.mdx). It shows what has to be true
+before a camera can produce frames on a Modalix board, what you have to write,
+and how to check each step. A camera that is not on that list is not supported.
+Expect driver and device-tree work, and separate work on image quality.
+
+:::caution[Not yet validated on hardware]
+This page is written from the kernel source for platform release 2.1.3. Nobody
+has integrated a new camera by following it.
+:::
+
+## Check the Fit First {#check-fit}
+
+| Question | What the platform provides |
+| --- | --- |
+| MIPI CSI-2 lanes | Each CSI interface of the Modalix SoM has two data lanes. A camera that needs four lanes on one interface does not work. |
+| Interfaces | The SoM has four CSI interfaces, CSI0 to CSI3. A carrier board connects some of them. The Modalix DevKit connects CSI1 and CSI2. |
+| Connector and cable | The connector on the camera must reach the connector on the carrier board. You may need an adapter. |
+| Control bus, clock, power, and reset | The sensor needs an I2C bus, a reference clock, its supplies, and usually a reset or power-down pin. The carrier board decides which pins provide them. |
+
+For the camera connectors and signals of a carrier board, see
+[Carrier Board Bring-up](../design/som-carrier.mdx).
+
+## Check the Driver {#driver}
+
+The kernel must have a driver for the sensor. Platform release 2.1.3 enables
+drivers for these camera sensors: Sony IMX219, IMX415, IMX477, IMX568, and
+IMX678, onsemi AR0234, and OmniVision OG05C10. It also enables the GMSL
+serializer and deserializer drivers MAX96714, MAX96717, MAX96724, and MAX9296A.
+The list is in
+[`simaai_modalix_defconfig`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/configs/simaai_modalix_defconfig).
+
+For another sensor, add its driver to the kernel. See
+[Build the BSP from Source](../software/build-from-source.mdx).
+
+A driver in the kernel does not make a camera supported. The cameras that have
+an overlay are in [Supported MIPI Cameras](./supported-cameras.mdx).
+
+## Write the Overlay {#overlay}
+
+Start from the overlay of a supported camera for your carrier board and port,
+and change it for your sensor. For example, see
+[`modalix-som-waveshare-ARDU-IMX477-1CAM.dtso`](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/arch/arm64/boot/dts/simaai/overlays/modalix-som-waveshare-ARDU-IMX477-1CAM.dtso).
+The overlay has to do these things:
+
+1. Provide the reference clock of the sensor.
+2. Enable the I2C bus that the sensor is on.
+3. Set the power-down or reset pin of the camera.
+4. Enable the CSI interface of the port, with its D-PHY and video nodes. For
+   port 1, these are `csi1`, `mipi_dphy_rx1`, `axi_vdma1`, `v4l2video1`, and
+   `v4l2vdma1`.
+5. Describe the sensor: its `compatible` string, its I2C address, and its clock.
+6. Connect the sensor to the CSI interface, with `data-lanes = <1 2>` and the
+   link frequency of the sensor mode.
+
+To build, install, and check the overlay, see
+[Device Trees and Overlays](../software/device-tree.mdx).
+
+## Validate Capture {#validate}
+
+1. List the cameras. Your camera must be in the list:
+
+   ```console
+   sima@modalix:~$ cam -l
+   ```
+
+2. List the formats and sizes that the camera offers:
+
+   ```console
+   sima@modalix:~$ cam -c 1 -I
+   ```
+
+3. Capture a frame:
+
+   ```console
+   sima@modalix:~$ cam -c 1 --capture=1 -F -s pixelformat=NV12
+   ```
+
+If the camera is not in the list, see
+[If It Does Not Work](../software/device-tree.mdx#if-it-fails).
+
+## Image Quality Is a Separate Step {#image-quality}
+
+A camera that captures frames does not yet produce good images. The ISP needs
+tuning data for each sensor and lens. In platform release 2.1.3, the ISP driver
+in the kernel has sensor entries for the IMX477, IMX568, IMX678, and OG05C10
+only. For another sensor, plan for ISP tuning. The Modalix Camera & ISP Tuning
+Guide in [Reference Documents](../reference/extra-docs.md) describes it, and is
+available from your SiMa.ai representative.
+
+For what tuning covers and how to get the guide, see [ISP Tuning](./isp-tuning.mdx).
+
+## Get Help {#help}
+
+To ask SiMa.ai about integrating a camera, contact your SiMa.ai representative,
+or use the [SiMa.ai contact page](https://sima.ai/contact/). Include the sensor
+and the part number of the camera module, the carrier board and the port, the
+platform release, and the result of each validation step.
+
+## Next Steps
+
+- [Supported MIPI Cameras](./supported-cameras.mdx): the cameras that already
+  have an overlay.
+- [Device Trees and Overlays](../software/device-tree.mdx): build, install, and
+  check an overlay.
+- [MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx):
+  select an overlay and use more than one camera.

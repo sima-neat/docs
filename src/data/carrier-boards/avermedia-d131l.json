@@ -1,0 +1,38 @@
+{
+  "id": "avermedia-d131l",
+  "vendor": "AVerMedia",
+  "model": "D131L",
+  "reference": false,
+  "ordering": {
+    "url": "https://professional.avermedia.com/product-detail/D131L"
+  },
+  "applications": {
+    "en": "Autonomous mobile robots, smart security, smart inspection",
+    "ja": "自律走行搬送ロボット、スマートセキュリティ、スマート検査",
+    "ko": "자율 이동 로봇, 스마트 보안, 스마트 검사",
+    "zh-Hant": "自主移動機器人、智慧安防、智慧檢測",
+    "uk": "Автономні мобільні роботи, розумна безпека, розумний контроль якості"
+  },
+  "cooling": {
+    "en": "Optional fan",
+    "ja": "ファン（オプション）",
+    "ko": "팬(옵션)",
+    "zh-Hant": "風扇（選配）",
+    "uk": "Вентилятор (опція)"
+  },
+  "temperatureGrade": "0 °C to +70 °C",
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 1,
+    "usb3": 4,
+    "usb2": 1,
+    "m2KeyMx4": 1,
+    "m2KeyE": 1,
+    "csi2Lane": 1,
+    "uart": 1,
+    "i2c": 2,
+    "i2s": 1,
+    "gpio": 6,
+    "spi": 2
+  }
+}

@@ -14,6 +14,10 @@ import TabItem from '@theme/TabItem';
 - DevKit の内部ストレージが破損しているか、起動に失敗する。
 - 複数のブータブル SD カードまたはリムーバブルドライブをデプロイ用に準備する必要がある。
 
+:::note
+このガイドでは、SiMa.ai が提供するイメージを書き込みます。独自にビルドしたイメージを書き込むには、[イメージを eMMC に書き込む](/hardware/deployment/flash-image)を参照してください。
+:::
+
 `sima-cli bootimg` を使用して、SD カードや NVMe ドライブなどのリムーバブルデバイスに完全なブータブルイメージをダウンロードして書き込みます。また、[BalenaEtcher](https://etcher.balena.io/) などのサードパーティツールを使用することもできます。
 
 <Tabs groupId="bootimage-method">

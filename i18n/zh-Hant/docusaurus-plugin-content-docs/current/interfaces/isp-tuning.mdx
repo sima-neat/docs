@@ -1,0 +1,45 @@
+---
+title: ISP 調校
+description: 什麼是 ISP 調校、哪些相機已針對 Modalix ISP 完成調校、何時需要調校，以及如何取得調校指南。
+sidebar_position: 4
+---
+
+# ISP 調校
+
+MLSoC Modalix 的影像訊號處理器（ISP）會將相機感測器的原始資料轉換為應用程式所接收的影像。從相機取得影格，與取得良好的影像，是兩個不同的步驟。本頁說明什麼是調校、哪些相機已完成調校，以及如何取得調校指南。
+
+:::caution[尚未在硬體上驗證]
+本頁摘要整理本網站其他相機頁面的內容，以及平台版本 2.1.3 的核心原始碼。相機與 ISP 的負責人員尚未審閱本頁。
+:::
+
+## 擷取與調校 {#capture-and-tuning}
+
+| | 擷取 | 影像品質調校 |
+| --- | --- | --- |
+| 結果 | 電路板列出該相機，且相機可輸出影格 | 影格具有正確的曝光、白平衡與色彩 |
+| 所需條件 | 感測器驅動程式與 device tree overlay | 針對該感測器及其鏡頭的調校資料 |
+| 從何開始 | [MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx) | 「Modalix 相機與影像訊號處理器（ISP）調校指南」 |
+
+ISP 為 Arm Mali-C71。
+
+## 已完成調校的相機 {#tuned-cameras}
+
+此平台版本已針對[支援的 MIPI 相機](./supported-cameras.mdx)中的相機完成調校：Arducam IMX477、e-con Systems IMX568 與 IMX678，以及 Leopard Imaging AR0234 與 OG05C10。使用上述任一相機時，不需先調校 ISP 即可開始使用。
+
+## 何時需要調校 {#when}
+
+- 您使用的感測器不在上述清單中。請參閱[整合您自己的相機](./custom-camera.mdx)。
+- 您將受支援的感測器搭配不同的鏡頭或相機模組使用。
+- 受支援相機的影像品質無法滿足您應用程式的需求。
+
+## 取得 ISP 調校指南 {#tuning-guide}
+
+「Modalix 相機與影像訊號處理器（ISP）調校指南」說明如何針對相機調校 ISP。該指南需申請取得，請參閱[參考檔案](../reference/extra-docs.md)。
+
+若要向 SiMa.ai 洽詢相機調校事宜，請聯絡您的 SiMa.ai 聯絡人，或使用 [SiMa.ai 聯絡頁面](https://sima.ai/contact/)。
+
+## 後續步驟
+
+- [支援的 MIPI 相機](./supported-cameras.mdx)：已完成調校的相機及其感測器模式。
+- [整合您自己的相機](./custom-camera.mdx)：在調校之前，先讓新相機能夠擷取影像。
+- [參考檔案](../reference/extra-docs.md)：如何取得調校指南。

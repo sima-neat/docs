@@ -1,0 +1,103 @@
+---
+title: Build and Apply an Update Package
+description: Build an SWUpdate package for a Modalix image with the Yocto layer, apply it to a board, and understand how the board falls back if the update does not boot.
+sidebar_position: 3
+---
+
+# Build and Apply an Update Package
+
+An update package replaces the software on a board without writing the whole
+eMMC again. The Yocto layer builds one as an SWUpdate package, a `.swu` file.
+The board writes the new software to the copies that it is not running from,
+switches to them, and goes back to the previous root filesystem if the new one
+does not boot. This page applies to images that you build with
+[Build a Complete Image with Yocto](../software/yocto-image.mdx).
+
+:::caution[Not yet validated on hardware]
+The package on this page was built once, on 2026-10-06, from the layer at its
+release 2.1.3 commit. It has not been applied to a board.
+:::
+
+## How an Update Works {#how-it-works}
+
+The eMMC holds two copies of U-Boot, of the boot directory, and of the root
+filesystem. See the
+[partition layout](../software/yocto-image.mdx#partitions). An update does the
+following:
+
+1. Writes the new root filesystem and the new U-Boot to the copies that are not
+   in use.
+2. Copies the new kernel, device trees, and overlays to the boot directory that
+   is not in use, `boot-0` or `boot-1`.
+3. Switches the board to the new copies, sets `upgrade_available` to `1` and
+   `bootcount` to `0` in the U-Boot environment, and reboots.
+
+If the new software fails to boot more times than `bootlimit` allows, U-Boot
+switches back to the previous root filesystem and clears `upgrade_available`.
+
+## Build the Package {#build}
+
+Build the image first, then build the package in the same build directory:
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
+```
+
+The package is `simaai-image-minimal-upgrade-modalix.rootfs.swu`, in
+`tmp/deploy/images/modalix` with the image. It contains:
+
+| Part | Files |
+| --- | --- |
+| Root filesystem | The `.rootfs.ext4.gz` file of the image |
+| U-Boot | `u-boot.bin` and the boot script, `boot.scr.uimg` |
+| Kernel | `Image` and `Image.enc` |
+| Device trees and overlays | The `.dtb` files of the board and every `.dtbo` file |
+| Update description and script | `sw-description` and `update_modalix.sh` |
+
+:::note
+In the public layer, `sw-description` names the root filesystem
+`simaai-image-palette-modalix.rootfs.ext4.gz`, and the recipe packs the root
+filesystem of `simaai-image-minimal`. Make the two names match before you build
+the package. The build succeeds with the mismatch and does not report it.
+:::
+
+## Apply the Package {#apply}
+
+1. Copy the `.swu` file to the board.
+2. Run `swupdate` as root:
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-palette:1.0 -i /tmp/update.swu
+   ```
+
+   The name and the revision after `-H` must match the entry in `sw-description`.
+   In the public layer they are `simaai-image-palette` and `1.0`. The board
+   reboots when the update finishes.
+
+3. After the reboot, check the build version of the running image:
+
+   ```console
+   root@modalix:~# grep SIMA_BUILD_VERSION /etc/buildinfo
+   ```
+
+## Recover {#recover}
+
+- If the new image does not boot, U-Boot goes back to the previous root
+  filesystem by itself, as described in [How an Update Works](#how-it-works).
+- If neither copy boots, write a complete image again. See
+  [Flash an Image to eMMC](./flash-image.mdx).
+
+## Not Covered {#not-covered}
+
+- Update packages for an eLxr image.
+- Signed update packages.
+- How the board marks an update as good after a successful boot.
+
+## Next Steps
+
+- [Build a Complete Image with Yocto](../software/yocto-image.mdx): build the
+  image that the package updates.
+- [Flash an Image to eMMC](./flash-image.mdx): write a complete image to a
+  board.
+- [Factory Build and Test](./factory-build-and-test.mdx): the tRoot update test
+  also uses `swupdate`.

@@ -117,6 +117,29 @@ const config = {
     ),
   },
 
+  plugins: [
+    [
+      '@docusaurus/plugin-client-redirects',
+      {
+        // Pages that moved when the sidebar was regrouped by task
+        // (sima-neat/docs#80). Keep old links working.
+        redirects: [
+          {from: '/hardware/reference/bsp', to: '/hardware/software'},
+          {from: '/hardware/reference/bsp/build-from-source', to: '/hardware/software/build-from-source'},
+          {
+            from: '/hardware/reference/bsp/release-compatibility',
+            to: '/hardware/software/release-compatibility',
+          },
+          {from: '/hardware/reference/bsp/carrier-board', to: '/hardware/design/som-carrier'},
+          {from: '/hardware/reference/bsp/low-speed-io', to: '/hardware/interfaces/low-speed-io'},
+          // The design folder has no index page. Send a shortened URL to the
+          // entry page of the section.
+          {from: '/hardware/design', to: '/hardware/design/carrier-board'},
+        ],
+      },
+    ],
+  ],
+
   presets: [
     [
       'classic',

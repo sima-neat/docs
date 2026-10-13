@@ -1,11 +1,15 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "Початок роботи",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "Оцінювання DevKit",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "Посібник зі швидкого старту",
     "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "Варіанти DevKit",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Standalone Mode": {
     "message": "Автономний режим",
@@ -15,21 +19,29 @@
     "message": "Режим PCIe",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "Оновлення прошивки",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Update & Recover SiMa Images": {
+    "message": "Оновлення та відновлення образів SiMa",
+    "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.DevKit Variants": {
-    "message": "Варіанти DevKit",
-    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.link.Next Step: Develop Software": {
+    "message": "Наступний крок: розробка ПЗ",
+    "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "Інструменти",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "Розробка на основі SoM",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "Довідкові матеріали",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "Збирання системного ПЗ",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "Інтеграція камер",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "Довідкові матеріали та завантаження",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "Технічні нотатки",

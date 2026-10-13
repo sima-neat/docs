@@ -14,6 +14,10 @@ Use Net Boot Recovery when you need to boot the DevKit over the network instead 
 - You are bringing up a new board and want to avoid wear on internal storage devices.
 - You are converting a Modalix DevKit from Yocto Linux to eLxr, or from eLxr back to Yocto Linux. See [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) for the conversion-specific prerequisites.
 
+:::note
+This guide uses images that SiMa.ai provides, and it needs a working U-Boot prompt on the board. It does not describe how to install an image that you built yourself. For that, see [Flash an Image to eMMC](/hardware/deployment/flash-image).
+:::
+
 Use the `--netboot` option with `sima-cli bootimg`. It downloads the boot image for the target board and serves it from a built-in TFTP server on the host. You then configure the DevKit in U-Boot to boot from that TFTP server and flash the new image to eMMC.
 
 <details open>

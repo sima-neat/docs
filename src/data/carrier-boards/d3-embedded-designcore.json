@@ -1,0 +1,26 @@
+{
+  "id": "d3-embedded-designcore",
+  "vendor": "D3 Embedded",
+  "model": "DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board",
+  "reference": false,
+  "ordering": {
+    "partNumber": "3010030",
+    "url": "https://www.d3embedded.com/product/designcore-nvidia-jetson-orin-nx-8-camera-gmsl2-carrier-board/"
+  },
+  "applications": {
+    "en": "Autonomous machines, smart cameras, industrial vehicles",
+    "ja": "自律マシン、スマートカメラ、産業用車両",
+    "ko": "자율 기계, 스마트 카메라, 산업용 차량",
+    "zh-Hant": "自主機器、智慧相機、工業車輛",
+    "uk": "Автономні машини, розумні камери, промислові транспортні засоби"
+  },
+  "temperatureGrade": "-20 °C to +70 °C",
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": "2 (10 GbE, 1 GbE)",
+    "usb3": 1,
+    "m2KeyMx4": 1,
+    "m2KeyE": 1,
+    "gmsl": 8
+  }
+}

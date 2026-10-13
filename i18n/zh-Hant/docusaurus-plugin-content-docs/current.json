@@ -1,11 +1,15 @@
 {
-  "sidebar.systemDocs.category.Getting Started": {
-    "message": "開始使用",
-    "description": "The label for category 'Getting Started' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Evaluate a DevKit": {
+    "message": "評估 DevKit",
+    "description": "The label for category 'Evaluate a DevKit' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.link.Quick Start Guide": {
     "message": "快速入門指南",
     "description": "The label for link 'Quick Start Guide' in sidebar 'systemDocs', linking to 'pathname:///tools/qsg/index.html'"
+  },
+  "sidebar.systemDocs.category.DevKit Variants": {
+    "message": "DevKit 型號",
+    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Standalone Mode": {
     "message": "獨立模式",
@@ -15,21 +19,29 @@
     "message": "PCIe 模式",
     "description": "The label for category 'PCIe Mode' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.Firmware Update": {
-    "message": "韌體更新",
-    "description": "The label for category 'Firmware Update' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Update & Recover SiMa Images": {
+    "message": "更新與復原 SiMa 映像檔",
+    "description": "The label for category 'Update & Recover SiMa Images' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.DevKit Variants": {
-    "message": "DevKit 型號",
-    "description": "The label for category 'DevKit Variants' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.link.Next Step: Develop Software": {
+    "message": "下一步：開發軟體",
+    "description": "The label for link 'Next Step: Develop Software' in sidebar 'systemDocs', linking to 'https://developer.sima.ai/software'"
   },
-  "sidebar.systemDocs.category.Tools": {
-    "message": "工具",
-    "description": "The label for category 'Tools' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build with the SoM": {
+    "message": "使用 SoM 開發",
+    "description": "The label for category 'Build with the SoM' in sidebar 'systemDocs'"
   },
-  "sidebar.systemDocs.category.References": {
-    "message": "參考資料",
-    "description": "The label for category 'References' in sidebar 'systemDocs'"
+  "sidebar.systemDocs.category.Build System Software": {
+    "message": "建置系統軟體",
+    "description": "The label for category 'Build System Software' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Integrate Cameras": {
+    "message": "整合相機",
+    "description": "The label for category 'Integrate Cameras' in sidebar 'systemDocs'"
+  },
+  "sidebar.systemDocs.category.Reference & Downloads": {
+    "message": "參考資料與下載",
+    "description": "The label for category 'Reference & Downloads' in sidebar 'systemDocs'"
   },
   "sidebar.systemDocs.category.Tech Notes": {
     "message": "技術說明",

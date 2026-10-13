@@ -83,10 +83,62 @@ for (const [locale, sources] of Object.entries(translationSources)) {
   }
 }
 const expectedSidebarMessages = {
-  ko: ['시작하기', '빠른 시작 가이드', '독립 실행형 모드', 'PCIe 모드', '펌웨어 업데이트', 'DevKit 변형', '도구', '참조', '기술 노트'],
-  ja: ['はじめに', 'クイックスタートガイド', 'スタンドアロンモード', 'PCIe モード', 'ファームウェア更新', 'DevKit バリエーション', 'ツール', 'リファレンス', '技術ノート'],
-  'zh-Hant': ['開始使用', '快速入門指南', '獨立模式', 'PCIe 模式', '韌體更新', 'DevKit 型號', '工具', '參考資料', '技術說明'],
-  uk: ['Початок роботи', 'Посібник зі швидкого старту', 'Автономний режим', 'Режим PCIe', 'Оновлення прошивки', 'Варіанти DevKit', 'Інструменти', 'Довідкові матеріали', 'Технічні нотатки'],
+  ko: [
+    'DevKit 평가',
+    '빠른 시작 가이드',
+    'DevKit 변형',
+    '독립 실행형 모드',
+    'PCIe 모드',
+    'SiMa 이미지 업데이트 및 복구',
+    '다음 단계: 소프트웨어 개발',
+    'SoM으로 구축하기',
+    '시스템 소프트웨어 빌드',
+    '카메라 통합',
+    '참조 및 다운로드',
+    '기술 노트',
+  ],
+  ja: [
+    'DevKit の評価',
+    'クイックスタートガイド',
+    'DevKit バリエーション',
+    'スタンドアロンモード',
+    'PCIe モード',
+    'SiMa イメージの更新と復旧',
+    '次のステップ: ソフトウェア開発',
+    'SoM で構築する',
+    'システムソフトウェアのビルド',
+    'カメラの統合',
+    'リファレンスとダウンロード',
+    '技術ノート',
+  ],
+  'zh-Hant': [
+    '評估 DevKit',
+    '快速入門指南',
+    'DevKit 型號',
+    '獨立模式',
+    'PCIe 模式',
+    '更新與復原 SiMa 映像檔',
+    '下一步：開發軟體',
+    '使用 SoM 開發',
+    '建置系統軟體',
+    '整合相機',
+    '參考資料與下載',
+    '技術說明',
+  ],
+  uk: [
+    'Оцінювання DevKit',
+    'Посібник зі швидкого старту',
+    'Варіанти DevKit',
+    'Автономний режим',
+    'Режим PCIe',
+    'Оновлення та відновлення образів SiMa',
+    'Наступний крок: розробка ПЗ',
+    'Розробка на основі SoM',
+    'Збирання системного ПЗ',
+    'Інтеграція камер',
+    'Довідкові матеріали та завантаження',
+    'Технічні нотатки',
+  ],
 };
 const expectedBannerQuickStartLabels = {
   en: 'Quick Start',
@@ -126,14 +178,17 @@ const modeTabLabels = {
   uk: ['Автономний режим', 'Режим PCIe'],
 };
 const sidebarTranslationKeys = [
-  'sidebar.systemDocs.category.Getting Started',
+  'sidebar.systemDocs.category.Evaluate a DevKit',
   'sidebar.systemDocs.link.Quick Start Guide',
+  'sidebar.systemDocs.category.DevKit Variants',
   'sidebar.systemDocs.category.Standalone Mode',
   'sidebar.systemDocs.category.PCIe Mode',
-  'sidebar.systemDocs.category.Firmware Update',
-  'sidebar.systemDocs.category.DevKit Variants',
-  'sidebar.systemDocs.category.Tools',
-  'sidebar.systemDocs.category.References',
+  'sidebar.systemDocs.category.Update & Recover SiMa Images',
+  'sidebar.systemDocs.link.Next Step: Develop Software',
+  'sidebar.systemDocs.category.Build with the SoM',
+  'sidebar.systemDocs.category.Build System Software',
+  'sidebar.systemDocs.category.Integrate Cameras',
+  'sidebar.systemDocs.category.Reference & Downloads',
   'sidebar.systemDocs.category.Tech Notes',
 ];
 const context = {window: {}};
@@ -523,9 +578,9 @@ assert.match(mobileSearchSource, /aria-label=\{searchCopy\.close\}/);
 assert.doesNotMatch(mobileSearchSource, /aria-label="(?:Search Developer Center|Close search)"/);
 assert.ok(
   fs.readFileSync(
-    path.join(docsRoot, 'i18n/ko/docusaurus-plugin-content-docs/current/reference/bsp.md'),
+    path.join(docsRoot, 'i18n/ko/docusaurus-plugin-content-docs/current/software/index.md'),
     'utf8',
-  ).includes('소스 레이어: [swsoc-simaai-elxr-doc]'),
+  ).includes('소스: [simaai-linux](https://github.com/SiMa-ai/simaai-linux)'),
   'Korean BSP translation must preserve the source repository identifier',
 );
 const japaneseNetworkSource = fs.readFileSync(
@@ -537,13 +592,6 @@ const japaneseNetworkSource = fs.readFileSync(
 );
 assert.match(japaneseNetworkSource, /バージョン 2\.0 以前にのみ適用されます[^]*?\n:::\n\n1\./);
 assert.match(japaneseNetworkSource, /   :::warning\n   このファイル[^]*?\n   :::/);
-assert.match(
-  fs.readFileSync(
-    path.join(docsRoot, 'i18n/ja/docusaurus-plugin-content-docs/current/reference/bsp.md'),
-    'utf8',
-  ),
-  /いずれかの方法を使用して、DevKit に書き込みます/,
-);
 assert.match(
   fs.readFileSync(
     path.join(
@@ -697,7 +745,7 @@ assert.match(
 assert.doesNotMatch(rootThemeSource, /WIP_DEADLINE|WipBanner|wip-banner/);
 assert.doesNotMatch(rootThemeSource, /localePrefix/);
 assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/getting-started"\)/);
-assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/devkit\/modalix-devkit"\)/);
+assert.match(rootThemeSource, /useBaseUrl\("\/hardware\/design\/carrier-board"\)/);
 assert.doesNotMatch(localDeveloperCenterSource, /curl[^\n]+\|\s*grep -Fq/);
 assert.match(localDeveloperCenterSource, /response="\$\(curl[\s\S]*grep -Fq[\s\S]*<<<"\$\{response\}"/);
 assert.match(shellSource, /localizedPath\('\/', locale, manifest\)/);
@@ -878,8 +926,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   }
   if (locale === 'zh-Hant') {
     const glossarySource = fs.readFileSync(path.join(translatedDocsRoot, 'reference/glossary.md'), 'utf8');
-    assert.doesNotMatch(glossarySource, /750 MHz/, 'zh-Hant converts GOPS throughput into MHz');
-    assert.match(glossarySource, /750 16 位元 GOPS/);
+    assert.doesNotMatch(glossarySource, /720 MHz/, 'zh-Hant converts GOPS throughput into MHz');
+    assert.match(glossarySource, /720 16 位元 GOPS/);
     assert.doesNotMatch(translatedCorpus, /條紋/, 'zh-Hant translates a MIPI lane as a visual stripe');
     assert.doesNotMatch(translatedCorpus, /港口/, 'zh-Hant translates a hardware port as a maritime harbor');
     assert.doesNotMatch(translatedCorpus, /建立人脈/, 'zh-Hant translates networking as relationship-building');
@@ -895,8 +943,8 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     );
   }
   if (locale === 'ja') {
-    assert.doesNotMatch(translatedCorpus, /750\s*MHz/, 'ja converts GOPS throughput into MHz');
-    assert.match(translatedCorpus, /750 16ビット GOPS/);
+    assert.doesNotMatch(translatedCorpus, /720\s*MHz/, 'ja converts GOPS throughput into MHz');
+    assert.match(translatedCorpus, /720 16ビット GOPS/);
     const elxrConversionSource = fs.readFileSync(
       path.join(translatedDocsRoot, 'reference/tech-notes/elxr-conversion.mdx'),
       'utf8',
@@ -907,11 +955,11 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
   if (locale === 'uk') {
     assert.doesNotMatch(
       translatedCorpus,
-      /750[^\n|.]*операцій[^\n|.]*секунду/i,
+      /720[^\n|.]*операцій[^\n|.]*секунду/i,
       'uk drops the giga scale from GOPS throughput',
     );
     assert.ok(
-      (translatedCorpus.match(/750 16-бітних GOPS/g) || []).length >= 6,
+      (translatedCorpus.match(/720 16-бітних GOPS/g) || []).length >= 6,
       'uk does not consistently preserve the canonical CVU throughput unit',
     );
     assert.doesNotMatch(
@@ -972,7 +1020,7 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
       );
       assert.doesNotMatch(
         translatedSource,
-        /750\s*(?:MHz|兆赫)/,
+        /720\s*(?:MHz|兆赫)/,
         `${path.relative(docsRoot, translatedDoc)} converts GOPS throughput into a clock frequency`,
       );
     }
