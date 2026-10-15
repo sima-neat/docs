@@ -18,7 +18,51 @@ sidebar_position: 2
 このガイドでは SiMa.ai が提供するイメージを使用します。また、ボード上で U-Boot プロンプトが動作している必要があります。独自にビルドしたイメージのインストール方法は、このガイドでは説明していません。その場合は、[イメージを eMMC に書き込む](/hardware/deployment/flash-image)を参照してください。
 :::
 
-`sima-cli bootimg`と組み合わせて、`--netboot`オプションを使用します。これにより、ターゲットボード用のブートイメージがダウンロードされ、ホスト上の組み込みTFTPサーバーから提供されます。次に、U-BootでDevKitを構成し、そのTFTPサーバーからブートするように設定し、新しいイメージをeMMCに書き込みます。
+`sima-cli bootimg`と組み合わせて、`--netboot`オプションを使用します。これにより、ターゲットボード用のブートイメージがダウンロードされ、ホスト上の組み込みTFTPサーバーから提供されます。DevKit はその TFTP サーバーから起動し、`sima-cli` が新しいイメージを eMMC に書き込みます。
+
+実行方法は 2 つあります。
+
+- **自動。** DevKit が Linux を起動でき、ホストから SSH で接続できる場合は、1 つのコマンドでネットワークブートの設定、DevKit の再起動、eMMC への書き込みまで行えます。シリアルコンソールは不要です。[自動ネットワークブートと書き込み](#automatic)を参照してください。
+- **手動。** DevKit が Linux を起動できない場合や、ホストから SSH で接続できない場合は、シリアルコンソールから U-Boot でネットワークブートを設定します。ステップ1からステップ4に従ってください。
+
+## 自動ネットワークブートと書き込み {#automatic}
+
+`sima-cli` 2.1.17 以降が必要です。インストールされているバージョンは `sima-cli --version` で確認できます。
+
+1. **DevKit のイーサネットポート**を、直接またはスイッチ経由でホストに接続します。ホストから DevKit の現在の IP アドレスに到達できることを確認します（例：`ping 192.168.1.20`）。
+
+2. `--devkit` と `--autoflash` を指定して `sima-cli bootimg` を実行します。`<version>` をターゲットとなる SDK のバージョン（例：`%platform_version%`）に、`<devkit-ip>` を DevKit の現在の IP アドレスに置き換えてください。
+
+   **macOS の場合：**
+
+   ```console
+   sima-user@sima-user-machine:~$ sima-cli bootimg -v <version> --netboot --devkit <devkit-ip> --autoflash
+   ```
+
+   **Linux の場合：** TFTPサーバーは特権ポートである69にバインドされるため、`sudo` が必要です。
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg -v <version> --netboot --devkit <devkit-ip> --autoflash
+   ```
+
+   このコマンドは、デフォルトで Modalix DevKit に eLxr をインストールします。Yocto の場合は `--fwtype yocto` を追加します。`--devkit` を省略すると、`sima-cli` はネットワーク上の DevKit を探し、どれを使うかを尋ねます。
+
+3. `sima-cli` は SSH で DevKit に接続し、使用するネットワーク設定を表示します。設定を確認してから承認してください。その後、`sima-cli` は次の処理を行います。
+
+   1. DevKit の U-Boot 環境を保存し、ホスト上の TFTP サーバーから起動するように設定します。
+   2. DevKit を再起動します。実行中のアプリケーションは中断されます。
+   3. DevKit がネットワークから起動し、SSH が使用できるようになるまで待ちます。
+   4. イメージを eMMC に書き込みます。
+
+   この処理には数分かかります。コマンドは実行したままにしてください。起動の様子はシリアルコンソールで確認できますが、必須ではありません。
+
+4. `sima-cli` が `✅ Flash completed` と表示したら、`netboot>` プロンプトで `q` と入力します。`sima-cli` は保存した U-Boot 環境を DevKit に書き戻し、DevKit が再び eMMC から起動するようにします。
+
+5. DevKit の電源を入れ直してください。eMMC からターゲットバージョンが起動します。
+
+`sima-cli` が SSH で DevKit に接続できない場合や、U-Boot 環境を安全に変更できない場合、DevKit の変更や再起動は行いません。TFTP サーバーは動作したままで、入力すべき U-Boot コマンドが表示されることがあります。[手動ネットワークブートと書き込み](#manual)のステップ3のとおりにシリアルコンソールからネットワークブートを設定し、ステップ4のとおりに `f` と入力してください。
+
+## 手動ネットワークブートと書き込み {#manual}
 
 <details open>
 <summary><strong>ステップ1：物理的なセットアップ</strong></summary>
@@ -129,10 +173,12 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary><strong>ステップ4：eMMCに書き込みます</strong></summary>
 
-ホスト上の`--netboot`シェルは、次の2つのコマンドをサポートしています。
+ホスト上の`--netboot`シェルは、次のコマンドをサポートしています。
 
 - `c` — 接続されているすべてのクライアントと、現在それらのクライアントで実行されているファームウェアのバージョンを表示します。
+- `d` — ネットワーク上の DevKit を探します。
 - `f` — 選択したクライアントのeMMCにファームウェアを書き込みます。
+- `q` — セッションを終了し、TFTP サーバーを停止します。
 
 DevKit がネットワークブートを完了するまで待ちます。これには数分かかる場合があります。シリアルコンソールにログインプロンプトが表示されたら、ボードは準備完了です。完全なブートシーケンスを観察するために、シリアルコンソールを接続したままにしておくことをお勧めします。
 
