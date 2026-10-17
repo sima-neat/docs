@@ -4,8 +4,8 @@
       {key: 'quickstart', label: 'Quick Start Guide', href: '/tools/qsg/index.html', external: true},
       {key: 'hardware', label: 'Hardware', href: '/hardware', external: false},
       {key: 'software', label: 'Software', href: '/software', external: false},
-      {key: 'examples', label: 'Examples', href: '/examples/', external: false},
       {key: 'models', label: 'Models', href: 'https://huggingface.co/simaai', external: true},
+      {key: 'examples', label: 'Examples', href: '/examples/', external: false},
       {key: 'community', label: 'Community', href: 'https://community.sima.ai', external: true},
     ],
     theme: {
@@ -971,6 +971,11 @@
 
     return {
       ...base,
+      navItems: base.navItems.map((item) => (
+        item.key === 'models' && ['stg', 'staging'].includes(runtimeConfig.environment)
+          ? {...item, href: '/models/', external: false}
+          : item
+      )),
       search: runtimeConfig.search || base.search || null,
     };
   }
