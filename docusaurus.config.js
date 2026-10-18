@@ -73,6 +73,9 @@ const config = {
   organizationName: 'sima-neat',
   projectName: 'docs',
   trailingSlash: false,
+  stylesheets: [
+    'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap',
+  ],
   headTags: [
     {
       tagName: 'script',

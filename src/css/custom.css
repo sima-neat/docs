@@ -6,14 +6,10 @@
   --ifm-color-primary-light: #6aa5e2;
   --ifm-color-primary-lighter: #7cb1e7;
   --ifm-color-primary-lightest: #9cc6ef;
-  --ifm-font-family-base: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --ifm-font-family-base: "Roboto", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ifm-font-family-monospace: "IBM Plex Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --ifm-heading-font-family: var(--ifm-font-family-base);
   --docs-subnav-height: 3.25rem;
-}
-
-html[data-theme='dark'] {
-  --ifm-color-primary: #8fc0f0;
 }
 
 .navbar {
@@ -35,7 +31,7 @@ html[data-theme='dark'] {
   }
 
   html.developer-center-shell-active #__docusaurus {
-    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height));
+    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 0.75rem);
   }
 
   html.developer-center-shell-active .theme-doc-sidebar-container {
@@ -49,8 +45,8 @@ html[data-theme='dark'] {
 
   html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 0.75rem) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 0.75rem) !important;
   }
 
   /* Offset the right-side "On this page" table of contents below the bar. */
