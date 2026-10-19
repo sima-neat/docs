@@ -18,7 +18,51 @@ sidebar_position: 2
 本指南使用 SiMa.ai 提供的映像檔，且電路板上必須有可運作的 U-Boot 提示字元。本指南不說明如何安裝您自行建置的映像檔；若有此需求，請參閱[將映像檔燒錄到 eMMC](/hardware/deployment/flash-image)。
 :::
 
-使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像檔，並從主機上的內建 TFTP 伺服器提供該映像檔。然後，您可以在 U-Boot 中設定 DevKit，以便從該 TFTP 伺服器啟動，並將新的映像檔燒錄到 eMMC。
+使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像檔，並從主機上的內建 TFTP 伺服器提供該映像檔。DevKit 接著從該 TFTP 伺服器啟動，再由 `sima-cli` 將新的映像檔燒錄到 eMMC。
+
+有兩種執行方式：
+
+- **自動。** 如果 DevKit 能啟動 Linux，且主機可以透過 SSH 連線到它，只要一個指令就能設定網路啟動、重新啟動 DevKit，並燒錄 eMMC。不需要序列主控台。請參閱[自動網路啟動與燒錄](#automatic)。
+- **手動。** 如果 DevKit 無法啟動 Linux，或主機無法透過 SSH 連線到它，請透過序列主控台在 U-Boot 中設定網路啟動。請依照步驟 1 到步驟 4 操作。
+
+## 自動網路啟動與燒錄 {#automatic}
+
+需要 `sima-cli` 2.1.17 或更新版本。執行 `sima-cli --version` 可查看已安裝的版本。
+
+1. 將 **DevKit 的乙太網路連接埠**直接或透過交換器連接到主機。確認主機可以連到 DevKit 目前的 IP 位址，例如 `ping 192.168.1.20`。
+
+2. 加上 `--devkit` 和 `--autoflash` 執行 `sima-cli bootimg`。將 `<version>` 替換為目標 SDK 版本（例如 `%platform_version%`），並將 `<devkit-ip>` 替換為 DevKit 目前的 IP 位址。
+
+   **在 macOS 上：**
+
+   ```console
+   sima-user@sima-user-machine:~$ sima-cli bootimg -v <version> --netboot --devkit <devkit-ip> --autoflash
+   ```
+
+   **在 Linux 上：** TFTP 伺服器會綁定到需要權限的連接埠 69，因此需要 `sudo`：
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg -v <version> --netboot --devkit <devkit-ip> --autoflash
+   ```
+
+   此指令預設會在 Modalix DevKit 上安裝 eLxr。若要安裝 Yocto，請加上 `--fwtype yocto`。如果省略 `--devkit`，`sima-cli` 會在網路上尋找 DevKit，並請您選擇其中一台。
+
+3. `sima-cli` 會透過 SSH 連線到 DevKit，並顯示它將使用的網路設定。確認設定後再同意。接著 `sima-cli` 會：
+
+   1. 儲存 DevKit 的 U-Boot 環境，並將其設定為從主機上的 TFTP 伺服器啟動。
+   2. 重新啟動 DevKit，這會中斷正在執行的應用程式。
+   3. 等待 DevKit 從網路啟動完成，且可以使用 SSH。
+   4. 將映像檔寫入 eMMC。
+
+   這需要幾分鐘。請讓指令持續執行。您可以開啟序列主控台觀察啟動過程，但這不是必要的。
+
+4. 當 `sima-cli` 顯示 `✅ Flash completed` 時，在 `netboot>` 提示字元輸入 `q`。`sima-cli` 會將儲存的 U-Boot 環境寫回 DevKit，讓它再次從 eMMC 啟動。
+
+5. 將 DevKit 重新上電。它會從 eMMC 啟動目標版本。
+
+如果 `sima-cli` 無法透過 SSH 連線到 DevKit，或無法安全地變更 U-Boot 環境，就不會變更或重新啟動 DevKit。TFTP 伺服器會繼續執行，並可能顯示需要輸入的 U-Boot 指令。請依照[手動網路啟動與燒錄](#manual)的步驟 3，透過序列主控台設定網路啟動，然後依照步驟 4 輸入 `f`。
+
+## 手動網路啟動與燒錄 {#manual}
 
 <details open>
 <summary><strong>步驟 1：實體設定</strong></summary>
@@ -129,10 +173,12 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary><strong>步驟 4：燒錄 eMMC。</strong></summary>
 
-這個 `--netboot` 主機上的 Shell 支援兩個指令：
+主機上的 `--netboot` Shell 支援以下指令：
 
 - `c` — 顯示所有已連線的使用者端，以及目前正在這些使用者端上執行的韌體版本。
+- `d` — 在網路上尋找 DevKit。
 - `f` — 將選取的客戶端裝置的 eMMC 進行燒錄。
+- `q` — 結束工作階段並停止 TFTP 伺服器。
 
 請等待 DevKit 完成網路啟動。這可能需要幾分鐘。一旦序列主控台上顯示登入提示，則板子已準備就緒。我們建議在整個啟動過程中保持序列主控台的連接，以便觀察完整的啟動序列。
 
