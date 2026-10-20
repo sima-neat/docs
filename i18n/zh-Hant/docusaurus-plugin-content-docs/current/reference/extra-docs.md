@@ -37,7 +37,7 @@ sidebar_position: 4
 | 檔案 | 描述 | 取得方式 | 下載 |
 | --- | --- | --- | --- |
 | **Modalix 系統模組載板硬體參考** | 設計基於 Modalix 系統模組 (SoM) 的載板時，以下是主要設計指南：連接器腳位、介面對應、電源供應和參考連接。在開始自訂板設計時，請先閱讀此指南。 | 需 SiMa.ai 帳號 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
-| **Modalix 系統模組（SoM）資料手冊** | SoM 的詳細電氣、機械和熱特性規格，包括：連接器腳位、電源時序、電流消耗和工作限制。這是制定板級設計決策的權威參考資料。 | 需 SiMa.ai 帳號 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
+| **Modalix 系統模組（SoM）資料手冊** | SoM 的詳細電氣、機械和熱特性規格，包括：連接器腳位、電源時序、電流消耗和工作限制。這是制定板級設計決策的權威參考資料。 | 需 SiMa.ai 帳號 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf) |
 | **Modalix 系統單晶片（SoC）資料手冊** | 關於 MLSoC Modalix 晶片的詳細電氣、機械和熱規格——包括腳位功能、電源軌、訊號時序和工作限制。當您在矽晶層級進行設計，而不是以預先整合的系統模組 (SoM) 為基礎時，這些資訊是必要的。 | 需申請 | *請聯絡您的SiMa.ai聯絡人* |
 | **系統模組（SoM）載板啟動指南** | 一份逐步操作的手冊，說明如何為新組裝的載板供電並進行驗證，從啟動電源供應開始，到啟動系統模組（SoM），並包含檢查點和常見的啟動問題，以便您留意。 | 需 SiMa.ai 帳號 | [下載 PDF](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
 
