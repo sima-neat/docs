@@ -621,13 +621,14 @@ assert.match(
   ),
   /eLxr 런타임에서 실행되는 SDK 릴리스 \*\*2\.1\.0\*\* 이상/,
 );
-assert.match(
-  fs.readFileSync(
-    path.join(docsRoot, 'i18n/ja/docusaurus-plugin-content-docs/current/reference/tech-notes/ros2.mdx'),
+for (const locale of ['ko', 'ja', 'zh-Hant', 'uk']) {
+  const ros2Source = fs.readFileSync(
+    path.join(docsRoot, `i18n/${locale}/docusaurus-plugin-content-docs/current/reference/tech-notes/ros2.mdx`),
     'utf8',
-  ),
-  /eLxr ランタイム上で動作する SDK リリース \*\*2\.1\.0\*\* 以降/,
-);
+  );
+  assert.match(ros2Source, /sima-cli neat install ros@v3\.0\.0/);
+  assert.match(ros2Source, /sima-cli install tools\/ros2/);
+}
 assert.match(
   fs.readFileSync(
     path.join(
