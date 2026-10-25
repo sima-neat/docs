@@ -6,9 +6,9 @@ sidebar_position: 4
 
 # Convert from 2.1.3 to 3.0.0
 
-This procedure applies to **Modalix SoM DevKits** and **Modalix PCIe cards**. Most new boards have **2.1.x** firmware installed at the factory.
+This procedure applies to Modalix SoM DevKits and Modalix PCIe cards. Most new boards have 2.1.x firmware installed at the factory.
 
-Release **2.1.x** uses a system image compatible with **Debian 12**. Release **3.0.0** moves to **Debian 13**. It also includes system changes to **OverlayFS**, **A/B images**, and **SWUpdate**.
+Release 2.1.x uses a system image compatible with Debian 12. Release 3.0.0 moves to Debian 13. It also includes system changes to OverlayFS, A/B images, and SWUpdate.
 
 These changes make the 3.0.0 system image incompatible with the 2.1 system image. The conversion requires a special update procedure. First, update the board to the latest **2.1.3** firmware. Then, use **netboot** to start the board through the network and write the 3.0.0 image to its storage.
 
