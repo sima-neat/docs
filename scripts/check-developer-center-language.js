@@ -628,6 +628,9 @@ for (const locale of ['ko', 'ja', 'zh-Hant', 'uk']) {
   );
   assert.match(ros2Source, /sima-cli neat install ros@v3\.0\.0/);
   assert.match(ros2Source, /sima-cli install tools\/ros2/);
+  assert.match(ros2Source, /eLxr/);
+  assert.match(ros2Source, /Yocto/);
+  assert.match(ros2Source, /\]\(\.\/elxr-conversion\)/);
 }
 assert.match(
   fs.readFileSync(
