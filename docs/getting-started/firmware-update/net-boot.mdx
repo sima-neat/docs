@@ -18,7 +18,51 @@ Use Net Boot Recovery when you need to boot the DevKit over the network instead 
 This guide uses images that SiMa.ai provides, and it needs a working U-Boot prompt on the board. It does not describe how to install an image that you built yourself. For that, see [Flash an Image to eMMC](/hardware/deployment/flash-image).
 :::
 
-Use the `--netboot` option with `sima-cli bootimg`. It downloads the boot image for the target board and serves it from a built-in TFTP server on the host. You then configure the DevKit in U-Boot to boot from that TFTP server and flash the new image to eMMC.
+Use the `--netboot` option with `sima-cli bootimg`. It downloads the boot image for the target board and serves it from a built-in TFTP server on the host. The DevKit then boots from that TFTP server, and `sima-cli` flashes the new image to eMMC.
+
+There are two ways to run it:
+
+- **Automatic.** If the DevKit boots Linux and the host can reach it over SSH, one command sets up the network boot, reboots the DevKit, and flashes the eMMC. You do not need the serial console. See [Automatic Net Boot and Flash](#automatic).
+- **Manual.** If the DevKit does not boot Linux, or the host cannot reach it over SSH, you set up the network boot in U-Boot through the serial console. Follow Steps 1 to 4.
+
+## Automatic Net Boot and Flash {#automatic}
+
+This needs `sima-cli` 2.1.17 or later. To check the installed version, run `sima-cli --version`.
+
+1. Connect the **DevKit's Ethernet port** to the host, directly or through a switch. Check that the host can reach the DevKit at its current IP address, for example `ping 192.168.1.20`.
+
+2. Run `sima-cli bootimg` with `--devkit` and `--autoflash`. Replace `<version>` with the target SDK version (for example `%platform_version%`), and `<devkit-ip>` with the DevKit's current IP address.
+
+   **On macOS:**
+
+   ```console
+   sima-user@sima-user-machine:~$ sima-cli bootimg -v <version> --netboot --devkit <devkit-ip> --autoflash
+   ```
+
+   **On Linux:** the TFTP server binds to port 69, which is privileged, so `sudo` is required:
+
+   ```console
+   sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg -v <version> --netboot --devkit <devkit-ip> --autoflash
+   ```
+
+   The command installs eLxr on a Modalix DevKit by default. For Yocto, add `--fwtype yocto`. If you leave out `--devkit`, `sima-cli` looks for DevKits on the network and asks you to choose one.
+
+3. `sima-cli` connects to the DevKit over SSH and shows the network settings it will use. Check them, then confirm. `sima-cli` then:
+
+   1. Saves the DevKit's U-Boot environment, and sets it to boot from the TFTP server on the host.
+   2. Reboots the DevKit, which interrupts any running applications.
+   3. Waits until the DevKit has booted from the network and SSH is available on it.
+   4. Writes the image to the eMMC.
+
+   This takes several minutes. Keep the command running. To watch the boot, you can open the serial console, but you do not have to.
+
+4. When `sima-cli` prints `✅ Flash completed`, type `q` at the `netboot>` prompt. `sima-cli` writes the saved U-Boot environment back to the DevKit, so that it boots from eMMC again.
+
+5. Power-cycle the DevKit. It boots the target version from eMMC.
+
+If `sima-cli` cannot connect to the DevKit over SSH, or cannot change the U-Boot environment safely, it does not change or reboot the DevKit. It keeps the TFTP server running, and it can print the U-Boot commands to enter. Set up the network boot through the serial console as in Step 3 of [Manual Net Boot and Flash](#manual), then type `f` as in Step 4.
+
+## Manual Net Boot and Flash {#manual}
 
 <details open>
 <summary><strong>Step 1. Physical Setup</strong></summary>
@@ -129,10 +173,12 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary><strong>Step 4. Flash the eMMC</strong></summary>
 
-The `--netboot` shell on the host supports two commands:
+The `--netboot` shell on the host supports these commands:
 
 - `c` — Show all connected clients and the firmware version currently running on them.
+- `d` — Look for DevKits on the network.
 - `f` — Flash the selected client's eMMC.
+- `q` — End the session and stop the TFTP server.
 
 Wait for the DevKit to finish netbooting. This may take several minutes. Once the login prompt is shown on the serial console, the board is ready. We recommend keeping the serial console connected throughout to observe the full boot sequence.
 
