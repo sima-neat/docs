@@ -37,7 +37,7 @@ DevKit を初めてご利用ですか？こちらから始めてください。�
 | ドキュメント | 説明 | 入手方法 | ダウンロード |
 | --- | --- | --- | --- |
 | **Modalix SoM キャリアボードのハードウェアに関する技術資料** | Modalix SoM を使用してキャリアボードを設計する際の主なガイド：コネクターのピン配置、インターフェースのマッピング、電力供給、および参照接続について説明します。カスタムボードの設計を開始する前に、まずこちらをお読みください。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
-| **Modalix SoM データシート** | SoM（システムオンモジュール）の詳細な電気的、機械的、および熱的仕様：コネクターのピン配置、電源シーケンス、消費電流、および動作範囲。これは、基板レベルの設計に関する意思決定を行う際の信頼できる情報源です。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
+| **Modalix SoM データシート** | SoM（システムオンモジュール）の詳細な電気的、機械的、および熱的仕様：コネクターのピン配置、電源シーケンス、消費電流、および動作範囲。これは、基板レベルの設計に関する意思決定を行う際の信頼できる情報源です。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf) |
 | **Modalix SoC データシート** | MLSoC Modalixダイの、詳細な電気的、機械的、および熱的仕様 — ピン機能、電源ライン、信号タイミング、および動作範囲。あらかじめ統合されたSoMを基に設計するのではなく、シリコンレベルで設計する場合に必要となります。 | 依頼により提供 | *SiMa.ai の担当者にお問い合わせください。* |
 | **キャリアボード用SoMの立ち上げガイド** | 新しく組み立てたキャリアボードに電源を供給し、正常に動作するかどうかを確認するための、段階的な手順を説明します。電源投入からSoM（システムオンモジュール）の起動まで、各段階で確認すべきポイントや、よくある問題点についても解説します。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
 
