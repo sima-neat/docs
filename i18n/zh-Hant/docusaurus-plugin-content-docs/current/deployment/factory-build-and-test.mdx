@@ -90,10 +90,6 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
 
 使用以下接線在 Modalix DevKit 上燒錄 tRoot。tRoot 韌體損毀的 DevKit（例如通電時 tRoot 主控台沒有任何輸出）也可以用相同接線復原。
 
-:::caution[尚未在硬體上驗證]
-這些接線取自 SiMa.ai 用於 Modalix SoM 啟動調試的設定，尚未在 DevKit 上依照本流程實際執行。
-:::
-
 <figure className="doc-figure">
   <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="從 Aardvark 10 針排針到 Modalix DevKit 的接線：GND 與 SDA 接到 12 針排針，SCLK、SS、MISO 與 MOSI 接到 40 針排針" />
   <figcaption>

@@ -108,11 +108,6 @@ tRoot ファームウェアは単一のバイナリ `troot_blob.be` です。書
 次の接続を使用して、Modalix DevKit の tRoot に書き込みます。tRoot ファームウェアが破損した
 DevKit（たとえば、電源投入時に tRoot コンソールに何も表示されない場合）の復旧にも使用できます。
 
-:::caution[ハードウェアでは未検証]
-これらの接続は、SiMa.ai が Modalix SoM の立ち上げに使用した構成に基づいています。DevKit 上で
-この手順に沿ってまだ実行されていません。
-:::
-
 <figure className="doc-figure">
   <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="Aardvark の 10 ピンヘッダーから Modalix DevKit への配線：GND と SDA を 12 ピンヘッダーへ、SCLK、SS、MISO、MOSI を 40 ピンヘッダーへ接続" />
   <figcaption>
