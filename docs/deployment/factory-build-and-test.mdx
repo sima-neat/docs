@@ -4,6 +4,8 @@ description: A recommended process for assembling, programming, and testing Moda
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Factory Build and Test
 
 This is a recommended process for building and testing Modalix-based boards in a
@@ -94,8 +96,11 @@ SiMa.ai recommends a Total Phase Aardvark I2C/SPI host adapter with the Total
 Phase Flash Center software.
 
 1. Install Flash Center on the host.
-2. Connect the programmer to the board's SPI flash header. This connector depends
-   on the board, and is typically a dual-row header.
+2. Connect the programmer to the board's SPI flash signals. On the Modalix
+   DevKit, see
+   [Connect the Aardvark to the Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
+   On another board, the connector depends on the board, and is typically a
+   dual-row header.
 3. Start Flash Center. It also has command-line tools if you want to automate
    this step.
 4. Add the adapter.
@@ -103,6 +108,50 @@ Phase Flash Center software.
    board, for example a Winbond W25Q16 (2 MB).
 6. Load `troot_blob.be`.
 7. Program the flash.
+
+#### Connect the Aardvark to the Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
+
+Use these connections to program tRoot on a Modalix DevKit. They also recover a
+DevKit whose tRoot firmware is corrupted, for example when the tRoot console
+shows no output at power-on.
+
+:::caution[Not yet validated on hardware]
+These connections come from SiMa.ai's bring-up setup for the Modalix SoM. They
+have not yet been run with this procedure on a DevKit.
+:::
+
+<figure className="doc-figure">
+  <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="Wiring from the Aardvark 10-pin header to the Modalix DevKit: GND and SDA to the 12-pin header, and SCLK, SS, MISO and MOSI to the 40-pin header" />
+  <figcaption>
+    <strong>Figure 1.</strong> Aardvark to Modalix DevKit, Modalix SoM Rev 2
+  </figcaption>
+</figure>
+
+| Aardvark pin | Aardvark signal | DevKit header | DevKit pin | DevKit signal |
+| --- | --- | --- | --- | --- |
+| 2 | GND | 12-pin header | 9 | GND |
+| 3 | SDA | 12-pin header | 10 | `FORCE_RECOVERY` |
+| 7 | SCLK | 40-pin header (J12) | 13 | `SPI1_SCK` |
+| 9 | SS | 40-pin header (J12) | 18 | `SPI1_CS0` |
+| 5 | MISO | 40-pin header (J12) | 22 | `SPI1_MISO` |
+| 8 | MOSI | 40-pin header (J12) | 37 | `SPI1_MOSI` |
+
+These connections are for Modalix SoM Rev 2. On Modalix SoM Rev 1, swap MISO
+and MOSI: Aardvark pin 5 (MISO) goes to pin 37, and Aardvark pin 8 (MOSI) goes
+to pin 22. To find the SoM revision of your DevKit, see
+[Modalix DevKit](/hardware/devkit/modalix-devkit).
+
+`FORCE_RECOVERY` drives the SPI mux that connects the on-module QSPI flash to
+`SPI1`. See [Carrier Board Bring-up](/hardware/design/som-carrier).
+
+To watch the tRoot console while you work, connect a USB-to-UART cable to the
+same 12-pin header:
+
+| USB-to-UART cable | DevKit pin | DevKit signal |
+| --- | --- | --- |
+| GND | 7 | GND |
+| TX | 3 | `UART2_RXD` |
+| RX | 4 | `UART2_TXD` |
 
 ## Set Up the Test Station {#set-up-the-test-station}
 

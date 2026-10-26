@@ -16,6 +16,8 @@ sidebar_position: 2
 
 :::note
 このガイドでは SiMa.ai が提供するイメージを使用します。また、ボード上で U-Boot プロンプトが動作している必要があります。独自にビルドしたイメージのインストール方法は、このガイドでは説明していません。その場合は、[イメージを eMMC に書き込む](/hardware/deployment/flash-image)を参照してください。
+
+電源投入時にシリアルコンソールに何も表示されない場合は、tRoot ファームウェアが破損していて、ボードが U-Boot に到達できない可能性があります。まず SPI フラッシュプログラマーで tRoot に書き込んでください。[Aardvark を Modalix DevKit に接続する](/hardware/deployment/factory-build-and-test#connect-the-aardvark-to-the-modalix-devkit)を参照してください。
 :::
 
 `sima-cli bootimg`と組み合わせて、`--netboot`オプションを使用します。これにより、ターゲットボード用のブートイメージがダウンロードされ、ホスト上の組み込みTFTPサーバーから提供されます。次に、U-BootでDevKitを構成し、そのTFTPサーバーからブートするように設定し、新しいイメージをeMMCに書き込みます。

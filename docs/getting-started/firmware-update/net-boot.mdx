@@ -16,6 +16,8 @@ Use Net Boot Recovery when you need to boot the DevKit over the network instead 
 
 :::note
 This guide uses images that SiMa.ai provides, and it needs a working U-Boot prompt on the board. It does not describe how to install an image that you built yourself. For that, see [Flash an Image to eMMC](/hardware/deployment/flash-image).
+
+If the serial console shows nothing at power-on, the tRoot firmware may be corrupted, and the board cannot reach U-Boot. Reprogram tRoot with an SPI flasher first. See [Connect the Aardvark to the Modalix DevKit](/hardware/deployment/factory-build-and-test#connect-the-aardvark-to-the-modalix-devkit).
 :::
 
 Use the `--netboot` option with `sima-cli bootimg`. It downloads the boot image for the target board and serves it from a built-in TFTP server on the host. You then configure the DevKit in U-Boot to boot from that TFTP server and flash the new image to eMMC.

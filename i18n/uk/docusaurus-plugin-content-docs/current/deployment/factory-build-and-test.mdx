@@ -4,6 +4,8 @@ description: Рекомендований процес збирання, про�
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 # Заводське збирання та тестування
 
 Це рекомендований процес збирання та тестування плат на основі Modalix на
@@ -93,8 +95,10 @@ SiMa.ai рекомендує хост-адаптер Total Phase Aardvark I2C/SP
 Phase Flash Center.
 
 1. Установіть Flash Center на хості.
-2. Під’єднайте програматор до роз’єму SPI-флеш-пам’яті на платі. Цей роз’єм залежить
-   від плати й зазвичай є дворядним.
+2. Під’єднайте програматор до сигналів SPI-флеш-пам’яті на платі. Для Modalix DevKit
+   див. розділ
+   [Під’єднання Aardvark до Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
+   На іншій платі роз’єм залежить від плати й зазвичай є дворядним.
 3. Запустіть Flash Center. Він також має інструменти командного рядка, якщо ви хочете автоматизувати
    цей крок.
 4. Додайте адаптер.
@@ -102,6 +106,50 @@ Phase Flash Center.
    платі, наприклад Winbond W25Q16 (2 МБ).
 6. Завантажте `troot_blob.be`.
 7. Запрограмуйте флеш-пам’ять.
+
+#### Під’єднання Aardvark до Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
+
+Використовуйте ці з’єднання, щоб запрограмувати tRoot на Modalix DevKit. Вони також
+дають змогу відновити DevKit, прошивку tRoot якого пошкоджено, наприклад коли консоль
+tRoot нічого не виводить після ввімкнення живлення.
+
+:::caution[Ще не перевірено на обладнанні]
+Ці з’єднання взято з конфігурації, яку SiMa.ai використовує для запуску Modalix SoM.
+Цю процедуру ще не виконували з ними на DevKit.
+:::
+
+<figure className="doc-figure">
+  <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="З’єднання від 10-контактного роз’єму Aardvark до Modalix DevKit: GND і SDA до 12-контактного роз’єму, SCLK, SS, MISO і MOSI до 40-контактного роз’єму" />
+  <figcaption>
+    <strong>Рисунок 1.</strong> Під’єднання Aardvark до Modalix DevKit, Modalix SoM Rev 2
+  </figcaption>
+</figure>
+
+| Контакт Aardvark | Сигнал Aardvark | Роз’єм DevKit | Контакт DevKit | Сигнал DevKit |
+| --- | --- | --- | --- | --- |
+| 2 | GND | 12-контактний роз’єм | 9 | GND |
+| 3 | SDA | 12-контактний роз’єм | 10 | `FORCE_RECOVERY` |
+| 7 | SCLK | 40-контактний роз’єм (J12) | 13 | `SPI1_SCK` |
+| 9 | SS | 40-контактний роз’єм (J12) | 18 | `SPI1_CS0` |
+| 5 | MISO | 40-контактний роз’єм (J12) | 22 | `SPI1_MISO` |
+| 8 | MOSI | 40-контактний роз’єм (J12) | 37 | `SPI1_MOSI` |
+
+Ці з’єднання призначені для Modalix SoM Rev 2. На Modalix SoM Rev 1 поміняйте місцями
+MISO і MOSI: контакт 5 Aardvark (MISO) під’єднується до контакту 37, а контакт 8 Aardvark
+(MOSI) — до контакту 22. Щоб дізнатися ревізію SoM вашого DevKit, див. розділ
+[Modalix DevKit](/hardware/devkit/modalix-devkit).
+
+`FORCE_RECOVERY` керує SPI-мультиплексором, який під’єднує QSPI-флеш-пам’ять модуля до
+`SPI1`. Див. розділ [Запуск плати-носія](/hardware/design/som-carrier).
+
+Щоб стежити за консоллю tRoot під час роботи, під’єднайте кабель USB-UART до того самого
+12-контактного роз’єму:
+
+| Кабель USB-UART | Контакт DevKit | Сигнал DevKit |
+| --- | --- | --- |
+| GND | 7 | GND |
+| TX | 3 | `UART2_RXD` |
+| RX | 4 | `UART2_TXD` |
 
 ## Налаштування тестової станції {#set-up-the-test-station}
 
