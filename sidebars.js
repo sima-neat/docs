@@ -85,6 +85,7 @@ const sidebars = {
       'interfaces/low-speed-io',
       'reference/glossary',
       section('Tech Notes', 'reference/tech-notes/index', [
+        'reference/tech-notes/convert-2-1-3-to-3-0-0',
         'reference/tech-notes/nfs',
         'reference/tech-notes/ros2',
       ]),

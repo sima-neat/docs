@@ -1,6 +1,6 @@
 ---
 title: "技術備註"
-description: "特定平台的操作說明、進階主題，以及已知的限制。"
+description: "特定平台的操作說明、進階主題和已知限制。"
 sidebar_position: 1
 ---
 
@@ -10,5 +10,6 @@ sidebar_position: 1
 
 - [設定 NFS](./nfs.mdx)
 - [轉換為 eLxr](./elxr-conversion.mdx)
-- [在 Modalix 系統模組 (SoM) DevKit 上設定 Bluetooth](./bluetooth.mdx)
-- [在 Modalix 系統模組 (SoM) DevKit 上安裝 ROS 2](./ros2.mdx)
+- [從 2.1.3 升級到 3.0.0](./convert-2-1-3-to-3-0-0.md)
+- [在 Modalix SoM DevKit 上設定 Bluetooth。](./bluetooth.mdx)
+- [在 Modalix SoM DevKit 上安裝 ROS 2。](./ros2.mdx)
