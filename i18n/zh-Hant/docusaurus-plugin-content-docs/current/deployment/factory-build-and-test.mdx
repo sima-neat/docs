@@ -76,9 +76,12 @@ OTP 記憶體只能寫入一次。確認每個值之前，請先仔細檢查。
 
 ### 燒錄 tRoot SPI 快閃記憶體 {#program-the-troot-spi-flash}
 
-tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩種版本之一：上述的 OTP 燒錄韌體，或您的量產韌體。SiMa.ai 建議使用 Total Phase Aardvark I2C/SPI 主機轉接器，搭配 Total Phase Flash Center 軟體。
+tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩種版本之一：上述的 OTP 燒錄韌體，或您的量產韌體。SiMa.ai 建議使用 Total Phase 的以下兩項工具：
 
-1. 在主機上安裝 Flash Center。
+- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)：將主機連接到電路板 SPI 快閃記憶體的 USB 轉接器。
+- [Flash Center](https://www.totalphase.com/products/flash-center/)：Total Phase 的免費軟體，透過 Aardvark 清除、燒錄並驗證 SPI 快閃記憶體。可在 Windows 與 Linux 上執行，不支援 macOS。
+
+1. 從 Total Phase 網站下載 Flash Center，並安裝在 Windows 或 Linux 主機上。
 2. 將燒錄器連接到電路板的 SPI 快閃記憶體訊號。若是 Modalix DevKit，請參閱[將 Aardvark 連接到 Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit)。若是其他電路板，連接器取決於電路板，通常為雙排排針。
 3. 啟動 Flash Center。如果您想將此步驟自動化，它也提供命令列工具。
 4. 新增轉接器。
@@ -96,6 +99,21 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
     <strong>圖 1.</strong> Aardvark 與 Modalix DevKit 的接線（Modalix SoM Rev 2）
   </figcaption>
 </figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="接在 Modalix DevKit 40 針排針（J12）上的 Aardvark 跳線" />
+    <figcaption>
+      <strong>圖 2.</strong> 接在 40 針排針（J12）上的 Aardvark 接線。這塊電路板使用 SoM Rev 1，因此 MISO 與 MOSI 接線位於與 SoM Rev 2 相反的針腳。請依照表格接線。
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="插在 Aardvark 10 針排線上的跳線" />
+    <figcaption>
+      <strong>圖 3.</strong> 插在 Aardvark 10 針排線上的跳線。
+    </figcaption>
+  </figure>
+</div>
 
 | Aardvark 針腳 | Aardvark 訊號 | DevKit 排針 | DevKit 針腳 | DevKit 訊號 |
 | --- | --- | --- | --- | --- |
@@ -117,6 +135,21 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
 | GND | 7 | GND |
 | TX | 3 | `UART2_RXD` |
 | RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="接在 Modalix DevKit 12 針排針上的 USB 轉 UART 線與 Aardvark 接線" />
+    <figcaption>
+      <strong>圖 4.</strong> 12 針排針上的接線：USB 轉 UART 線（橘色 TX、黃色 RX、黑色 GND），旁邊是 Aardvark 的接線。
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="接到 USB 轉 UART 線的跳線" />
+    <figcaption>
+      <strong>圖 5.</strong> 接到 USB 轉 UART 線的跳線。
+    </figcaption>
+  </figure>
+</div>
 
 ## 設定測試站 {#set-up-the-test-station}
 

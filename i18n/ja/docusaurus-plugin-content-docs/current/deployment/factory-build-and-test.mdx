@@ -89,10 +89,14 @@ OTP メモリには一度しか書き込めません。確定する前に各値�
 ### tRoot SPI フラッシュに書き込む {#program-the-troot-spi-flash}
 
 tRoot ファームウェアは単一のバイナリ `troot_blob.be` です。書き込むのは、上記で使用した OTP 書き込み用
-ファームウェアか、量産用ファームウェアのいずれかです。SiMa.ai では、Total Phase Aardvark I2C/SPI
-ホストアダプターと Total Phase Flash Center ソフトウェアの使用をお勧めします。
+ファームウェアか、量産用ファームウェアのいずれかです。SiMa.ai では、Total Phase の次の 2 つのツールをお勧めします。
 
-1. ホストに Flash Center をインストールします。
+- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)：ホストをボードの SPI フラッシュに接続する USB アダプターです。
+- [Flash Center](https://www.totalphase.com/products/flash-center/)：Aardvark を介して SPI フラッシュの消去、書き込み、検証を行う、Total Phase の
+  無償ソフトウェアです。Windows と Linux で動作し、macOS では動作しません。
+
+1. Total Phase の Web サイトから Flash Center をダウンロードし、Windows または Linux のホストに
+   インストールします。
 2. プログラマーをボードの SPI フラッシュ信号に接続します。Modalix DevKit の場合は、
    [Aardvark を Modalix DevKit に接続する](#connect-the-aardvark-to-the-modalix-devkit)
    を参照してください。その他のボードでは、コネクターはボードによって異なり、通常は 2 列のヘッダーです。
@@ -114,6 +118,21 @@ DevKit（たとえば、電源投入時に tRoot コンソールに何も表示�
     <strong>図 1.</strong> Aardvark と Modalix DevKit の接続（Modalix SoM Rev 2）
   </figcaption>
 </figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Modalix DevKit の 40 ピンヘッダー（J12）に接続した Aardvark のジャンパー線" />
+    <figcaption>
+      <strong>図 2.</strong> 40 ピンヘッダー（J12）に接続した Aardvark の配線。このボードは SoM Rev 1 のため、MISO と MOSI の配線は SoM Rev 2 とは逆のピンに接続されています。ピンは表に従ってください。
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Aardvark の 10 ピンリボンケーブルに差し込んだジャンパー線" />
+    <figcaption>
+      <strong>図 3.</strong> Aardvark の 10 ピンケーブルに差し込んだジャンパー線。
+    </figcaption>
+  </figure>
+</div>
 
 | Aardvark のピン | Aardvark の信号 | DevKit のヘッダー | DevKit のピン | DevKit の信号 |
 | --- | --- | --- | --- | --- |
@@ -139,6 +158,21 @@ Aardvark のピン 5（MISO）をピン 37 に、Aardvark のピン 8（MOSI）�
 | GND | 7 | GND |
 | TX | 3 | `UART2_RXD` |
 | RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Modalix DevKit の 12 ピンヘッダーに接続した USB-UART ケーブルと Aardvark の配線" />
+    <figcaption>
+      <strong>図 4.</strong> 12 ピンヘッダーの配線：USB-UART ケーブル（オレンジ：TX、黄：RX、黒：GND）と、その横の Aardvark の配線。
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="USB-UART ケーブルに接続したジャンパー線" />
+    <figcaption>
+      <strong>図 5.</strong> USB-UART ケーブルに接続したジャンパー線。
+    </figcaption>
+  </figure>
+</div>
 
 ## テストステーションをセットアップする {#set-up-the-test-station}
 

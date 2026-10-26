@@ -91,10 +91,16 @@ OTP-пам’ять можна записати лише один раз. Пер
 
 Прошивка tRoot — це один двійковий файл, `troot_blob.be`. Ви записуєте одну з двох
 версій: прошивку для програмування OTP, яку використано вище, або вашу виробничу прошивку.
-SiMa.ai рекомендує хост-адаптер Total Phase Aardvark I2C/SPI із програмним забезпеченням Total
-Phase Flash Center.
+SiMa.ai рекомендує два інструменти від Total Phase:
 
-1. Установіть Flash Center на хості.
+- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/): USB-адаптер, що з’єднує хост із SPI-флеш-пам’яттю
+  плати.
+- [Flash Center](https://www.totalphase.com/products/flash-center/): безкоштовне програмне забезпечення від Total Phase, яке стирає,
+  програмує й перевіряє SPI-флеш-пам’ять через Aardvark. Працює у Windows і Linux, але не
+  в macOS.
+
+1. Завантажте Flash Center із вебсайту Total Phase і встановіть його на хості з Windows або
+   Linux.
 2. Під’єднайте програматор до сигналів SPI-флеш-пам’яті на платі. Для Modalix DevKit
    див. розділ
    [Під’єднання Aardvark до Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
@@ -119,6 +125,21 @@ tRoot нічого не виводить після ввімкнення жив�
     <strong>Рисунок 1.</strong> Під’єднання Aardvark до Modalix DevKit, Modalix SoM Rev 2
   </figcaption>
 </figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Перемички від Aardvark на 40-контактному роз’ємі (J12) Modalix DevKit" />
+    <figcaption>
+      <strong>Рисунок 2.</strong> Дроти Aardvark на 40-контактному роз’ємі (J12). На цій платі встановлено SoM Rev 1, тому дроти MISO і MOSI під’єднано до протилежних контактів, ніж для SoM Rev 2. Контакти беріть із таблиці.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Перемички, вставлені в 10-контактний шлейф Aardvark" />
+    <figcaption>
+      <strong>Рисунок 3.</strong> Перемички в 10-контактному кабелі Aardvark.
+    </figcaption>
+  </figure>
+</div>
 
 | Контакт Aardvark | Сигнал Aardvark | Роз’єм DevKit | Контакт DevKit | Сигнал DevKit |
 | --- | --- | --- | --- | --- |
@@ -145,6 +166,21 @@ MISO і MOSI: контакт 5 Aardvark (MISO) під’єднується до 
 | GND | 7 | GND |
 | TX | 3 | `UART2_RXD` |
 | RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Кабель USB-UART і дроти Aardvark на 12-контактному роз’ємі Modalix DevKit" />
+    <figcaption>
+      <strong>Рисунок 4.</strong> Дроти на 12-контактному роз’ємі: кабель USB-UART (помаранчевий TX, жовтий RX, чорний GND), поруч дроти Aardvark.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="Перемички, під’єднані до кабелю USB-UART" />
+    <figcaption>
+      <strong>Рисунок 5.</strong> Перемички, під’єднані до кабелю USB-UART.
+    </figcaption>
+  </figure>
+</div>
 
 ## Налаштування тестової станції {#set-up-the-test-station}
 

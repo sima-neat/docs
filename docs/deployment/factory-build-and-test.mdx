@@ -92,10 +92,16 @@ OTP memory can be written only once. Check each value before you confirm it.
 
 The tRoot firmware is a single binary, `troot_blob.be`. You write one of two
 versions: the OTP programming firmware used above, or your production firmware.
-SiMa.ai recommends a Total Phase Aardvark I2C/SPI host adapter with the Total
-Phase Flash Center software.
+SiMa.ai recommends two tools from Total Phase:
 
-1. Install Flash Center on the host.
+- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/): a USB adapter that connects the host
+  to the board's SPI flash.
+- [Flash Center](https://www.totalphase.com/products/flash-center/): free software from Total Phase that erases, programs,
+  and verifies SPI flash through the Aardvark. It runs on Windows and Linux,
+  not on macOS.
+
+1. Download Flash Center from the Total Phase website, and install it on a
+   Windows or Linux host.
 2. Connect the programmer to the board's SPI flash signals. On the Modalix
    DevKit, see
    [Connect the Aardvark to the Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
@@ -122,6 +128,21 @@ shows no output at power-on.
   </figcaption>
 </figure>
 
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Jumper wires from the Aardvark on the 40-pin header (J12) of a Modalix DevKit" />
+    <figcaption>
+      <strong>Figure 2.</strong> The Aardvark wires on the 40-pin header (J12). This board has SoM Rev 1, so the MISO and MOSI wires are on the opposite pins from SoM Rev 2. Use the table for the pins.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Jumper wires plugged into the Aardvark 10-pin ribbon cable" />
+    <figcaption>
+      <strong>Figure 3.</strong> The jumper wires on the Aardvark's 10-pin cable.
+    </figcaption>
+  </figure>
+</div>
+
 | Aardvark pin | Aardvark signal | DevKit header | DevKit pin | DevKit signal |
 | --- | --- | --- | --- | --- |
 | 2 | GND | 12-pin header | 9 | GND |
@@ -147,6 +168,21 @@ same 12-pin header:
 | GND | 7 | GND |
 | TX | 3 | `UART2_RXD` |
 | RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="USB-to-UART cable and Aardvark wires on the 12-pin header of a Modalix DevKit" />
+    <figcaption>
+      <strong>Figure 4.</strong> Wires on the 12-pin header: the USB-to-UART cable (orange TX, yellow RX, black GND), with the Aardvark wires alongside.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="Jumper wires joined to the USB-to-UART cable" />
+    <figcaption>
+      <strong>Figure 5.</strong> The jumper wires joined to the USB-to-UART cable.
+    </figcaption>
+  </figure>
+</div>
 
 ## Set Up the Test Station {#set-up-the-test-station}
 

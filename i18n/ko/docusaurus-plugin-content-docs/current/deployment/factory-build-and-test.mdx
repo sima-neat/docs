@@ -90,11 +90,15 @@ OTP 메모리는 한 번만 기록할 수 있습니다. 각 값을 확정하기 
 ### tRoot SPI 플래시 프로그래밍 {#program-the-troot-spi-flash}
 
 tRoot 펌웨어는 단일 바이너리 `troot_blob.be`입니다. 위에서 사용한 OTP 프로그래밍용
-펌웨어 또는 양산용 펌웨어, 두 버전 중 하나를 기록합니다. SiMa.ai는 Total Phase
-Flash Center 소프트웨어와 함께 Total Phase Aardvark I2C/SPI 호스트 어댑터를 사용할
-것을 권장합니다.
+펌웨어 또는 양산용 펌웨어, 두 버전 중 하나를 기록합니다. SiMa.ai는 Total Phase의 다음 두
+도구를 권장합니다.
 
-1. 호스트에 Flash Center를 설치합니다.
+- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/): 호스트를 보드의 SPI 플래시에 연결하는 USB 어댑터입니다.
+- [Flash Center](https://www.totalphase.com/products/flash-center/): Aardvark를 통해 SPI 플래시를 지우고, 프로그래밍하고, 검증하는 Total Phase의
+  무료 소프트웨어입니다. Windows와 Linux에서 실행되며 macOS에서는 실행되지 않습니다.
+
+1. Total Phase 웹사이트에서 Flash Center를 다운로드하여 Windows 또는 Linux 호스트에
+   설치합니다.
 2. 프로그래머를 보드의 SPI 플래시 신호에 연결합니다. Modalix DevKit의 경우
    [Aardvark를 Modalix DevKit에 연결](#connect-the-aardvark-to-the-modalix-devkit)을
    참조하십시오. 다른 보드에서는 커넥터가 보드에 따라 다르며, 일반적으로 2열 헤더입니다.
@@ -116,6 +120,21 @@ DevKit(예: 전원을 켤 때 tRoot 콘솔에 아무것도 출력되지 않는 �
     <strong>그림 1.</strong> Aardvark와 Modalix DevKit 연결(Modalix SoM Rev 2)
   </figcaption>
 </figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Modalix DevKit의 40핀 헤더(J12)에 연결한 Aardvark 점퍼선" />
+    <figcaption>
+      <strong>그림 2.</strong> 40핀 헤더(J12)에 연결한 Aardvark 배선. 이 보드는 SoM Rev 1이므로 MISO와 MOSI 배선이 SoM Rev 2와 반대 핀에 연결되어 있습니다. 핀은 표를 따르십시오.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Aardvark 10핀 리본 케이블에 꽂은 점퍼선" />
+    <figcaption>
+      <strong>그림 3.</strong> Aardvark 10핀 케이블에 꽂은 점퍼선.
+    </figcaption>
+  </figure>
+</div>
 
 | Aardvark 핀 | Aardvark 신호 | DevKit 헤더 | DevKit 핀 | DevKit 신호 |
 | --- | --- | --- | --- | --- |
@@ -140,6 +159,21 @@ Aardvark 핀 5(MISO)는 핀 37에, Aardvark 핀 8(MOSI)은 핀 22에 연결합�
 | GND | 7 | GND |
 | TX | 3 | `UART2_RXD` |
 | RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Modalix DevKit의 12핀 헤더에 연결한 USB-UART 케이블과 Aardvark 배선" />
+    <figcaption>
+      <strong>그림 4.</strong> 12핀 헤더의 배선: USB-UART 케이블(주황 TX, 노랑 RX, 검정 GND)과 그 옆의 Aardvark 배선.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="USB-UART 케이블에 연결한 점퍼선" />
+    <figcaption>
+      <strong>그림 5.</strong> USB-UART 케이블에 연결한 점퍼선.
+    </figcaption>
+  </figure>
+</div>
 
 ## 테스트 스테이션 설정 {#set-up-the-test-station}
 
