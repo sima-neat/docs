@@ -5,6 +5,7 @@ sidebar_position: 2
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
 
 # Заводське збирання та тестування
 
@@ -119,7 +120,7 @@ SiMa.ai рекомендує два інструменти від Total Phase:
 дають змогу відновити DevKit, прошивку tRoot якого пошкоджено, наприклад коли консоль
 tRoot нічого не виводить після ввімкнення живлення.
 
-<figure className="doc-figure">
+<figure className="doc-figure doc-figure--diagram">
   <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="З’єднання від 10-контактного роз’єму Aardvark до Modalix DevKit: GND і SDA до 12-контактного роз’єму, SCLK, SS, MISO і MOSI до 40-контактного роз’єму" />
   <figcaption>
     <strong>Рисунок 1.</strong> Під’єднання Aardvark до Modalix DevKit, Modalix SoM Rev 2
@@ -152,6 +153,13 @@ tRoot нічого не виводить після ввімкнення жив�
 
 Номери контактів 12-контактного роз’єму відлічуються від контакту 1, позначеного на платі-носії Waveshare. Перш ніж під’єднувати дроти, знайдіть контакт 1 на платі.
 
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="12-контактний роз’єм: контакт 1 ліворуч, кнопка PWR за контактом 12, дроти на контактах 3, 4, 7, 9 і 10" />
+  <figcaption>
+    <strong>Рисунок 4.</strong> 12-контактний роз’єм із кнопкою PWR праворуч. Контакт 1 — крайній лівий.
+  </figcaption>
+</figure>
+
 Ці з’єднання призначені для Modalix SoM Rev 2. На Modalix SoM Rev 1 поміняйте місцями
 MISO і MOSI: контакт 5 Aardvark (MISO) під’єднується до контакту 37, а контакт 8 Aardvark
 (MOSI) — до контакту 22. Щоб дізнатися ревізію SoM вашого DevKit, див. розділ
@@ -173,13 +181,13 @@ MISO і MOSI: контакт 5 Aardvark (MISO) під’єднується до 
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Кабель USB-UART і дроти Aardvark на 12-контактному роз’ємі Modalix DevKit" />
     <figcaption>
-      <strong>Рисунок 4.</strong> Дроти на 12-контактному роз’ємі: кабель USB-UART (помаранчевий TX, жовтий RX, чорний GND), поруч дроти Aardvark.
+      <strong>Рисунок 5.</strong> Дроти на 12-контактному роз’ємі: кабель USB-UART (помаранчевий TX, жовтий RX, чорний GND), поруч дроти Aardvark.
     </figcaption>
   </figure>
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="Перемички, під’єднані до кабелю USB-UART" />
     <figcaption>
-      <strong>Рисунок 5.</strong> Перемички, під’єднані до кабелю USB-UART.
+      <strong>Рисунок 6.</strong> Перемички, під’єднані до кабелю USB-UART.
     </figcaption>
   </figure>
 </div>

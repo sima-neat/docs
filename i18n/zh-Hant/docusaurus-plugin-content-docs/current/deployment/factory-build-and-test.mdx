@@ -5,6 +5,7 @@ sidebar_position: 2
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
 
 # 工廠組裝與測試
 
@@ -93,7 +94,7 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
 
 使用以下接線在 Modalix DevKit 上燒錄 tRoot。tRoot 韌體損毀的 DevKit（例如通電時 tRoot 主控台沒有任何輸出）也可以用相同接線復原。
 
-<figure className="doc-figure">
+<figure className="doc-figure doc-figure--diagram">
   <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="從 Aardvark 10 針排針到 Modalix DevKit 的接線：GND 與 SDA 接到 12 針排針，SCLK、SS、MISO 與 MOSI 接到 40 針排針" />
   <figcaption>
     <strong>圖 1.</strong> Aardvark 與 Modalix DevKit 的接線（Modalix SoM Rev 2）
@@ -126,6 +127,13 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
 
 12 針排針的針腳編號從 Waveshare 載板上標示的第 1 針開始計算。接線前，請先在板上找到第 1 針。
 
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="最左端為第 1 針的 12 針排針，PWR 按鈕位於第 12 針之後，第 3、4、7、9、10 針已接線" />
+  <figcaption>
+    <strong>圖 4.</strong> 12 針排針，PWR 按鈕在右側。第 1 針位於最左端。
+  </figcaption>
+</figure>
+
 這些接線適用於 Modalix SoM Rev 2。在 Modalix SoM Rev 1 上，請將 MISO 與 MOSI 對調：Aardvark 針腳 5（MISO）接到針腳 37，Aardvark 針腳 8（MOSI）接到針腳 22。若要確認您 DevKit 的 SoM 版本，請參閱 [Modalix DevKit](/hardware/devkit/modalix-devkit)。
 
 `FORCE_RECOVERY` 控制 SPI 多工器，將模組上的 QSPI 快閃記憶體連接到 `SPI1`。請參閱[載板啟動調試](/hardware/design/som-carrier)。
@@ -142,13 +150,13 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="接在 Modalix DevKit 12 針排針上的 USB 轉 UART 線與 Aardvark 接線" />
     <figcaption>
-      <strong>圖 4.</strong> 12 針排針上的接線：USB 轉 UART 線（橘色 TX、黃色 RX、黑色 GND），旁邊是 Aardvark 的接線。
+      <strong>圖 5.</strong> 12 針排針上的接線：USB 轉 UART 線（橘色 TX、黃色 RX、黑色 GND），旁邊是 Aardvark 的接線。
     </figcaption>
   </figure>
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="接到 USB 轉 UART 線的跳線" />
     <figcaption>
-      <strong>圖 5.</strong> 接到 USB 轉 UART 線的跳線。
+      <strong>圖 6.</strong> 接到 USB 轉 UART 線的跳線。
     </figcaption>
   </figure>
 </div>

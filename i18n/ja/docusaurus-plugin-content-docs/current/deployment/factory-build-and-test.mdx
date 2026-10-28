@@ -5,6 +5,7 @@ sidebar_position: 2
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
 
 # 工場でのビルドとテスト
 
@@ -112,7 +113,7 @@ tRoot ファームウェアは単一のバイナリ `troot_blob.be` です。書
 次の接続を使用して、Modalix DevKit の tRoot に書き込みます。tRoot ファームウェアが破損した
 DevKit（たとえば、電源投入時に tRoot コンソールに何も表示されない場合）の復旧にも使用できます。
 
-<figure className="doc-figure">
+<figure className="doc-figure doc-figure--diagram">
   <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="Aardvark の 10 ピンヘッダーから Modalix DevKit への配線：GND と SDA を 12 ピンヘッダーへ、SCLK、SS、MISO、MOSI を 40 ピンヘッダーへ接続" />
   <figcaption>
     <strong>図 1.</strong> Aardvark と Modalix DevKit の接続（Modalix SoM Rev 2）
@@ -145,6 +146,13 @@ DevKit（たとえば、電源投入時に tRoot コンソールに何も表示�
 
 12 ピンヘッダーのピン番号は、Waveshare キャリアボードに表示されているピン 1 から数えます。配線する前に、ボード上でピン 1 の位置を確認してください。
 
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="左端がピン 1 の 12 ピンヘッダー。PWR ボタンはピン 12 の先にあり、ピン 3、4、7、9、10 に配線されています" />
+  <figcaption>
+    <strong>図 4.</strong> 12 ピンヘッダー。PWR ボタンは右側にあります。ピン 1 は左端です。
+  </figcaption>
+</figure>
+
 これらの接続は Modalix SoM Rev 2 用です。Modalix SoM Rev 1 では MISO と MOSI を入れ替えます。
 Aardvark のピン 5（MISO）をピン 37 に、Aardvark のピン 8（MOSI）をピン 22 に接続します。
 お使いの DevKit の SoM リビジョンを確認するには、[Modalix DevKit](/hardware/devkit/modalix-devkit)
@@ -165,13 +173,13 @@ Aardvark のピン 5（MISO）をピン 37 に、Aardvark のピン 8（MOSI）�
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Modalix DevKit の 12 ピンヘッダーに接続した USB-UART ケーブルと Aardvark の配線" />
     <figcaption>
-      <strong>図 4.</strong> 12 ピンヘッダーの配線：USB-UART ケーブル（オレンジ：TX、黄：RX、黒：GND）と、その横の Aardvark の配線。
+      <strong>図 5.</strong> 12 ピンヘッダーの配線：USB-UART ケーブル（オレンジ：TX、黄：RX、黒：GND）と、その横の Aardvark の配線。
     </figcaption>
   </figure>
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="USB-UART ケーブルに接続したジャンパー線" />
     <figcaption>
-      <strong>図 5.</strong> USB-UART ケーブルに接続したジャンパー線。
+      <strong>図 6.</strong> USB-UART ケーブルに接続したジャンパー線。
     </figcaption>
   </figure>
 </div>

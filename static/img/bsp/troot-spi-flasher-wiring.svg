@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14">
   <title>Aardvark SPI flasher to Modalix DevKit wiring (Modalix SoM Rev 2)</title>
-  <rect width="760" height="380" fill="#ffffff"/>
 
   <!-- Aardvark 10-pin header -->
   <rect x="20" y="20" width="230" height="340" rx="8" fill="#f4f6f8" stroke="#5b6670" stroke-width="1.5"/>

@@ -5,6 +5,7 @@ sidebar_position: 2
 ---
 
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
 
 # Factory Build and Test
 
@@ -121,7 +122,7 @@ Use these connections to program tRoot on a Modalix DevKit. They also recover a
 DevKit whose tRoot firmware is corrupted, for example when the tRoot console
 shows no output at power-on.
 
-<figure className="doc-figure">
+<figure className="doc-figure doc-figure--diagram">
   <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="Wiring from the Aardvark 10-pin header to the Modalix DevKit: GND and SDA to the 12-pin header, and SCLK, SS, MISO and MOSI to the 40-pin header" />
   <figcaption>
     <strong>Figure 1.</strong> Aardvark to Modalix DevKit, Modalix SoM Rev 2
@@ -152,7 +153,14 @@ shows no output at power-on.
 | 5 | MISO | 40-pin header (J12) | 22 | `SPI1_MISO` |
 | 8 | MOSI | 40-pin header (J12) | 37 | `SPI1_MOSI` |
 
-The 12-pin header pin numbers count from pin 1 as marked on the Waveshare carrier board. Find pin 1 on the board before you connect any wire.
+The 12-pin header pin numbers count from pin 1 as marked on the Waveshare carrier board: pin 1 is at the end away from the PWR button (Figure 4). Find pin 1 on the board before you connect any wire.
+
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="12-pin header with pin 1 at the left end, the PWR button past pin 12, and wires on pins 3, 4, 7, 9 and 10" />
+  <figcaption>
+    <strong>Figure 4.</strong> The 12-pin header with the PWR button to the right. Pin 1 is at the left end.
+  </figcaption>
+</figure>
 
 These connections are for Modalix SoM Rev 2. On Modalix SoM Rev 1, swap MISO
 and MOSI: Aardvark pin 5 (MISO) goes to pin 37, and Aardvark pin 8 (MOSI) goes
@@ -175,13 +183,13 @@ same 12-pin header:
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="USB-to-UART cable and Aardvark wires on the 12-pin header of a Modalix DevKit" />
     <figcaption>
-      <strong>Figure 4.</strong> Wires on the 12-pin header: the USB-to-UART cable (orange TX, yellow RX, black GND), with the Aardvark wires alongside.
+      <strong>Figure 5.</strong> Wires on the 12-pin header: the USB-to-UART cable (orange TX, yellow RX, black GND), with the Aardvark wires alongside.
     </figcaption>
   </figure>
   <figure className="doc-figure">
     <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="Jumper wires joined to the USB-to-UART cable" />
     <figcaption>
-      <strong>Figure 5.</strong> The jumper wires joined to the USB-to-UART cable.
+      <strong>Figure 6.</strong> The jumper wires joined to the USB-to-UART cable.
     </figcaption>
   </figure>
 </div>
