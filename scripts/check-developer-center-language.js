@@ -165,12 +165,6 @@ const pcieTabLabels = {
   'zh-Hant': ['介面', '主要功能'],
   uk: ['Інтерфейси', 'Основні функції'],
 };
-const networkTabLabels = {
-  ko: ['Linux 셸에서 네트워크 설정', '호스트 네트워크 연결 공유', 'U-Boot 셸에서 네트워크 설정'],
-  ja: ['Linux シェルでのネットワーク設定', 'ホストのネットワーク接続を共有', 'U-Boot シェルでのネットワーク設定'],
-  'zh-Hant': ['Linux Shell 中的網路設定', '共用主機網路連線', 'U-Boot Shell 中的網路設定'],
-  uk: ['Налаштування мережі в оболонці Linux', 'Спільний доступ до мережевого підключення хоста', 'Налаштування мережі в оболонці U-Boot'],
-};
 const modeTabLabels = {
   ko: ['독립 실행형 모드', 'PCIe 모드'],
   ja: ['スタンドアロンモード', 'PCIe モード'],
@@ -590,8 +584,8 @@ const japaneseNetworkSource = fs.readFileSync(
   ),
   'utf8',
 );
-assert.match(japaneseNetworkSource, /バージョン 2\.0 以前にのみ適用されます[^]*?\n:::\n\n1\./);
-assert.match(japaneseNetworkSource, /   :::warning\n   このファイル[^]*?\n   :::/);
+assert.match(japaneseNetworkSource, /<summary>ファームウェア 2\.0 以前<\/summary>/);
+assert.match(japaneseNetworkSource, /このファイルは[^]*?2\.0[^]*?NetworkManager/);
 assert.match(
   fs.readFileSync(
     path.join(
@@ -688,7 +682,7 @@ assert.match(
     ),
     'utf8',
   ),
-  /板卡重新啟動[^]*若要修改板卡的靜態 IP 位址/,
+  /重新啟動 DevKit[^]*在 Linux 啟動後，若要變更靜態位址/,
 );
 assert.doesNotMatch(landingSource, /copy\.navItems\.quickstart/);
 assert.doesNotMatch(landingSource, /tools\/qsg\/index\.html/);
@@ -890,9 +884,11 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     path.join(translatedDocsRoot, 'getting-started/standalone-mode/network.mdx'),
     'utf8',
   );
-  for (const tabLabel of networkTabLabels[locale]) {
-    assert.ok(networkSource.includes(`label="${tabLabel}"`), `${locale} leaves a network tab untranslated`);
-  }
+  assert.doesNotMatch(networkSource, /<TabItem/, `${locale} retains obsolete network tabs`);
+  assert.match(networkSource, /:::tip/);
+  assert.match(networkSource, /sima-cli device discover/);
+  assert.match(networkSource, /\{#share-the-hosts-internet-connection\}/);
+  assert.match(networkSource, /<details>[\s\S]*?<summary>[^<]+<\/summary>[\s\S]*?env set forcenetcfg static; saveenv[\s\S]*?<\/details>/);
   for (const tabLabel of modeTabLabels[locale]) {
     assert.ok(localizedIndexSource.includes(`label="${tabLabel}"`), `${locale} leaves a mode tab untranslated`);
   }
@@ -1000,7 +996,6 @@ for (const [locale, messages] of Object.entries(expectedSidebarMessages)) {
     );
   }
   if (locale === 'ko') {
-    assert.match(networkSource, /:::note[\s\S]*?\n:::\n\n1\./);
     assert.doesNotMatch(networkSource, /^:::경고$/m, 'ko translates a Docusaurus directive keyword');
     assert.doesNotMatch(translatedCorpus, /Bluetooth 세면대/, 'ko translates an audio sink as a washbasin');
     assert.doesNotMatch(translatedCorpus, /컴퓨터 비전 부서/, 'ko translates a hardware unit as a department');
