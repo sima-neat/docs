@@ -33,10 +33,10 @@ sima-cli login
 - Exits 0; a second invocation reports the session is already active.
 - GenAI only: `hf auth whoami` (or `huggingface-cli whoami`) shows the account.
 
-## Phase 3 — Neat SDK
+## Phase 3 — Palette SDK
 
 ```bash
-sima-cli sdk ls        # shows the installed Neat SDK environment
+sima-cli sdk ls        # shows the installed Palette SDK environment
 sima-cli sdk neat      # enters a container shell
 ```
 
@@ -67,7 +67,7 @@ tar tzf <path-to>*_mpk.tar.gz
 
 ## Phase 7 — App built and running
 
-- `./build.sh --clean` exited 0 in the Neat SDK shell.
+- `./build.sh --clean` exited 0 in the Palette SDK shell.
 - On the DevKit, the example runs with its `config.yaml` and prints
   detections (or the overlay appears in Insight).
 
