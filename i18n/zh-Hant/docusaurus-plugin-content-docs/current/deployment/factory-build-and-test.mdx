@@ -124,6 +124,8 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
 | 5 | MISO | 40 針排針（J12） | 22 | `SPI1_MISO` |
 | 8 | MOSI | 40 針排針（J12） | 37 | `SPI1_MOSI` |
 
+12 針排針的針腳編號從 Waveshare 載板上標示的第 1 針開始計算。接線前，請先在板上找到第 1 針。
+
 這些接線適用於 Modalix SoM Rev 2。在 Modalix SoM Rev 1 上，請將 MISO 與 MOSI 對調：Aardvark 針腳 5（MISO）接到針腳 37，Aardvark 針腳 8（MOSI）接到針腳 22。若要確認您 DevKit 的 SoM 版本，請參閱 [Modalix DevKit](/hardware/devkit/modalix-devkit)。
 
 `FORCE_RECOVERY` 控制 SPI 多工器，將模組上的 QSPI 快閃記憶體連接到 `SPI1`。請參閱[載板啟動調試](/hardware/design/som-carrier)。
