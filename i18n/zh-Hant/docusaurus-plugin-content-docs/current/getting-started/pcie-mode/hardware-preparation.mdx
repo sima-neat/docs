@@ -20,17 +20,13 @@ sidebar_position: 1
 
 ## 準備 PCIe 擴充卡
 
-![ Modalix PCIe 卡的 DIP 開關](/img/devkit/pcie-dip-switch.png)
+1. 請確認「執行/程式」開關是否已開啟。 `ON`.
+2. 關閉主機電源，將 Modalix PCIe 卡插入 PCIe 插槽，然後開啟主機電源。
+3. 如果主機主機板同時提供一個主要（藍色）和一個非主要（黑色）PCIe 插槽，請將 Modalix PCIe 卡安裝在次要（黑色）插槽中。
+4. 將卡片的序列連接器/UART 連接至主機，以便進行啟動和除錯。
+5. 這張 PCIe 卡還配備了一個實體乙太網路連接埠，以便直接存取網路。
 
-1. 在 Modalix PCIe 卡上，找到上方所示的四個 DIP 開關。請確認開關 #1 處於 `OFF` 位置。
-2. 請確認「執行/程式」開關是否已 `ON`.
-3. 關閉主機電源，將 Modalix PCIe 卡插入 PCIe 插槽，然後開啟主機電源。
-4. 除非另有指示，否則請將 DIP 開關維持在其出廠時的預設位置。
-5. 如果主機主機板同時提供一個主要（藍色）和一個非主要（黑色）PCIe 插槽，請將 Modalix PCIe 卡安裝在次要（黑色）插槽中。
-6. 將卡片的序列連接器/UART 連接到主機，以便進行啟動和除錯。
-7. 這張 PCIe 卡還配備了一個實體乙太網路連接埠，以便直接存取網路。
-
-如需更詳細地了解 PCIe 卡的介面、開關和連接器，請參閱 [Modalix PCIe 卡](/hardware/devkit/modalix-pcie-card)。
+如需更詳細地了解 PCIe 卡的介面和連接器，請參閱 [Modalix PCIe 卡](/hardware/devkit/modalix-pcie-card)。
 
 :::note
 在極少數情況下，您可能不希望驅動程式在主機重新啟動時自動載入。若要停用自動載入，請建立或編輯 `/etc/modprobe.d/blacklist.conf`，並新增 `blacklist sima_mla_drv`。然後執行 `update-initramfs`，並重新啟動主機。重新啟動後，使用 `insmod` 或 `modprobe` 手動載入驅動程式。
