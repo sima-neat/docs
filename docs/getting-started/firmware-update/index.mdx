@@ -19,7 +19,10 @@ Please install or upgrade `sima-cli` before continuing. These guides are intende
 :::
 
 :::warning
-Upgrading a Modalix DevKit from SDK 1.7 to 2.0 requires additional steps. Refer to the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) guide for the conversion procedure.
+Upgrading a Modalix DevKit across these firmware versions requires a special conversion procedure:
+
+- **1.7 to 2.0:** Follow [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) to move from Yocto Linux to eLxr.
+- **2.x (including 2.0) to 3.0:** Follow the [Convert from 2.1.3 to 3.0.0](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) tech note. First update to 2.1.3, then use netboot to install 3.0.0. A direct firmware update from 2.x to 3.0 is not supported.
 :::
 
 ## Operating Systems {#os}

@@ -20,7 +20,7 @@ sidebar_position: 2
 전원을 켰을 때 시리얼 콘솔에 아무것도 표시되지 않으면 tRoot 펌웨어가 손상되어 보드가 U-Boot에 도달하지 못하는 것일 수 있습니다. 먼저 SPI 플래시 프로그래머로 tRoot를 다시 프로그래밍하십시오. [Aardvark를 Modalix DevKit에 연결](/hardware/deployment/factory-build-and-test#connect-the-aardvark-to-the-modalix-devkit)을 참조하십시오.
 :::
 
-`sima-cli bootimg`와 함께 `--netboot` 옵션을 사용합니다. 그러면 대상 보드에 대한 부트 이미지를 다운로드하고 호스트에 내장된 TFTP 서버에서 해당 이미지를 제공합니다. 그런 다음 U-Boot에서 DevKit을 구성하여 해당 TFTP 서버에서 부팅하고 새 이미지를 eMMC에 플래싱합니다.
+`sima-cli bootimg`와 함께 `--netboot` 옵션을 사용하세요. 그러면 대상 보드의 부트 이미지를 다운로드하여 호스트의 내장 TFTP 서버에서 제공합니다. 펌웨어 버전 2.1.3 이상을 실행 중인 접근 가능한 DevKit 또는 PCIe 카드의 경우, `--devkit <ip>`를 추가하여 호스트가 U-Boot 환경을 구성하고 네트워크 부팅을 시작할 수 있도록 합니다. 이렇게 하면 3단계를 건너뛸 수 있습니다. 이전 펌웨어를 사용하거나 접근할 수 없는 장치의 경우, 3단계에서 직렬 콘솔을 통해 U-Boot를 구성합니다.
 
 <details open>
 <summary><strong>1단계: 물리적 설정</strong></summary>
@@ -30,15 +30,12 @@ sidebar_position: 2
 
 호스트 시스템에 `sima-cli`가 설치되어 있지 않으면, 다음 단계를 진행하기 전에 설치하십시오.
 
-터미널 세션 2개가 필요합니다.
-
-1. DevKit에 연결된 시리얼 콘솔 세션을 사용합니다. 이 세션을 사용하여 U-Boot 환경 변수를 수정하여 DevKit이 네트워크를 통해 부팅되도록 합니다.
-2. 호스트 셸 세션입니다. 이 세션을 사용하여 TFTP 서버를 시작하고 eMMC 플래싱을 시작합니다.
+호스트 셸 세션을 사용하여 TFTP 서버를 시작하고 eMMC 플래시를 시작합니다. `--devkit` 및 `--autoflash`를 사용하는 경우에도 netboot 진행 상황을 모니터링하기 위해 별도의 직렬 콘솔 연결을 사용하는 것이 좋습니다. 3단계에서 수동으로 U-Boot를 구성하려면 직렬 콘솔이 필요합니다.
 :::
 
 1. **DevKit의 이더넷 포트**를 호스트 장치에 직접 연결하고, 호스트의 네트워크 인터페이스를 정적 IP 주소 **192.168.1.10**으로 설정합니다. Modalix 얼리 액세스 DevKit에서는 이더넷 포트 0을 사용합니다.
 
-2. DevKit의 **UART 포트**를 호스트에 연결하여 콘솔에 액세스합니다. 호스트에 `sima-cli`를 설치한 후 시리얼 터미널을 엽니다.
+2. 권장되는 직렬 연결을 위해 DevKit의 **UART 포트**를 호스트에 연결하여 콘솔에 액세스합니다. 호스트에 `sima-cli`를 설치한 후 직렬 터미널을 엽니다.
 
    ```console
    sima-user@sima-user-machine:~$ sima-cli serial
@@ -76,6 +73,18 @@ TFTP 서버는 권한이 필요한 포트 69에 연결되므로 `sudo` 명령어
 sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
 ```
 
+### 호스트에서 Netboot를 구성합니다(펌웨어 2.1.3 이상).
+
+DevKit 또는 PCIe 카드가 현재 펌웨어 2.1.3 이상을 실행 중이고 호스트에서 접근 가능한 경우, 위의 명령에 `--devkit <ip>`를 추가합니다. `<ip>`를 장치의 현재 IP 주소로 바꿉니다. 호스트는 U-Boot 환경을 구성하고 네트워크 부팅을 시작하므로 3단계를 건너뛰고 4단계로 진행할 수 있습니다.
+
+장치가 네트워크 부팅을 완료한 후 자동으로 플래싱하려면 `--autoflash`를 추가합니다.
+
+```console
+sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
+```
+
+Linux에서는 위에서 설명한 것과 동일한 `sudo ~/.sima-cli/.venv/bin/sima-cli` 접두사를 사용합니다. `--autoflash`를 사용하면 4단계에서 수동 `f` 명령을 입력할 필요가 없습니다. 가능하다면 직렬 콘솔을 연결하여 진행 상황을 모니터링하고, CLI에서 재부팅하라는 메시지가 나타날 때까지 기다립니다.
+
 이 명령어는:
 
 1. 요청한 SDK 버전과 보드 유형에 맞는 부팅 가능한 이미지를 다운로드합니다.
@@ -86,6 +95,8 @@ sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boa
 
 <details open>
 <summary><strong> 3단계: DevKit을 네트워크 부팅으로 구성</strong></summary>
+
+2단계에서 호스트가 `--devkit`를 사용하여 네트워크 부팅을 구성한 경우 이 단계를 건너뛰십시오. 그렇지 않은 경우 아래의 직렬 콘솔 절차를 따르십시오.
 
 DevKit을 시리얼 콘솔을 통해 호스트에 연결한 상태에서 전원을 껐다가 다시 켜십시오. 전원 재부팅 중에 시리얼 콘솔 연결이 끊어지면 다시 연결하십시오. `Hit any key to stop autoboot` 메시지가 나타날 때까지 기다린 다음 아무 키나 눌러 U-Boot 셸로 들어갑니다.
 
@@ -131,6 +142,8 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary> 4단계: eMMC를 플래싱합니다. <strong> </strong> </summary>
 
+2단계에서 `--autoflash`를 활성화한 경우, 네트워크 부팅된 장치가 준비되면 플래싱이 자동으로 시작됩니다. 진행 상황을 모니터링하고 안내에 따라 재부팅하십시오. 그렇지 않은 경우 아래의 수동 명령을 사용하십시오.
+
 호스트의 `--netboot` 셸은 두 가지 명령을 지원합니다.
 
 - `c` — 연결된 모든 클라이언트와 현재 해당 클라이언트에서 실행 중인 펌웨어 버전을 표시합니다.
@@ -163,13 +176,6 @@ netboot> f
 
 플래싱이 완료되면 DevKit의 전원을 껐다가 다시 켜십시오. 그러면 eMMC에서 대상 버전이 부팅됩니다.
 
-:::note
-**네트워크 부팅 중에 DevKit의 IP 주소가 변경된 경우** (예: DHCP가 기본 주소인 `192.168.1.20` 대신 다른 주소를 할당한 경우) `f`는 자체적으로 보드에 연결하지 못합니다. DevKit의 시리얼 콘솔에서 새 IP 주소를 확인합니다. 이 주소는 부팅 로그에 출력되며, 네트워크 부팅된 셸에서 `ip addr`로 표시됩니다. 그런 다음 이 주소를 `f`에 명시적으로 전달합니다.
-
-```console
-netboot> f <new-ip>
-```
-:::
 
 </details>
 
@@ -183,6 +189,12 @@ netboot> f <new-ip>
 
   ```console
   modalix:~$ ping 192.168.1.10
+  ```
+
+- 네트부팅 중에 DevKit의 IP 주소가 변경되는 경우(예: DHCP가 새 주소를 할당하는 경우), `sima-cli`는 이를 알림받지 못하고 이전 주소를 계속 사용할 수 있습니다. 직렬 콘솔을 통해 DevKit에 연결하고 `ip addr` 명령을 실행하여 현재 IP 주소를 확인합니다. 그런 다음 호스트의 네트부팅 셸에서 해당 주소를 사용하여 `f` 명령을 실행하여 장치를 플래싱합니다.
+
+  ```console
+  netboot> f <actual-ip>
   ```
 
 - `f`에서 이미지를 찾지 못하면 2단계의 `sima-cli bootimg --netboot` 명령을 다시 실행하여 TFTP 경로를 새로 고칩니다.
