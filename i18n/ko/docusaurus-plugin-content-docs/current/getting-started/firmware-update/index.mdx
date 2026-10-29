@@ -19,7 +19,10 @@ DevKit 펌웨어를 최신 상태로 유지하고, 부팅되지 않는 장치를
 :::
 
 :::warning
-Modalix DevKit을 SDK 1.7에서 2.0으로 업그레이드하려면 추가 단계가 필요합니다. 변환 절차에 대해서는 [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion) 가이드 문서를 참조하십시오.
+다음 펌웨어 버전 간에 Modalix DevKit를 업그레이드하려면 특별한 변환 절차가 필요합니다.
+
+- **1.7에서 2.0으로:** [eLxr로 변환](/hardware/reference/tech-notes/elxr-conversion) 지침을 따라 Yocto Linux에서 eLxr로 전환합니다.
+- **2.x(2.0 포함)에서 3.0으로:** [2.1.3에서 3.0.0으로 변환합니다.](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) 기술 문서를 따르십시오. 먼저 2.1.3으로 업데이트한 다음, netboot를 사용하여 3.0.0을 설치합니다. 2.x에서 3.0으로 직접 펌웨어를 업데이트하는 것은 지원되지 않습니다.
 :::
 
 ## 운영 체제 {#os}

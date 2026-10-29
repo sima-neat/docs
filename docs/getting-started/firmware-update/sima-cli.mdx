@@ -15,6 +15,10 @@ Use `sima-cli update` when the DevKit is running and reachable over the network.
 `sima-cli update` installs official SiMa.ai builds only. If you built your own image, see [Flash an Image to eMMC](/hardware/deployment/flash-image) instead.
 :::
 
+:::note
+DevKits running 2.x firmware cannot use this update mechanism to move directly to 3.0. Follow [Convert from 2.1.3 to 3.0.0](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) once. After conversion, use `sima-cli update` to update from eLxr 3.0 to a newer release.
+:::
+
 Before you continue, confirm that the host can reach the DevKit over the network. See:
 
 - [Standalone Mode Network Setup](/hardware/getting-started/standalone-mode/network)
@@ -29,7 +33,7 @@ Run `sima-cli` directly on the standalone DevKit. Make sure the DevKit has an ac
 modalix:~$ sima-cli update
 ```
 
-On MLSoC running Yocto Linux, you may also specify a full URL instead of a version string if you have previously downloaded and hosted the image yourself.
+On MLSoC running Yocto Linux and on Modalix running eLxr 3.0 or later, you may also specify a full URL instead of a version string if you have downloaded and hosted the image yourself. This includes updating from eLxr 3.0 to a newer release.
 
 ```console
 modalix:~$ sima-cli update http://your-server/image.tar.gz
@@ -39,7 +43,7 @@ modalix:~$ sima-cli update http://your-server/image.tar.gz
 <TabItem value="from-host" label="From Host Machine">
 
 :::note
-This method is only supported on the MLSoC platform running Yocto. For Modalix devices running eLxr Linux, perform the update directly on the DevKit.
+Host-initiated updates are supported on MLSoC running Yocto Linux and on Modalix running eLxr 3.0 or later, including updates from 3.0 to a newer release. For Modalix running eLxr 2.x, perform the update directly on the DevKit; moving to 3.0 requires the conversion guide linked above.
 :::
 
 Use this command from the host machine:

@@ -15,6 +15,10 @@ import TabItem from '@theme/TabItem';
 `sima-cli update` 只會安裝 SiMa.ai 官方建置版本。如果您使用自行建置的映像檔，請改為參閱[將映像檔燒錄到 eMMC](/hardware/deployment/flash-image)。
 :::
 
+:::note
+執行 2.x 韌體的 DevKit 無法使用此更新機制直接升級到 3.0。請先按照 [從 2.1.3 升級到 3.0.0](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) 的步驟進行轉換。轉換完成後，使用 `sima-cli update` 從 eLxr 3.0 升級到更新的版本。
+:::
+
 在繼續之前，請確認主機可以透過網路存取 DevKit。請參閱：
 
 - [獨立模式網路設定](/hardware/getting-started/standalone-mode/network)
@@ -29,7 +33,7 @@ import TabItem from '@theme/TabItem';
 modalix:~$ sima-cli update
 ```
 
-在執行 Yocto Linux 的 MLSoC 上，如果您之前已下載並自行託管映像，則也可以指定完整的 URL，而不是版本字串。
+在執行 Yocto Linux 的 MLSoC 主機上，以及在執行 eLxr 3.0 或更高版本的 Modalix 主機上，如果您已自行下載並託管映像檔，您可以指定完整的 URL，而不是版本字串。這包括從 eLxr 3.0 更新到更新的版本。
 
 ```console
 modalix:~$ sima-cli update http://your-server/image.tar.gz
@@ -39,7 +43,7 @@ modalix:~$ sima-cli update http://your-server/image.tar.gz
 <TabItem value="from-host" label="從主機">
 
 :::note
-此方法僅在執行 Yocto 的 MLSoC 平台上受支援。對於執行 eLxr Linux 的 Modalix 裝置，請直接在 DevKit 上執行更新。
+在執行 Yocto Linux 的 MLSoC 上，以及在執行 eLxr 3.0 或更高版本的 Modalix 上，都支援主機發起的更新，包括從 3.0 更新到更新的版本。對於執行 eLxr 2.x 的 Modalix，請直接在 DevKit 上執行更新；升級到 3.0 需要參考上述連結中的轉換指南。
 :::
 
 從主機執行以下命令：

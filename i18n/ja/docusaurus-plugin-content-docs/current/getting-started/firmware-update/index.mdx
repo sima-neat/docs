@@ -19,7 +19,10 @@ DevKitのファームウェアを最新の状態に保ち、起動しないデ�
 :::
 
 :::warning
-Modalix DevKitをSDK 1.7から2.0にアップグレードするには、追加の手順が必要です。変換手順については、[eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)ガイドを参照してください。
+これらのファームウェアバージョン間で Modalix DevKit をアップグレードするには、特別な変換手順が必要です。
+
+- **1.7から2.0へ:** [eLxr に変換](/hardware/reference/tech-notes/elxr-conversion)の手順に従って、Yocto LinuxからeLxrへ移行してください。
+- **2.x（2.0を含む）から3.0への移行：** [2.1.3 から 3.0.0 にバージョンアップします。](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) の技術ノートに従ってください。まず2.1.3にアップデートし、次にnetbootを使用して3.0.0をインストールします。2.xから3.0への直接のファームウェアアップデートはサポートされていません。
 :::
 
 ## オペレーティングシステム {#os}
