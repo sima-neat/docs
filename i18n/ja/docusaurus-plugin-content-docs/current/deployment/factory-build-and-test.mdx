@@ -90,23 +90,30 @@ OTP メモリには一度しか書き込めません。確定する前に各値�
 ### tRoot SPI フラッシュに書き込む {#program-the-troot-spi-flash}
 
 tRoot ファームウェアは単一のバイナリ `troot_blob.be` です。書き込むのは、上記で使用した OTP 書き込み用
-ファームウェアか、量産用ファームウェアのいずれかです。SiMa.ai では、Total Phase の次の 2 つのツールをお勧めします。
+ファームウェアか、量産用ファームウェアのいずれかです。SiMa.ai では、ホストをボードの SPI フラッシュに接続する
+Total Phase の USB アダプター [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) と、それを介してフラッシュに書き込む Python スクリプトをお勧めします。
+スクリプトは、書き込み前に SPI マルチプレクサーをフラッシュ側に切り替え、終了時に元に戻します。
 
-- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)：ホストをボードの SPI フラッシュに接続する USB アダプターです。
-- [Flash Center](https://www.totalphase.com/products/flash-center/)：Aardvark を介して SPI フラッシュの消去、書き込み、検証を行う、Total Phase の
-  無償ソフトウェアです。Windows と Linux で動作し、macOS では動作しません。
-
-1. Total Phase の Web サイトから Flash Center をダウンロードし、Windows または Linux のホストに
-   インストールします。
-2. プログラマーをボードの SPI フラッシュ信号に接続します。Modalix DevKit の場合は、
+1. Windows、Linux、または macOS のホストに Python 3 をインストールします。
+2. Aardvark 用の Total Phase USB ドライバーをインストールします。ドライバーは
+   [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) のページの **Downloads** にあります。
+3. 同じページから Aardvark Software API をインストールします。ホスト用のパッケージをダウンロードして展開します。
+   `python` フォルダーには、スクリプトが必要とする `aardvark_py.py` とネイティブライブラリ
+   （Windows では `aardvark.dll`、Linux と macOS では `aardvark.so`）が入っています。
+4. [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) を Software API の `python` フォルダーにダウンロードし、`troot_blob.be` もそこにコピーします。
+5. プログラマーをボードの SPI フラッシュ信号に接続します。Modalix DevKit の場合は、
    [Aardvark を Modalix DevKit に接続する](#connect-the-aardvark-to-the-modalix-devkit)
    を参照してください。その他のボードでは、コネクターはボードによって異なり、通常は 2 列のヘッダーです。
-3. Flash Center を起動します。この手順を自動化したい場合は、コマンドラインツールも用意されています。
-4. アダプターを追加します。
-5. ターゲットデバイスを選択します。**SPI Flash** を選択し、次にボードに実装されている部品
-   （例：Winbond W25Q16（2 MB））を選択します。
-6. `troot_blob.be` を読み込みます。
-7. フラッシュに書き込みます。
+6. `python` フォルダーでスクリプトを実行します。
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   引数は、Aardvark のポート（最初のアダプターは `0`）、SPI モード（`0`）、書き込み後にフラッシュを読み戻して
+   検証するかどうか（`0` は検証しない、`1` は検証する）、およびイメージです。SPI 転送が失敗すると、スクリプトは
+   最大 10 回再試行し（`--retry` で変更できます）、その後チップ消去からやり直します。
+7. `Flash programming completed successfully.` と `DONE!` が表示されるまで待ちます。
 
 #### Aardvark を Modalix DevKit に接続する {#connect-the-aardvark-to-the-modalix-devkit}
 
@@ -159,7 +166,9 @@ Aardvark のピン 5（MISO）をピン 37 に、Aardvark のピン 8（MOSI）�
 を参照してください。
 
 `FORCE_RECOVERY` は、モジュール上の QSPI フラッシュを `SPI1` に接続する SPI マルチプレクサーを
-制御します。[キャリアボードの立ち上げ](/hardware/design/som-carrier)を参照してください。
+制御します。スクリプトは、フラッシュへの書き込み中はこの信号を Low に保ち、終了時に High にします。
+[キャリアボードの立ち上げ](/hardware/design/som-carrier)を参照してください。スクリプトは Aardvark の
+SCL ピン（ピン 1）もコアのリセットとして駆動します。Modalix DevKit では SCL を接続しないでください。
 
 作業中に tRoot コンソールを確認するには、同じ 12 ピンヘッダーに USB-UART ケーブルを接続します。
 

@@ -77,18 +77,29 @@ OTP 記憶體只能寫入一次。確認每個值之前，請先仔細檢查。
 
 ### 燒錄 tRoot SPI 快閃記憶體 {#program-the-troot-spi-flash}
 
-tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩種版本之一：上述的 OTP 燒錄韌體，或您的量產韌體。SiMa.ai 建議使用 Total Phase 的以下兩項工具：
+tRoot 韌體是單一二進位檔 `troot_blob.be`。您可以寫入上面使用的 OTP 燒錄韌體，或您的量產韌體。
+SiMa.ai 建議使用 Total Phase 的 USB 轉接器 [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)（用於將主機連接到電路板的 SPI 快閃記憶體），
+以及透過它燒錄快閃記憶體的 Python 指令碼。指令碼會在寫入前將 SPI 多工器切換到快閃記憶體，並在完成後切換回來。
 
-- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)：將主機連接到電路板 SPI 快閃記憶體的 USB 轉接器。
-- [Flash Center](https://www.totalphase.com/products/flash-center/)：Total Phase 的免費軟體，透過 Aardvark 清除、燒錄並驗證 SPI 快閃記憶體。可在 Windows 與 Linux 上執行，不支援 macOS。
+1. 在 Windows、Linux 或 macOS 主機上安裝 Python 3。
+2. 安裝 Aardvark 的 Total Phase USB 驅動程式。驅動程式位於
+   [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) 頁面的 **Downloads** 中。
+3. 從同一頁面安裝 Aardvark Software API。下載適用於您主機的套件並解壓縮。其 `python` 資料夾包含指令碼所需的
+   `aardvark_py.py` 和原生程式庫（Windows 為 `aardvark.dll`，Linux 和 macOS 為 `aardvark.so`）。
+4. 將 [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) 下載到 Software API 的 `python` 資料夾，並將 `troot_blob.be` 也複製到該處。
+5. 將燒錄器連接到電路板的 SPI 快閃記憶體訊號。若為 Modalix DevKit，請參閱
+   [將 Aardvark 連接到 Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit)。
+   其他電路板的連接器因板而異，通常是雙排排針。
+6. 在 `python` 資料夾中執行指令碼：
 
-1. 從 Total Phase 網站下載 Flash Center，並安裝在 Windows 或 Linux 主機上。
-2. 將燒錄器連接到電路板的 SPI 快閃記憶體訊號。若是 Modalix DevKit，請參閱[將 Aardvark 連接到 Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit)。若是其他電路板，連接器取決於電路板，通常為雙排排針。
-3. 啟動 Flash Center。如果您想將此步驟自動化，它也提供命令列工具。
-4. 新增轉接器。
-5. 選擇目標裝置：選擇 **SPI Flash**，然後選擇電路板上安裝的元件，例如 Winbond W25Q16（2 MB）。
-6. 載入 `troot_blob.be`。
-7. 燒錄快閃記憶體。
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   參數依序為 Aardvark 連接埠（第一個轉接器為 `0`）、SPI 模式（`0`）、是否在寫入後讀回並驗證快閃記憶體
+   （`0` 為略過，`1` 為驗證），以及映像檔。若 SPI 傳輸失敗，指令碼最多重試 10 次（可用 `--retry` 變更），
+   之後會從晶片抹除重新開始。
+7. 等待出現 `Flash programming completed successfully.` 和 `DONE!`。
 
 #### 將 Aardvark 連接到 Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
 
@@ -136,7 +147,7 @@ tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩�
 
 這些接線適用於 Modalix SoM Rev 2。在 Modalix SoM Rev 1 上，請將 MISO 與 MOSI 對調：Aardvark 針腳 5（MISO）接到針腳 37，Aardvark 針腳 8（MOSI）接到針腳 22。若要確認您 DevKit 的 SoM 版本，請參閱 [Modalix DevKit](/hardware/devkit/modalix-devkit)。
 
-`FORCE_RECOVERY` 控制 SPI 多工器，將模組上的 QSPI 快閃記憶體連接到 `SPI1`。請參閱[載板啟動調試](/hardware/design/som-carrier)。
+`FORCE_RECOVERY` 控制 SPI 多工器，將模組上的 QSPI 快閃記憶體連接到 `SPI1`。指令碼在燒錄快閃記憶體時會將其保持為低電位，完成後設為高電位。請參閱[載板啟動調試](/hardware/design/som-carrier)。指令碼也會將 Aardvark 的 SCL 針腳（針腳 1）當作核心重設來驅動。在 Modalix DevKit 上，請勿連接 SCL。
 
 若要在操作時查看 tRoot 主控台，請將 USB 轉 UART 線連接到同一個 12 針排針：
 

@@ -93,28 +93,37 @@ OTP memory can be written only once. Check each value before you confirm it.
 
 The tRoot firmware is a single binary, `troot_blob.be`. You write one of two
 versions: the OTP programming firmware used above, or your production firmware.
-SiMa.ai recommends two tools from Total Phase:
+SiMa.ai recommends the [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) from Total Phase, a USB adapter that connects the
+host to the board's SPI flash, and a Python script that programs the flash
+through it. The script also switches the SPI mux to the flash before it writes,
+and back when it finishes.
 
-- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/): a USB adapter that connects the host
-  to the board's SPI flash.
-- [Flash Center](https://www.totalphase.com/products/flash-center/): free software from Total Phase that erases, programs,
-  and verifies SPI flash through the Aardvark. It runs on Windows and Linux,
-  not on macOS.
-
-1. Download Flash Center from the Total Phase website, and install it on a
-   Windows or Linux host.
-2. Connect the programmer to the board's SPI flash signals. On the Modalix
+1. Install Python 3 on a Windows, Linux, or macOS host.
+2. Install the Total Phase USB drivers for the Aardvark. They are under
+   **Downloads** on the [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) page.
+3. Install the Aardvark Software API from the same page. Download the package
+   for your host, and unzip it. Its `python` folder holds `aardvark_py.py` and
+   the native library (`aardvark.dll` on Windows, `aardvark.so` on Linux and
+   macOS) that the script needs.
+4. Download [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) into the `python` folder of the
+   Software API, and copy `troot_blob.be` there.
+5. Connect the programmer to the board's SPI flash signals. On the Modalix
    DevKit, see
    [Connect the Aardvark to the Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
    On another board, the connector depends on the board, and is typically a
    dual-row header.
-3. Start Flash Center. It also has command-line tools if you want to automate
-   this step.
-4. Add the adapter.
-5. Select the target device: choose **SPI Flash**, then the part fitted to your
-   board, for example a Winbond W25Q16 (2 MB).
-6. Load `troot_blob.be`.
-7. Program the flash.
+6. In the `python` folder, run the script:
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   The arguments are the Aardvark port (`0` for the first adapter), the SPI
+   mode (`0`), whether to read the flash back and verify it (`0` skips, `1`
+   verifies), and the image. If an SPI transfer fails, the script retries it
+   up to 10 times (`--retry` changes this), and then starts again from the
+   chip erase.
+7. Wait for `Flash programming completed successfully.` and `DONE!`.
 
 #### Connect the Aardvark to the Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
 
@@ -168,7 +177,10 @@ to pin 22. To find the SoM revision of your DevKit, see
 [Modalix DevKit](/hardware/devkit/modalix-devkit).
 
 `FORCE_RECOVERY` drives the SPI mux that connects the on-module QSPI flash to
-`SPI1`. See [Carrier Board Bring-up](/hardware/design/som-carrier).
+`SPI1`. The script holds it low while it programs the flash, and sets it high
+when it finishes. See [Carrier Board Bring-up](/hardware/design/som-carrier).
+The script also drives the Aardvark's SCL pin (pin 1) as a core reset. Leave
+SCL unconnected on the Modalix DevKit.
 
 To watch the tRoot console while you work, connect a USB-to-UART cable to the
 same 12-pin header:

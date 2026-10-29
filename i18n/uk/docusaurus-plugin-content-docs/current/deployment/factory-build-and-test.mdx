@@ -90,29 +90,34 @@ OTP-пам’ять можна записати лише один раз. Пер
 
 ### Програмування SPI-флеш-пам’яті tRoot {#program-the-troot-spi-flash}
 
-Прошивка tRoot — це один двійковий файл, `troot_blob.be`. Ви записуєте одну з двох
-версій: прошивку для програмування OTP, яку використано вище, або вашу виробничу прошивку.
-SiMa.ai рекомендує два інструменти від Total Phase:
+Мікропрограма tRoot — це один двійковий файл `troot_blob.be`. Ви записуєте одну з двох
+версій: мікропрограму для програмування OTP, використану вище, або вашу серійну мікропрограму.
+SiMa.ai рекомендує USB-адаптер [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) від Total Phase, який під’єднує
+хост до SPI-флеш-пам’яті плати, і скрипт Python, який програмує флеш-пам’ять через нього.
+Перед записом скрипт перемикає SPI-мультиплексор на флеш-пам’ять, а після завершення повертає його назад.
 
-- [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/): USB-адаптер, що з’єднує хост із SPI-флеш-пам’яттю
-  плати.
-- [Flash Center](https://www.totalphase.com/products/flash-center/): безкоштовне програмне забезпечення від Total Phase, яке стирає,
-  програмує й перевіряє SPI-флеш-пам’ять через Aardvark. Працює у Windows і Linux, але не
-  в macOS.
-
-1. Завантажте Flash Center із вебсайту Total Phase і встановіть його на хості з Windows або
-   Linux.
-2. Під’єднайте програматор до сигналів SPI-флеш-пам’яті на платі. Для Modalix DevKit
-   див. розділ
+1. Установіть Python 3 на хост із Windows, Linux або macOS.
+2. Установіть USB-драйвери Total Phase для Aardvark. Вони розміщені в розділі
+   **Downloads** на сторінці [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/).
+3. Установіть Aardvark Software API з тієї самої сторінки. Завантажте пакет для вашого хоста
+   та розпакуйте його. Його тека `python` містить `aardvark_py.py` і нативну бібліотеку
+   (`aardvark.dll` у Windows, `aardvark.so` у Linux і macOS), потрібні скрипту.
+4. Завантажте [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) до теки `python` пакета Software API та скопіюйте туди `troot_blob.be`.
+5. Під’єднайте програматор до сигналів SPI-флеш-пам’яті плати. Для Modalix
+   DevKit див. розділ
    [Під’єднання Aardvark до Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
-   На іншій платі роз’єм залежить від плати й зазвичай є дворядним.
-3. Запустіть Flash Center. Він також має інструменти командного рядка, якщо ви хочете автоматизувати
-   цей крок.
-4. Додайте адаптер.
-5. Виберіть цільовий пристрій: оберіть **SPI Flash**, а потім мікросхему, встановлену на вашій
-   платі, наприклад Winbond W25Q16 (2 МБ).
-6. Завантажте `troot_blob.be`.
-7. Запрограмуйте флеш-пам’ять.
+   На іншій платі роз’єм залежить від плати; зазвичай це дворядний роз’єм.
+6. У теці `python` запустіть скрипт:
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   Аргументи: порт Aardvark (`0` для першого адаптера), режим SPI (`0`), чи потрібно
+   прочитати флеш-пам’ять і перевірити її (`0` — без перевірки, `1` — перевірити) та образ.
+   Якщо передавання SPI не вдається, скрипт повторює його до 10 разів (`--retry` змінює це
+   значення), а потім починає знову зі стирання мікросхеми.
+7. Дочекайтеся повідомлень `Flash programming completed successfully.` і `DONE!`.
 
 #### Під’єднання Aardvark до Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
 
@@ -166,7 +171,10 @@ MISO і MOSI: контакт 5 Aardvark (MISO) під’єднується до 
 [Modalix DevKit](/hardware/devkit/modalix-devkit).
 
 `FORCE_RECOVERY` керує SPI-мультиплексором, який під’єднує QSPI-флеш-пам’ять модуля до
-`SPI1`. Див. розділ [Запуск плати-носія](/hardware/design/som-carrier).
+`SPI1`. Під час програмування флеш-пам’яті скрипт утримує цей сигнал на низькому рівні, а після
+завершення встановлює високий. Див. розділ [Запуск плати-носія](/hardware/design/som-carrier).
+Скрипт також керує контактом SCL (контакт 1) адаптера Aardvark як скиданням ядра. На Modalix
+DevKit не під’єднуйте SCL.
 
 Щоб стежити за консоллю tRoot під час роботи, під’єднайте кабель USB-UART до того самого
 12-контактного роз’єму:
