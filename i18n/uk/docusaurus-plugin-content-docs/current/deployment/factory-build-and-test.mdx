@@ -4,6 +4,9 @@ description: Рекомендований процес збирання, про�
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
+
 # Заводське збирання та тестування
 
 Це рекомендований процес збирання та тестування плат на основі Modalix на
@@ -87,21 +90,115 @@ OTP-пам’ять можна записати лише один раз. Пер
 
 ### Програмування SPI-флеш-пам’яті tRoot {#program-the-troot-spi-flash}
 
-Прошивка tRoot — це один двійковий файл, `troot_blob.be`. Ви записуєте одну з двох
-версій: прошивку для програмування OTP, яку використано вище, або вашу виробничу прошивку.
-SiMa.ai рекомендує хост-адаптер Total Phase Aardvark I2C/SPI із програмним забезпеченням Total
-Phase Flash Center.
+Мікропрограма tRoot — це один двійковий файл `troot_blob.be`. Ви записуєте одну з двох
+версій: мікропрограму для програмування OTP, використану вище, або вашу серійну мікропрограму.
+SiMa.ai рекомендує USB-адаптер [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) від Total Phase, який під’єднує
+хост до SPI-флеш-пам’яті плати, і скрипт Python, який програмує флеш-пам’ять через нього.
+Перед записом скрипт перемикає SPI-мультиплексор на флеш-пам’ять, а після завершення повертає його назад.
 
-1. Установіть Flash Center на хості.
-2. Під’єднайте програматор до роз’єму SPI-флеш-пам’яті на платі. Цей роз’єм залежить
-   від плати й зазвичай є дворядним.
-3. Запустіть Flash Center. Він також має інструменти командного рядка, якщо ви хочете автоматизувати
-   цей крок.
-4. Додайте адаптер.
-5. Виберіть цільовий пристрій: оберіть **SPI Flash**, а потім мікросхему, встановлену на вашій
-   платі, наприклад Winbond W25Q16 (2 МБ).
-6. Завантажте `troot_blob.be`.
-7. Запрограмуйте флеш-пам’ять.
+1. Установіть Python 3 на хост із Windows, Linux або macOS.
+2. Установіть USB-драйвери Total Phase для Aardvark. Вони розміщені в розділі
+   **Downloads** на сторінці [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/).
+3. Установіть Aardvark Software API з тієї самої сторінки. Завантажте пакет для вашого хоста
+   та розпакуйте його. Його тека `python` містить `aardvark_py.py` і нативну бібліотеку
+   (`aardvark.dll` у Windows, `aardvark.so` у Linux і macOS), потрібні скрипту.
+4. Завантажте [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) до теки `python` пакета Software API та скопіюйте туди `troot_blob.be`.
+5. Під’єднайте програматор до сигналів SPI-флеш-пам’яті плати. Для Modalix
+   DevKit див. розділ
+   [Під’єднання Aardvark до Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
+   На іншій платі роз’єм залежить від плати; зазвичай це дворядний роз’єм.
+6. У теці `python` запустіть скрипт:
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   Аргументи: порт Aardvark (`0` для першого адаптера), режим SPI (`0`), чи потрібно
+   прочитати флеш-пам’ять і перевірити її (`0` — без перевірки, `1` — перевірити) та образ.
+   Якщо передавання SPI не вдається, скрипт повторює його до 10 разів (`--retry` змінює це
+   значення), а потім починає знову зі стирання мікросхеми.
+7. Дочекайтеся повідомлень `Flash programming completed successfully.` і `DONE!`.
+
+#### Під’єднання Aardvark до Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
+
+Використовуйте ці з’єднання, щоб запрограмувати tRoot на Modalix DevKit. Вони також
+дають змогу відновити DevKit, прошивку tRoot якого пошкоджено, наприклад коли консоль
+tRoot нічого не виводить після ввімкнення живлення.
+
+<figure className="doc-figure doc-figure--diagram">
+  <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="З’єднання від 10-контактного роз’єму Aardvark до Modalix DevKit: GND і SDA до 12-контактного роз’єму, SCLK, SS, MISO і MOSI до 40-контактного роз’єму" />
+  <figcaption>
+    <strong>Рисунок 1.</strong> Під’єднання Aardvark до Modalix DevKit, Modalix SoM Rev 2
+  </figcaption>
+</figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Перемички від Aardvark на 40-контактному роз’ємі (J12) Modalix DevKit" />
+    <figcaption>
+      <strong>Рисунок 2.</strong> Дроти Aardvark на 40-контактному роз’ємі (J12). На цій платі встановлено SoM Rev 1, тому дроти MISO і MOSI під’єднано до протилежних контактів, ніж для SoM Rev 2. Контакти беріть із таблиці.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Перемички, вставлені в 10-контактний шлейф Aardvark" />
+    <figcaption>
+      <strong>Рисунок 3.</strong> Перемички в 10-контактному кабелі Aardvark.
+    </figcaption>
+  </figure>
+</div>
+
+| Контакт Aardvark | Сигнал Aardvark | Роз’єм DevKit | Контакт DevKit | Сигнал DevKit |
+| --- | --- | --- | --- | --- |
+| 2 | GND | 12-контактний роз’єм | 9 | GND |
+| 3 | SDA | 12-контактний роз’єм | 10 | `FORCE_RECOVERY` |
+| 7 | SCLK | 40-контактний роз’єм (J12) | 13 | `SPI1_SCK` |
+| 9 | SS | 40-контактний роз’єм (J12) | 18 | `SPI1_CS0` |
+| 5 | MISO | 40-контактний роз’єм (J12) | 22 | `SPI1_MISO` |
+| 8 | MOSI | 40-контактний роз’єм (J12) | 37 | `SPI1_MOSI` |
+
+Номери контактів 12-контактного роз’єму відлічуються від контакту 1, позначеного на платі-носії Waveshare. Перш ніж під’єднувати дроти, знайдіть контакт 1 на платі.
+
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="12-контактний роз’єм: контакт 1 ліворуч, кнопка PWR за контактом 12, дроти на контактах 3, 4, 7, 9 і 10" />
+  <figcaption>
+    <strong>Рисунок 4.</strong> 12-контактний роз’єм із кнопкою PWR праворуч. Контакт 1 — крайній лівий.
+  </figcaption>
+</figure>
+
+Ці з’єднання призначені для Modalix SoM Rev 2. На Modalix SoM Rev 1 поміняйте місцями
+MISO і MOSI: контакт 5 Aardvark (MISO) під’єднується до контакту 37, а контакт 8 Aardvark
+(MOSI) — до контакту 22. Щоб дізнатися ревізію SoM вашого DevKit, див. розділ
+[Modalix DevKit](/hardware/devkit/modalix-devkit).
+
+`FORCE_RECOVERY` керує SPI-мультиплексором, який під’єднує QSPI-флеш-пам’ять модуля до
+`SPI1`. Під час програмування флеш-пам’яті скрипт утримує цей сигнал на низькому рівні, а після
+завершення встановлює високий. Див. розділ [Запуск плати-носія](/hardware/design/som-carrier).
+Скрипт також керує контактом SCL (контакт 1) адаптера Aardvark як скиданням ядра. На Modalix
+DevKit не під’єднуйте SCL.
+
+Щоб стежити за консоллю tRoot під час роботи, під’єднайте кабель USB-UART до того самого
+12-контактного роз’єму:
+
+| Кабель USB-UART | Контакт DevKit | Сигнал DevKit |
+| --- | --- | --- |
+| GND | 7 | GND |
+| TX | 3 | `UART2_RXD` |
+| RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Кабель USB-UART і дроти Aardvark на 12-контактному роз’ємі Modalix DevKit" />
+    <figcaption>
+      <strong>Рисунок 5.</strong> Дроти на 12-контактному роз’ємі: кабель USB-UART (помаранчевий TX, жовтий RX, чорний GND), поруч дроти Aardvark.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="Перемички, під’єднані до кабелю USB-UART" />
+    <figcaption>
+      <strong>Рисунок 6.</strong> Перемички, під’єднані до кабелю USB-UART.
+    </figcaption>
+  </figure>
+</div>
 
 ## Налаштування тестової станції {#set-up-the-test-station}
 
