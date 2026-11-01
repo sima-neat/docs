@@ -18,7 +18,7 @@ sidebar_position: 2
 本指南使用 SiMa.ai 提供的映像檔，且電路板上必須有可運作的 U-Boot 提示字元。本指南不說明如何安裝您自行建置的映像檔；若有此需求，請參閱[將映像檔燒錄到 eMMC](/hardware/deployment/flash-image)。
 :::
 
-使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像檔，並從主機上的內建 TFTP 伺服器提供該映像檔。然後，您可以在 U-Boot 中設定 DevKit，以便從該 TFTP 伺服器啟動，並將新的映像檔燒錄到 eMMC。
+使用 `--netboot` 選項搭配 `sima-cli bootimg`。它會下載目標板的啟動映像，並從主機上的內建 TFTP 伺服器提供該映像。對於目前執行韌體 2.1.3 或更高版本的 DevKit 或 PCIe 卡，請新增 `--devkit <ip>`，以便主機能夠設定 U-Boot 環境並啟動網路啟動。然後，您可以跳過步驟 3。對於較舊的韌體或無法連線的裝置，請在步驟 3 中透過序列主控台設定 U-Boot。
 
 <details open>
 <summary><strong>步驟 1：實體設定</strong></summary>
@@ -28,15 +28,12 @@ sidebar_position: 2
 
 如果您尚未在您的主機上安裝 `sima-cli`，請在繼續之前先安裝。
 
-需要兩個終端機工作階段：
-
-1. 連接到 DevKit 的序列主控台。使用此主控台來修改 U-Boot 環境變數，以便 DevKit 透過網路啟動。
-2. 一個主機的 Shell 工作階段。使用這個工作階段來啟動 TFTP 伺服器，並開始 eMMC 燒錄。
+使用主機的 Shell 工作階段來啟動 TFTP 伺服器，並開始 eMMC 快閃操作。我們建議使用獨立的序列主控台連線來監控網路啟動進度，即使在使用 `--devkit` 和 `--autoflash` 時也是如此。在步驟 3 中，需要使用序列主控台進行手動 U-Boot 設定。
 :::
 
 1. 將 **DevKit 的乙太網路連接埠** 直接連接到主機，並將主機的網路介面設定為靜態 IP 位址 **192.168.1.10**。在 Modalix 搶先體驗版 DevKit 上，使用乙太網路連接埠 0。
 
-2. 將 DevKit 的 **UART 連接埠**連接到主機，以便進行主控台存取。在主機上安裝 `sima-cli` 後，開啟一個序列終端：
+2. 為了建立建議的序列連接，請將 DevKit 的 **UART 埠** 連接到主機，以便進行主控台存取。在主機上安裝 `sima-cli` 後，請開啟序列終端機：
 
    ```console
    sima-user@sima-user-machine:~$ sima-cli serial
@@ -74,6 +71,18 @@ TFTP 伺服器會繫結到 69 埠，而該埠需要特權才能存取，因此 `
 sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
 ```
 
+### 從主機設定 Netboot（韌體 2.1.3 或更新版本）
+
+如果 DevKit 或 PCIe 卡目前正在執行韌體 2.1.3 或更高版本，並且可以從主機存取，請將 `--devkit <ip>` 附加到上述指令中。將 `<ip>` 替換為裝置目前的 IP 位址。主機會設定 U-Boot 環境並啟動網路啟動，因此您可以跳過步驟 3 並繼續到步驟 4。
+
+若要在裝置完成網路啟動後自動進行閃存操作，請同時附加 `--autoflash`。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
+```
+
+在 Linux 系統上，請使用上述相同的 `sudo ~/.sima-cli/.venv/bin/sima-cli` 前置詞。如果啟用了 `--autoflash`，則無需在步驟 4 中手動輸入 `f` 命令。如果可以，請保持序列主控台的連接，以便監控進度，並等待 CLI 提示您重新啟動。
+
 這個指令：
 
 1. 下載指定 SDK 版本和板型對應的可開機映像檔。
@@ -84,6 +93,8 @@ sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boa
 
 <details open>
 <summary><strong>步驟 3：將 DevKit 設定為透過網路啟動 </strong></summary>
+
+如果主機在步驟 2 中已設定網路啟動，且使用了 `--devkit`，則跳過此步驟。否則，請按照以下序列主控台程序操作。
 
 在 DevKit 連接到主機時，進行電源重啟。如果在電源重啟過程中，序列埠連接中斷，請重新連接。等待直到看到「`Hit any key to stop autoboot`」，然後按下任意鍵以進入 U-Boot 介面：
 
@@ -129,6 +140,8 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary><strong>步驟 4：燒錄 eMMC。</strong></summary>
 
+如果您在步驟 2 中啟用了 `--autoflash`，則在透過網路啟動的裝置準備就緒後，刷機程序會自動開始。請監控進度，並在出現提示時重新啟動。否則，請使用以下手動指令。
+
 這個 `--netboot` 主機上的 Shell 支援兩個指令：
 
 - `c` — 顯示所有已連線的使用者端，以及目前正在這些使用者端上執行的韌體版本。
@@ -161,13 +174,6 @@ netboot> f
 
 完成燒錄後，請重新啟動 DevKit。它會從 eMMC 啟動目標版本。
 
-:::note
-**如果 DevKit 的 IP 位址在網路啟動期間發生變更**（例如，因為 DHCP 分配的位址與預設的 `192.168.1.20` 不同），則 `f` 將無法自行連線到板卡。在 DevKit 的序列主控台上找到新的 IP 位址。它會顯示在啟動記錄中，並且在網路啟動後的 Shell 中由 `ip addr` 顯示。然後明確地將其傳遞給 `f`：
-
-```console
-netboot> f <new-ip>
-```
-:::
 
 </details>
 
@@ -181,6 +187,12 @@ netboot> f <new-ip>
 
   ```console
   modalix:~$ ping 192.168.1.10
+  ```
+
+- 如果 DevKit 在網路啟動期間變更 IP 位址（例如，因為 DHCP 分配了新的位址），`sima-cli` 不會收到通知，並且可能繼續使用先前的位址。透過序列主控台連接到 DevKit，然後執行 `ip addr` 命令以找出其目前的 IP 位址。然後，在主機的網路啟動 shell 中使用該位址，並使用 `f` 命令來對設備進行刷機：
+
+  ```console
+  netboot> f <actual-ip>
   ```
 
 - 如果 `f` 無法找到映像檔，請從步驟 2 重新執行 `sima-cli bootimg --netboot` 命令，以重新整理 TFTP 路徑。

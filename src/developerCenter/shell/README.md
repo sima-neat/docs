@@ -6,7 +6,9 @@ This directory owns the shared Developer Center behavior for the canonical
 The shell defines:
 
 - canonical section routes for Hardware, Software, and Examples
-- external destinations for Models and Community
+- Models links to `/models/` in staging and Hugging Face in other environments,
+  using the generated `developer-center-runtime.json` environment
+- external destination for Community
 - common theme persistence keys and cookie behavior
 - global documentation-language persistence and localized section routes
 - localized shell branding and navigation labels

@@ -1,6 +1,6 @@
 ---
 title: For AI Agents
-description: One-page, copy-pasteable onboarding for coding agents — install sima-cli, authenticate, install the Palette Neat SDK and Model Compiler, connect a Modalix DevKit, compile a model, and build and run NEAT apps including GenAI.
+description: One-page, copy-pasteable onboarding for coding agents — install sima-cli, authenticate, install the Palette SDK and Model Compiler, connect a Modalix DevKit, compile a model, and build and run NEAT apps including GenAI.
 ---
 
 <!--
@@ -14,7 +14,7 @@ description: One-page, copy-pasteable onboarding for coding agents — install s
 
 # For AI Agents
 
-This page is the complete, self-contained onboarding path for the SiMa.ai development platform. An agent that reads this one page can install `sima-cli`, authenticate, install the Palette Neat software (SDK, Model Compiler, Neat Library), connect a Modalix DevKit, compile a model, and build and run applications — including GenAI.
+This page is the complete, self-contained onboarding path for the SiMa.ai development platform. An agent that reads this one page can install `sima-cli`, authenticate, install the Palette SDK software (development environment, Model Compiler, Neat Library), connect a Modalix DevKit, compile a model, and build and run applications — including GenAI.
 
 Raw version of this page (no HTML): `https://developer.sima.ai/agents.md` · `https://developer.sima.ai/llms.txt`
 
@@ -31,9 +31,9 @@ Execute the phases in order (or the subset from the decision matrix in Phase 0).
 | Hugging Face token | Phase 8 only | Only for downloading open-source GenAI models from [huggingface.co/simaai](https://huggingface.co/simaai) |
 | Target silicon | Phases 4, 6 | `modalix` (gen2, default) or legacy `mlsoc`/`davinci` (gen1) |
 
-**Terminology.** *Palette Neat* is the SiMa.ai software development toolkit for building AI applications on Modalix: the **Neat SDK** (containerized dev environment), the **Neat Library** (C++/Python runtime, a.k.a. `neat`/`pyneat`), the **Model Compiler** (ONNX → MLA), and **LLiMa** (GenAI runtime). NEAT replaces the older Palette/MPK toolchain. Everything installs through one tool: `sima-cli`.
+**Terminology.** *Palette SDK* is the SiMa.ai software development toolkit for building AI applications on Modalix: the containerized development environment, the **Neat Library** (C++/Python runtime, a.k.a. `neat`/`pyneat`), the **Model Compiler** (ONNX → MLA), and **LLiMa** (GenAI runtime). NEAT replaces the older Palette/MPK toolchain. Everything installs through one tool: `sima-cli`.
 
-**Success definition:** `sima-cli` authenticated, Neat SDK shell reachable, and — depending on your goal — a model compiled to an MPK `.tar.gz` and/or one example application running on the DevKit.
+**Success definition:** `sima-cli` authenticated, Palette SDK shell reachable, and — depending on your goal — a model compiled to an MPK `.tar.gz` and/or one example application running on the DevKit.
 
 ## Phase 0 — Prerequisites and decision matrix
 
@@ -43,7 +43,7 @@ Execute the phases in order (or the subset from the decision matrix in Phase 0).
 | --- | --- | --- | --- |
 | Ubuntu 22.04 / 24.04 | x86_64 or aarch64 | Docker Engine | Primary path; this page assumes it |
 | Windows 11 | x86_64 (WSL2) | Docker Engine in WSL | Run all Linux commands inside WSL |
-| macOS 15.5+ | Apple Silicon | Colima | Model Compiler must be installed inside the Neat SDK |
+| macOS 15.5+ | Apple Silicon | Colima | Model Compiler must be installed inside the Palette SDK |
 
 Minimums: 4 CPU cores, 16 GB RAM, 100 GB free disk, Python ≥ 3.8, `sudo` access. GenAI **model compilation** needs far more: 128 GB RAM recommended, 512 GB disk preferred (running pre-compiled GenAI models on the DevKit does not).
 
@@ -120,20 +120,20 @@ hf auth login   # paste the Hugging Face user access token
 
 **Verify:** `sima-cli login` exits 0 (re-running it reports you are already logged in). Reset with `sima-cli logout`.
 
-## Phase 3 — Install the Palette Neat SDK (development environment)
+## Phase 3 — Install the Palette SDK (development environment)
 
-The Neat SDK is a containerized development environment (compilers, cross-toolchain, Neat Library headers, Insight visualization). One command installs it, and it prompts to pair your DevKit and to add the Model Compiler:
+The Palette SDK is a containerized development environment (compilers, cross-toolchain, Neat Library headers, Insight visualization). One command installs it, and it prompts to pair your DevKit and to add the Model Compiler:
 
 ```bash
 sima-cli neat install sdk@%sdk_channel%
 ```
 
-This installs Neat SDK %sdk_version% (compatible with DevKit platform software %platform_version%). Answer the interactive prompts: DevKit IP for pairing (recommended — it also provisions the Neat Library and PyNeat on the DevKit) and Model Compiler installation (say yes if you plan to compile models; otherwise Phase 4 adds it later).
+This installs Palette SDK %sdk_version% (compatible with DevKit platform software %platform_version%). Answer the interactive prompts: DevKit IP for pairing (recommended — it also provisions the Neat Library and PyNeat on the DevKit) and Model Compiler installation (say yes if you plan to compile models; otherwise Phase 4 adds it later).
 
 Enter the SDK shell, then start the `neat` helper to get your Insight URL:
 
 ```console
-$ sima-cli sdk neat        # enter the Neat SDK container shell
+$ sima-cli sdk neat        # enter the Palette SDK container shell
 $ neat                     # inside the SDK: prints the Insight URL, typically https://localhost:9900
 ```
 
@@ -141,7 +141,7 @@ Useful management commands: `sima-cli sdk ls` (list environments), `sima-cli sdk
 
 Legacy two-step flow (only for the older SDK 2.0.0 line): `sima-cli install ghcr:sima-neat/sdk:v2.0.0` then `sima-cli sdk setup [--devkit <DEVKIT_IP>]`.
 
-Go deeper: [Neat SDK documentation](https://developer.sima.ai/software/getting-started/dev-environment/).
+Go deeper: [Palette SDK documentation](https://developer.sima.ai/software/getting-started/dev-environment/).
 
 **Verify:** `sima-cli sdk neat` drops you into a container shell; inside it `neat` prints an Insight URL and `https://localhost:9900` responds in a browser.
 
@@ -149,7 +149,7 @@ Go deeper: [Neat SDK documentation](https://developer.sima.ai/software/getting-s
 
 Skip this phase if you accepted the Model Compiler prompt in Phase 3, or if you only run pre-compiled models from the Model Zoo.
 
-On the host (Ubuntu; pick `arm64` on aarch64 hosts — on macOS install inside the Neat SDK shell instead):
+On the host (Ubuntu; pick `arm64` on aarch64 hosts — on macOS install inside the Palette SDK shell instead):
 
 ```bash
 sima-cli install -v %platform_version% tools/model-compiler/amd64
@@ -236,7 +236,7 @@ tar tzf <output>/*_mpk.tar.gz    # lists .elf, *_mpk.json (and optionally .so, *
 
 ## Phase 7 — Build and run a NEAT application
 
-Work inside the Neat SDK shell (`sima-cli sdk neat`). The examples live in [github.com/sima-neat/apps](https://github.com/sima-neat/apps) — detection, segmentation, tracking, classification, depth, benchmarking, GenAI.
+Work inside the Palette SDK shell (`sima-cli sdk neat`). The examples live in [github.com/sima-neat/apps](https://github.com/sima-neat/apps) — detection, segmentation, tracking, classification, depth, benchmarking, GenAI.
 
 ```bash
 git clone https://github.com/sima-neat/apps.git
@@ -342,7 +342,7 @@ Everything lives under [developer.sima.ai](https://developer.sima.ai), organized
 
 | Section | Page | Use when |
 | --- | --- | --- |
-| Getting Started | [Neat SDK](https://developer.sima.ai/software/getting-started/dev-environment/) | installing/configuring the dev environment, DevKit sync |
+| Getting Started | [Palette SDK](https://developer.sima.ai/software/getting-started/dev-environment/) | installing/configuring the dev environment, DevKit sync |
 | Getting Started | [Neat Library](https://developer.sima.ai/software/getting-started/neat-library/) | runtime install/update, PyNeat, the `neat` CLI |
 | Getting Started | [Compatibility](https://developer.sima.ai/software/getting-started/compatibility) | which SDK ↔ DevKit ↔ library versions work together |
 | Model Preparation | [Compile a Model](https://developer.sima.ai/software/compile-a-model/) | quantization, compilation, graph surgery, accuracy validation |
@@ -357,7 +357,7 @@ Everything lives under [developer.sima.ai](https://developer.sima.ai), organized
 | Tools & Reference | [Troubleshooting](https://developer.sima.ai/software/reference/troubleshooting/) | SDK/network diagnostics and rollback |
 | — | [Release Notes](https://developer.sima.ai/software/release-notes/) | what changed per release |
 
-Inside the Neat SDK container, the packaged core source at `/neat-resources/core-src` and the installed public headers are the authoritative API ground truth.
+Inside the Palette SDK container, the packaged core source at `/neat-resources/core-src` and the installed public headers are the authoritative API ground truth.
 
 ### Examples, Models, Community
 
@@ -380,7 +380,7 @@ sima-cli login
 sima-cli logout
 hf auth login                                    # Hugging Face (GenAI only)
 
-# ---- Phase 3: Neat SDK ----
+# ---- Phase 3: Palette SDK ----
 sima-cli neat install sdk@%sdk_channel%          # install SDK %sdk_version%
 sima-cli sdk neat                                # enter SDK shell
 neat                                             # (inside SDK) Insight URL

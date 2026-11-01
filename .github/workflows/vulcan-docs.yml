@@ -399,6 +399,7 @@ jobs:
             --delete \
             --exclude "software/*" \
             --exclude "examples/*" \
+            --exclude "models/*" \
             "${s3_args[@]}"
 
           if [[ -n "${SYSDOC_CLOUDFRONT_DISTRIBUTION_ID:-}" ]]; then

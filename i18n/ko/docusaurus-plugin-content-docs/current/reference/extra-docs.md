@@ -37,7 +37,7 @@ Modalix SoM을 사용자 정의 보드에 통합하는 데 필요한 핵심 참�
 | 문서 | 설명 | 이용 방법 | 다운로드 |
 | --- | --- | --- | --- |
 | **Modalix SoM(시스템 온 모듈) 캐리어 보드 하드웨어 레퍼런스** | Modalix 모듈을 기반으로 캐리어 보드를 설계할 때 참고할 수 있는 주요 가이드: 커넥터 핀 배치, 인터페이스 매핑, 전원 공급, 참조 연결 정보가 포함되어 있습니다. 맞춤형 보드 설계를 시작하기 전에 먼저 이 내용을 읽어보세요. | SiMa.ai 계정 필요 | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
-| **Modalix SoM 데이터시트** | SoM에 대한 상세한 전기적, 기계적, 열적 사양 — 커넥터 핀 배열, 전원 시퀀스, 전류 소비량, 작동 한계. 보드 수준 설계 결정을 위한 신뢰할 수 있는 정보 출처입니다. | SiMa.ai 계정 필요 | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_Data_Sheet_Rev2.1_5-15-2026.pdf) |
+| **Modalix SoM 데이터시트** | SoM에 대한 상세한 전기적, 기계적, 열적 사양 — 커넥터 핀 배열, 전원 시퀀스, 전류 소비량, 작동 한계. 보드 수준 설계 결정을 위한 신뢰할 수 있는 정보 출처입니다. | SiMa.ai 계정 필요 | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf) |
 | **Modalix SoC 데이터시트** | MLSoC Modalix 다이의 상세한 전기적, 기계적, 열적 사양 — 핀 기능, 전원 공급 회로, 신호 타이밍 및 작동 한계. 미리 통합된 SoM을 기준으로 설계하는 대신 실리콘 수준에서 설계할 때 필요합니다. | 요청 시 제공 | *SiMa.ai 담당자에게 문의하세요.* |
 | **캐리어 보드 시스템 온 모듈(SoM) 브링업 가이드** | 새로 제작된 캐리어 보드를 켜고 검증하는 단계별 절차입니다. 여기에는 전원 공급부터 부팅되는 SoM(System on Module)까지의 과정이 포함되며, 주요 점검 사항과 발생 가능한 일반적인 문제점을 확인하는 방법이 제시되어 있습니다. | SiMa.ai 계정 필요 | [PDF 다운로드](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
 

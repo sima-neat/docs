@@ -1,14 +1,15 @@
 ---
-title: "技術的な補足事項"
+title: "技術的な注意事項"
 description: "プラットフォーム固有の手順、高度なトピック、および既知の制限事項。"
 sidebar_position: 1
 ---
 
-# 技術的な補足事項
+# 技術的な注意事項
 
-これらのページには、プラットフォーム固有の手順、高度な設定方法、および既知の制限事項が記載されています。
+これらのページには、プラットフォーム固有の手順、高度な設定、および既知の制限事項が記載されています。
 
-- [NFS を設定](./nfs.mdx)
+- [NFS をセットアップする](./nfs.mdx)
 - [eLxr に変換](./elxr-conversion.mdx)
-- [Modalix SoM DevKit で Bluetooth を設定](./bluetooth.mdx)
-- [Modalix SoM DevKit に ROS 2 をインストール](./ros2.mdx)
+- [2.1.3 から 3.0.0 にバージョンアップします。](./convert-2-1-3-to-3-0-0.md)
+- [BluetoothをModalix SoM DevKitに設定します。](./bluetooth.mdx)
+- [ROS 2 を Modalix SoM DevKit にインストールします。](./ros2.mdx)
