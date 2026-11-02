@@ -26,15 +26,18 @@ sidebar_position: 2
 
 ## 設定建置容器 {#set-up-the-build-container}
 
-SDK 容器內含目標平台的工具鏈、標頭檔與函式庫。請將下方的 Dockerfile 儲存為 `Dockerfile.modalix`，然後從該檔案所在的目錄建置映像檔。此 Dockerfile 會設定版本 2.1.0 的 SDK。
+SDK 容器內含目標平台的工具鏈、標頭檔與函式庫。請將下方的 Dockerfile 儲存為 `Dockerfile.modalix`，然後從該檔案所在的目錄建置映像檔。此 Dockerfile 會設定最新版本 2.1.3 的 SDK。若要為其他版本建置，請在 `docker build` 加上 `--build-arg SIMA_RELEASE=<release>`，並使用電路板上執行的版本；請參閱[版本相容性](./release-compatibility.mdx)。
 
 <details>
 <summary><strong>Dockerfile.modalix</strong></summary>
 
 ```dockerfile title="Dockerfile.modalix"
-# Generated Dockerfile for modalix Build:release[2.1.0]
+# Dockerfile for the Modalix BSP build container
 
 FROM debian:bookworm
+
+# Platform release to build for, for example 2.1.3
+ARG SIMA_RELEASE=2.1.3
 
 # List of additional packages that are to be deployed in SDK sysroot
 ARG SDK_PKG_LIST
@@ -83,7 +86,7 @@ RUN apt-get update --allow-releaseinfo-change && \
 	libssl-dev \
 	libgnutls28-dev \
 	openssh-client \
-	simaai-sdk-tools
+	simaai-sdk-tools=${SIMA_RELEASE}
 
 RUN echo "Package: *" > /etc/apt/preferences.d/stable.pref
 RUN echo "Pin: origin \"repo.sima.ai/elxr\"" >> /etc/apt/preferences.d/stable.pref
@@ -104,9 +107,7 @@ RUN if uname -a | grep -q '#[0-9]*-Ubuntu'; then \
 RUN if [ "x86_64" = "x86_64" ]; then apt update --allow-releaseinfo-change && apt install \
     arch-test -y; fi
 
-RUN python3 /opt/bin/simaai_setup_sdk.py modalix 2.1.0 \
-	 \
-	"${SDK_PKG_LIST}"
+RUN python3 /opt/bin/simaai_setup_sdk.py modalix "${SIMA_RELEASE}" "*" "${SDK_PKG_LIST}"
 
 RUN echo "source /opt/bin/simaai-init-build-env modalix" >> /root/.bashrc
 ```
@@ -121,7 +122,7 @@ sima-user@sima-user-machine:~$ docker build -t modalix-sdk --file Dockerfile.mod
 若要將額外的套件預先載入 sysroot，請傳入以逗號分隔的清單：
 
 ```console
-sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libzix-dev,vxi-dev -t modalix-sdk --file Dockerfile.modalix .
+sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libjsoncpp-dev,libyaml-cpp-dev -t modalix-sdk --file Dockerfile.modalix .
 ```
 
 請從您具有寫入權限的目錄啟動容器：
