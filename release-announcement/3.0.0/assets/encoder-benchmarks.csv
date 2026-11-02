@@ -1,0 +1,17 @@
+Resolution,Codec,Chroma,Frame configuration,GOP (frames),Target bitrate / JPEG quality,Single-stream FPS,8-stream aggregate FPS,Single-stream DMA-BUF (MiB),8-stream DMA-BUF (MiB)
+720p,H.264,4:2:0,I/P,30,4 Mbps VBR,192.00,315.30,14.32,114.59
+720p,H.264,4:2:0,I/P,10,4 Mbps VBR,192.27,315.23,14.32,114.59
+720p,H.264,4:2:0,I only,1,12 Mbps VBR,193.33,315.23,14.32,114.59
+720p,H.264,4:2:0,I/P,30,4 Mbps CBR,191.93,315.27,14.32,114.59
+720p,H.265,4:2:0,I/P,30,4 Mbps VBR,242.60,339.40,14.21,113.66
+720p,H.265,4:2:0,I/P,10,4 Mbps VBR,243.27,340.30,14.21,113.66
+720p,H.265,4:2:0,I only,1,12 Mbps VBR,237.57,328.60,14.21,113.66
+720p,H.265,4:2:0,I/P,30,4 Mbps CBR,242.87,339.43,14.21,113.66
+720p,MJPEG,4:2:0,Independent JPEG frames,N/A,Quality 60,395.80,406.43,11.16,89.28
+720p,MJPEG,4:2:0,Independent JPEG frames,N/A,Quality 90,395.70,406.40,11.16,89.28
+1080p,H.264,4:2:0,I/P,30,8 Mbps VBR,88.93,151.60,30.75,245.97
+1080p,H.265,4:2:0,I/P,30,8 Mbps VBR,113.30,156.00,30.48,243.84
+1080p,MJPEG,4:2:0,Independent JPEG frames,N/A,Quality 80,181.87,184.13,24.14,193.16
+4K,H.264,4:2:0,I/P,30,32 Mbps VBR,34.40,,160.81,
+4K,H.265,4:2:0,I/P,30,32 Mbps VBR,42.20,,120.94,
+4K,MJPEG,4:2:0,Independent JPEG frames,N/A,Quality 80,46.97,,95.82,
