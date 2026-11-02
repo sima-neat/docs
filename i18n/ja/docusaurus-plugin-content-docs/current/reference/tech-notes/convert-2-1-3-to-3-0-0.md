@@ -131,6 +131,16 @@ PCIe カードのシリアルポートは、アクセスしにくい場合があ
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
+:::tip Ubuntu ホスト
+Ubuntu では、TFTP サーバーが特権 UDP ポート 69 を使用するため、`sima-cli` を `sudo` で実行してください。`which sima-cli` でインストール済み CLI の絶対パスを調べ、次の単一コマンドで変換を実行できます。
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+`{ip}` をボードの IP アドレスに置き換えてください。
+:::
+
 このコマンドは、ホスト上でTFTPサーバーを起動します。これにより、ボードがそのサーバーからブートするように指示されます。その後、`--autoflash`オプションが、イメージをボードに自動的に書き込みます。
 
 手順が完了するまで、ホストのターミナルを開いたままにしてください。ネットワークに接続した状態を維持し、ボードの電源を入れ続けます。

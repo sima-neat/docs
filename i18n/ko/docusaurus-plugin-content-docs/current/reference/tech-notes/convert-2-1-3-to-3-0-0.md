@@ -131,6 +131,16 @@ PCIe 카드의 시리얼 포트에 접근하기 어려울 수 있습니다. 시�
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
+:::tip Ubuntu 호스트
+Ubuntu에서는 TFTP 서버가 권한이 필요한 UDP 포트 69를 사용하므로 `sima-cli`를 `sudo`로 실행해야 합니다. `which sima-cli`로 설치된 CLI의 절대 경로를 찾아 다음 한 줄 명령으로 변환을 실행합니다:
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+`{ip}`를 보드의 IP 주소로 바꾸십시오.
+:::
+
 이 명령어는 호스트에서 TFTP 서버를 시작합니다. 이 명령어는 보드가 해당 서버에서 부팅하도록 지시합니다. 그런 다음 `--autoflash` 옵션이 이미지를 보드에 자동으로 기록합니다.
 
 프로세스가 완료될 때까지 호스트 터미널을 열어두십시오. 네트워크 연결을 유지하고 보드의 전원을 켜둔 상태로 유지하십시오.
