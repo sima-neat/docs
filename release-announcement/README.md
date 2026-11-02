@@ -43,9 +43,10 @@ git diff --check
 
 Verify feature tabs, benchmark filters, the exact-measurement table, video
 preview selection/close, and the upgrade checklist in a browser. Check narrow
-and wide layouts and keyboard navigation. Google Drive playback is subject to
-the viewer's existing Drive permissions; the page also links directly to each
-original video. Google Fonts are loaded externally, with local font fallbacks.
+and wide layouts and keyboard navigation. The release gallery must use the
+publicly shared Drive copies documented in the release README; verify anonymous
+access when replacing videos. Each preview also has a direct Drive link. Google
+Fonts are loaded externally, with local font fallbacks.
 
 ## GitHub Pages workflow
 

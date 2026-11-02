@@ -5,8 +5,11 @@ The standalone marketing page is `index.html`; shared hosting guidance lives in
 
 ## Content and assets
 
-- Release copy and eight original Google Drive demonstration links come from
-  the supplied Palette SDK 3.0 release announcement.
+- Release copy comes from the supplied Palette SDK 3.0 release announcement.
+- All eight demonstration links and preview IDs use the publicly shared
+  [3.0.0 video folder](https://drive.google.com/drive/folders/1v0ximz2_IA89h4tPqc15ZBCRtrxHeATa).
+  Use these public copies when updating the page; the internal originals are
+  not suitable for a public release announcement.
 - The SiMa.ai logo and Modalix image were obtained from the corporate website.
 - The encoder explorer transcribes all 16 configurations from the supplied
   Encoder Benchmark Results table. The original image is retained as
