@@ -131,6 +131,16 @@ PCIe 卡上的序列埠可能不易觸及。如果您無法連接序列線，請
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
+:::tip Ubuntu 主機
+在 Ubuntu 上，TFTP 伺服器使用需要管理員權限的 UDP 連接埠 69，因此必須使用 `sudo` 執行 `sima-cli`。以下單一指令使用 `which sima-cli` 找出已安裝 CLI 的絕對路徑，然後執行轉換：
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+將 `{ip}` 替換為板卡的 IP 位址。
+:::
+
 這個指令會在主機上啟動一個 TFTP 伺服器。它會指示板卡從該伺服器啟動。然後，`--autoflash` 選項會自動將映像檔寫入板卡。
 
 在程序完成之前，請保持主機終端視窗開啟。請保持網路連線，並確保板卡已開啟電源。

@@ -131,6 +131,16 @@ Run the commands in this section **on the host**.
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
+:::tip Ubuntu hosts
+On Ubuntu, run `sima-cli` with `sudo` because the TFTP server uses privileged UDP port 69. Use `which sima-cli` to find the installed CLI's absolute path and run the conversion in one command:
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+Replace `{ip}` with the board's IP address.
+:::
+
 The command starts a TFTP server on the host. It instructs the board to boot from that server. The `--autoflash` option then writes the image to the board automatically.
 
 Keep the host terminal open until the procedure is complete. Keep the network connected and the board powered on.
