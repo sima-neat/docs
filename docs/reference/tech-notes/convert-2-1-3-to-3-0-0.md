@@ -22,7 +22,8 @@ This note uses these terms:
 
 - Make a backup of the files and configuration that you need from the board.
 - Make sure the board has Internet access for the 2.1.3 update.
-- Make sure the host has Internet access for CLI updates and image downloads.
+- For online conversion, make sure the host has Internet access for CLI updates and image downloads.
+- If the host has no Internet access during conversion, use the offline procedure in Section 3.
 - Use **sima-cli 2.1.19 or later** on the host. With Internet access, `sima-cli` updates itself to the latest version.
 - Prepare an Ethernet connection between the board and the host.
 - If possible, prepare a serial connection to monitor the board.
@@ -144,6 +145,37 @@ Replace `{ip}` with the board's IP address.
 The command starts a TFTP server on the host. It instructs the board to boot from that server. The `--autoflash` option then writes the image to the board automatically.
 
 Keep the host terminal open until the procedure is complete. Keep the network connected and the board powered on.
+
+### Offline Conversion
+
+Use this procedure when the netboot host has no Internet access. The board must already run the latest 2.1.3 firmware.
+
+Before you disconnect the host, install the latest `sima-cli` and download both files:
+
+```bash
+mkdir images && cd images
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/elxr-palette-modalix-3.0.0-arm64.img.gz
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/modalix-tftp-boot-minimal.tar.gz
+cd ..
+```
+
+You can also download the files on another computer. Copy the `images` directory to the netboot host. The netboot host must already have the latest `sima-cli` installed.
+
+Keep both files compressed. Connect the board to the host as described in Section 2. Internet sharing is not required for offline conversion.
+
+From the directory that contains `images`, run this command on the host:
+
+```bash
+sima-cli bootimg --netboot --images images
+```
+
+On Ubuntu, run:
+
+```bash
+sudo "$(which sima-cli)" bootimg --netboot --images images
+```
+
+The command uses the local files to start the TFTP server. Follow the board boot and flashing steps in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Then continue with Section 4 below.
 
 ## 4. Reboot the Board
 

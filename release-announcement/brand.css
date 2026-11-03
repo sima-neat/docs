@@ -1,0 +1,18 @@
+/* SiMa corporate palette, based on sima.ai's revamp styles. */
+:root {
+  color-scheme: light;
+  --sima-white: #ffffff;
+  --sima-ink: #0b1220;
+  --sima-muted: #6e6e73;
+  --sima-blue: #5998dd;
+  --sima-blue-text: #346ca9;
+  --sima-blue-hover: #376ba7;
+  --sima-blue-heading: #4a85c8;
+  --sima-green: #2a9c4f;
+  --sima-lime: #a4cc2d;
+  --sima-purple: #4a4276;
+  --sima-lavender: #d1cee6;
+  --sima-surface: #f5f5f7;
+  --sima-sky: #eaf2fc;
+  --sima-border: #e5e5ea;
+}

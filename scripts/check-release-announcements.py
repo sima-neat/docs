@@ -36,6 +36,8 @@ def validate_page(path):
         assert not url.path.startswith('/'), f'{path}: root-relative URL: {link}'
         target = (path.parent / unquote(url.path)).resolve() if url.path else path
         assert target.is_relative_to(ROOT.resolve()), f'{path}: escaping asset: {link}'
+        if target.is_dir():
+            target = target / 'index.html'
         assert target.is_file(), f'{path}: missing asset: {link}'
         if url.fragment and target.suffix == '.html':
             target_page = page if target == path else Page(target.read_text())
@@ -69,13 +71,13 @@ def validate_encoder(release):
 
 
 def main():
-    pages = sorted(ROOT.glob('*/index.html'))
+    pages = sorted(ROOT.rglob('index.html'))
     assert pages, 'No release announcement pages found'
     assert not list(ROOT.rglob('.openai')), 'Sites metadata must not be published'
     for page in pages:
         validate_page(page.resolve())
         validate_encoder(page.parent)
-        print(f'{page.parent.name}: local links and encoder exports verified')
+        print(f'{page.relative_to(ROOT)}: local links and encoder exports verified')
 
 
 if __name__ == '__main__':

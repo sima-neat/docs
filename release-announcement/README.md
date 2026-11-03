@@ -1,12 +1,17 @@
 # Release announcements
 
-Standalone, versioned release marketing pages. These files are separate from the
+A Palette marketing landing page and versioned release timeline, with standalone
+release detail pages. These files are separate from the
 Docusaurus hardware documentation and its Vulcan/S3 publishing workflow.
 
 ## Layout
 
 ```text
 release-announcement/
+  index.html
+  brand.css
+  landing.css
+  landing.js
   3.0.0/
     index.html
     styles.css
@@ -29,12 +34,15 @@ From the repository root:
 python3 -m http.server 4183 --directory release-announcement
 ```
 
-Open `http://localhost:4183/3.0.0/`. Use a static HTTP server rather than opening
+Open `http://localhost:4183/` for the landing page and release timeline. The
+3.0.0 entry is dated October 31, 2026, and opens its detailed page in a new tab
+at `http://localhost:4183/3.0.0/`. Use a static HTTP server rather than opening
 HTML directly from the filesystem. No dependency installation is needed.
 
 ## Validation
 
 ```sh
+node --check release-announcement/landing.js
 node --check release-announcement/3.0.0/app.js
 node --check release-announcement/3.0.0/encoder.js
 python3 scripts/check-release-announcements.py
@@ -43,9 +51,10 @@ git diff --check
 
 Verify feature tabs, benchmark filters, the exact-measurement table, video
 preview selection/close, and the upgrade checklist in a browser. Check narrow
-and wide layouts and keyboard navigation. Google Drive playback is subject to
-the viewer's existing Drive permissions; the page also links directly to each
-original video. Google Fonts are loaded externally, with local font fallbacks.
+and wide layouts and keyboard navigation. The release gallery must use the
+publicly shared Drive copies documented in the release README; verify anonymous
+access when replacing videos. Each preview also has a direct Drive link. Google
+Fonts are loaded externally, with local font fallbacks.
 
 ## GitHub Pages workflow
 
@@ -99,10 +108,29 @@ release directories intended to remain public: each deployment replaces the
 site's complete artifact; it does not merge files with the previous deployment.
 Keep release content synchronized before switching the publication branch.
 After deployment, verify `https://releases.neat.sima.ai/3.0.0/`, including its
-assets and downloads. The domain root has no landing page yet; use the versioned
-URL. To roll back, restore the approved files on one of the allowed branches and
+assets and downloads. The domain root serves the Palette introduction and release timeline; each
+release entry links to its versioned detail page in a new tab. To roll back, restore the approved files on one of the allowed branches and
 manually rerun publication from that branch.
 
 Adding the workflow does not enable Pages, change DNS or trigger publication.
 Do not include Sites hosting metadata or credentials in the Pages artifact.
 The existing private preview is independent of this repository source.
+
+## Maintaining the release timeline
+
+The root `index.html` introduces Palette and contains the release timeline.
+Add each new released version as a semantic list entry with its release date,
+benefits summary, and a relative link to its version directory. The detail
+link must use `target="_blank"` and `rel="noopener"`, and tell visitors it opens
+in a new tab. Update the latest-release badge and hero shortcut together.
+The journal currently starts with 3.0.0 on October 31, 2026; this does not imply
+that earlier Palette versions did not exist.
+
+## Corporate colors
+
+`brand.css` defines the shared color tokens for the landing page and release
+detail pages, using the palette from [sima.ai](https://sima.ai/): white and light
+gray surfaces, dark navy text, corporate blue, and secondary green, lime and
+purple accents. Darker blue variants are used for small text and hover states.
+Keep palette changes in this shared file and retain the brand stylesheet before
+each page's component stylesheet.
