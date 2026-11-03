@@ -22,7 +22,8 @@ sidebar_position: 4
 
 - 보드에서 필요한 파일과 설정을 백업하세요.
 - 2.1.3 업데이트를 위해 보드가 인터넷에 연결되어 있는지 확인하세요.
-- CLI 업데이트 및 이미지 다운로드를 위해 호스트가 인터넷에 접속할 수 있는지 확인하세요.
+- 온라인 변환을 수행하려면 호스트가 CLI 업데이트 및 이미지 다운로드를 위해 인터넷에 접속할 수 있는지 확인하세요.
+- 호스트가 변환 중에 인터넷에 접속할 수 없는 경우, 3절의 오프라인 절차를 사용하십시오.
 - 호스트에서 **sima-cli 2.1.19 버전 이상**을 사용하십시오. 인터넷에 연결되어 있으면 `sima-cli`가 최신 버전으로 자동 업데이트됩니다.
 - 보드와 호스트 간에 이더넷 연결을 설정합니다.
 - 가능하다면 보드를 모니터링하기 위해 시리얼 연결을 준비하십시오.
@@ -144,6 +145,37 @@ sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
 이 명령어는 호스트에서 TFTP 서버를 시작합니다. 이 명령어는 보드가 해당 서버에서 부팅하도록 지시합니다. 그런 다음 `--autoflash` 옵션이 이미지를 보드에 자동으로 기록합니다.
 
 프로세스가 완료될 때까지 호스트 터미널을 열어두십시오. 네트워크 연결을 유지하고 보드의 전원을 켜둔 상태로 유지하십시오.
+
+### 오프라인 변환
+
+네트부트 호스트가 인터넷에 연결되어 있지 않을 때 이 절차를 사용합니다. 보드는 최신 2.1.3 펌웨어를 실행 중이어야 합니다.
+
+호스트를 분리하기 전에 최신 `sima-cli`를 설치하고 다음 두 파일을 다운로드합니다.
+
+```bash
+mkdir images && cd images
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/elxr-palette-modalix-3.0.0-arm64.img.gz
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/modalix-tftp-boot-minimal.tar.gz
+cd ..
+```
+
+다른 컴퓨터에서 파일을 다운로드할 수도 있습니다. `images` 디렉토리를 netboot 호스트에 복사합니다. netboot 호스트에는 최신 `sima-cli`가 이미 설치되어 있어야 합니다.
+
+두 파일을 모두 압축된 상태로 유지합니다. 2절에 설명된 대로 보드를 호스트에 연결합니다. 오프라인 변환에는 인터넷 공유가 필요하지 않습니다.
+
+`images`가 포함된 디렉터리에서 호스트에서 다음 명령을 실행합니다.
+
+```bash
+sima-cli bootimg --netboot --images images
+```
+
+Ubuntu에서 다음 명령을 실행합니다.
+
+```bash
+sudo "$(which sima-cli)" bootimg --netboot --images images
+```
+
+이 명령어는 로컬 파일을 사용하여 TFTP 서버를 시작합니다. [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)에 설명된 대로 보드 부팅 및 플래싱 단계를 따르십시오. 그런 다음 아래 섹션 4를 계속 진행합니다.
 
 ## 4. 보드를 재부팅합니다.
 
