@@ -9,6 +9,7 @@ Docusaurus hardware documentation and its Vulcan/S3 publishing workflow.
 ```text
 release-announcement/
   index.html
+  brand.css
   landing.css
   landing.js
   3.0.0/
@@ -124,3 +125,12 @@ link must use `target="_blank"` and `rel="noopener"`, and tell visitors it opens
 in a new tab. Update the latest-release badge and hero shortcut together.
 The journal currently starts with 3.0.0 on October 31, 2026; this does not imply
 that earlier Palette versions did not exist.
+
+## Corporate colors
+
+`brand.css` defines the shared color tokens for the landing page and release
+detail pages, using the palette from [sima.ai](https://sima.ai/): white and light
+gray surfaces, dark navy text, corporate blue, and secondary green, lime and
+purple accents. Darker blue variants are used for small text and hover states.
+Keep palette changes in this shared file and retain the brand stylesheet before
+each page's component stylesheet.
