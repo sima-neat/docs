@@ -27,3 +27,19 @@ hardware/test methodology.
 The visual capability maps are conceptual; the demonstration gallery points to
 original recordings. Checklist completion records planning progress in browser
 local storage and does not validate a device.
+
+
+## eLxr platform highlights
+
+Sections 03 and 04 summarize the supplied *SDK 3.0.0 Platform Updates* deck
+(October 27, 2026). Content references: development stack (slides 2-5), signed
+A/B updates and USB recovery (11-13), secure boot signing, OP-TEE and firewall
+support (15), idle clock gating (21), Docker support (22), memory and PCIe model
+loading (23), camera and host support (25-30), connectivity (31), and AV1 decode
+(33-35). The source deck and its internal links are not included in site assets.
+
+Keep the full-reflash/rebuild migration notice and workload limitations alongside
+the benefits. Secure boot support does not assert that it is enabled on every
+device. RAM-disk loading is not an inference-speed benchmark. HDR and custom
+SWUpdate bundles are omitted because the deck does not describe them as released
+in 3.0.0.
