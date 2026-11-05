@@ -1,0 +1,164 @@
+---
+title: "在 Modalix SoM DevKit 上安裝 Docker"
+description: "在平台版本為 3.0 的 Modalix SoM DevKit 上，透過 Palette SDK 或手動安裝 Docker，並在其上執行容器。"
+sidebar_position: 6
+---
+
+# 在 Modalix SoM DevKit 上安裝 Docker
+
+Docker 可讓您將應用程式與其相依套件一起封裝，並以容器的形式在 DevKit 上執行。Modalix SoM DevKit 出廠時並未內建 Docker。本備註說明在平台版本 3.0 上安裝 Docker 的兩種方式：在 Palette SDK 中以一個指令安裝，或在 DevKit 上手動安裝。兩種方式安裝的內容相同。
+
+## 在您開始之前
+
+您需要：
+
+- 一個平台版本為 **3.0** 的 Modalix SoM DevKit。若要確認，請在 DevKit 上執行 `cat /etc/buildinfo`。
+- DevKit 需連接網路才能下載 Docker。
+- `/data` 上需有可用空間，Docker 會在此存放映像檔和容器。在 DevKit 上，`/data` 約為 3 GB。請使用 `df -h /data` 檢查可用空間，並盡量讓映像檔保持精簡。
+
+DevKit 使用的容器映像檔必須針對 `linux/arm64` 建置。
+
+## 安裝會執行的動作
+
+兩種方式都會：
+
+1. 從 Docker 的 Debian `trixie` 套件庫安裝適用於 ARM64 的 Docker CE（`docker-ce`、`docker-ce-cli` 和 `containerd.io`）。
+2. 將 Docker 的資料存放在 `/data/docker`，並將 containerd 的資料存放在 `/data/containerd`，以避免映像檔佔滿根檔案系統。
+3. 開啟容器網路所需的 IP 轉送功能。
+4. 啟動 `docker` 和 `containerd` 服務，並設定每次開機時自動啟動。
+5. 將您的使用者加入 `docker` 群組，讓您不需要 `sudo` 即可執行 `docker`。
+
+## 從 Palette SDK 安裝 {#palette-sdk}
+
+如果您在 Palette SDK 中開發，且已將 DevKit 與其配對（`sima-cli sdk setup --devkit <devkit-ip>`），請使用此方式。配對也會讓 DevKit 使用者能以免密碼的方式使用 `sudo`，此方式需要這項設定。
+
+1. 在 Palette SDK shell 中執行：
+
+   ```console
+   sdk$ dk container setup
+   ```
+
+   當系統詢問是否要在 DevKit 上設定 Docker 時，請回答 `y`。若要略過此問題，請執行 `dk container setup --yes`。如果 DevKit 上的 Docker 已可正常運作，此指令會保留現有安裝，只會將您的使用者加入 `docker` 群組。如果安裝中斷，請再次執行此指令；它可以安全地繼續完成安裝。
+
+2. 當它印出 `Docker is ready on the DevKit` 時，即可從 SDK shell 在 DevKit 上執行容器：
+
+   | 指令 | 用途 |
+   | --- | --- |
+   | `dk container deploy <image> [docker-run-options] [-- command]` | 從 SDK 的本機登錄庫將映像檔拉取到 DevKit 上，然後執行它。 |
+   | `dk container run <image> [docker-run-options] [-- command]` | 執行已在 DevKit 上的映像檔。 |
+   | `dk container pull <image>` | 將映像檔拉取到 DevKit 上。 |
+   | `dk container images` | 列出 SDK 本機登錄庫中的映像檔。 |
+   | `dk container list` | 列出 DevKit 上的容器。 |
+   | `dk container logs <container>` | 顯示容器的輸出。加上 `--follow` 可持續監看。 |
+   | `dk container stop <container>` | 停止容器。 |
+   | `dk container remove <container>` | 移除容器。 |
+
+   例如，若要在 SDK 中為 DevKit 建置映像檔、將其推送到 SDK 的本機登錄庫，並在 DevKit 上啟動它：
+
+   ```console
+   sdk$ docker buildx build --platform linux/arm64 -t "$SIMA_CONTAINER_REGISTRY/my-app:latest" --push .
+   sdk$ dk container deploy my-app:latest --detach --name my-app --network host
+   sdk$ dk container logs my-app --follow
+   ```
+
+## 在 DevKit 上手動安裝 {#manual}
+
+如果您未使用 Palette SDK，請使用此方式。請透過 SSH 或序列埠，**在 DevKit 上**執行以下所有指令。`sudo` 會要求您輸入密碼。
+
+1. 在安裝 Docker 期間，先將 eLxr 套件鏡像清單移到別處。您會在步驟 9 將它放回原處。
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /root/apt-disabled
+   sima@modalix:~$ sudo mv /etc/apt/sources.list.d/0000mirror.list /root/apt-disabled/
+   ```
+
+2. 設定 Docker 將資料存放在 `/data/docker`：
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /etc/docker /data/docker
+   sima@modalix:~$ echo '{"data-root": "/data/docker", "firewall-backend": "nftables"}' | sudo tee /etc/docker/daemon.json
+   ```
+
+3. 開啟 IP 轉送功能：
+
+   ```console
+   sima@modalix:~$ printf 'net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1\n' | sudo tee /etc/sysctl.d/99-docker-forward.conf
+   sima@modalix:~$ sudo sysctl --system
+   ```
+
+4. 新增 Docker 的套件庫：
+
+   ```console
+   sima@modalix:~$ sudo install -m 0755 -d /etc/apt/keyrings
+   sima@modalix:~$ sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ sudo chmod a+r /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ echo 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian trixie stable' | sudo tee /etc/apt/sources.list.d/docker.list
+   ```
+
+5. 安裝 Docker：
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   ```
+
+6. 停止服務，並將 containerd 的資料移到 `/data/containerd`：
+
+   ```console
+   sima@modalix:~$ sudo systemctl stop docker.socket docker containerd
+   sima@modalix:~$ sudo mkdir -p /data/containerd
+   sima@modalix:~$ sudo sh -c 'mv /var/lib/containerd/* /data/containerd/ 2>/dev/null; true'
+   ```
+
+7. 立即將 `/data/containerd` 掛載到 `/var/lib/containerd`，並設定每次開機時自動掛載：
+
+   ```console
+   sima@modalix:~$ echo '/data/containerd /var/lib/containerd none bind 0 0' | sudo tee -a /etc/fstab
+   sima@modalix:~$ sudo mount /var/lib/containerd
+   ```
+
+8. 啟動服務，並設定每次開機時自動啟動：
+
+   ```console
+   sima@modalix:~$ sudo systemctl enable containerd docker
+   sima@modalix:~$ sudo systemctl restart containerd docker
+   ```
+
+9. 將 eLxr 套件鏡像清單放回原處：
+
+   ```console
+   sima@modalix:~$ sudo mv /root/apt-disabled/0000mirror.list /etc/apt/sources.list.d/
+   ```
+
+10. 將您的使用者加入 `docker` 群組，然後登出並重新登入：
+
+    ```console
+    sima@modalix:~$ sudo usermod -aG docker "$USER"
+    ```
+
+## 檢查安裝情況 {#check}
+
+在 DevKit 上：
+
+1. 確認 Docker 將資料存放在 `/data/docker`：
+
+   ```console
+   sima@modalix:~$ docker info --format '{{.DockerRootDir}}'
+   /data/docker
+   ```
+
+2. 執行測試容器：
+
+   ```console
+   sima@modalix:~$ docker run --rm hello-world
+   ```
+
+   它會印出 `Hello from Docker!`。
+
+3. 檢查 `/data` 上的可用空間：
+
+   ```console
+   sima@modalix:~$ df -h /data
+   ```
+
+   若要釋出空間，請使用 `docker image prune` 和 `docker container prune` 移除不再需要的映像檔和容器。
