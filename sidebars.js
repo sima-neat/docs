@@ -88,6 +88,7 @@ const sidebars = {
         'reference/tech-notes/convert-2-1-3-to-3-0-0',
         'reference/tech-notes/nfs',
         'reference/tech-notes/ros2',
+        'reference/tech-notes/pcie-card-bringup',
       ]),
     ]),
   ],

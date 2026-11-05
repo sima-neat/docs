@@ -1,0 +1,174 @@
+---
+title: "PCIe 卡啟動與疑難排解"
+description: "在 Modalix HHHL PCIe 卡上啟動並驗證 PCIe 虛擬乙太網路連結，並執行傳輸量測試。"
+sidebar_position: 6
+---
+
+# PCIe 卡啟動與疑難排解
+
+當主機已偵測到 Modalix HHHL PCIe 卡，但 PCIe 虛擬乙太網路連結無法建立時，請參考本備註——這種情況最常發生在卡片安裝於外接 Thunderbolt/USB4 機殼時。
+
+:::note
+請先參考 [PCIe 模式](/hardware/getting-started/pcie-mode) 進行硬體準備與驅動程式安裝。當 `sima-cli device discover` 未偵測到虛擬乙太網路連結，或已偵測到但 `ping` 與 SSH 無法運作時，再回到本頁。
+:::
+
+PCIe 堆疊在主機與卡片之間提供虛擬乙太網路連結，因此無需乙太網路線，`ping`、`ssh`、`scp` 與 `iperf3` 即可透過 PCIe 運作：
+
+```text
+[HOST] 10.0.0.1/24  <--- PCIe --->  10.0.0.2/24 [MODALIX]
+```
+
+**[HOST]** 是 Ubuntu 主機，**[MODALIX]** 是在卡片上執行的 Linux。
+
+## 外接機殼的電源順序
+
+外接機殼有獨立的電源域，因此重新啟動主機並不會讓卡片重新上電。
+
+- **關機：** 先關主機，再關機殼。
+- **開機：** 先開機殼，再開主機。
+
+安裝於主機板內部插槽的卡片與主機共用電源，不需要特殊的順序。
+
+## 介面命名（選用）
+
+`sima-cli` 會從 sysfs 中卡片的 PCI 位址解析 PCIe 虛擬乙太網路介面，因此無論主機將介面命名為何（通常是 `enp47s0` 之類的可預測名稱），探索都能正常運作。重新命名**並非必要**。
+
+如果您希望在不同主機上使用穩定的介面名稱，並避免 NetworkManager 重新設定連結，重新命名仍然有用。若要套用，請在**主機**上建立兩個檔案。
+
+:::note[略過重新命名]
+這裡的兩項工作可以分開進行。如果 NetworkManager 接管了介面，並取代了驅動程式提供的
+`10.0.<cardnum>.1` 位址，探索仍可透過 PCI 位址運作，但 `ping` 與 SSH 會失敗——
+因此您可能只需要「不受管理」設定而不需要重新命名。請改以 MAC 而非名稱比對裝置，
+並僅建立此檔案：
+
+```ini
+[device-simaai-unmanaged]
+match-device=mac:00:53:49:4d:41:30
+managed=0
+```
+
+請替換為主機介面本身的 MAC，其第一個位元組即為卡片編號。
+接著執行 `sudo systemctl restart NetworkManager`；由於沒有任何項目被重新命名，
+因此不需要 `udev` 規則，也不需要新的裝置事件。
+:::
+
+`/etc/udev/rules.d/90-network.rules`：
+
+```text
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="*:53:49:4d:41:30", NAME="veth-simaai", ENV{NM_UNMANAGED}="1"
+```
+
+此規則假設主機中只有**一張** Modalix 卡。開頭的萬用字元涵蓋 MAC 的第一個位元組，
+也就是卡片編號（請參閱
+[虛擬網路](/hardware/getting-started/pcie-mode/virtual-network)），因此在
+安裝多張卡片的主機上，此規則會比對到每張卡片的主機端介面——
+而其中只有一個能取得 `veth-simaai` 這個名稱。對於多卡主機，請為每張卡片
+建立各自的規則，比對其完整 MAC 並指定不同名稱，例如
+`veth-simaai0` 與 `veth-simaai1`，並在以下步驟中使用這些名稱。
+
+`/etc/NetworkManager/conf.d/99-unmanaged-devices.conf`：
+
+```ini
+[device-vethsimaai-unmanaged]
+match-device=interface-name:veth-simaai
+managed=0
+```
+
+:::warning
+對於上述單卡規則，請完全照寫使用萬用字元 `*:53:49:4d:41:30`，
+而不要使用某一系統的確切 MAC——萬用字元涵蓋了卡片編號位元組。
+例外是上述的多卡情況，此時每張卡片都需要一條比對其完整 MAC 的規則，才能加以區分。
+
+無論哪種情況，規則都必須比對**主機**介面，其 MAC 結尾為
+`:41:30`。卡片本身的介面結尾為 `:41:31`。
+:::
+
+這兩個檔案相互配合：NetworkManager 設定檔比對的是 `interface-name:veth-simaai`，因此只有在 `udev` 規則套用該名稱後才會生效。
+
+套用設定：
+
+```console
+sima-user@sima-user-machine:~$ sudo udevadm control --reload-rules
+sima-user@sima-user-machine:~$ sudo systemctl restart NetworkManager
+```
+
+此規則比對的是 `ACTION=="add"`，因此僅重新載入並不會重新命名已存在的介面——
+必須觸發新的裝置事件：
+
+- **外接機殼：** 重新連接機殼或讓機殼重新上電。
+- **主機板內部插槽：** 重新啟動主機，或在不重新啟動的情況下移除並重新掃描裝置，
+  並替換為卡片的 PCI 位址：
+
+  ```console
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/devices/0000:2f:00.0/remove
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/rescan
+  ```
+
+## 驗證連結
+
+檢查兩端的位址。如果您未套用上述的重新命名，請替換為主機自己的介面名稱：
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima-user@sima-user-machine:~$ ip -br addr show veth-simaai
+veth-simaai   UNKNOWN   10.0.0.1/24
+```
+
+<img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima@modalix:~$ ip -br addr show veth-simaai
+veth-simaai   UNKNOWN   10.0.0.2/24
+```
+
+接著從主機確認路徑與探索：
+
+```console
+sima-user@sima-user-machine:~$ ping 10.0.0.2
+sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+sima-user@sima-user-machine:~$ sima-cli device discover
+Detected PCIe virtual ethernet.
+```
+
+:::note
+虛擬介面顯示 `UNKNOWN` 是正常的。如果您已套用重新命名，該介面因被標記為不受管理，所以不會出現在 **Settings → Network** 中——請使用 `ip` 而非 GUI 進行驗證。
+
+除非 SiMa 工程團隊指示，否則請勿變更預設的 `10.0.0.1` / `10.0.0.2` 位址。
+
+這些是卡片編號 0 的位址，也就是本備註所假設的單卡情況。
+其模式為主機端 `10.0.<cardnum>.1`、卡片端
+`10.0.<cardnum>.2`（請參閱
+[虛擬網路](/hardware/getting-started/pcie-mode/virtual-network)），因此
+第二張卡片使用 `10.0.1.1` 與 `10.0.1.2`。請在全文中相應替換。
+:::
+
+## 傳輸量測試
+
+`sima-cli device discover` 提供透過虛擬乙太網路路徑的傳輸量測試。它會自行設定兩端——不需要在卡片上啟動伺服器：
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima-user@sima-user-machine:~$ sima-cli device discover
+Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
+Virtual Ethernet Throughput: 7.61 Gbps (healthy)
+```
+
+測試環境的量測結果約為 7–8 Gbps。實際傳輸量取決於主機、機殼與 Thunderbolt 路徑。
+
+## 疑難排解
+
+| 症狀 | 檢查項目 |
+| --- | --- |
+| 卡片未出現在 `lspci -nnk -d 1f06:` 中 | 機殼電源、Thunderbolt/USB4 連線，以及卡片是否安裝妥當。接著將主機與機殼都完全斷電後重新上電。 |
+| `sima-cli` 回報 `veth-simaai not found` | 這是仍以介面名稱比對的舊版 `sima-cli`。請更新 `sima-cli`，或套用上述的 `udev` 規則，然後重新加入卡片或讓卡片重新上電。 |
+| 介面存在但 `ping 10.0.0.2` 失敗 | 確認主機上為 `10.0.0.1/24`、卡片上為 `10.0.0.2/24`，且兩個介面都已啟用。請勿變更位址。 |
+| `Device "veth-simaai" does not exist` | 在尚未套用重新命名時，或在將卡片端介面命名為 `eth2` 的舊版 pre-eLxr 卡片映像上，這是預期的結果。請執行 `ip addr`（簡要格式不會顯示 MAC），並依位址以及結尾為 `:41:30`（主機）或 `:41:31`（卡片）的 MAC 進行比對。 |
+| 重新啟動前 PCIe 正常，重新啟動後不穩定 | 請依照上述的電源順序——機殼有獨立的電源。 |
+
+## 相關內容
+
+- [PCIe 模式](/hardware/getting-started/pcie-mode) — 硬體準備與驅動程式安裝。
+- [虛擬網路](/hardware/getting-started/pcie-mode/virtual-network) — 手動 IP 指派與 MAC/IP 定址方案。
+- [Modalix PCIe 卡](/hardware/devkit/modalix-pcie-card) — 卡片介面、開關與連接器。
