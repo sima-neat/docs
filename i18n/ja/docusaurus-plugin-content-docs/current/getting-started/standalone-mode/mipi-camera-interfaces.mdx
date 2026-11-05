@@ -54,6 +54,14 @@ sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo ; saveenv ; boot
 
 プラットフォームリリース 2.1.3 のカメラ用オーバーレイを以下に示します。ほかのリリースでは、一部のオーバーレイの名前が異なります。お使いのボードにあるオーバーレイを一覧表示するには、Linux から次のコマンドを実行します。
 
+プラットフォーム 3.0 以降の場合：
+
+```console
+sima@modalix:~$ ls /boot/modalix-som-*.dtbo
+```
+
+プラットフォーム 2.1.x の場合：
+
 ```console
 sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 ```
@@ -158,6 +166,18 @@ sima$ saveenv ; boot
 ボードが起動したら、`cam -l` を実行します。カメラごとに 1 つのエントリが表示されます。
 
 この変数は、シリアルコンソールを使わずに Linux から設定することもできます。
+
+プラットフォーム 3.0 以降では、U-Boot の環境は読み取り専用のマウント `/var/uboot` にあります。書き込み可能にしてから `sudo` で変数を設定し、再び読み取り専用に戻します。
+
+```console
+sima@modalix:~$ sudo mount -o remount,rw /var/uboot
+sima@modalix:~$ sudo fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
+sima@modalix:~$ sudo mount -o remount,ro /var/uboot
+sima@modalix:~$ fw_printenv dtbos
+sima@modalix:~$ sudo reboot
+```
+
+プラットフォーム 2.1.x の場合：
 
 ```console
 sima@modalix:~$ fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
