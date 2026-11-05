@@ -81,7 +81,9 @@ sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boa
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-在 Linux 系統上，請使用上述相同的 `sudo ~/.sima-cli/.venv/bin/sima-cli` 前置詞。如果啟用了 `--autoflash`，則無需在步驟 4 中手動輸入 `f` 命令。如果可以，請保持序列主控台的連接，以便監控進度，並等待 CLI 提示您重新啟動。
+在 Linux 系統上，請使用上述相同的 `sudo ~/.sima-cli/.venv/bin/sima-cli` 前置詞。如果啟用了 `--autoflash`，則無需在步驟 4 中手動輸入 `f` 命令。如果可以，請保持序列主控台的連接，以便監控進度。燒錄完成後，`sima-cli` 會重新啟動裝置，使其從 eMMC 啟動。
+
+如果 `sima-cli` 無法透過 SSH 連線到裝置，或無法安全地變更其 U-Boot 環境，則不會變更裝置，並會讓 TFTP 伺服器繼續執行。此時請改為在步驟 3 中透過序列主控台設定網路啟動。
 
 這個指令：
 
@@ -140,12 +142,14 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary><strong>步驟 4：燒錄 eMMC。</strong></summary>
 
-如果您在步驟 2 中啟用了 `--autoflash`，則在透過網路啟動的裝置準備就緒後，刷機程序會自動開始。請監控進度，並在出現提示時重新啟動。否則，請使用以下手動指令。
+如果您在步驟 2 中啟用了 `--autoflash`，則在透過網路啟動的裝置準備就緒後，刷機程序會自動開始，完成後 `sima-cli` 會重新啟動裝置，使其從 eMMC 啟動。否則，請使用以下手動指令。
 
-這個 `--netboot` 主機上的 Shell 支援兩個指令：
+這個 `--netboot` 主機上的 Shell 支援以下指令：
 
 - `c` — 顯示所有已連線的使用者端，以及目前正在這些使用者端上執行的韌體版本。
+- `d` — 在網路上尋找裝置。
 - `f` — 將選取的客戶端裝置的 eMMC 進行燒錄。
+- `q` — 結束工作階段並停止 TFTP 伺服器。
 
 請等待 DevKit 完成網路啟動。這可能需要幾分鐘。一旦序列主控台上顯示登入提示，則板子已準備就緒。我們建議在整個啟動過程中保持序列主控台的連接，以便觀察完整的啟動序列。
 
@@ -172,7 +176,7 @@ netboot> f
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-完成燒錄後，請重新啟動 DevKit。它會從 eMMC 啟動目標版本。
+完成燒錄後，`sima-cli` 會詢問是否要立即重新啟動 DevKit。回答 `y`，DevKit 就會從 eMMC 啟動目標版本。如果回答 `n`，則會在下次重新啟動時從 eMMC 啟動。
 
 
 </details>
