@@ -13,3 +13,4 @@ sidebar_position: 1
 - [2.1.3 から 3.0.0 にバージョンアップします。](./convert-2-1-3-to-3-0-0.md)
 - [BluetoothをModalix SoM DevKitに設定します。](./bluetooth.mdx)
 - [ROS 2 を Modalix SoM DevKit にインストールします。](./ros2.mdx)
+- [Modalix SoM DevKit で USB WiFi アダプターを使用する](./wifi.mdx)
