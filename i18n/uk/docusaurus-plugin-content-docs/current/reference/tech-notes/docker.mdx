@@ -1,0 +1,164 @@
+---
+title: "Встановіть Docker на Modalix SoM DevKit"
+description: "Встановіть Docker на Modalix SoM DevKit з версією платформи 3.0 із Palette SDK або вручну та запускайте на ньому контейнери."
+sidebar_position: 6
+---
+
+# Встановіть Docker на Modalix SoM DevKit
+
+Docker дозволяє запакувати застосунок разом із його залежностями та запускати його на DevKit як контейнер. Modalix SoM DevKit постачається без Docker. У цій примітці описано два способи встановити його на платформі версії 3.0: однією командою з Palette SDK або вручну на DevKit. Обидва способи встановлюють те саме.
+
+## Перш ніж почати
+
+Вам знадобиться:
+
+- Modalix SoM DevKit з версією платформи **3.0**. Щоб перевірити версію, виконайте `cat /etc/buildinfo` на DevKit.
+- Доступ до Інтернету на DevKit для завантаження Docker.
+- Вільне місце в `/data`, де Docker зберігає свої образи та контейнери. На DevKit розмір `/data` становить близько 3 ГБ. Перевірте вільне місце за допомогою `df -h /data` і намагайтеся, щоб образи були невеликими.
+
+Образи контейнерів для DevKit мають бути зібрані для `linux/arm64`.
+
+## Що робить встановлення
+
+Обидва способи:
+
+1. Встановлюють Docker CE (`docker-ce`, `docker-ce-cli` і `containerd.io`) для ARM64 з репозиторію Docker для Debian `trixie`.
+2. Зберігають дані Docker у `/data/docker`, а дані containerd — у `/data/containerd`, щоб образи не заповнювали кореневу файлову систему.
+3. Вмикають переадресацію IP, яка потрібна для мережевої взаємодії контейнерів.
+4. Запускають служби `docker` і `containerd` та налаштовують їхній запуск під час кожного завантаження.
+5. Додають вашого користувача до групи `docker`, щоб ви могли виконувати `docker` без `sudo`.
+
+## Встановлення з Palette SDK {#palette-sdk}
+
+Використовуйте цей спосіб, якщо ви розробляєте в Palette SDK і вже з’єднали з ним DevKit (`sima-cli sdk setup --devkit <devkit-ip>`). З’єднання також надає користувачу DevKit `sudo` без пароля, що потрібно для цього способу.
+
+1. В оболонці Palette SDK виконайте:
+
+   ```console
+   sdk$ dk container setup
+   ```
+
+   Відповідайте `y`, коли команда запитає, чи налаштувати Docker на DevKit. Щоб пропустити запитання, виконайте `dk container setup --yes`. Якщо Docker уже працює на DevKit, команда залишає його без змін і лише додає вашого користувача до групи `docker`. Якщо встановлення перервано, виконайте команду ще раз; вона безпечно продовжить роботу.
+
+2. Коли команда виведе `Docker is ready on the DevKit`, запускайте контейнери на DevKit з оболонки SDK:
+
+   | Команда | Що вона робить |
+   | --- | --- |
+   | `dk container deploy <image> [docker-run-options] [-- command]` | Завантажує образ з локального реєстру SDK на DevKit, а потім запускає його. |
+   | `dk container run <image> [docker-run-options] [-- command]` | Запускає образ, який уже є на DevKit. |
+   | `dk container pull <image>` | Завантажує образ на DevKit. |
+   | `dk container images` | Виводить список образів у локальному реєстрі SDK. |
+   | `dk container list` | Виводить список контейнерів на DevKit. |
+   | `dk container logs <container>` | Показує вивід контейнера. Додайте `--follow`, щоб продовжувати стежити за ним. |
+   | `dk container stop <container>` | Зупиняє контейнер. |
+   | `dk container remove <container>` | Видаляє контейнер. |
+
+   Наприклад, щоб зібрати образ у SDK для DevKit, надіслати його до локального реєстру SDK і запустити на DevKit:
+
+   ```console
+   sdk$ docker buildx build --platform linux/arm64 -t "$SIMA_CONTAINER_REGISTRY/my-app:latest" --push .
+   sdk$ dk container deploy my-app:latest --detach --name my-app --network host
+   sdk$ dk container logs my-app --follow
+   ```
+
+## Встановлення вручну на DevKit {#manual}
+
+Використовуйте цей спосіб, якщо ви не користуєтеся Palette SDK. Виконуйте всі наведені нижче команди **на DevKit** через SSH або послідовний порт. `sudo` запитає ваш пароль.
+
+1. На час встановлення Docker перемістіть список дзеркал пакетів eLxr в інше місце. Ви повернете його на кроці 9.
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /root/apt-disabled
+   sima@modalix:~$ sudo mv /etc/apt/sources.list.d/0000mirror.list /root/apt-disabled/
+   ```
+
+2. Вкажіть Docker зберігати дані в `/data/docker`:
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /etc/docker /data/docker
+   sima@modalix:~$ echo '{"data-root": "/data/docker", "firewall-backend": "nftables"}' | sudo tee /etc/docker/daemon.json
+   ```
+
+3. Увімкніть переадресацію IP:
+
+   ```console
+   sima@modalix:~$ printf 'net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1\n' | sudo tee /etc/sysctl.d/99-docker-forward.conf
+   sima@modalix:~$ sudo sysctl --system
+   ```
+
+4. Додайте репозиторій пакетів Docker:
+
+   ```console
+   sima@modalix:~$ sudo install -m 0755 -d /etc/apt/keyrings
+   sima@modalix:~$ sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ sudo chmod a+r /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ echo 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian trixie stable' | sudo tee /etc/apt/sources.list.d/docker.list
+   ```
+
+5. Встановіть Docker:
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   ```
+
+6. Зупиніть служби та перемістіть дані containerd до `/data/containerd`:
+
+   ```console
+   sima@modalix:~$ sudo systemctl stop docker.socket docker containerd
+   sima@modalix:~$ sudo mkdir -p /data/containerd
+   sima@modalix:~$ sudo sh -c 'mv /var/lib/containerd/* /data/containerd/ 2>/dev/null; true'
+   ```
+
+7. Змонтуйте `/data/containerd` у `/var/lib/containerd` зараз і під час кожного завантаження:
+
+   ```console
+   sima@modalix:~$ echo '/data/containerd /var/lib/containerd none bind 0 0' | sudo tee -a /etc/fstab
+   sima@modalix:~$ sudo mount /var/lib/containerd
+   ```
+
+8. Запустіть служби та налаштуйте їхній запуск під час кожного завантаження:
+
+   ```console
+   sima@modalix:~$ sudo systemctl enable containerd docker
+   sima@modalix:~$ sudo systemctl restart containerd docker
+   ```
+
+9. Поверніть на місце список дзеркал пакетів eLxr:
+
+   ```console
+   sima@modalix:~$ sudo mv /root/apt-disabled/0000mirror.list /etc/apt/sources.list.d/
+   ```
+
+10. Додайте вашого користувача до групи `docker`, а потім вийдіть із системи та увійдіть знову:
+
+    ```console
+    sima@modalix:~$ sudo usermod -aG docker "$USER"
+    ```
+
+## Перевірка встановлення {#check}
+
+На DevKit:
+
+1. Переконайтеся, що Docker зберігає дані в `/data/docker`:
+
+   ```console
+   sima@modalix:~$ docker info --format '{{.DockerRootDir}}'
+   /data/docker
+   ```
+
+2. Запустіть тестовий контейнер:
+
+   ```console
+   sima@modalix:~$ docker run --rm hello-world
+   ```
+
+   Він виведе `Hello from Docker!`.
+
+3. Перевірте вільне місце в `/data`:
+
+   ```console
+   sima@modalix:~$ df -h /data
+   ```
+
+   Щоб звільнити місце, видаліть образи та контейнери, які вам більше не потрібні, за допомогою `docker image prune` і `docker container prune`.
