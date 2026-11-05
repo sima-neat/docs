@@ -6,14 +6,14 @@ sidebar_position: 7
 
 # Use a USB WiFi Adapter on the Modalix SoM DevKit
 
-The Modalix SoM DevKit has no built-in WiFi. You can add it with a USB WiFi adapter. This note uses an adapter with the MediaTek MT7921AU chip, which supports WiFi 6 on 2.4 GHz and 5 GHz. The platform 3.0 kernel includes the Linux wireless stack, but not the driver for this chip, so you build the driver, install it with the chip's firmware, and then connect with NetworkManager.
+The Modalix SoM DevKit has no built-in WiFi. You can add it with a USB WiFi adapter. This note uses an adapter with the MediaTek MT7921AU chip, which supports WiFi 6E on 2.4 GHz, 5 GHz, and 6 GHz. The platform 3.0 kernel includes the Linux wireless stack, but not the driver for this chip, so you build the driver, install it with the chip's firmware, and then connect with NetworkManager.
 
 ## Before You Start
 
 You need:
 
 - A Modalix SoM DevKit with platform version **3.0**. To check, run `cat /etc/buildinfo` on the DevKit.
-- A USB WiFi adapter with the MediaTek MT7921AU chip (USB ID `0e8d:7961`).
+- A USB WiFi adapter with the MediaTek MT7921AU chip (USB ID `0e8d:7961`), for example the [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62). Other MT7921AU adapters work the same way.
 - Internet access on the DevKit, through Ethernet, to install packages.
 - A Linux host with Docker and `git`, to build the driver, and SSH access from the host to the DevKit.
 
@@ -141,4 +141,4 @@ If the DevKit is also connected through Ethernet, the Ethernet connection stays 
 
 - **Firmware updates remove the driver.** The modules are built for the running kernel. After you update the DevKit firmware, build and install them again.
 - **Other adapters need their own driver.** This note covers the MediaTek MT7921AU. Other chips need a different kernel driver and firmware.
-- **No 6 GHz.** The MT7921AU uses 2.4 GHz and 5 GHz only.
+- **6 GHz is not tested.** The adapter supports 6 GHz, but this note was tested on 2.4 GHz and 5 GHz only. Whether you can use 6 GHz also depends on your country's rules.

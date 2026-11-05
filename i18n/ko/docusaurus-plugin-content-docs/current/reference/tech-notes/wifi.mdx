@@ -6,14 +6,14 @@ sidebar_position: 7
 
 # Modalix SoM DevKit에서 USB WiFi 어댑터를 사용합니다.
 
-Modalix SoM DevKit에는 WiFi가 내장되어 있지 않습니다. USB WiFi 어댑터를 사용하여 WiFi를 추가할 수 있습니다. 이 문서에서는 2.4 GHz 및 5 GHz에서 WiFi 6를 지원하는 MediaTek MT7921AU 칩이 탑재된 어댑터를 사용합니다. 플랫폼 3.0 커널에는 Linux 무선 스택이 포함되어 있지만 이 칩용 드라이버는 포함되어 있지 않습니다. 따라서 드라이버를 빌드하고, 칩의 펌웨어와 함께 설치한 다음, NetworkManager로 연결합니다.
+Modalix SoM DevKit에는 WiFi가 내장되어 있지 않습니다. USB WiFi 어댑터를 사용하여 WiFi를 추가할 수 있습니다. 이 문서에서는 2.4 GHz, 5 GHz 및 6 GHz에서 WiFi 6E를 지원하는 MediaTek MT7921AU 칩이 탑재된 어댑터를 사용합니다. 플랫폼 3.0 커널에는 Linux 무선 스택이 포함되어 있지만 이 칩용 드라이버는 포함되어 있지 않습니다. 따라서 드라이버를 빌드하고, 칩의 펌웨어와 함께 설치한 다음, NetworkManager로 연결합니다.
 
 ## 시작하기 전에
 
 다음이 필요합니다:
 
 - 플랫폼 버전 **3.0**을 사용하는 Modalix SoM DevKit. 확인하려면 DevKit에서 `cat /etc/buildinfo`를 실행하십시오.
-- MediaTek MT7921AU 칩이 탑재된 USB WiFi 어댑터(USB ID `0e8d:7961`).
+- MediaTek MT7921AU 칩이 탑재된 USB WiFi 어댑터(USB ID `0e8d:7961`). 예: [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62). 다른 MT7921AU 어댑터도 같은 방법으로 사용할 수 있습니다.
 - 패키지를 설치하기 위한 DevKit의 인터넷 연결(Ethernet 사용).
 - 드라이버를 빌드하기 위한 Docker와 `git`이 설치된 Linux 호스트, 그리고 호스트에서 DevKit로의 SSH 접속.
 
@@ -141,4 +141,4 @@ DevKit가 Ethernet으로도 연결되어 있으면 Ethernet 연결이 기본 경
 
 - **펌웨어를 업데이트하면 드라이버가 제거됩니다.** 모듈은 실행 중인 커널용으로 빌드됩니다. DevKit 펌웨어를 업데이트한 후에는 모듈을 다시 빌드하고 설치하십시오.
 - **다른 어댑터에는 해당 어댑터용 드라이버가 필요합니다.** 이 문서는 MediaTek MT7921AU를 다룹니다. 다른 칩에는 다른 커널 드라이버와 펌웨어가 필요합니다.
-- **6 GHz는 지원되지 않습니다.** MT7921AU는 2.4 GHz와 5 GHz만 사용합니다.
+- **6 GHz는 테스트하지 않았습니다.** 어댑터는 6 GHz를 지원하지만, 이 문서는 2.4 GHz와 5 GHz에서만 테스트했습니다. 6 GHz 사용 가능 여부는 국가별 규정에 따라서도 달라집니다.

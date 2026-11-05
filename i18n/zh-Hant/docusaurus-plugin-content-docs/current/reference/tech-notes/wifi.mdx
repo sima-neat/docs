@@ -6,14 +6,14 @@ sidebar_position: 7
 
 # 在 Modalix SoM DevKit 上使用 USB WiFi 轉接器
 
-Modalix SoM DevKit 沒有內建 WiFi，您可以使用 USB WiFi 轉接器來新增此功能。本備註使用搭載 MediaTek MT7921AU 晶片的轉接器，此晶片支援 2.4 GHz 和 5 GHz 的 WiFi 6。平台 3.0 的核心包含 Linux 無線堆疊，但不包含此晶片的驅動程式，因此您需要建置驅動程式、將它與晶片的韌體一起安裝，然後透過 NetworkManager 連線。
+Modalix SoM DevKit 沒有內建 WiFi，您可以使用 USB WiFi 轉接器來新增此功能。本備註使用搭載 MediaTek MT7921AU 晶片的轉接器，此晶片支援 2.4 GHz、5 GHz 和 6 GHz 的 WiFi 6E。平台 3.0 的核心包含 Linux 無線堆疊，但不包含此晶片的驅動程式，因此您需要建置驅動程式、將它與晶片的韌體一起安裝，然後透過 NetworkManager 連線。
 
 ## 在您開始之前
 
 您需要：
 
 - 一個平台版本為 **3.0** 的 Modalix SoM DevKit。若要確認版本，請在 DevKit 上執行 `cat /etc/buildinfo`。
-- 一個搭載 MediaTek MT7921AU 晶片的 USB WiFi 轉接器（USB ID `0e8d:7961`）。
+- 一個搭載 MediaTek MT7921AU 晶片的 USB WiFi 轉接器（USB ID `0e8d:7961`），例如 [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62)。其他 MT7921AU 轉接器的使用方式相同。
 - DevKit 需透過乙太網路連上網際網路，以便安裝套件。
 - 一台安裝了 Docker 和 `git` 的 Linux 主機，用來建置驅動程式，且主機能透過 SSH 存取 DevKit。
 
@@ -141,4 +141,4 @@ Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
 
 - **韌體更新會移除驅動程式。** 這些模組是針對目前執行的核心所建置。更新 DevKit 韌體後，請重新建置並安裝它們。
 - **其他轉接器需要各自的驅動程式。** 本備註涵蓋 MediaTek MT7921AU。其他晶片需要不同的核心驅動程式和韌體。
-- **不支援 6 GHz。** MT7921AU 僅使用 2.4 GHz 和 5 GHz。
+- **未測試 6 GHz。** 轉接器支援 6 GHz，但本備註僅在 2.4 GHz 和 5 GHz 上測試過。能否使用 6 GHz 也取決於您所在國家/地區的法規。
