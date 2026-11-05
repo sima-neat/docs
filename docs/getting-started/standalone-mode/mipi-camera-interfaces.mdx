@@ -18,18 +18,9 @@ The **Modalix DevKit** includes two MIPI interfaces for camera input. The MIPI p
 
 Before you start, power off the **Modalix DevKit** and attach a MIPI camera to one of the MIPI ports.
 
-Connect a serial cable from the host to the **Modalix DevKit**, then power on the DevKit.
+Power on the DevKit, and log in to Linux on it over SSH or the serial console.
 
-Open a serial terminal with `sima-cli`, then press any key during the 3 second countdown to enter U-Boot:
-
-```console
-sima-cli serial -b 115200
-...
-Hit any key to stop autoboot:  0
-sima$
-```
-
-In U-Boot, set the `dtbos` variable to the appropriate **Device Tree Blob Overlay** (`.dtbo`) file. The correct file depends on the **carrier board**, **camera manufacturer**, **sensor type**, and **camera port**. Then save the environment and boot into the operating system.
+From Linux, set the U-Boot `dtbos` variable to the appropriate **Device Tree Blob Overlay** (`.dtbo`) file, then reboot. The correct file depends on the **carrier board**, **camera manufacturer**, **sensor type**, and **camera port**.
 
 The filename follows this pattern:
 
@@ -43,27 +34,25 @@ Select each component based on your hardware:
 | --- | --- | --- |
 | Carrier Board | `connectech`, `seeedstudio`, `waveshare` | The carrier board model |
 | Camera Manufacturer | `ARDU`, `ECON`, `LI` | Arducam, e-con Systems, or Leopard Imaging |
-| Sensor Type | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | The camera sensor model |
+| Sensor Type | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `IMX415`, `AR0234`, `AR0822`, `OG05C10` | The camera sensor model |
 | Port | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | The MIPI port number connected to the camera |
 
 By default, the Modalix DevKit has the Waveshare carrier board. For example, for an Arducam IMX477 camera connected to port 1 of a Modalix DevKit:
 
+The U-Boot environment is on a read-only mount, `/var/uboot`. Make it writable, set the variable with `sudo`, and make it read-only again:
+
 ```console
-sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo ; saveenv ; boot
+sima@modalix:~$ sudo mount -o remount,rw /var/uboot
+sima@modalix:~$ sudo fw_setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+sima@modalix:~$ sudo mount -o remount,ro /var/uboot
+sima@modalix:~$ fw_printenv dtbos
+sima@modalix:~$ sudo reboot
 ```
 
-The camera overlays in platform release 2.1.3 are listed below. Other releases use different names for some overlays. To list the overlays on your board, run this command from Linux:
-
-On platform 3.0 and later:
+The camera overlays in platform release 3.0.0 are listed below. To list the overlays on your board, run this command:
 
 ```console
 sima@modalix:~$ ls /boot/modalix-som-*.dtbo
-```
-
-On platform 2.1.x:
-
-```console
-sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 ```
 
 For the camera to order, the ports on each carrier board, and the sensor modes behind each overlay, see [Supported MIPI Cameras](../../interfaces/supported-cameras.mdx).
@@ -89,20 +78,31 @@ modalix-som-connectech-LI-AR0234-0CAM.dtbo
 modalix-som-connectech-LI-AR0234-1CAM.dtbo
 modalix-som-connectech-LI-AR0234-2CAM.dtbo
 modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-IMX568-0CAM.dtbo
+modalix-som-connectech-LI-IMX568-1CAM.dtbo
+modalix-som-connectech-LI-IMX568-2CAM.dtbo
+modalix-som-connectech-LI-IMX568-3CAM.dtbo
 modalix-som-connectech-LI-OG05C10-0CAM.dtbo
 modalix-som-connectech-LI-OG05C10-1CAM.dtbo
 modalix-som-connectech-LI-OG05C10-2CAM.dtbo
 modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-connectech-METOAK-DUAL.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
 modalix-som-seeedstudio-ECON-FPGA-IMX568-0CAM.dtbo
 modalix-som-seeedstudio-ECON-FPGA-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
 modalix-som-seeedstudio-ECON-KOBE1-IMX568-0CAM.dtbo
 modalix-som-seeedstudio-ECON-KOBE1-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-IMX415-0CAM.dtbo
+modalix-som-seeedstudio-LI-IMX415-2CAM.dtbo
+modalix-som-seeedstudio-LI-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-LI-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
@@ -117,12 +117,27 @@ modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
 modalix-som-waveshare-ECON-KOBE1-IMX568-1CAM.dtbo
 modalix-som-waveshare-ECON-KOBE1-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-MIPI-GEN-1CAM.dtbo
+modalix-som-waveshare-INTROSPECT-MIPI-GEN-2CAM-VC1.dtbo
+modalix-som-waveshare-INTROSPECT-MIPI-GEN-2CAM-VC2.dtbo
+modalix-som-waveshare-INTROSPECT-MIPI-GEN-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-1CAM.dtbo
 modalix-som-waveshare-LI-AR0234-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-AR0822-1CAM.dtbo
+modalix-som-waveshare-LI-AR0822-2CAM.dtbo
+modalix-som-waveshare-LI-ECON-IMX568-DUAL.dtbo
+modalix-som-waveshare-LI-IMX415-1CAM.dtbo
+modalix-som-waveshare-LI-IMX415-2CAM.dtbo
+modalix-som-waveshare-LI-IMX568-1CAM-594MBPS.dtbo
+modalix-som-waveshare-LI-IMX568-1CAM.dtbo
+modalix-som-waveshare-LI-IMX568-2CAM.dtbo
+modalix-som-waveshare-LI-IMX568-DUAL.dtbo
 modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
 modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+modalix-som-waveshare-METOAK-DUAL.dtbo
+modalix-som-waveshare4CSI-ARDU-IMX477-QUAD.dtbo
 ```
 
 To validate the interfaces, connect the Modalix DevKit to a display and log in. Then, use libcamera to verify camera connectivity.
@@ -147,27 +162,11 @@ To validate the interfaces, connect the Modalix DevKit to a display and log in. 
 
 ## Use Multiple Cameras {#multiple-cameras}
 
-To use more than one camera, set `dtbos` to one overlay for each camera, separated by spaces. U-Boot applies every overlay in the list. This works from platform release 2.1.0.
+To use more than one camera, set `dtbos` to one overlay for each camera, separated by spaces. U-Boot applies every overlay in the list.
 
 The cameras can be different models. Use the overlay that matches the model and port of each camera. For example, for a Modalix DevKit with an e-con Systems IMX678 camera on port 1 and a Leopard Imaging OG05C10 camera on port 2:
 
-```console
-sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
-sima$ printenv dtbos
-sima$ saveenv ; boot
-```
-
-- Use one overlay for each port.
-- The order of the overlays does not matter.
-- A `DUAL` overlay sets up both ports of the Waveshare carrier board with the same camera model. Use either a `DUAL` overlay or two port overlays, not both.
-- For the ports that have an overlay on each carrier board, see [Supported MIPI Cameras](../../interfaces/supported-cameras.mdx#ports).
-- Not every combination has been tested. Verify yours with `cam -l` and a capture from each camera.
-
-After the board boots, run `cam -l`. It lists one entry for each camera.
-
-You can also set the variable from Linux, without the serial console:
-
-On platform 3.0 and later, the U-Boot environment is on a read-only mount, `/var/uboot`. Make it writable, set the variable with `sudo`, and make it read-only again:
+The U-Boot environment is on a read-only mount, `/var/uboot`. Make it writable, set the variable with `sudo`, and make it read-only again:
 
 ```console
 sima@modalix:~$ sudo mount -o remount,rw /var/uboot
@@ -177,10 +176,10 @@ sima@modalix:~$ fw_printenv dtbos
 sima@modalix:~$ sudo reboot
 ```
 
-On platform 2.1.x:
+- Use one overlay for each port.
+- The order of the overlays does not matter.
+- A `DUAL` overlay sets up both ports of the Waveshare carrier board with the same camera model. Use either a `DUAL` overlay or two port overlays, not both.
+- For the ports that have an overlay on each carrier board, see [Supported MIPI Cameras](../../interfaces/supported-cameras.mdx#ports).
+- Not every combination has been tested. Verify yours with `cam -l` and a capture from each camera.
 
-```console
-sima@modalix:~$ fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
-sima@modalix:~$ fw_printenv dtbos
-sima@modalix:~$ sudo reboot
-```
+After the board boots, run `cam -l`. It lists one entry for each camera.

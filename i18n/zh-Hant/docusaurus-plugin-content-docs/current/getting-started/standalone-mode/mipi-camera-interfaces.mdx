@@ -18,18 +18,9 @@ sidebar_position: 3
 
 在開始之前，請關閉 **Modalix DevKit** 的電源，並將一個 MIPI 相機連接到其中一個 MIPI 連接埠。
 
-將一條序列線連接到主機和 **Modalix DevKit**，然後開啟 DevKit 的電源。
+開啟 DevKit 的電源，並透過 SSH 或序列主控台登入 DevKit 上的 Linux。
 
-使用 `sima-cli` 開啟一個序列終端，然後在 3 秒倒數期間按下任意按鍵，以進入 U-Boot。
-
-```console
-sima-cli serial -b 115200
-...
-Hit any key to stop autoboot:  0
-sima$
-```
-
-在 U-Boot 中，將 `dtbos` 變數設定為適當的「Device Tree Blob Overlay」(`.dtbo`) 檔案。正確的檔案取決於「載板」、「相機製造商」、「感測器類型」和「相機連接埠」。然後儲存環境並啟動至作業系統。
+在 Linux 中，將 U-Boot 的 `dtbos` 變數設定為適當的「Device Tree Blob Overlay」(`.dtbo`) 檔案，然後重新開機。正確的檔案取決於「載板」、「相機製造商」、「感測器類型」和「相機連接埠」。
 
 檔案名稱遵循以下模式：
 
@@ -43,27 +34,25 @@ modalix-som-<carrier_board>-<camera_manufacturer>-<sensor_type>-<port>.dtbo
 | --- | --- | --- |
 | 載板 | `connectech`, `seeedstudio`, `waveshare` | 載板型號 |
 | 相機製造商 | `ARDU`, `ECON`, `LI` | Arducam、e-con Systems 或 Leopard Imaging |
-| 感測器類型 | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `AR0234`, `OG05C10` | 相機感測器型號 |
+| 感測器類型 | `IMX477`, `IMX568`, `FPGA-IMX568`, `KOBE1-IMX568`, `IMX678`, `IMX415`, `AR0234`, `AR0822`, `OG05C10` | 相機感測器型號 |
 | 連接埠 | `0CAM`, `1CAM`, `2CAM`, `3CAM`, `DUAL` | 與相機連接的 MIPI 埠號。 |
 
 Modalix DevKit 預設搭載 Waveshare 載板。舉例來說，Modalix DevKit 的 1 號埠連接 Arducam IMX477 相機時：
 
+U-Boot 環境位於唯讀掛載點 `/var/uboot`。請先將其改為可寫入，使用 `sudo` 設定變數，然後再改回唯讀：
+
 ```console
-sima$ setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo ; saveenv ; boot
+sima@modalix:~$ sudo mount -o remount,rw /var/uboot
+sima@modalix:~$ sudo fw_setenv dtbos modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
+sima@modalix:~$ sudo mount -o remount,ro /var/uboot
+sima@modalix:~$ fw_printenv dtbos
+sima@modalix:~$ sudo reboot
 ```
 
-以下列出平台版本 2.1.3 的相機 overlay。其他版本中，部分 overlay 的名稱不同。若要列出您電路板上的 overlay，請在 Linux 中執行以下指令：
-
-平台 3.0 及更新版本：
+以下列出平台版本 3.0.0 的相機 overlay。若要列出您電路板上的 overlay，請執行以下指令：
 
 ```console
 sima@modalix:~$ ls /boot/modalix-som-*.dtbo
-```
-
-平台 2.1.x：
-
-```console
-sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
 ```
 
 關於各 overlay 對應的訂購相機、各載板的連接埠與感測器模式，請參閱[支援的 MIPI 相機](../../interfaces/supported-cameras.mdx)。
@@ -89,20 +78,31 @@ modalix-som-connectech-LI-AR0234-0CAM.dtbo
 modalix-som-connectech-LI-AR0234-1CAM.dtbo
 modalix-som-connectech-LI-AR0234-2CAM.dtbo
 modalix-som-connectech-LI-AR0234-3CAM.dtbo
+modalix-som-connectech-LI-IMX568-0CAM.dtbo
+modalix-som-connectech-LI-IMX568-1CAM.dtbo
+modalix-som-connectech-LI-IMX568-2CAM.dtbo
+modalix-som-connectech-LI-IMX568-3CAM.dtbo
 modalix-som-connectech-LI-OG05C10-0CAM.dtbo
 modalix-som-connectech-LI-OG05C10-1CAM.dtbo
 modalix-som-connectech-LI-OG05C10-2CAM.dtbo
 modalix-som-connectech-LI-OG05C10-3CAM.dtbo
+modalix-som-connectech-METOAK-DUAL.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-0CAM.dtbo
 modalix-som-seeedstudio-ARDU-IMX477-2CAM.dtbo
 modalix-som-seeedstudio-ECON-FPGA-IMX568-0CAM.dtbo
 modalix-som-seeedstudio-ECON-FPGA-IMX568-2CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-ECON-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-0CAM.dtbo
 modalix-som-seeedstudio-ECON-IMX678-2CAM.dtbo
 modalix-som-seeedstudio-ECON-KOBE1-IMX568-0CAM.dtbo
 modalix-som-seeedstudio-ECON-KOBE1-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-0CAM.dtbo
 modalix-som-seeedstudio-LI-AR0234-2CAM.dtbo
+modalix-som-seeedstudio-LI-IMX415-0CAM.dtbo
+modalix-som-seeedstudio-LI-IMX415-2CAM.dtbo
+modalix-som-seeedstudio-LI-IMX568-0CAM.dtbo
+modalix-som-seeedstudio-LI-IMX568-2CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-0CAM.dtbo
 modalix-som-seeedstudio-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo
@@ -117,12 +117,27 @@ modalix-som-waveshare-ECON-IMX678-2CAM.dtbo
 modalix-som-waveshare-ECON-IMX678-DUAL.dtbo
 modalix-som-waveshare-ECON-KOBE1-IMX568-1CAM.dtbo
 modalix-som-waveshare-ECON-KOBE1-IMX568-2CAM.dtbo
+modalix-som-waveshare-ECON-MIPI-GEN-1CAM.dtbo
+modalix-som-waveshare-INTROSPECT-MIPI-GEN-2CAM-VC1.dtbo
+modalix-som-waveshare-INTROSPECT-MIPI-GEN-2CAM-VC2.dtbo
+modalix-som-waveshare-INTROSPECT-MIPI-GEN-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-1CAM.dtbo
 modalix-som-waveshare-LI-AR0234-2CAM.dtbo
 modalix-som-waveshare-LI-AR0234-DUAL.dtbo
+modalix-som-waveshare-LI-AR0822-1CAM.dtbo
+modalix-som-waveshare-LI-AR0822-2CAM.dtbo
+modalix-som-waveshare-LI-ECON-IMX568-DUAL.dtbo
+modalix-som-waveshare-LI-IMX415-1CAM.dtbo
+modalix-som-waveshare-LI-IMX415-2CAM.dtbo
+modalix-som-waveshare-LI-IMX568-1CAM-594MBPS.dtbo
+modalix-som-waveshare-LI-IMX568-1CAM.dtbo
+modalix-som-waveshare-LI-IMX568-2CAM.dtbo
+modalix-som-waveshare-LI-IMX568-DUAL.dtbo
 modalix-som-waveshare-LI-OG05C10-1CAM.dtbo
 modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
 modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
+modalix-som-waveshare-METOAK-DUAL.dtbo
+modalix-som-waveshare4CSI-ARDU-IMX477-QUAD.dtbo
 ```
 
 為了驗證介面，請將 Modalix DevKit 連接到顯示器，然後登入。接著，使用 libcamera 來驗證相機的連線。
@@ -147,27 +162,11 @@ modalix-som-waveshare-LI-OG05C10-DUAL.dtbo
 
 ## 使用多台相機 {#multiple-cameras}
 
-若要使用一台以上的相機，請將 `dtbos` 設定為每台相機各一個 overlay，並以空格分隔。U-Boot 會套用清單中的每個 overlay。此做法自平台版本 2.1.0 起適用。
+若要使用一台以上的相機，請將 `dtbos` 設定為每台相機各一個 overlay，並以空格分隔。U-Boot 會套用清單中的每個 overlay。
 
 相機可以是不同的型號。請使用與每台相機的型號及連接埠相符的 overlay。舉例來說，Modalix DevKit 的 1 號埠連接 e-con Systems IMX678 相機、2 號埠連接 Leopard Imaging OG05C10 相機時：
 
-```console
-sima$ setenv dtbos modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo
-sima$ printenv dtbos
-sima$ saveenv ; boot
-```
-
-- 每個連接埠只能指定一個 overlay。
-- overlay 的順序不影響結果。
-- `DUAL` overlay 會將 Waveshare 載板的兩個連接埠設定為相同的相機型號。請擇一使用 `DUAL` overlay 或兩個連接埠各自的 overlay，不要同時指定。
-- 各載板有哪些連接埠提供 overlay，請參閱[支援的 MIPI 相機](../../interfaces/supported-cameras.mdx#ports)。
-- 並非所有組合都經過測試。請使用 `cam -l` 並從每台相機擷取影像，以驗證您的組合。
-
-電路板開機後，請執行 `cam -l`。每台相機會列出一個項目。
-
-您也可以在 Linux 中設定此變數，而不需要序列主控台。
-
-在平台 3.0 及更新版本中，U-Boot 環境位於唯讀掛載點 `/var/uboot`。請先將其改為可寫入，使用 `sudo` 設定變數，然後再改回唯讀：
+U-Boot 環境位於唯讀掛載點 `/var/uboot`。請先將其改為可寫入，使用 `sudo` 設定變數，然後再改回唯讀：
 
 ```console
 sima@modalix:~$ sudo mount -o remount,rw /var/uboot
@@ -177,10 +176,10 @@ sima@modalix:~$ fw_printenv dtbos
 sima@modalix:~$ sudo reboot
 ```
 
-平台 2.1.x：
+- 每個連接埠只能指定一個 overlay。
+- overlay 的順序不影響結果。
+- `DUAL` overlay 會將 Waveshare 載板的兩個連接埠設定為相同的相機型號。請擇一使用 `DUAL` overlay 或兩個連接埠各自的 overlay，不要同時指定。
+- 各載板有哪些連接埠提供 overlay，請參閱[支援的 MIPI 相機](../../interfaces/supported-cameras.mdx#ports)。
+- 並非所有組合都經過測試。請使用 `cam -l` 並從每台相機擷取影像，以驗證您的組合。
 
-```console
-sima@modalix:~$ fw_setenv dtbos "modalix-som-waveshare-ECON-IMX678-1CAM.dtbo modalix-som-waveshare-LI-OG05C10-2CAM.dtbo"
-sima@modalix:~$ fw_printenv dtbos
-sima@modalix:~$ sudo reboot
-```
+電路板開機後，請執行 `cam -l`。每台相機會列出一個項目。
