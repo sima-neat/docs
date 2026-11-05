@@ -23,6 +23,26 @@ The Web Serial API is only available in Chromium-based browsers:
 Firefox and Safari do not support the Web Serial API and cannot be used with this tool.
 :::
 
+### Linux: `dialout` group access
+
+On Linux, serial devices such as `/dev/ttyUSB0` are owned by `root:dialout` with mode `crw-rw----`. New user accounts are not in the `dialout` group by default, so the browser cannot open the device and **your DevKit will not appear in the serial port picker** — even though `lsusb` and `dmesg` show the USB to Serial adapter and `/dev/ttyUSB0` exists.
+
+Add your user to the `dialout` group:
+
+```console
+sudo usermod -aG dialout $USER
+```
+
+Then **log out and back in, or reboot** — the group change does not apply to your current session. Verify with:
+
+```console
+groups | grep dialout
+```
+
+:::note
+This step applies to Linux only. macOS and Windows do not require it.
+:::
+
 ## Getting Started
 
 1. Connect your SiMa.ai DevKit to your computer using a USB to Serial cable.

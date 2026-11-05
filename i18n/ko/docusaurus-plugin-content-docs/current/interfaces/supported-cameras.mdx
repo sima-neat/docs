@@ -1,0 +1,140 @@
+---
+title: 지원되는 MIPI 카메라
+description: Modalix BSP에 오버레이가 있는 MIPI 카메라와 주문 정보, 캐리어 보드 포트, 센서 모드.
+sidebar_position: 2
+---
+
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
+
+# 지원되는 MIPI 카메라
+
+이 페이지에서는 Modalix BSP가 지원하는 MIPI CSI-2 카메라에 대해 주문할 카메라,
+오버레이가 있는 캐리어 보드 포트, 드라이버가 제공하는 센서 모드를 설명합니다.
+보드에서 카메라를 구성하려면
+[MIPI 카메라 인터페이스](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)를 참조하십시오.
+
+:::note 이 정보의 출처
+이 페이지의 오버레이와 센서 모드는 플랫폼 릴리스 2.1.3의 커널 소스인
+[simaai-linux](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60)에서
+가져온 것입니다. BSP가 제공하는 내용을 나타내며, SiMa.ai가 모든 캐리어 보드에서
+검증한 내용은 아닙니다. **확인되지 않음**으로 표시된 항목은 아직 공개된 출처가 없습니다.
+:::
+
+## 카메라 및 주문 정보 {#cameras}
+
+BSP에는 세 벤더의 센서 다섯 종에 대한 오버레이가 있습니다. 벤더는 같은 센서를
+탑재한 모듈을 여러 개 판매하는 경우가 많으며, 이들은 레인 수, 커넥터, 렌즈가
+서로 다릅니다. 센서 이름이 아니라 부품 번호로 주문하십시오. 카메라를 선택하면 해당
+사양을 볼 수 있습니다.
+
+<CameraList />
+
+- 위의 두 부품 번호는 Leopard Imaging이 SiMa.ai용 카메라로 등재한 것입니다.
+- BSP가 지원하는 Arducam 및 e-con Systems 카메라의 부품 번호는 아직 공개되지
+  않았습니다. 주문하기 전에 SiMa.ai 담당자에게 문의하십시오.
+- e-con Systems는 IMX568 카메라를 세 가지 구성으로 공급합니다. 표준 카메라,
+  e-con FPGA 보드가 있는 카메라, e-con KOBE1 FPGA 보드가 있는 카메라입니다.
+  구성마다 전용 오버레이가 있습니다. 사용 중인 구성에 맞는 오버레이를 사용하십시오.
+
+## 카메라 사양 {#specifications}
+
+카메라를 추가하면 해당 사양을 볼 수 있습니다. 카메라를 4개까지 추가해 나란히 비교할 수
+있으며, ×로 제거할 수 있습니다. 센서 모드는 릴리스 2.1.3의 드라이버가 각 카메라에 대해
+설정하는 모드이며, 스케일링 이전의 값입니다.
+
+<CameraSpecs />
+
+## 카메라 연결 {#connect}
+
+1. 카메라를 연결하거나 분리하기 전에 보드의 전원을 끄십시오.
+2. 카메라를 캐리어 보드의 MIPI CSI-2 커넥터에 연결하십시오. Modalix DevKit에는
+   두 개가 있습니다.
+3. 사용한 포트를 기록해 두십시오. 오버레이 이름에 포트가 포함됩니다.
+4. [MIPI 카메라 인터페이스](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)에
+   설명된 대로 캐리어 보드, 카메라, 포트에 맞는 오버레이를 선택하십시오.
+
+이 페이지의 모든 오버레이는 MIPI 데이터 레인 두 개를 사용합니다.
+
+카메라의 커넥터는 캐리어 보드의 커넥터와 다른 경우가 많으므로 어댑터 케이블이
+필요할 수 있습니다. 각 카메라의 케이블 및 어댑터 부품 번호는 아직 공개되지 않았습니다.
+카메라 벤더 또는 SiMa.ai 담당자에게 문의하십시오. 레퍼런스 캐리어 보드의 커넥터는
+[캐리어 보드 브링업](../design/som-carrier.mdx)을 참조하십시오.
+
+## 캐리어 보드 및 포트 {#ports}
+
+릴리스 2.1.3에는 이 표의 각 조합에 대한 오버레이가 있습니다. 오버레이 파일
+이름은 `modalix-som-<carrier>-<camera>-<port>.dtbo`이며, 예를 들면
+`modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo`입니다.
+
+<CameraOverlays />
+
+- Modalix DevKit에는 기본적으로 Waveshare 캐리어 보드가 탑재되어 있으므로
+  Waveshare 열의 오버레이를 사용하십시오.
+- 포트의 숫자는 커넥터가 연결된 SoM의 MIPI CSI 인터페이스를 나타냅니다.
+  예를 들어 `1CAM`은 CSI1입니다. 숫자는 캐리어 보드마다 다릅니다.
+- `DUAL`은 하나의 오버레이로 Waveshare의 두 포트를 동일한 카메라 모델로
+  설정합니다.
+- 모델이 다른 카메라 두 대를 사용하려면 포트마다 오버레이를 하나씩 지정하십시오.
+  [여러 카메라 사용](../getting-started/standalone-mode/mipi-camera-interfaces.mdx#multiple-cameras)을 참조하십시오.
+- 대시(—)는 해당 조합에 대한 오버레이가 없음을 의미합니다.
+- 캐리어 이름은 캐리어 보드의 벤더를 나타내며 보드 모델을 나타내지는 않습니다.
+  캐리어 보드를 비교하려면
+  [서드파티 캐리어 보드](../design/third-party-carriers.mdx)를 참조하십시오.
+
+오버레이는 보드의 활성 부트 디렉터리에 있습니다. 보드에 있는 오버레이를
+나열하려면 다음을 실행하십시오.
+
+```console
+sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
+```
+
+### 이전 릴리스의 오버레이 이름 {#earlier-releases}
+
+| 릴리스 | 카메라 오버레이 |
+| --- | --- |
+| 2.1.0 | `ARDU-IMX477`, `ECON-IMX568`, `ECON-IMX678`, `LI-AR0234`, `LI-OG05C10` |
+| 2.1.1 | `ECON-KOBE1-IMX568` 추가 |
+| 2.1.3 | `ECON-IMX568`을 `ECON-FPGA-IMX568`로 이름 변경, Waveshare 캐리어 보드의 표준 카메라용으로 새 `ECON-IMX568` 추가 |
+
+:::caution 릴리스 2.1.3에서 ECON-IMX568 오버레이가 변경되었습니다
+릴리스 2.1.0 및 2.1.1에서 `ECON-IMX568`은 e-con FPGA 보드가 있는 카메라용
+오버레이입니다. 릴리스 2.1.3부터 이 오버레이의 이름은 `ECON-FPGA-IMX568`이며,
+`ECON-IMX568`은 표준 카메라용 오버레이입니다. 업데이트한 후 U-Boot의 `dtbos`
+변수를 확인하십시오.
+:::
+
+## 센서 모드 {#sensor-modes}
+
+각 카메라의 센서 모드는 [카메라 사양](#specifications)에 나와 있습니다.
+
+- 카메라의 데이터시트에는 같은 센서의 다른 모드가 나와 있을 수 있습니다.
+  데이터시트에 나와 있다고 해서 해당 모드가 동작한다고 가정하지 마십시오.
+- 보드가 보고하는 모드가 기준입니다. 모드를 나열하려면
+  [MIPI 카메라 인터페이스](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)에
+  설명된 대로 `cam -c <camera> -I`를 실행하십시오.
+
+### ISP 출력 {#isp-output}
+
+애플리케이션은 센서의 원시 데이터가 아니라 ISP의 출력을 받습니다. 릴리스
+2.1.3에서 ISP 드라이버는 NV12, RGB24, BGRA32 형식으로 출력을 제공하며,
+센서 모드의 크기를 출력 크기로 보고합니다.
+
+ISP가 스케일링하여 출력하는 크기는 확인되지 않았습니다. Neat 애플리케이션에서
+다른 크기를 사용하려면
+[MIPI 카메라 사용](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)에
+설명된 대로 모델의 전처리에서 크기를 조정하십시오.
+
+카메라의 이미지 품질 튜닝은 별도의 작업입니다. [참고 자료](../reference/extra-docs.md)에 있는
+「Modalix 카메라 및 ISP 튜닝 가이드」를 참조하십시오. 이 가이드는 SiMa.ai 담당자를 통해 제공됩니다.
+
+튜닝의 범위와 가이드를 받는 방법은 [ISP 튜닝](./isp-tuning.mdx)을 참조하십시오.
+
+## 다음 단계
+
+- [MIPI 카메라 인터페이스](../getting-started/standalone-mode/mipi-camera-interfaces.mdx):
+  오버레이 선택 및 카메라 검증.
+- [MIPI 카메라 사용](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input):
+  Neat 애플리케이션에서 카메라 프레임 읽기.
+- [자체 카메라 통합](./custom-camera.mdx): 이 페이지에 없는 카메라.
+- [캐리어 보드 브링업](../design/som-carrier.mdx): 자체 캐리어 보드에서의
+  카메라.

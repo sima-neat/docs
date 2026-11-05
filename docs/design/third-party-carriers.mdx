@@ -1,0 +1,79 @@
+---
+title: Third-Party Carrier Boards
+description: Compare off-the-shelf carrier boards with the 260-pin SODIMM form factor that the Modalix SoM uses.
+sidebar_position: 5
+---
+
+import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierBoards';
+
+# Third-Party Carrier Boards
+
+The Modalix SoM uses the same 260-pin SODIMM form factor as the NVIDIA Jetson
+Orin NX and Orin Nano, so a carrier board built for those modules can be a
+starting point for your product or a reference for your own design. This page
+compares the interfaces on eight of them.
+
+:::warning Form factor is not validation
+SiMa.ai has brought up the Modalix SoM on the Waveshare board, the Connect Tech
+Boson-22, and the Seeed Studio reComputer J401. The other boards are listed for
+their form factor and have not been tested with the Modalix SoM. Verify electrical pin compatibility between the SoM and the carrier
+board before connecting them, and expect to adapt the device tree. See
+[Carrier Board Bring-up](./som-carrier.mdx).
+:::
+
+## How to Read the Specifications
+
+- The values are what each vendor lists for its board. Check the vendor's
+  current documentation before you buy, because board revisions change.
+- A dash (—) in the comparison, or an item missing from a board's
+  specifications, means that this page has no value for that item. It does not
+  mean that the board lacks the interface.
+- A connector on the carrier board does not mean that the interface works with
+  the Modalix SoM. Which interfaces work depends on what the SoM routes to the
+  connector and on the device tree. See
+  [Carrier Board Bring-up](./som-carrier.mdx) and
+  [Low-Speed I/O](../interfaces/low-speed-io.mdx).
+- The **Modalix SoM** column shows what the SoM supports for each interface.
+  *Supported* means that the SoM brings the interface out to its connector.
+  *Carrier-dependent* means that the interface may need configuration or
+  software changes for your board. *Not supported* means that the interface
+  does not work with the Modalix SoM, whatever the carrier board provides.
+  *Not confirmed* means that this page has no information.
+
+## Available Boards
+
+Select a board name to view its specifications. The ordering column gives the
+vendor's part number, where this page has one, and the vendor's product page.
+
+The boards are the Waveshare JETSON-ORIN-IO-BASE-H, AVerMedia D131L, Auvidea JNX40S, Connect Tech Boson-22, D3 Embedded DesignCore Jetson Orin NX 8-Camera GMSL2 Carrier Board, Diamond Systems JAX-BB01 (Jackson), Leopard Imaging LI-ONX-CB-4CAM-FP, and Seeed Studio reComputer J401.
+
+<CarrierBoardList />
+
+The Waveshare board is the reference carrier board. Its full component list is
+in [Carrier Board Bring-up](./som-carrier.mdx).
+
+:::caution Check the supported modules
+Leopard Imaging lists the LI-ONX-CB-4CAM-FP for the Jetson Orin NX only, and
+warns that it can damage a Jetson Orin Nano module. Ask the vendor before you
+connect a Modalix SoM to it.
+:::
+
+## Board Specifications
+
+Add a board to view its specifications. Add up to four boards to compare them
+side by side, and use × to remove one.
+
+<CarrierBoardSpecs />
+
+The Modalix SoM Rev 2 brings out four MIPI CSI interfaces with 2 lanes each.
+It does not support a 4-lane MIPI CSI connection, because two independent
+2-lane controller paths cannot be combined into a single 4-lane path.
+Camera support also depends on the sensor driver and overlay. See
+[MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx).
+
+## Next Steps
+
+- [Carrier Board Bring-up](./som-carrier.mdx): the reference carrier board, and
+  what needs software adaptation.
+- [Carrier Board Design](./carrier-board.md): the collateral and steps for
+  designing your own carrier board.

@@ -6,14 +6,10 @@
   --ifm-color-primary-light: #6aa5e2;
   --ifm-color-primary-lighter: #7cb1e7;
   --ifm-color-primary-lightest: #9cc6ef;
-  --ifm-font-family-base: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --ifm-font-family-base: "Roboto", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ifm-font-family-monospace: "IBM Plex Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --ifm-heading-font-family: var(--ifm-font-family-base);
   --docs-subnav-height: 3.25rem;
-}
-
-html[data-theme='dark'] {
-  --ifm-color-primary: #8fc0f0;
 }
 
 .navbar {
@@ -35,7 +31,7 @@ html[data-theme='dark'] {
   }
 
   html.developer-center-shell-active #__docusaurus {
-    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height));
+    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 0.75rem);
   }
 
   html.developer-center-shell-active .theme-doc-sidebar-container {
@@ -49,8 +45,8 @@ html[data-theme='dark'] {
 
   html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 0.75rem) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 0.75rem) !important;
   }
 
   /* Offset the right-side "On this page" table of contents below the bar. */
@@ -284,7 +280,8 @@ html[data-theme='dark'] {
   }
 
   html.dc-mobile-search-open #developer-center-shell-root .navbar__items:not(.navbar__items--right),
-  html.dc-mobile-search-open #developer-center-shell-root .color-mode-toggle {
+  html.dc-mobile-search-open #developer-center-shell-root .color-mode-toggle,
+  html.dc-mobile-search-open #developer-center-shell-root .developer-center-language {
     display: none !important;
   }
 
@@ -831,4 +828,51 @@ html[data-theme='dark'] .cookie-consent__toggle {
   .devkit-card img {
     width: 80%;
   }
+}
+
+/* Figure layouts for hardware documentation.
+   Board photos pair naturally (top/bottom of the same board), so they sit
+   side by side and collapse to one column on narrow viewports. Diagrams and
+   photos are exported on white, so each figure carries its own white plate —
+   without it they float oddly against the dark theme. */
+.figure-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 1.4rem 0;
+}
+
+.doc-figure {
+  margin: 1.4rem 0;
+  border: 1px solid rgba(28, 47, 58, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.figure-grid .doc-figure {
+  margin: 0;
+}
+
+.doc-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 12px 12px 0;
+  background: #fff;
+}
+
+.doc-figure figcaption {
+  padding: 10px 14px 12px;
+  background: #fff;
+  color: #4a5b66;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* A wide schematic needs the full column and room to breathe. */
+.doc-figure--wide img {
+  padding: 16px 16px 0;
 }

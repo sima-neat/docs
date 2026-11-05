@@ -1,0 +1,53 @@
+---
+title: Modalix DevKit のインターフェース対応状況
+description: プラットフォームリリースが対応している Modalix DevKit のインターフェースと、それぞれのコネクター、SoM の信号、デバイスツリー。
+sidebar_position: 2
+---
+
+import {BoardSupportTable} from '@site/src/components/BoardSupport';
+
+# Modalix DevKit のインターフェース対応状況
+
+このページでは、Modalix DevKit のインターフェースを一覧で示します。各インターフェースについて、
+ボード上のコネクター、その元になる Modalix SoM の信号、プラットフォームリリース 2.1.3 の
+デバイスツリーでの扱いを示します。DevKit は Waveshare キャリアボードに Modalix SoM を
+搭載したものであるため、この表はその組み合わせにのみ当てはまります。
+
+:::caution[ハードウェアでは未検証]
+このページは、プラットフォームリリース 2.1.3 のカーネルソースと、このサイトのほかのページを
+もとに作成しています。ハードウェアでのテスト結果が記録されている行は、まだありません。
+:::
+
+## インターフェース {#interfaces}
+
+この表では、シリアルコンソール、Gigabit Ethernet、USB、HDMI、NVMe ストレージ、
+MIPI CSI-2 カメラ、I2C、GPIO、SPI、I2S オーディオ、Bluetooth、eMMC、リアルタイムクロック、
+CAN を扱います。ガイドがあるインターフェースは、名前がそのガイドへのリンクになっています。
+
+<BoardSupportTable />
+
+## ステータスの見方 {#status}
+
+- **対応**：このボードでは、リリースがそのインターフェースを提供しています。SoM の
+  デバイスツリーで有効になっているか、部品が SoM 上にあり設定が不要です。
+- **オーバーレイが必要**：ハードウェアはありますが、リリースのデバイスツリーでは
+  有効になっていません。[デバイスツリーとオーバーレイ](../software/device-tree.mdx)の説明に従って、
+  デバイスツリーオーバーレイを追加してください。
+- **非対応**：そのインターフェースは Modalix SoM では動作しません。
+- **未確認**：このページには情報がありません。
+
+## ほかのボード {#other-boards}
+
+SoM の信号はどのキャリアボードでも同じですが、コネクターとオーバーレイは異なります。
+ほかのキャリアボードについては、
+[サードパーティー製キャリアボード](../design/third-party-carriers.mdx)と
+[キャリアボードの立ち上げ](../design/som-carrier.mdx)から始めてください。
+
+## 次のステップ
+
+- [低速 I/O](../interfaces/low-speed-io.mdx)：GPIO、UART、I2C、SPI の
+  ピン割り当てとデバイスツリーの例。
+- [対応 MIPI カメラ](../interfaces/supported-cameras.mdx)：DevKit のポート用の
+  カメラオーバーレイ。
+- [BSP をソースからビルドする](../software/build-from-source.mdx)：オーバーレイの
+  ビルドとインストール。

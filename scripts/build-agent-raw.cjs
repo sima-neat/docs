@@ -41,7 +41,7 @@ const llms = [
   '# SiMa.ai Developer Documentation',
   '',
   '> One-shot onboarding for AI agents: install sima-cli, authenticate, install the',
-  '> Palette Neat SDK and Model Compiler, connect a Modalix DevKit, compile a model,',
+  '> Palette SDK and Model Compiler, connect a Modalix DevKit, compile a model,',
   '> and build and run NEAT applications including GenAI.',
   '',
   `Canonical raw guide: ${siteUrl}/agents.md`,

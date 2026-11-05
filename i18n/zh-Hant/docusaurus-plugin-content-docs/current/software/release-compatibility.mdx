@@ -1,0 +1,32 @@
+---
+title: 版本相容性
+description: 每個 Modalix 平台版本所對應的 Linux 核心與 U-Boot 原始碼 commit。
+sidebar_position: 3
+---
+
+# 版本相容性
+
+每個 Modalix 平台版本都是由公開的核心與 U-Boot 儲存庫中的某一個 commit 建置而成。若要重新建置與電路板上映像檔相符的元件，請在建置前先 check out 該版本對應的 commit。請參閱[從原始碼建置 BSP](./build-from-source.mdx)。
+
+## 各版本的核心與 U-Boot
+
+| 平台版本 | 核心版本 | 核心 commit | U-Boot commit |
+| --- | --- | --- | --- |
+| 2.1.3 | 6.18.3 | [`65aba29989da`](https://github.com/SiMa-ai/simaai-linux/commit/65aba29989da02d7612da5484dbbcd50643fdd60) | [`5a026adbe2a5`](https://github.com/SiMa-ai/sima-ai-uboot/commit/5a026adbe2a54aeaae5dc50e1852d4b5c1884640) |
+| 2.1.1 | 6.18.3 | [`75cf83206ddf`](https://github.com/SiMa-ai/simaai-linux/commit/75cf83206ddf82d4c94f9eaf037c30fbe2e5bcef) | [`ae825aa3b679`](https://github.com/SiMa-ai/sima-ai-uboot/commit/ae825aa3b679389672e7b5b6f5e7a75f55330e1d) |
+| 2.1.0 | 6.18.3 | [`694f7f2bd658`](https://github.com/SiMa-ai/simaai-linux/commit/694f7f2bd658297bd3f3e31e507d63eed4849189) | [`96c6ccab6a56`](https://github.com/SiMa-ai/sima-ai-uboot/commit/96c6ccab6a567398323a4239a5d837b5a44b5788) |
+| 2.0.0 | 6.1.22 | [`e92918061c54`](https://github.com/SiMa-ai/simaai-linux/commit/e92918061c54726431a00c60d3d9fff2ddce27f2) | [`93961411fa44`](https://github.com/SiMa-ai/sima-ai-uboot/commit/93961411fa44a5b90dca02eb55fd87d33043ad2a) |
+
+2.1.0 這一列的核心 commit 指向的是發行 commit [`11591e638c71`](https://github.com/SiMa-ai/simaai-linux/commit/11591e638c7144fbc97b736de6aa209bab190a5c) 之後的建置修正 commit。
+
+## 如何解讀此表
+
+- 這些儲存庫沒有版本標籤。每個版本都是 `master` 上的單一 commit，標題為 `SiMa.AI Release <version>`。
+- `master` 永遠是最新版本。若為執行較舊版本的電路板建置它，所得到的核心或開機載入程式會與該電路板的根檔案系統及模組不相符。
+- 在執行中的電路板上，可使用 `cat /etc/buildinfo` 查詢版本。
+
+若要 check out 某個版本：
+
+```console
+root@sdk:/data/simaai-linux$ git checkout 65aba29989da
+```

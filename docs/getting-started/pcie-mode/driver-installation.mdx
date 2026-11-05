@@ -4,6 +4,8 @@ description: Install Modalix PCIe Card drivers and verify PCIe discovery.
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
@@ -69,7 +71,7 @@ C:\Users\sima> sima-cli install drivers/windows
 
 Check the Windows device manager for the SiMa AI device.
 
-<img src="/img/devkit/windows-device.jpg" alt="Windows device manager showing SiMa AI device" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+<img src={useBaseUrl('/img/devkit/windows-device.jpg')} alt="Windows device manager showing SiMa AI device" style={{width: '80%', display: 'block', margin: '0 auto'}} />
 
 :::note
 After driver installation, power cycle the host machine before validation.

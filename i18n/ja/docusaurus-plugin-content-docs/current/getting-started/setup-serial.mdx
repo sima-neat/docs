@@ -1,0 +1,121 @@
+---
+title: シリアル接続を設定します。
+description: シリアルコンソールを介して、開発ホストをModalix DevKitに接続します。
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# シリアル接続を設定します。
+
+起動時に、スタンドアロンモードまたはPCIeモードのいずれを使用する場合でも、DevKitのシリアルインターフェースに接続してください。
+
+スタンドアロンモードでは、シリアルアクセスを使用することで、ネットワークへのアクセスが利用できない場合や、ネットワーク設定が正しくない場合でも、DevKitの構成、監視、および復旧を行うことができます。
+
+PCIeモードでは、シリアルインターフェースを使用すると、起動時にPCIeカードのシェルやデバッグコンソールに直接アクセスできます。ホストドライバーまたはPCIeリンクが完全に機能する前に、低レベルの制御やトラブルシューティングに使用してください。
+
+シリアルアクセスは主に開発および初期設定に使用されます。デプロイ後、通常、通常の運用にはシリアル接続は必要ありません。
+
+ハードウェアに最適なケーブル構成を選択し、次にコンピューターで使用するシリアルターミナルの方法を選択してください。
+
+## ハードウェアのセットアップ
+
+シリアルケーブルの接続を確認するには、使用しているボードを選択してください。
+
+<Tabs groupId="board">
+<TabItem value="modalix-devkit" label="Modalix DevKit" default>
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="Modalix DevKit のコネクタ" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit コネクタ</figcaption>
+</figure>
+
+付属のシリアルケーブルを使用して、DevKitをコンピューターに接続してください。
+
+- **DevKitの接続:** 付属のUSB-A - USB-Cケーブルを使用して、エンクロージャーにラベル表示されている**UART**ポートにDevKitを接続してください。
+- **コンピューター側:** **USB Type-A**ポートに接続します。必要に応じてUSBハブを使用してください。
+
+</TabItem>
+<TabItem value="modalix-ea-kit" label="Modalix EA Kit">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-ea-kit-interfaces.png')} alt="Modalix Early Access Kit のコネクタ" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix早期アクセスキットコネクター</figcaption>
+</figure>
+
+付属のシリアルケーブルを使用して、DevKitをコンピューターに接続してください。
+
+- **DevKitの接続:** フラットコネクタ上の三角形のマークが、DevKitの最も右側のピンと一致するように接続してください。
+- **コンピューター側:** **USB Type-A**ポートに接続します。必要に応じてUSBハブを使用してください。
+
+</TabItem>
+<TabItem value="modalix-pcie-card" label="Modalix PCIe Card">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-ea-pcie-interfaces.jpg')} alt="Modalix PCIe Card のコネクタ" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix PCIeカードコネクタ</figcaption>
+</figure>
+
+付属のシリアルケーブルを使用して、カードをホストに接続してください。
+
+- **カードの接続:** 上の画像に示すように、付属のUSB-A - UARTケーブルを使用して、カードの**ARM UART**ポートに接続します。
+- **ホスト側：** **USB Type-A**ポートに接続します。必要に応じてUSBハブを使用してください。
+
+</TabItem>
+</Tabs>
+
+## シリアルターミナルを開く
+
+<Tabs>
+<TabItem value="mac-linux" label="macOS & Linux" default>
+
+:::note
+続行する前に、`sima-cli`をインストールまたはアップグレードしてください。このガイドは、最新の`sima-cli`バージョンで使用することを目的としています。
+:::
+
+macOSまたはLinuxでシリアルポートに接続するには、`sima-cli serial`を使用してください。
+
+```console
+sima-cli serial
+```
+
+このコマンドは、シリアルポートにアクセスするために必要な依存関係をインストールします。シリアルターミナルを終了するには、Ctrl + A を押し、次に Ctrl + X を押します。
+
+一部の古いファームウェアバージョンでは、システムがシリアルコンソールに対して異なるボーレートを使用する場合があります。ターミナルに文字化けした出力が表示される場合は、ボーレートが一致していないことが原因である可能性があります。より高いボーレートを指定してみてください。
+
+```console
+sima-cli serial -b 921600
+```
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+**Windows**からDevKitに接続するには、次の手順に従ってください。
+
+1. COMポートを特定してください：
+   - **デバイスマネージャー**を開き、**ポート（COM & LPT）**を展開します。
+   - 「USBシリアルポート（COMx）」という項目を探してください。
+
+2. シリアルターミナルをインストールして開きます。
+   - 「[PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html)」または「Tera Term」を使用してください。
+   - 接続タイプを「シリアル」に設定します。
+   - 正しい**COMポート**を入力してください（例：`COM3`）。
+   - **ボーレート**を`115200`に設定します。
+
+3. 接続を開始するには、**「開く」**をクリックしてください。
+
+</TabItem>
+<TabItem value="web-serial" label="Web Serial Console">
+
+**Web Serial Console** は、ローカルでのインストールを必要としない、ブラウザベースの代替手段です。Chromium ブラウザで開き、USB 経由で DevKit に接続し、シリアルコンソールに接続します。
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">Webシリアルコンソールを起動します</a>
+
+コマンドパレットのリファレンス、複数デバイスのサポート、およびトラブルシューティングについては、<p style={{marginTop: '1.75rem'}}>完全な<a href="/hardware/tools/web-serial-console">Web Serial Console</a>ページをご覧ください。</p>
+
+</TabItem>
+</Tabs>
+
+シリアルコンソールでログインを促されたら、デフォルトの**ユーザー名** `sima` と **パスワード** `edgeai` を使用してください。

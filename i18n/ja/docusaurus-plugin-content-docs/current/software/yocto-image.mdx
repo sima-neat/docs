@@ -1,0 +1,152 @@
+---
+title: Yocto で完全なイメージをビルドする
+description: 公開されている Yocto レイヤーを使用して、Modalix の完全なイメージをソースからビルドし、書き込むファイルを確認します。
+sidebar_position: 5
+---
+
+# Yocto で完全なイメージをビルドする
+
+公開されている Yocto レイヤー [meta-simaai](https://github.com/SiMa-ai/meta-simaai) を使用すると、
+Modalix ボード用の完全なイメージをソースからビルドできます。1 回のビルドで、U-Boot、カーネル、
+デバイスツリーとオーバーレイ、SiMa.ai のファームウェア、最小構成のルートファイルシステムが、
+書き込み可能な 1 つのファイルとして生成されます。イメージ全体を自分で作成する必要がある場合に
+使用してください。すでに起動するボードでカーネルやデバイスツリーを変更する場合は、
+[BSP をソースからビルドする](./build-from-source.mdx)
+のほうが早く済みます。
+
+:::caution[ハードウェアでは未検証]
+このページのビルドは、2026-10-06 に Ubuntu 22.04 のコンテナー内で、リリース 2.1.3 のコミットの
+レイヤーを使って 1 回実行しました。生成されたイメージは、ボードへの書き込みも起動も行っていません。
+:::
+
+:::note
+独自のソースから完全な eLxr イメージをビルドする方法は、まだ文書化されていません。
+ボードの立ち上げには、引き続き eLxr を推奨します。
+[eLxr と Yocto](./index.md#elxr-or-yocto) を参照してください。
+:::
+
+## 始める前に {#before-you-start}
+
+- Linux のビルドホストを使用します。レイヤーのマニュアルでは Ubuntu 22.04 を推奨しており、
+  Yocto Project は WSL をサポートしていないとされています。
+- レシピは、SiMa.ai のカーネルと U-Boot のソースを SSH の URL で GitHub から取得します。
+  ビルドホストに GitHub の SSH 鍵を設定するか、これらの URL に HTTPS を使うよう Git を
+  設定します。
+
+  ```console
+  sima-user@sima-user-machine:~$ git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
+  sima-user@sima-user-machine:~$ git config --global --add url."https://github.com/".insteadOf "git@github.com:"
+  ```
+
+- Yocto Project が Ubuntu 向けに挙げている
+  [ビルドホスト用パッケージ](https://docs.yoctoproject.org/5.0/ref-manual/system-requirements.html#required-packages-for-the-build-host)
+  をインストールし、`en_US.UTF-8` ロケールを使用できるようにします。そのうえで、レイヤーの
+  マニュアルが追加で挙げているパッケージをインストールします。
+
+  ```console
+  sima-user@sima-user-machine:~$ sudo apt-get install chrpath diffstat g++ gawk make liblz4-tool cmake python3 python3-distutils libncurses5 git gfortran
+  sima-user@sima-user-machine:~$ sudo dpkg --add-architecture i386
+  sima-user@sima-user-machine:~$ sudo apt update
+  sima-user@sima-user-machine:~$ sudo apt install libc6:i386
+  ```
+
+## レイヤーを取得する {#layers}
+
+このビルドでは、Yocto Project の `scarthgap` リリースを使用します。次のレイヤーを
+1 つのディレクトリにクローンします。
+
+- `poky`
+- `meta-openembedded`
+- `meta-arm`
+- `meta-clang` および `meta-clang-revival`
+- `meta-python-ai`
+- `meta-swupdate`
+- `meta-simaai`
+
+これらのディレクトリ名は変更せず、同じ階層に並べて配置してください。テンプレートは、
+ビルドディレクトリの隣にあるパスで各レイヤーを参照します。
+
+各レイヤーのリポジトリと正確なリビジョンは、レイヤー内の
+[ビルドマニュアル](https://github.com/SiMa-ai/meta-simaai/blob/master/documentation/build-manual.rst)
+に記載されています。そのリビジョンを使用してください。SiMa.ai のレイヤーを取得するには、次のようにします。
+
+```console
+sima-user@sima-user-machine:~$ git clone https://github.com/SiMa-ai/meta-simaai.git
+```
+
+## ビルドを設定する {#setup}
+
+このレイヤーには、レイヤーの一覧とビルド構成を設定するテンプレートがあります。
+レイヤーを置いたディレクトリで、次を実行します。
+
+```console
+sima-user@sima-user-machine:~$ export TEMPLATECONF=$PWD/meta-simaai/conf/templates/custom
+sima-user@sima-user-machine:~$ source poky/oe-init-build-env
+sima-user@sima-user-machine:~/build$ bitbake-layers show-layers
+```
+
+最後のコマンドは、ビルドで使用するレイヤーを一覧表示します。`meta-simaai` が
+一覧に含まれていることを確認してください。
+
+:::warning[これは開発用イメージです]
+レイヤーのビルドテンプレートは、開発向けのイメージを作成する `debug-tweaks` イメージ機能を有効にします。
+また、イメージには `root` ユーザーと `sima` ユーザーの既定のパスワードが設定されています。
+製品を出荷する前に、`conf/local.conf` の `EXTRA_IMAGE_FEATURES` から `debug-tweaks` を削除し、
+独自のパスワードを設定してください。
+:::
+
+## イメージをビルドする {#build}
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal
+```
+
+テンプレートの既定値は別のボードであるため、コマンドラインで `MACHINE=modalix` を
+指定します。このイメージには、SiMa.ai のファームウェア、カーネルモジュール、OpenSSH、
+swupdate を含む最小構成のルートファイルシステムが含まれます。
+
+マシン設定が `commercial` ライセンスフラグを受け入れているため、ビルドは確認を求めずに
+SiMa.ai のファームウェアを含めます。イメージを配布する前に、
+[`licenses/SiMaai-EULA-1.0`](https://github.com/SiMa-ai/meta-simaai/blob/master/licenses/SiMaai-EULA-1.0)
+のライセンスを読んでください。
+
+20 コアのマシンで 12 個のビルドスレッドを使った初回ビルドは、約 35 分かかり、約 70 GB の
+ディスク容量を使用しました。
+
+## 出力を確認する {#output}
+
+ビルドの出力は、ビルドディレクトリ内の `tmp/deploy/images/modalix` に書き込まれます。
+
+| ファイル | 用途 |
+| --- | --- |
+| `simaai-image-minimal-modalix.rootfs.wic.gz` および `.wic.bmap` | 完全な eMMC イメージとそのブロックマップ。これらを書き込みます。 |
+| `simaai-image-minimal-modalix.rootfs.ext4.gz` | ルートファイルシステムのみ |
+| `simaai-image-minimal-modalix.rootfs.cpio.gz` | ネットワークから起動するための、初期 RAM ディスク形式のルートファイルシステム |
+| `Image`、`u-boot.bin`、`.dtb`、`overlays/*.dtbo` | カーネル、U-Boot、デバイスツリー、オーバーレイ |
+
+## パーティション構成 {#partitions}
+
+eMMC イメージには、GPT パーティションテーブルに次のパーティションがあります。
+
+| パーティション | サイズ | 内容 |
+| --- | --- | --- |
+| `u-boot0` および `u-boot1` | 各 2 MB | U-Boot（2 つのコピー） |
+| `boot` | 512 MB、FAT | `boot-0` および `boot-1` ディレクトリ。それぞれにカーネル、デバイスツリー、オーバーレイが含まれます |
+| `platform0` および `platform1` | 各 2 GB、ext4 | ルートファイルシステム（2 つのコピー） |
+| `userdata` | 約 10 GB、ext4 | ユーザーデータ |
+
+## イメージを書き込む {#flash}
+
+[イメージを eMMC に書き込む](../deployment/flash-image.mdx)の説明に従って、
+`.wic.gz` ファイルを `.wic.bmap` ファイルとともにボードの eMMC に書き込みます。
+
+## 次のステップ
+
+- [イメージを eMMC に書き込む](../deployment/flash-image.mdx)：ネットワークまたは SD カードから
+  ボードを起動し、イメージを書き込みます。
+- [アップデートパッケージのビルドと適用](../deployment/update-package.mdx)：eMMC 全体を
+  書き直さずにボードを更新します。
+- [ボードサポートパッケージ](./index.md)：ソースと、eLxr と Yocto の
+  比較。
+- [リリースの互換性](./release-compatibility.mdx)：各プラットフォームリリースの基になっている
+  カーネルと U-Boot のコミット。

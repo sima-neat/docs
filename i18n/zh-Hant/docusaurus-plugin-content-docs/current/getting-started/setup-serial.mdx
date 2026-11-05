@@ -1,0 +1,121 @@
+---
+title: 設定序列埠連線
+description: 透過序列主控台將開發主機連接至 Modalix 開發套件。
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# 設定序列埠連線
+
+在啟動過程中，無論您使用獨立模式還是 PCIe 模式，都請連接到 DevKit 的序列埠介面。
+
+在獨立模式下，序列存取功能可讓您配置、監控和恢復 DevKit，即使在無法使用網路或網路配置錯誤時也能進行操作。
+
+在 PCIe 模式下，序列介面可讓您在系統啟動時直接存取 PCIe 卡外殼和除錯主控台。請在主機驅動程式或 PCIe 連線完全運作之前，使用它進行低階控制和疑難排解。
+
+序列存取主要用於開發和啟動階段。部署完成後，正常運作通常不需要序列連接。
+
+為您的硬體選擇電纜配置，然後為您的電腦選擇序列終端方法。
+
+## 硬體設定
+
+選擇您的板卡以查看序列埠纜線連接。
+
+<Tabs groupId="board">
+<TabItem value="modalix-devkit" label="Modalix DevKit" default>
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="Modalix DevKit 連接器" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}> Modalix DevKit 連接器 </figcaption>
+</figure>
+
+使用隨附的序列埠線將開發套件連接到您的電腦：
+
+- **DevKit 連接結束：** 使用提供的 USB-A 轉 USB-C 連接線，連接到 DevKit 上的 **UART** 連接埠，如外殼上的標籤所示。
+- **電腦端：** 連接至 **USB Type-A** 連接埠。如有需要，請使用 USB 集線器。
+
+</TabItem>
+<TabItem value="modalix-ea-kit" label="Modalix EA Kit">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-ea-kit-interfaces.png')} alt="Modalix Early Access Kit 連接器" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}> Modalix 早期版本套件連接器 </figcaption>
+</figure>
+
+使用隨附的序列埠線將開發套件連接到您的電腦：
+
+- **DevKit 端：** 確保扁平連接器上的三角形標記與 DevKit 上的最右側引腳對齊。
+- **電腦端：** 連接至 **USB Type-A** 連接埠。如有需要，請使用 USB 集線器。
+
+</TabItem>
+<TabItem value="modalix-pcie-card" label="Modalix PCIe Card">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-ea-pcie-interfaces.jpg')} alt="Modalix PCIe Card 連接器" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}> Modalix PCIe 卡連接器 </figcaption>
+</figure>
+
+使用隨附的序列埠線將卡連接到您的主機：
+
+- **卡片端：** 使用提供的 USB-A 轉 UART 連接線連接到卡片的 **ARM UART** 端口，如上圖所示。
+- **主機端：** 連接至 **USB Type-A** 連接埠。如有需要，請使用 USB 集線器。
+
+</TabItem>
+</Tabs>
+
+## 開啟一個序列終端機
+
+<Tabs>
+<TabItem value="mac-linux" label="macOS & Linux" default>
+
+:::note
+請先安裝或升級 `sima-cli`，再繼續操作。本指南適用於最新版本的 `sima-cli`。
+:::
+
+在 macOS 或 Linux 上，使用 `sima-cli serial` 連接到序列埠。
+
+```console
+sima-cli serial
+```
+
+此指令會安裝存取序列埠所需的相依性。若要離開序列終端機，請按下 Ctrl + A，然後按下 Ctrl + X。
+
+在某些較早的韌體版本中，系統可能使用不同的波特率來進行序列控制台通訊。如果您在終端中看到亂碼輸出，很可能是由於波特率不匹配所致。請嘗試指定更高的波特率：
+
+```console
+sima-cli serial -b 921600
+```
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+若要從 **Windows** 連接到 DevKit，請遵循以下步驟：
+
+1. 識別 COM 埠：
+   - 開啟「裝置管理員」，然後展開「埠（COM 與 LPT）」。
+   - 尋找類似於「**USB 序列埠 (COMx)**」的條目。
+
+2. 安裝並開啟一個序列終端：
+   - 使用 [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) 或 **Tera Term**。
+   - 將連線類型設定為「序列」。
+   - 請輸入正確的 **COM 埠**（例如：`COM3`）。
+   - 將「波特率」設定為 `115200`。
+
+3. 點擊「**開啟**」以啟動連線。
+
+</TabItem>
+<TabItem value="web-serial" label="Web Serial Console">
+
+**網頁序列埠控制台**是一個基於瀏覽器的替代方案，無需本地安裝。在 Chromium 瀏覽器中開啟它，透過 USB 連接 DevKit，然後連接到序列埠控制台。
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">啟動網頁序列埠控制台</a>
+
+<p style={{marginTop: '1.75rem'}}>請參閱完整的 <a href="/hardware/tools/web-serial-console">網頁序列埠控制台</a> 頁面，以取得命令選單參考、多裝置支援及疑難排解資訊。</p>
+
+</TabItem>
+</Tabs>
+
+當序列控制台提示您登入時，請使用預設的**使用者名稱** `sima` 和**密碼** `edgeai`。

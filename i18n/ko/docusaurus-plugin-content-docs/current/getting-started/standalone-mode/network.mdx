@@ -1,0 +1,159 @@
+---
+title: 네트워크 설정
+description: 독립 모드에서 Modalix DevKit 네트워킹을 구성합니다.
+sidebar_position: 1
+---
+
+# 네트워크 설정
+
+Modalix DevKit을 네트워크에 연결하거나 호스트 컴퓨터에 직접 연결합니다. 기본적으로 DevKit은 DHCP를 사용하여 IP 주소를 가져옵니다.
+
+:::tip 직렬 액세스를 계속 사용할 수 있도록 하십시오.
+[직렬 연결](/hardware/getting-started/setup-serial)을 사용하면 네트워크를 통해 연결할 수 없을 때 IP 주소를 확인하고 네트워크 설정을 수정할 수 있습니다.
+:::
+
+## 1. DevKit을 연결합니다.
+
+설정에 맞는 연결 방식을 선택하세요.
+
+- **DHCP를 사용하는 네트워크:** DevKit을 라우터 또는 네트워크 스위치에 연결합니다. 그러면 자동으로 IP 주소를 할당받습니다.
+- **호스트에 직접 연결:** DevKit의 이더넷 포트를 호스트에 연결합니다. 필요한 경우 USB-to-이더넷 어댑터를 사용합니다. 펌웨어 3.0에서는 일반적으로 고정 IP 주소를 설정하지 않고도 연결할 수 있습니다. 자세한 내용은 아래 팁을 참조하십시오.
+- **호스트를 통해 인터넷에 접속:** DevKit을 호스트에 연결하고 인터넷 공유를 활성화합니다. [호스트의 인터넷 연결을 공유합니다.](#share-the-hosts-internet-connection)을 참조하십시오.
+
+:::tip 펌웨어 3.0에서 직접 연결 기능 사용
+부팅 시 DHCP 서버를 사용할 수 없는 경우, 펌웨어 3.0은 DevKit에 `169.254.x.x` 범위(`169.254.0.0/16`) 내의 링크 로컬 주소를 할당합니다.
+
+DHCP를 사용하는 직접 연결된 호스트는 일반적으로 IPv4 링크 로컬 폴백이 활성화된 경우 동일한 범위 내에서 자체 주소를 할당합니다. 그러면 호스트와 DevKit는 정적 IP 구성 없이 통신할 수 있습니다.
+
+이 연결은 로컬 액세스만 제공합니다. 인터넷 액세스를 위해서는 인터넷 액세스가 가능한 네트워크를 사용하거나 호스트의 인터넷 공유 기능을 활성화하십시오.
+:::
+
+:::tip 펌웨어 2.1.3에서 직접 연결 가능
+DHCP를 사용할 수 없는 경우, DevKit는 기본적으로 `192.168.1.20`로 설정됩니다. 로컬 네트워크를 통해 DevKit에 연결하려면 호스트의 연결된 이더넷 인터페이스를 동일한 서브넷의 다른 고정 주소(예: `192.168.1.10/24`)로 설정하십시오.
+:::
+
+## 2. DevKit의 IP 주소를 찾습니다. {#check-the-current-ip-address}
+
+DevKit가 펌웨어 3.0을 실행하는지 알고 있다면, 동일한 로컬 네트워크에서 **호스트**에서 다음 명령을 실행하세요.
+
+```console
+sima-user@sima-user-machine:~$ sima-cli device discover
+```
+
+이 명령어는 검색된 Modalix DevKit의 IP 주소를 출력합니다.
+
+다른 펌웨어 버전을 사용하거나, 장치 검색으로 DevKit을 찾을 수 없는 경우, 시리얼 콘솔을 열고 다음 명령을 DevKit에서 실행하십시오.
+
+```console
+modalix:~$ ip -4 addr
+```
+
+연결된 이더넷 인터페이스(예: `end0`)에서 `inet` 뒤에 있는 주소를 찾습니다. 예를 들어, `192.168.91.181/22`는 IP 주소가 `192.168.91.181`임을 의미합니다. 루프백 주소 `127.0.0.1`는 사용하지 마십시오.
+
+## 3. 연결 테스트
+
+다음 명령을 **호스트**에서 실행하고, `<devkit-ip>`를 찾은 주소로 바꿉니다.
+
+```console
+sima-user@sima-user-machine:~$ ping <devkit-ip>
+sima-user@sima-user-machine:~$ ssh sima@<devkit-ip>
+```
+
+:::tip 연결에 실패하면
+이더넷 케이블과 양쪽 장치의 IP 주소를 확인하세요. 직접 연결의 경우, 두 주소 모두 동일한 서브넷에 있어야 합니다. 호스트가 링크 로컬 폴백을 지원하지 않는 경우, 해당 기능을 활성화하거나 양쪽 장치에 고정 IP 주소를 설정하세요.
+
+시리얼 콘솔을 사용하여 DevKit의 네트워크 설정을 확인하거나 변경하세요.
+:::
+
+## DHCP 또는 고정 IP 설정을 변경합니다.
+
+다음 명령을 실행하여 네트워크 구성 메뉴를 엽니다. (**DevKit**에서 실행)
+
+```console
+modalix:~$ sima-cli network
+```
+
+메뉴를 사용하여 재부팅 없이 DHCP와 고정 IP 주소 간에 전환하십시오.
+
+### NetworkManager를 사용하여 구성
+
+`sima-cli`를 사용할 수 없는 경우, eLxr 2.1 이상 버전에서 아래 명령을 사용하십시오. 이 명령은 미리 구성된 `end0-dhcp` 및 `end0-static` 프로필을 사용합니다.
+
+DHCP를 활성화하려면:
+
+```console
+modalix:~$ sudo nmcli connection up end0-dhcp
+```
+
+고정 IP 주소를 설정하고 활성화하려면:
+
+```console
+modalix:~$ sudo nmcli connection modify end0-static ipv4.addresses 192.168.1.20/24
+modalix:~$ sudo nmcli connection up end0-static
+```
+
+`192.168.1.20/24`을 사용자의 설정에 맞는 주소 및 네트워크 접두사로 바꿉니다. 동일한 서브넷에서 다른 주소를 사용하여 호스트를 구성합니다.
+
+활성 연결 및 IP 주소를 확인하려면:
+
+```console
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ ip -4 addr
+```
+
+:::caution 네트워크 설정 변경
+IP 주소를 변경하면 SSH 세션이 끊길 수 있습니다. 직렬 콘솔을 사용하거나 새 주소로 다시 연결하세요.
+:::
+
+## 호스트의 인터넷 연결을 공유합니다. {#share-the-hosts-internet-connection}
+
+DevKit이 Ubuntu 호스트를 통해 인터넷에 접속해야 할 때 이 옵션을 사용하십시오.
+
+1. DevKit의 이더넷 포트를 호스트에 연결합니다. 호스트가 인터넷에 접속할 수 있는지 확인하십시오.
+2. 호스트에서 **설정 → 네트워크 → 유선**으로 이동하여 해당 이더넷 포트에 대한 연결을 생성하거나 편집합니다.
+3. **IPv4** 탭에서 **다른 컴퓨터와 공유**를 선택하고 변경 사항을 적용합니다.
+4. 연결을 껐다가 다시 켜서 설정을 적용하세요.
+5. DevKit이 DHCP를 사용하도록 설정한 다음, [해당 IP 주소를 찾습니다.](#check-the-current-ip-address)를 사용하여 IP 주소를 확인하고 연결을 테스트합니다.
+
+Ubuntu는 일반적으로 공유 네트워크에 대해 `10.42.0.0/24`를 사용합니다. 호스트는 다른 서브넷을 사용할 수 있습니다. 필요한 경우 `ip -4 addr`를 사용하여 호스트의 이더넷 주소를 확인한 다음 해당 서브넷을 스캔하십시오.
+
+```console
+sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24
+```
+
+디스커버리 또는 직렬 콘솔을 사용하여 DevKit에 해당하는 주소를 확인하세요.
+
+## 이전 펌웨어: U-Boot 네트워크 설정
+
+<details>
+<summary>펌웨어 2.0 버전 이하</summary>
+
+이 단계는 펌웨어 버전 2.0 이하에만 적용됩니다. 펌웨어 버전 2.1 이상에서는 위에 제시된 Linux 명령을 사용하십시오. 이전 버전 관련 자세한 내용은 [v2.0.0 문서](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell)을 참조하십시오.
+
+1. [시리얼 터미널](/hardware/getting-started/setup-serial)을 통해 DevKit에 연결합니다.
+2. DevKit을 재부팅합니다. `Hit any key to stop autoboot` 메시지가 나타나면 키를 눌러 U-Boot로 들어갑니다.
+3. 고정 IP 설정을 활성화하려면 다음 명령을 실행하세요.
+
+   ```console
+   sima:~$ env set forcenetcfg static; saveenv
+   sima:~$ boot
+   ```
+
+   첫 번째 및 두 번째 이더넷 포트는 각각 `192.168.1.20` 및 `192.168.2.20`를 사용합니다.
+
+4. Linux가 시작된 후 고정 주소를 변경하려면 이 파일의 **네트워크** 섹션을 편집하세요.
+
+   ```console
+   modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
+   ```
+
+   이 파일은 펌웨어 버전 2.0 이하에서만 사용됩니다. 펌웨어 버전 2.1 이상에서는 NetworkManager 프로필을 사용합니다.
+
+5. 대신 DHCP를 활성화하려면 U-Boot에서 다음 명령을 실행하세요.
+
+   ```console
+   sima:~$ env set forcenetcfg dhcp; saveenv
+   sima:~$ boot
+   ```
+
+</details>

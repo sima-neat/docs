@@ -1,0 +1,100 @@
+---
+title: 업데이트 패키지 빌드 및 적용
+description: Yocto 레이어로 Modalix 이미지용 SWUpdate 패키지를 빌드하여 보드에 적용하는 방법과, 업데이트가 부팅되지 않을 때 보드가 되돌아가는 방식.
+sidebar_position: 3
+---
+
+# 업데이트 패키지 빌드 및 적용
+
+업데이트 패키지를 사용하면 eMMC 전체를 다시 기록하지 않고 보드의 소프트웨어를 교체할 수
+있습니다. Yocto 레이어는 이를 SWUpdate 패키지(`.swu` 파일)로 빌드합니다. 보드는 새
+소프트웨어를 현재 사용하지 않는 쪽 사본에 기록한 뒤 그쪽으로 전환하며, 새 소프트웨어가
+부팅되지 않으면 이전 루트 파일 시스템으로 되돌아갑니다. 이 페이지는
+[Yocto로 전체 이미지 빌드](../software/yocto-image.mdx)로 빌드한 이미지에 적용됩니다.
+
+:::caution[하드웨어에서 아직 검증되지 않음]
+이 페이지의 패키지는 2026-10-06에 릴리스 2.1.3 커밋의 레이어로 한 번 빌드했습니다.
+보드에 적용해 보지는 않았습니다.
+:::
+
+## 업데이트 동작 방식 {#how-it-works}
+
+eMMC에는 U-Boot, 부트 디렉터리, 루트 파일 시스템이 각각 두 벌씩 들어 있습니다.
+[파티션 구성](../software/yocto-image.mdx#partitions)을 참조하십시오. 업데이트는 다음을
+수행합니다.
+
+1. 새 루트 파일 시스템과 새 U-Boot를 사용하지 않는 쪽 사본에 기록합니다.
+2. 새 커널, 디바이스 트리, 오버레이를 사용하지 않는 쪽 부트 디렉터리(`boot-0` 또는
+   `boot-1`)에 복사합니다.
+3. 보드를 새 사본으로 전환하고, U-Boot 환경에서 `upgrade_available`을 `1`로,
+   `bootcount`를 `0`으로 설정한 다음 재부팅합니다.
+
+새 소프트웨어의 부팅 실패 횟수가 `bootlimit`에서 허용하는 값을 넘으면, U-Boot는
+이전 루트 파일 시스템으로 되돌리고 `upgrade_available`을 해제합니다.
+
+## 패키지 빌드 {#build}
+
+먼저 이미지를 빌드한 다음, 같은 빌드 디렉터리에서 패키지를 빌드하십시오.
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
+```
+
+패키지는 `simaai-image-minimal-upgrade-modalix.rootfs.swu`이며, 이미지와 함께 `tmp/deploy/images/modalix`에 생성됩니다. 내용은 다음과 같습니다.
+
+| 구성 요소 | 파일 |
+| --- | --- |
+| 루트 파일 시스템 | 이미지의 `.rootfs.ext4.gz` 파일 |
+| U-Boot | `u-boot.bin` 및 부트 스크립트 `boot.scr.uimg` |
+| 커널 | `Image` 및 `Image.enc` |
+| 디바이스 트리 및 오버레이 | 보드의 `.dtb` 파일과 모든 `.dtbo` 파일 |
+| 업데이트 설명 및 스크립트 | `sw-description` 및 `update_modalix.sh` |
+
+:::note
+공개 레이어에서 `sw-description`은 루트 파일 시스템으로
+`simaai-image-palette-modalix.rootfs.ext4.gz`를 지정하지만, 레시피는
+`simaai-image-minimal`의 루트 파일 시스템을 패키지에 넣습니다. 패키지를 빌드하기 전에
+두 이름을 일치시키십시오. 이름이 일치하지 않아도 빌드는 성공하며, 불일치는 보고되지
+않습니다.
+:::
+
+## 패키지 적용 {#apply}
+
+1. `.swu` 파일을 보드에 복사합니다.
+2. root로 `swupdate`를 실행합니다.
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-palette:1.0 -i /tmp/update.swu
+   ```
+
+   `-H` 뒤의 이름과 리비전은 `sw-description`의 항목과 일치해야 합니다.
+   공개 레이어에서는 `simaai-image-palette`와 `1.0`입니다. 업데이트가 끝나면
+   보드가 재부팅됩니다.
+
+3. 재부팅한 후 실행 중인 이미지의 빌드 버전을 확인합니다.
+
+   ```console
+   root@modalix:~# grep SIMA_BUILD_VERSION /etc/buildinfo
+   ```
+
+## 복구 {#recover}
+
+- 새 이미지가 부팅되지 않으면 [업데이트 동작 방식](#how-it-works)에서 설명한 대로
+  U-Boot가 스스로 이전 루트 파일 시스템으로 되돌아갑니다.
+- 두 사본 모두 부팅되지 않으면 전체 이미지를 다시 기록하십시오.
+  [eMMC에 이미지 플래싱](./flash-image.mdx)을 참조하십시오.
+
+## 다루지 않는 내용 {#not-covered}
+
+- eLxr 이미지용 업데이트 패키지.
+- 서명된 업데이트 패키지.
+- 부팅에 성공한 뒤 보드가 업데이트를 정상으로 표시하는 방식.
+
+## 다음 단계
+
+- [Yocto로 전체 이미지 빌드](../software/yocto-image.mdx): 패키지가 업데이트하는
+  이미지 빌드.
+- [eMMC에 이미지 플래싱](./flash-image.mdx): 전체 이미지를 보드에
+  기록.
+- [공장 빌드 및 테스트](./factory-build-and-test.mdx): tRoot 업데이트 테스트에서도
+  `swupdate`를 사용합니다.

@@ -25,8 +25,8 @@ Please specify the nature of your feedback:
 
 **Page URL**
 Please provide the exact link(s) to the page on https://developer.sima.ai where the issue is located:
-1. 
-2. 
+1.
+2.
 
 **Suggested Change (Expected Documentation)**
 A clear and concise description of what you think the documentation should say, or the specific text you propose adding.

@@ -1,0 +1,101 @@
+---
+title: アップデートパッケージのビルドと適用
+description: Yocto レイヤーで Modalix イメージ用の SWUpdate パッケージをビルドしてボードに適用する方法と、アップデートが起動しない場合のフォールバックの仕組み。
+sidebar_position: 3
+---
+
+# アップデートパッケージのビルドと適用
+
+アップデートパッケージを使用すると、eMMC 全体を書き直さずに、ボード上のソフトウェアを
+置き換えられます。Yocto レイヤーは、これを SWUpdate パッケージ（`.swu` ファイル）としてビルドします。
+ボードは、新しいソフトウェアを現在使用していない側のコピーに書き込んでからそちらに切り替え、
+新しいソフトウェアが起動しない場合は以前のルートファイルシステムに戻ります。このページは、
+[Yocto で完全なイメージをビルドする](../software/yocto-image.mdx)でビルドしたイメージを対象としています。
+
+:::caution[ハードウェアでは未検証]
+このページのパッケージは、2026-10-06 にリリース 2.1.3 のコミットのレイヤーを使って 1 回
+ビルドしました。ボードへの適用は行っていません。
+:::
+
+## アップデートの仕組み {#how-it-works}
+
+eMMC には、U-Boot、ブートディレクトリ、ルートファイルシステムがそれぞれ 2 つずつ
+格納されています。[パーティション構成](../software/yocto-image.mdx#partitions)を参照してください。
+アップデートでは、次の処理が行われます。
+
+1. 新しいルートファイルシステムと新しい U-Boot を、使用していない側のコピーに
+   書き込みます。
+2. 新しいカーネル、デバイスツリー、オーバーレイを、使用していない側のブートディレクトリ
+   （`boot-0` または `boot-1`）にコピーします。
+3. ボードを新しいコピーに切り替え、U-Boot 環境の `upgrade_available` を `1`、
+   `bootcount` を `0` に設定して、再起動します。
+
+新しいソフトウェアの起動失敗が `bootlimit` で許容される回数を超えると、U-Boot は
+以前のルートファイルシステムに戻し、`upgrade_available` をクリアします。
+
+## パッケージをビルドする {#build}
+
+まずイメージをビルドし、続いて同じビルドディレクトリでパッケージをビルドします。
+
+```console
+sima-user@sima-user-machine:~/build$ MACHINE=modalix bitbake simaai-image-minimal-upgrade
+```
+
+パッケージは `simaai-image-minimal-upgrade-modalix.rootfs.swu` で、イメージと同じ `tmp/deploy/images/modalix` に生成されます。内容は次のとおりです。
+
+| 構成要素 | ファイル |
+| --- | --- |
+| ルートファイルシステム | イメージの `.rootfs.ext4.gz` ファイル |
+| U-Boot | `u-boot.bin` とブートスクリプト `boot.scr.uimg` |
+| カーネル | `Image` および `Image.enc` |
+| デバイスツリーとオーバーレイ | ボードの `.dtb` ファイルと、すべての `.dtbo` ファイル |
+| アップデートの記述とスクリプト | `sw-description` および `update_modalix.sh` |
+
+:::note
+公開されているレイヤーでは、`sw-description` がルートファイルシステムとして
+`simaai-image-palette-modalix.rootfs.ext4.gz` を指定している一方、レシピは
+`simaai-image-minimal` のルートファイルシステムをパッケージに含めます。パッケージを
+ビルドする前に、この 2 つの名前を一致させてください。名前が一致していなくてもビルドは成功し、
+不一致は報告されません。
+:::
+
+## パッケージを適用する {#apply}
+
+1. `.swu` ファイルをボードにコピーします。
+2. root として `swupdate` を実行します。
+
+   ```console
+   root@modalix:~# swupdate -v -H simaai-image-palette:1.0 -i /tmp/update.swu
+   ```
+
+   `-H` の後ろの名前とリビジョンは、`sw-description` のエントリと一致している必要があります。
+   公開されているレイヤーでは、`simaai-image-palette` と `1.0` です。アップデートが完了すると、
+   ボードは再起動します。
+
+3. 再起動後、実行中のイメージのビルドバージョンを確認します。
+
+   ```console
+   root@modalix:~# grep SIMA_BUILD_VERSION /etc/buildinfo
+   ```
+
+## 復旧する {#recover}
+
+- 新しいイメージが起動しない場合、[アップデートの仕組み](#how-it-works)で説明したとおり、
+  U-Boot が自動的に以前のルートファイルシステムに戻します。
+- どちらのコピーも起動しない場合は、完全なイメージを書き込み直します。
+  [イメージを eMMC に書き込む](./flash-image.mdx)を参照してください。
+
+## このページで扱わない内容 {#not-covered}
+
+- eLxr イメージ用のアップデートパッケージ。
+- 署名付きのアップデートパッケージ。
+- 起動に成功した後、ボードがアップデートを正常と判定する仕組み。
+
+## 次のステップ
+
+- [Yocto で完全なイメージをビルドする](../software/yocto-image.mdx)：パッケージで
+  更新する対象のイメージのビルド。
+- [イメージを eMMC に書き込む](./flash-image.mdx)：完全なイメージの
+  ボードへの書き込み。
+- [工場でのビルドとテスト](./factory-build-and-test.mdx)：tRoot のアップデートテストでも
+  `swupdate` を使用します。

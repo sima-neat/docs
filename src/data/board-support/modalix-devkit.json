@@ -1,0 +1,346 @@
+{
+  "id": "modalix-devkit",
+  "board": "Modalix DevKit",
+  "carrier": "Waveshare",
+  "release": "2.1.3",
+  "rows": [
+    {
+      "id": "console",
+      "name": {
+        "en": "Serial console",
+        "ja": "シリアルコンソール",
+        "ko": "시리얼 콘솔",
+        "zh-Hant": "序列主控台",
+        "uk": "Послідовна консоль"
+      },
+      "connector": {
+        "en": "USB Type-C debug port",
+        "ja": "USB Type-C デバッグポート",
+        "ko": "USB Type-C 디버그 포트",
+        "zh-Hant": "USB Type-C 除錯埠",
+        "uk": "Порт налагодження USB Type-C"
+      },
+      "som": "`UART1`",
+      "deviceTree": {
+        "en": "`uart12`, the console",
+        "ja": "`uart12`（コンソール）",
+        "ko": "`uart12`(콘솔)",
+        "zh-Hant": "`uart12`（主控台）",
+        "uk": "`uart12`, консоль"
+      },
+      "status": "supported",
+      "guide": "/hardware/getting-started/setup-serial"
+    },
+    {
+      "id": "ethernet",
+      "name": "Gigabit Ethernet",
+      "connector": "RJ45",
+      "som": {
+        "en": "`MDI`, through the PHY on the SoM",
+        "ja": "`MDI`（SoM 上の PHY 経由）",
+        "ko": "`MDI`(SoM의 PHY 경유)",
+        "zh-Hant": "`MDI`，經由 SoM 上的 PHY",
+        "uk": "`MDI`, через PHY на SoM"
+      },
+      "deviceTree": "`xgmac0`, SGMII",
+      "status": "supported",
+      "note": {
+        "en": "The DevKit provides 1 GbE only.",
+        "ja": "DevKit で使用できるのは 1 GbE のみです。",
+        "ko": "DevKit은 1 GbE만 제공합니다.",
+        "zh-Hant": "DevKit 僅提供 1 GbE。",
+        "uk": "DevKit надає лише 1 GbE."
+      },
+      "guide": "/hardware/getting-started/standalone-mode/network"
+    },
+    {
+      "id": "usb",
+      "name": {
+        "en": "USB host",
+        "ja": "USB ホスト",
+        "ko": "USB 호스트",
+        "zh-Hant": "USB 主機",
+        "uk": "USB-хост"
+      },
+      "connector": {
+        "en": "4 USB 3 Type-A ports",
+        "ja": "USB 3 Type-A ポート × 4",
+        "ko": "USB 3 Type-A 포트 4개",
+        "zh-Hant": "4 個 USB 3 Type-A 連接埠",
+        "uk": "4 порти USB 3 Type-A"
+      },
+      "som": "`USB3 P0`–`P2`, `USB2 P0`–`P2`",
+      "deviceTree": "—",
+      "status": "supported",
+      "note": {
+        "en": "The USB controller is on the SoM.",
+        "ja": "USB コントローラーは SoM 上にあります。",
+        "ko": "USB 컨트롤러는 SoM에 있습니다.",
+        "zh-Hant": "USB 控制器位於 SoM 上。",
+        "uk": "Контролер USB розміщено на SoM."
+      }
+    },
+    {
+      "id": "hdmi",
+      "name": "HDMI",
+      "connector": {
+        "en": "HDMI connector",
+        "ja": "HDMI コネクター",
+        "ko": "HDMI 커넥터",
+        "zh-Hant": "HDMI 連接器",
+        "uk": "Роз’єм HDMI"
+      },
+      "som": "`HDMI`",
+      "deviceTree": "—",
+      "status": "supported",
+      "note": {
+        "en": "HDMI 1.4. Graphics support needs the Palette package.",
+        "ja": "HDMI 1.4。グラフィックスのサポートには Palette パッケージが必要です。",
+        "ko": "HDMI 1.4. 그래픽 지원에는 Palette 패키지가 필요합니다.",
+        "zh-Hant": "HDMI 1.4。圖形支援需要 Palette 套件。",
+        "uk": "HDMI 1.4. Для підтримки графіки потрібен пакет Palette."
+      }
+    },
+    {
+      "id": "nvme",
+      "name": {
+        "en": "NVMe storage",
+        "ja": "NVMe ストレージ",
+        "ko": "NVMe 스토리지",
+        "zh-Hant": "NVMe 儲存裝置",
+        "uk": "Накопичувач NVMe"
+      },
+      "connector": {
+        "en": "M.2 Key M slot",
+        "ja": "M.2 Key M スロット",
+        "ko": "M.2 Key M 슬롯",
+        "zh-Hant": "M.2 Key M 插槽",
+        "uk": "Слот M.2 Key M"
+      },
+      "som": "`PCIe0`, Gen4 ×4",
+      "deviceTree": "`pcie0_rc`",
+      "status": "supported",
+      "guide": "/hardware/getting-started/standalone-mode/nvme-storage"
+    },
+    {
+      "id": "csi",
+      "name": {
+        "en": "MIPI CSI-2 cameras",
+        "ja": "MIPI CSI-2 カメラ",
+        "ko": "MIPI CSI-2 카메라",
+        "zh-Hant": "MIPI CSI-2 相機",
+        "uk": "Камери MIPI CSI-2"
+      },
+      "connector": {
+        "en": "2 CSI connectors, 22-pin",
+        "ja": "22 ピン CSI コネクター × 2",
+        "ko": "22핀 CSI 커넥터 2개",
+        "zh-Hant": "2 個 22-pin CSI 連接器",
+        "uk": "2 роз’єми CSI, 22-контактні"
+      },
+      "som": {
+        "en": "`CSI1`, `CSI2`, 2 lanes each",
+        "ja": "`CSI1`、`CSI2`（各 2 レーン）",
+        "ko": "`CSI1`, `CSI2`(각 2레인)",
+        "zh-Hant": "`CSI1`、`CSI2`，各 2 lane",
+        "uk": "`CSI1`, `CSI2`, по 2 лінії"
+      },
+      "deviceTree": {
+        "en": "`csi1`, `csi2`, enabled by a camera overlay",
+        "ja": "`csi1`、`csi2`（カメラ用オーバーレイで有効化）",
+        "ko": "`csi1`, `csi2`(카메라 오버레이로 활성화)",
+        "zh-Hant": "`csi1`、`csi2`，由相機 overlay 啟用",
+        "uk": "`csi1`, `csi2`, вмикаються оверлеєм камери"
+      },
+      "status": "overlay",
+      "guide": "/hardware/interfaces/supported-cameras"
+    },
+    {
+      "id": "i2c",
+      "name": "I2C",
+      "connector": {
+        "en": "40-pin header, pins 3 and 5, and pins 27 and 28",
+        "ja": "40 ピンヘッダーのピン 3、5 およびピン 27、28",
+        "ko": "40핀 헤더의 3번·5번 핀 및 27번·28번 핀",
+        "zh-Hant": "40-pin 排針的第 3、5 腳與第 27、28 腳",
+        "uk": "40-контактний роз’єм, контакти 3 і 5 та 27 і 28"
+      },
+      "som": "`I2C1`, `I2C0`",
+      "deviceTree": "`i2c00`, `i2c01`",
+      "status": "supported",
+      "guide": "/hardware/interfaces/low-speed-io"
+    },
+    {
+      "id": "gpio",
+      "name": "GPIO",
+      "connector": {
+        "en": "40-pin header",
+        "ja": "40 ピンヘッダー",
+        "ko": "40핀 헤더",
+        "zh-Hant": "40-pin 排針",
+        "uk": "40-контактний роз’єм"
+      },
+      "som": {
+        "en": "15 GPIO on the SoM connector",
+        "ja": "SoM コネクター上の GPIO × 15",
+        "ko": "SoM 커넥터의 GPIO 15개",
+        "zh-Hant": "SoM 連接器上的 15 個 GPIO",
+        "uk": "15 GPIO на роз’ємі SoM"
+      },
+      "deviceTree": "`gpio10`, `gpio50`, `gpio60`, `gpio70`",
+      "status": "supported",
+      "guide": "/hardware/interfaces/low-speed-io"
+    },
+    {
+      "id": "spi",
+      "name": "SPI",
+      "connector": {
+        "en": "40-pin header",
+        "ja": "40 ピンヘッダー",
+        "ko": "40핀 헤더",
+        "zh-Hant": "40-pin 排針",
+        "uk": "40-контактний роз’єм"
+      },
+      "som": "`SPI0`, `SPI1`",
+      "deviceTree": {
+        "en": "Not enabled",
+        "ja": "有効化されていません",
+        "ko": "활성화되지 않음",
+        "zh-Hant": "未啟用",
+        "uk": "Не ввімкнено"
+      },
+      "status": "overlay",
+      "note": {
+        "en": "`SPI1` is shared with the QSPI flash on the SoM.",
+        "ja": "`SPI1` は SoM 上の QSPI フラッシュと共用です。",
+        "ko": "`SPI1`은 SoM의 QSPI 플래시와 공유됩니다.",
+        "zh-Hant": "`SPI1` 與 SoM 上的 QSPI 快閃記憶體共用。",
+        "uk": "`SPI1` використовується спільно з QSPI flash на SoM."
+      },
+      "guide": "/hardware/interfaces/low-speed-io"
+    },
+    {
+      "id": "i2s",
+      "name": {
+        "en": "I2S audio",
+        "ja": "I2S オーディオ",
+        "ko": "I2S 오디오",
+        "zh-Hant": "I2S 音訊",
+        "uk": "Аудіо I2S"
+      },
+      "connector": {
+        "en": "40-pin header",
+        "ja": "40 ピンヘッダー",
+        "ko": "40핀 헤더",
+        "zh-Hant": "40-pin 排針",
+        "uk": "40-контактний роз’єм"
+      },
+      "som": "`I2S0`",
+      "deviceTree": {
+        "en": "Not enabled",
+        "ja": "有効化されていません",
+        "ko": "활성화되지 않음",
+        "zh-Hant": "未啟用",
+        "uk": "Не ввімкнено"
+      },
+      "status": "unconfirmed"
+    },
+    {
+      "id": "bluetooth",
+      "name": "Bluetooth",
+      "connector": {
+        "en": "USB adapter",
+        "ja": "USB アダプター",
+        "ko": "USB 어댑터",
+        "zh-Hant": "USB 轉接器",
+        "uk": "USB-адаптер"
+      },
+      "som": "—",
+      "deviceTree": "—",
+      "status": "supported",
+      "note": {
+        "en": "Needs release 2.1.0 or later on eLxr.",
+        "ja": "eLxr 上のリリース 2.1.0 以降が必要です。",
+        "ko": "eLxr의 릴리스 2.1.0 이상이 필요합니다.",
+        "zh-Hant": "需要 eLxr 上的 2.1.0 或更新版本。",
+        "uk": "Потрібен випуск 2.1.0 або новіший на eLxr."
+      },
+      "guide": "/hardware/reference/tech-notes/bluetooth"
+    },
+    {
+      "id": "emmc",
+      "name": "eMMC",
+      "connector": {
+        "en": "On the SoM, 16 GB",
+        "ja": "SoM 上、16 GB",
+        "ko": "SoM에 탑재, 16 GB",
+        "zh-Hant": "位於 SoM 上，16 GB",
+        "uk": "На SoM, 16 ГБ"
+      },
+      "som": "—",
+      "deviceTree": "`nvs_sdhci0`",
+      "status": "supported"
+    },
+    {
+      "id": "rtc",
+      "name": {
+        "en": "Real-time clock",
+        "ja": "リアルタイムクロック",
+        "ko": "실시간 클록",
+        "zh-Hant": "即時時鐘",
+        "uk": "Годинник реального часу"
+      },
+      "connector": {
+        "en": "Backup battery header",
+        "ja": "バックアップ電池用ヘッダー",
+        "ko": "백업 배터리 헤더",
+        "zh-Hant": "備用電池排針",
+        "uk": "Роз’єм резервної батареї"
+      },
+      "som": {
+        "en": "On the SoM",
+        "ja": "SoM 上",
+        "ko": "SoM에 탑재",
+        "zh-Hant": "位於 SoM 上",
+        "uk": "На SoM"
+      },
+      "deviceTree": {
+        "en": "`pcf85063a` on `i2c23`",
+        "ja": "`i2c23` 上の `pcf85063a`",
+        "ko": "`i2c23`의 `pcf85063a`",
+        "zh-Hant": "`i2c23` 上的 `pcf85063a`",
+        "uk": "`pcf85063a` на `i2c23`"
+      },
+      "status": "supported"
+    },
+    {
+      "id": "csi4",
+      "name": {
+        "en": "MIPI CSI-2, 4-lane",
+        "ja": "MIPI CSI-2、4 レーン",
+        "ko": "MIPI CSI-2, 4레인",
+        "zh-Hant": "MIPI CSI-2，4-lane",
+        "uk": "MIPI CSI-2, 4 лінії"
+      },
+      "connector": "—",
+      "som": "—",
+      "deviceTree": "—",
+      "status": "unsupported",
+      "note": {
+        "en": "Two independent 2-lane paths cannot be combined into one 4-lane path",
+        "ja": "独立した 2 つの 2 レーン経路を 1 つの 4 レーン経路にまとめることはできません",
+        "ko": "독립된 2레인 경로 두 개를 하나의 4레인 경로로 합칠 수 없습니다",
+        "zh-Hant": "兩條獨立的 2-lane 路徑無法合併為一條 4-lane 路徑",
+        "uk": "Два незалежні 2-лінійні тракти не можна об’єднати в один 4-лінійний"
+      }
+    },
+    {
+      "id": "can",
+      "name": "CAN",
+      "connector": "—",
+      "som": "—",
+      "deviceTree": "—",
+      "status": "unsupported"
+    }
+  ]
+}

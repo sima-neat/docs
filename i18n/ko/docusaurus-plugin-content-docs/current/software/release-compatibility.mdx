@@ -1,0 +1,39 @@
+---
+title: 릴리스 호환성
+description: 각 Modalix 플랫폼 릴리스의 기반이 되는 Linux 커널 및 U-Boot 소스 커밋입니다.
+sidebar_position: 3
+---
+
+# 릴리스 호환성
+
+각 Modalix 플랫폼 릴리스는 공개 커널 및 U-Boot 저장소의 커밋 하나에서 빌드됩니다.
+보드에 설치된 이미지와 일치하는 구성 요소를 다시 빌드하려면, 빌드하기 전에 해당
+릴리스의 커밋을 체크아웃하십시오.
+[소스에서 BSP 빌드](./build-from-source.mdx)를 참조하십시오.
+
+## 릴리스별 커널 및 U-Boot
+
+| 플랫폼 릴리스 | 커널 버전 | 커널 커밋 | U-Boot 커밋 |
+| --- | --- | --- | --- |
+| 2.1.3 | 6.18.3 | [`65aba29989da`](https://github.com/SiMa-ai/simaai-linux/commit/65aba29989da02d7612da5484dbbcd50643fdd60) | [`5a026adbe2a5`](https://github.com/SiMa-ai/sima-ai-uboot/commit/5a026adbe2a54aeaae5dc50e1852d4b5c1884640) |
+| 2.1.1 | 6.18.3 | [`75cf83206ddf`](https://github.com/SiMa-ai/simaai-linux/commit/75cf83206ddf82d4c94f9eaf037c30fbe2e5bcef) | [`ae825aa3b679`](https://github.com/SiMa-ai/sima-ai-uboot/commit/ae825aa3b679389672e7b5b6f5e7a75f55330e1d) |
+| 2.1.0 | 6.18.3 | [`694f7f2bd658`](https://github.com/SiMa-ai/simaai-linux/commit/694f7f2bd658297bd3f3e31e507d63eed4849189) | [`96c6ccab6a56`](https://github.com/SiMa-ai/sima-ai-uboot/commit/96c6ccab6a567398323a4239a5d837b5a44b5788) |
+| 2.0.0 | 6.1.22 | [`e92918061c54`](https://github.com/SiMa-ai/simaai-linux/commit/e92918061c54726431a00c60d3d9fff2ddce27f2) | [`93961411fa44`](https://github.com/SiMa-ai/sima-ai-uboot/commit/93961411fa44a5b90dca02eb55fd87d33043ad2a) |
+
+2.1.0 커널 행은 릴리스 커밋
+[`11591e638c71`](https://github.com/SiMa-ai/simaai-linux/commit/11591e638c7144fbc97b736de6aa209bab190a5c) 다음에 적용된 빌드 수정 커밋을 가리킵니다.
+
+## 이 표를 읽는 방법
+
+- 저장소에는 릴리스 태그가 없습니다. 각 릴리스는 `master`의 단일 커밋이며, 제목은
+  `SiMa.AI Release <version>`입니다.
+- `master`에는 항상 최신 릴리스가 있습니다. 이전 릴리스를 실행하는 보드용으로
+  이를 빌드하면, 해당 보드의 루트 파일 시스템 및 모듈과 일치하지 않는 커널
+  또는 부트로더가 만들어집니다.
+- 실행 중인 보드의 릴리스는 `cat /etc/buildinfo`로 확인합니다.
+
+릴리스를 체크아웃하려면 다음을 실행합니다.
+
+```console
+root@sdk:/data/simaai-linux$ git checkout 65aba29989da
+```

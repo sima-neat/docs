@@ -1,0 +1,41 @@
+---
+title: "NVMe 저장 장치"
+description: "Modalix DevKit에서 NVMe 스토리지를 구성합니다."
+sidebar_position: 2
+---
+
+# NVMe 저장 장치
+
+**Modalix DevKit**에는 500GB NVMe 드라이브가 포함되어 있습니다. 더 많은 저장 공간이 필요한 경우, 기본적으로 설치된 드라이브를 캐리어 보드에 장착된 호환 가능한 M.2 NVMe 모듈로 교체하십시오.
+
+:::note
+계속하기 전에 `sima-cli`를 설치하거나 최신 버전으로 업데이트하십시오. 이 설명서는 최신 `sima-cli` 버전을 사용하는 것을 기준으로 작성되었습니다.
+:::
+
+:::note
+이 명령어는 반드시 Modalix DevKit에서 직접 실행해야 합니다.
+:::
+
+NVMe 드라이브를 포맷하려면 다음 명령을 실행하세요.
+
+```console
+modalix:~$ sima-cli nvme format
+```
+
+포맷 후 NVMe 드라이브가 `/media/nvme`에 마운트됩니다.
+
+마운트 상태를 확인하고 저장 공간 사용량을 보려면 다음 명령을 실행하세요.
+
+```console
+modalix:~$ df -h
+```
+
+이 명령은 모든 마운트된 파일 시스템의 사용 가능한 디스크 공간을 표시하며, 여기에는 NVMe 드라이브가 포함됩니다.
+
+NVMe 드라이브를 다시 마운트하려면 다음 명령을 실행하세요.
+
+```console
+modalix:~$ sima-cli nvme remount
+```
+
+`format` 및 `remount` 명령은 `/etc/fstab`에 항목을 추가하여 부팅 시 NVMe 드라이브가 자동으로 마운트되도록 합니다.

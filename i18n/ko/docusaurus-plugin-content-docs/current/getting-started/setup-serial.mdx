@@ -1,0 +1,121 @@
+---
+title: 직렬 연결 구성
+description: 직렬 콘솔을 통해 개발 호스트를 Modalix DevKit에 연결합니다.
+sidebar_position: 2
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+# 직렬 연결 구성
+
+독립 모드 또는 PCIe 모드를 사용하든, 부팅 과정 중에 DevKit 직렬 인터페이스에 연결하세요.
+
+독립 모드에서는 직렬 액세스를 통해 네트워크 연결이 불가능하거나 잘못 구성된 경우에도 DevKit를 구성, 모니터링 및 복구할 수 있습니다.
+
+PCIe 모드에서는 직렬 인터페이스를 통해 시스템 부팅 시 PCIe 카드 셸과 디버그 콘솔에 직접 액세스할 수 있습니다. 호스트 드라이버 또는 PCIe 링크가 완전히 작동하기 전에 저수준 제어 및 문제 해결에 사용하십시오.
+
+직렬 액세스는 주로 개발 및 초기 설정에 사용됩니다. 배포 후에는 일반적인 작동 시 직렬 연결이 필요하지 않은 경우가 많습니다.
+
+하드웨어에 맞는 케이블 설정을 선택한 다음, 컴퓨터에 사용할 직렬 터미널 방식을 선택하세요.
+
+## 하드웨어 설정
+
+시리얼 케이블 연결을 보려면 보드를 선택하세요.
+
+<Tabs groupId="board">
+<TabItem value="modalix-devkit" label="Modalix DevKit" default>
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-devkit.png')} alt="Modalix DevKit 커넥터" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix DevKit 커넥터</figcaption>
+</figure>
+
+제공된 시리얼 케이블을 사용하여 DevKit을 컴퓨터에 연결하세요:
+
+- **개발 키트 연결:** 제공된 USB-A-USB-C 케이블을 사용하여 케이스에 표시된 대로 개발 키트의 **UART** 포트에 연결합니다.
+- **컴퓨터 측:** **USB Type-A** 포트에 연결합니다. 필요한 경우 USB 허브를 사용하십시오.
+
+</TabItem>
+<TabItem value="modalix-ea-kit" label="Modalix EA Kit">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-ea-kit-interfaces.png')} alt="Modalix Early Access Kit 커넥터" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}>Modalix 얼리 액세스 키트 커넥터</figcaption>
+</figure>
+
+제공된 시리얼 케이블을 사용하여 DevKit을 컴퓨터에 연결하세요:
+
+- **DevKit 끝 부분:** 평평한 커넥터의 삼각형 표시가 DevKit의 가장 오른쪽 핀과 일치하는지 확인합니다.
+- **컴퓨터 측:** **USB Type-A** 포트에 연결합니다. 필요한 경우 USB 허브를 사용하십시오.
+
+</TabItem>
+<TabItem value="modalix-pcie-card" label="Modalix PCIe Card">
+
+<figure style={{margin: '0 auto 1rem', maxWidth: '780px', textAlign: 'center'}}>
+  <img src={useBaseUrl('/img/devkit/modalix-ea-pcie-interfaces.jpg')} alt="Modalix PCIe Card 커넥터" style={{width: '100%', borderRadius: 10}} />
+  <figcaption style={{fontWeight: 'bold', marginTop: '0.5rem'}}> 모달릭스 PCIe 카드 커넥터 </figcaption>
+</figure>
+
+제공된 시리얼 케이블을 사용하여 카드를 호스트에 연결하십시오:
+
+- **카드 연결:** 위 이미지에 표시된 대로 제공된 USB-A-UART 케이블을 사용하여 카드의 **ARM UART** 포트에 연결합니다.
+- **호스트 측:** **USB Type-A** 포트에 연결합니다. 필요한 경우 USB 허브를 사용하십시오.
+
+</TabItem>
+</Tabs>
+
+## 시리얼 터미널을 엽니다.
+
+<Tabs>
+<TabItem value="mac-linux" label="macOS & Linux" default>
+
+:::note
+계속하기 전에 `sima-cli`를 설치하거나 업그레이드하십시오. 이 설명서는 최신 버전의 `sima-cli`와 함께 사용하도록 제작되었습니다.
+:::
+
+macOS 또는 Linux에서 직렬 포트에 연결하려면 `sima-cli serial`를 사용하세요.
+
+```console
+sima-cli serial
+```
+
+이 명령은 직렬 포트에 액세스하는 데 필요한 종속성을 설치합니다. 직렬 터미널을 종료하려면 Ctrl + A를 누른 다음 Ctrl + X를 누르세요.
+
+일부 이전 펌웨어 버전에서는 시스템이 직렬 콘솔에 대해 다른 통신 속도를 사용할 수 있습니다. 터미널에 깨진 출력이 표시되면 통신 속도 불일치 때문일 가능성이 높습니다. 더 높은 통신 속도를 지정해 보세요.
+
+```console
+sima-cli serial -b 921600
+```
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+**Windows**에서 DevKit에 연결하려면 다음 단계를 따르세요.
+
+1. COM 포트를 식별합니다:
+   - **장치 관리자**를 열고 **포트(COM 및 LPT)**를 확장합니다.
+   - **USB 시리얼 포트 (COMx)**와 같은 항목을 찾으세요.
+
+2. 시리얼 터미널을 설치하고 엽니다:
+   - [PuTTY](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html) 또는 **Tera Term**을 사용하세요.
+   - 연결 유형을 **직렬**로 설정합니다.
+   - 올바른 **COM 포트**를 입력하세요(예: `COM3`).
+   - **보드 전송률**을 `115200`로 설정합니다.
+
+3. 연결을 시작하려면 **열기**를 클릭하세요.
+
+</TabItem>
+<TabItem value="web-serial" label="Web Serial Console">
+
+**웹 시리얼 콘솔**은 로컬 설치가 필요 없는 브라우저 기반의 대안입니다. Chromium 브라우저에서 열고, USB를 통해 DevKit에 연결한 다음, 시리얼 콘솔에 연결합니다.
+
+<a className="docs-button" href={useBaseUrl('/tools/serial/index.html')} target="_blank" rel="noreferrer">웹 시리얼 콘솔 실행</a>
+
+<p style={{marginTop: '1.75rem'}}> 명령 팔레트 참조, 다중 장치 지원 및 문제 해결에 대한 자세한 내용은 <a href="/hardware/tools/web-serial-console"> 웹 직렬 콘솔 </a> 페이지를 참조하십시오.</p>
+
+</TabItem>
+</Tabs>
+
+시리얼 콘솔에서 로그인하라는 메시지가 표시되면 기본 **사용자 이름** `sima`와 **비밀번호** `edgeai`를 사용하세요.

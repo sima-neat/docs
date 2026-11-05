@@ -1,0 +1,77 @@
+---
+title: "Віртуальна мережа"
+description: "Налаштуйте доступ до мережі Ethernet через PCIe для плати Modalix PCIe."
+sidebar_position: 3
+---
+
+# Віртуальна мережа
+
+:::note
+Переконайтеся, що ваш DevKit [оновлено](/hardware/getting-started/firmware-update) до останньої версії прошивки, перш ніж використовувати функцію віртуальної мережі.
+
+Ця функція доступна лише на хостах Linux.
+:::
+
+Коли плата Modalix PCIe під’єднана через PCIe, вона створює віртуальний Ethernet-інтерфейс між хостом і платою.
+
+Використовуйте віртуальну мережу для:
+
+- **Secure Shell (SSH)**: Отримайте доступ до командного рядка DevKit для усунення несправностей і керування системою.
+- **Протокол захищеного копіювання (SCP)**: передавайте файли журналів, файли конфігурації та інші файли між хостом і DevKit.
+
+## Ручне призначення IP-адреси.
+
+Під час ручного завантаження модуля за допомогою `insmod`, використовуйте наведену нижче команду. Це дозволить призначити статичну IP-адресу інтерфейсу хоста, а потім – карті Modalix PCIe.
+
+```console
+sudo insmod sima_mla_drv.ko default_ip=false
+```
+
+Для цього також потрібна утиліта `ifconfig` на хості.
+
+```console
+ifconfig <eth interface> 20.1.2.1
+```
+
+Після того, як ви призначите IP-адресу інтерфейсу хоста, до інтерфейсу SoC автоматично призначається IP + 1. Наприклад, якщо хост використовує `20.1.2.1`, то IP для MLSoC буде `20.1.2.2`.
+
+Під час створення інтерфейсів, інтерфейс хоста використовує MAC-адресу у форматі `cardnum:S:I:m:A:0`, а інтерфейс SoC використовує `cardnum:S:I:m:A:1`. IP-адреси призначаються під час створення як `host:10.0.cardnum.1` і `soc:10.0.cardnum.2`.
+
+1. Результат виконання команди `ifconfig` на хості:
+
+   ```console
+   enp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.1  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4130  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:30  txqueuelen 1000  (Ethernet)
+       RX packets 14107  bytes 4460994 (4.4 MB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 818  bytes 74840 (74.8 KB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+2. Результат виконання команди `ifconfig` на SiMa.ai DevKit:
+
+   ```console
+   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
+       RX packets 818  bytes 74840 (73.0 KiB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 14109  bytes 4461636 (4.2 MiB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+3. Встановіть SSH-з’єднання з хоста до пристрою. Використовуйте стандартне ім’я користувача `sima` і пароль `edgeai`.
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+   The authenticity of host '10.0.0.2 (10.0.0.2)' can't be established.
+   ED25519 key fingerprint is SHA256:ulxwiRM+cCQNJ90R5Qn5eV+9hqvkVNo0eWQ9pY3l8E0.
+   This key is not known by any other names
+   Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+   Warning: Permanently added '10.0.0.2' (ED25519) to the list of known hosts..
+   sima@10.0.0.2's password:
+   sima@modalix:~#
+   ```

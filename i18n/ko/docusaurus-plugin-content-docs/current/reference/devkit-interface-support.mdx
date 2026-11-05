@@ -1,0 +1,53 @@
+---
+title: Modalix DevKit 인터페이스 지원 현황
+description: 플랫폼 릴리스가 지원하는 Modalix DevKit 인터페이스와 각 인터페이스의 커넥터, SoM 신호, 디바이스 트리.
+sidebar_position: 2
+---
+
+import {BoardSupportTable} from '@site/src/components/BoardSupport';
+
+# Modalix DevKit 인터페이스 지원 현황
+
+이 페이지에서는 Modalix DevKit의 인터페이스를 나열합니다. 인터페이스마다 보드의 커넥터,
+그 바탕이 되는 Modalix SoM 신호, 플랫폼 릴리스 2.1.3의 디바이스 트리에서의 처리 방식을
+보여 줍니다. DevKit은 Waveshare 캐리어 보드에 Modalix SoM을 장착한 제품이므로, 이 표는
+해당 조합에만 적용됩니다.
+
+:::caution[하드웨어에서 아직 검증되지 않음]
+이 페이지는 플랫폼 릴리스 2.1.3의 커널 소스와 이 사이트의 다른 페이지를 바탕으로
+작성되었습니다. 하드웨어 테스트 결과가 기록된 행은 아직 없습니다.
+:::
+
+## 인터페이스 {#interfaces}
+
+이 표는 시리얼 콘솔, Gigabit Ethernet, USB, HDMI, NVMe 스토리지, MIPI CSI-2 카메라,
+I2C, GPIO, SPI, I2S 오디오, Bluetooth, eMMC, 실시간 클록, CAN을 다룹니다. 가이드가 있는
+인터페이스는 이름이 해당 가이드로 연결됩니다.
+
+<BoardSupportTable />
+
+## 상태 읽는 방법 {#status}
+
+- **지원**: 릴리스가 이 보드에서 해당 인터페이스를 제공합니다. SoM 디바이스 트리에서
+  활성화되어 있거나, 부품이 SoM에 있어 별도 설정이 필요 없습니다.
+- **오버레이 필요**: 하드웨어는 있지만 릴리스의 디바이스 트리에서 활성화되어 있지
+  않습니다. [디바이스 트리 및 오버레이](../software/device-tree.mdx)에 설명된 대로
+  디바이스 트리 오버레이를 추가하십시오.
+- **지원되지 않음**: 해당 인터페이스는 Modalix SoM에서 동작하지 않습니다.
+- **확인되지 않음**: 이 페이지에 정보가 없습니다.
+
+## 다른 보드 {#other-boards}
+
+SoM 신호는 모든 캐리어 보드에서 동일하지만 커넥터와 오버레이는 다릅니다.
+다른 캐리어 보드의 경우
+[서드파티 캐리어 보드](../design/third-party-carriers.mdx) 및
+[캐리어 보드 브링업](../design/som-carrier.mdx)에서 시작하십시오.
+
+## 다음 단계
+
+- [저속 I/O](../interfaces/low-speed-io.mdx): GPIO, UART, I2C, SPI의
+  핀 매핑과 디바이스 트리 예제.
+- [지원되는 MIPI 카메라](../interfaces/supported-cameras.mdx): DevKit 포트용
+  카메라 오버레이.
+- [소스에서 BSP 빌드](../software/build-from-source.mdx): 오버레이 빌드 및
+  설치.

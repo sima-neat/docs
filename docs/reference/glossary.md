@@ -11,10 +11,10 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Silicon & Compute
 
 **CVU**
-: **Computer Vision Unit.** The on-chip accelerator dedicated to classical vision workloads (filters, transforms, image-processing kernels). The MLSoC Modalix integrates a Synopsys EV74 CVU running at 750 16-bit GOPS.
+: **Computer Vision Unit.** The on-chip accelerator dedicated to classical vision workloads (filters, transforms, image-processing kernels). The MLSoC Modalix integrates a Synopsys EV74 CVU running at 720 16-bit GOPS.
 
 **ISP**
-: **Image Signal Processor.** The on-chip block that converts raw camera sensor output (Bayer pattern, mono, etc.) into a usable image. The MLSoC Modalix uses an ARM C-71 ISP running at 1.2 GHz.
+: **Image Signal Processor.** The on-chip block that converts raw camera sensor output (Bayer pattern, mono, etc.) into a usable image. The MLSoC Modalix uses an Arm Mali-C71AE ISP running at 1.2 GHz.
 
 **MLA**
 : **Machine Learning Accelerator.** The on-chip block that runs neural-network inference. The MLA is the primary differentiator of the MLSoC Modalix and is what NEAT applications target.
@@ -34,7 +34,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## System Software
 
 **BSP**
-: **Board Support Package.** The collection of low-level software — bootloader, kernel, device trees, drivers, and root filesystem — that brings a SiMa.ai board up from power-on to a usable Linux userspace. See [Board Support Package](./bsp).
+: **Board Support Package.** The collection of low-level software — bootloader, kernel, device trees, drivers, and root filesystem — that brings a SiMa.ai board up from power-on to a usable Linux userspace. See [Board Support Package](../software/index.md).
 
 **eLxr**
 : A [Debian-derived Linux distribution](https://elxr.org/) used as the default runtime on Modalix DevKits shipped after mid-December 2025. Userspace is managed with `apt`.

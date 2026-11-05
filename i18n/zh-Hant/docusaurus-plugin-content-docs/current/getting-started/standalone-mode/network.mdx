@@ -1,0 +1,159 @@
+---
+title: 網路設定
+description: 在獨立模式下設定 Modalix DevKit 的網路。
+sidebar_position: 1
+---
+
+# 網路設定
+
+將 Modalix DevKit 連接到您的網路，或直接連接到您的主機電腦。 預設情況下，DevKit 使用 DHCP 來取得 IP 位址。
+
+:::tip 請維持序列存取的可用性。
+透過 [序列連接](/hardware/getting-started/setup-serial)，您可以檢查 IP 位址並修正網路設定，以便在無法透過網路連線時進行操作。
+:::
+
+## 1. 連接 DevKit。
+
+請選擇最適合您設定的連線方式：
+
+- **透過 DHCP 連接網路：** 將 DevKit 連接到您的路由器或網路交換器。它會自動取得 IP 位址。
+- **直接連接到主機：** 將 DevKit 的乙太網路埠連接到主機。如果需要，請使用 USB 轉乙太網路轉接器。在韌體 3.0 中，通常您可以直接連接，而無需設定靜態 IP 位址；請參閱下面的提示。
+- **透過主機進行網路連線：** 將 DevKit 連接到主機，並啟用網路共用功能。請參閱 [分享主機的網際網路連線。](#share-the-hosts-internet-connection)。
+
+:::tip 韌體 3.0 版本中的直接連線功能。
+如果啟動時沒有可用的 DHCP 伺服器，韌體 3.0 會將 DevKit 指派一個位於 `169.254.x.x` 範圍內的鏈路本地位址 (`169.254.0.0/16`)。
+
+如果啟用 IPv4 鏈路本地回退，則使用 DHCP 的直接連接主機通常會自行指派一個位於相同範圍內的位址。然後，主機和 DevKit 就可以在無需靜態 IP 設定的情況下進行通訊。
+
+此連線僅提供本機存取。若要進行網際網路存取，請使用具有網際網路存取的網路，或啟用主機網際網路共用。
+:::
+
+:::tip 在韌體 2.1.3 版本中，可以直接連線。
+如果 DHCP 無法使用，DevKit 會預設使用 `192.168.1.20`。將主機的已連接乙太網路介面設定為相同子網路中的不同靜態位址，例如 `192.168.1.10/24`，以便透過本機網路連接到 DevKit。
+:::
+
+## 2. 找出 DevKit 的 IP 位址。 {#check-the-current-ip-address}
+
+如果您知道 DevKit 執行的是韌體 3.0，請在同一個區域網路中的**主機**上執行此指令：
+
+```console
+sima-user@sima-user-machine:~$ sima-cli device discover
+```
+
+這個指令會列印已偵測到的 Modalix DevKit 的 IP 位址。
+
+對於其他韌體版本，或者如果偵測功能無法找到 DevKit，請開啟序列埠控制台，並在 DevKit 上執行此指令：
+
+```console
+modalix:~$ ip -4 addr
+```
+
+在已連接的乙太網路介面上，找到 `inet` 之後的位址，例如 `end0`。例如，`192.168.91.181/22` 表示 IP 位址為 `192.168.91.181`。請勿使用迴路位址 `127.0.0.1`。
+
+## 3. 測試連線
+
+請在**主機**上執行以下指令，並將 `<devkit-ip>` 替換為您找到的位址：
+
+```console
+sima-user@sima-user-machine:~$ ping <devkit-ip>
+sima-user@sima-user-machine:~$ ssh sima@<devkit-ip>
+```
+
+:::tip 如果連線失敗
+檢查乙太網路線，以及兩個裝置上的 IP 位址。對於直接連線，兩個位址都必須位於同一個子網路中。如果主機不支援鏈路本地回退，請啟用它，或在兩個裝置上設定靜態位址。
+
+使用序列主控台來檢查或變更 DevKit 的網路設定。
+:::
+
+## 變更 DHCP 或靜態 IP 設定
+
+在 DevKit 上執行此指令，以開啟網路設定選單：
+
+```console
+modalix:~$ sima-cli network
+```
+
+使用選單在 DHCP 和靜態 IP 位址之間切換，無需重新啟動。
+
+### 使用 NetworkManager 進行設定。
+
+如果無法使用 `sima-cli`，請在 eLxr 2.1 或更高版本上使用以下指令。這些指令會使用預先設定的 `end0-dhcp` 和 `end0-static` 設定檔。
+
+若要啟用 DHCP：
+
+```console
+modalix:~$ sudo nmcli connection up end0-dhcp
+```
+
+若要設定靜態 IP 位址並啟用它：
+
+```console
+modalix:~$ sudo nmcli connection modify end0-static ipv4.addresses 192.168.1.20/24
+modalix:~$ sudo nmcli connection up end0-static
+```
+
+將 `192.168.1.20/24` 替換為您設定中的位址和網路前綴。為主機設定同一子網路中的不同位址。
+
+若要檢查目前連線和 IP 位址：
+
+```console
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ ip -4 addr
+```
+
+:::caution 變更網路設定
+變更 IP 位址可能會中斷您的 SSH 連線。請使用序列主控台或使用新的位址重新連線。
+:::
+
+## 分享主機的網路連線。 {#share-the-hosts-internet-connection}
+
+當 DevKit 需要透過 Ubuntu 主機來存取網際網路時，請使用此選項。
+
+1. 將 DevKit 的乙太網路埠連接到主機。請確認主機已連線至網際網路。
+2. 在主機上，開啟「設定 → 網路 → 有線網路」，然後建立或編輯該乙太網路埠的連線。
+3. 在「**IPv4**」分頁中，選擇「**與其他電腦共用**」，然後套用變更。
+4. 關閉並重新開啟連線，以套用設定。
+5. 請確認 DevKit 已啟用 DHCP，然後 [找出它的 IP 位址。](#check-the-current-ip-address)，並測試連線。
+
+Ubuntu 通常會使用 `10.42.0.0/24` 作為共享網路。您的主機可能使用不同的子網路。如果需要，請使用 `ip -4 addr` 檢查主機的乙太網路位址，然後掃描該子網路：
+
+```console
+sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24
+```
+
+使用探索功能或序列控制台來確認哪個位址屬於 DevKit。
+
+## 舊版韌體：U-Boot 網路設定
+
+<details>
+<summary>韌體 2.0 或更早版本</summary>
+
+這些步驟僅適用於 2.0 或更早版本的韌體。對於 2.1 或更新版本的韌體，請使用上述 Linux 指令。如需更多關於舊版本的資訊，請參閱 [v2.0.0 檔案說明](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell)。
+
+1. 透過 [序列終端機](/hardware/getting-started/setup-serial) 連接到 DevKit。
+2. 重新啟動 DevKit。當您看到 `Hit any key to stop autoboot` 時，請按下任意鍵以進入 U-Boot。
+3. 若要啟用靜態 IP 設定，請執行：
+
+   ```console
+   sima:~$ env set forcenetcfg static; saveenv
+   sima:~$ boot
+   ```
+
+   第一個和第二個乙太網路埠分別使用 `192.168.1.20` 和 `192.168.2.20`。
+
+4. 在 Linux 啟動後，若要變更靜態位址，請編輯此檔案中的「**網路**」區段：
+
+   ```console
+   modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
+   ```
+
+   這個檔案僅適用於 2.0 或更早版本的韌體。2.1 或更新版本的韌體使用 NetworkManager 設定檔。
+
+5. 若要啟用 DHCP，請在 U-Boot 中執行以下指令：
+
+   ```console
+   sima:~$ env set forcenetcfg dhcp; saveenv
+   sima:~$ boot
+   ```
+
+</details>

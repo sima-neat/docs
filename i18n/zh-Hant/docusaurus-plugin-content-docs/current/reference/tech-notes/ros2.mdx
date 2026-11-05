@@ -1,0 +1,89 @@
+---
+title: "在 Modalix SoM DevKit 上安裝 ROS 2"
+description: "在平台版本為 3.0 或更高版本，或 2.1.x 的 Modalix SoM DevKit 上安裝 ROS 2。"
+sidebar_position: 5
+---
+
+# 在 Modalix SoM DevKit 上安裝 ROS 2
+
+ROS 2 提供用於機器人應用程式的函式庫和工具。它允許感測器、感知、規劃和控制程序交換資料。在 Modalix SoM 上，ROS 2 在 Arm 核心上執行。感知應用程式可以使用 MLA 進行神經網路推論。
+
+## 在您開始之前
+
+您需要：
+
+- 一個 Modalix SoM DevKit，平台版本為 **3.0 或更高版本**，或 **2.1.x**。
+- `sima-cli` 已安裝在 DevKit 上。
+- DevKit 需連接網路才能下載套件。
+- 透過 SSH 或序列埠與 DevKit 建立連線。
+
+請在 DevKit 上執行以下所有指令。
+
+對於 2.1.x 平台，ROS 2 需要 eLxr 執行階段。如果 DevKit 執行 Yocto，請先按照 [轉換為 eLxr](./elxr-conversion) 的步驟操作。
+
+## 1. 檢查平台版本。
+
+請閱讀韌體資訊：
+
+```bash
+cat /etc/buildinfo
+```
+
+請使用以下針對您平台版本的安裝指令。
+
+若要從 2.1.x 升級到 3.0.0，請先按照 [從 2.1.3 升級到 3.0.0](./convert-2-1-3-to-3-0-0.md) 的步驟操作。
+
+## 2. 安裝 ROS 2。
+
+### 平台 3.0 及後續版本
+
+執行：
+
+```bash
+sima-cli neat install ros2@v3.0.0
+```
+
+請依照螢幕上的指示完成安裝，並設定 ROS 2 環境。
+
+### 平台 2.1.x
+
+執行：
+
+```bash
+sima-cli install tools/ros2
+```
+
+安裝程式會新增 Debian Bookworm 和 ROS 2 套件來源。它會安裝 ROS 2、建置工具和所需的函式庫。它還會將 ROS 2 環境設定新增到 `/home/sima/.bash_profile` 中，以便在後續登入時使用。
+
+若要在目前的 shell 中載入環境，請執行：
+
+```bash
+source /usr/local/ros2/local_setup.bash
+```
+
+## 3. 檢查安裝情況。
+
+請確保在用於此檢查的每個 shell 中都已載入 ROS 2 環境。
+
+1. 請確認 ROS 2 命令是否可用：
+
+   ```bash
+   ros2
+   ```
+
+2. 在一個終端視窗中啟動對話程式：
+
+   ```bash
+   ros2 run demo_nodes_cpp talker
+   ```
+
+3. 在同一個 DevKit 上開啟第二個終端機。
+4. 啟動監聽器：
+
+   ```bash
+   ros2 run demo_nodes_py listener
+   ```
+
+接收端應該會印出類似 `I heard: [Hello World: 1]` 的訊息。這些訊息顯示發送端和接收端可以交換資料。
+
+在每個終端機中按下 **Ctrl+C** 以停止示範。

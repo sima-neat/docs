@@ -1,0 +1,97 @@
+---
+title: 支援的 MIPI 相機
+description: Modalix BSP 提供 overlay 的 MIPI 相機，以及訂購資訊、載板連接埠與感測器模式。
+sidebar_position: 2
+---
+
+import {CameraList, CameraSpecs, CameraOverlays} from '@site/src/components/Cameras';
+
+# 支援的 MIPI 相機
+
+本頁列出 Modalix BSP 支援的 MIPI CSI-2 相機：應訂購哪一款相機、哪些載板連接埠有對應的 overlay，以及驅動程式提供哪些感測器模式。若要在您的電路板上設定相機，請參閱[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)。
+
+:::note 資訊來源
+本頁的 overlay 與感測器模式取自平台版本 2.1.3 的核心原始碼 [simaai-linux](https://github.com/SiMa-ai/simaai-linux/tree/65aba29989da02d7612da5484dbbcd50643fdd60)。這些內容呈現 BSP 所提供的功能，而非 SiMa.ai 已在每款載板上驗證的項目。標示為**尚未確認**的項目目前尚無公開來源。
+:::
+
+## 相機與訂購資訊 {#cameras}
+
+BSP 提供三家廠商、五款感測器的 overlay。廠商通常會販售多款採用相同感測器的模組，這些模組的通道數、連接器與鏡頭各不相同。請依料號訂購，而非依感測器名稱訂購。選擇相機即可檢視其規格。
+
+<CameraList />
+
+- 上述兩個料號均由 Leopard Imaging 列於其適用於 SiMa.ai 的相機中。
+- BSP 所支援的 Arducam 與 e-con Systems 相機料號尚未公開。訂購前請洽詢您的 SiMa.ai 聯絡人。
+- e-con Systems 以三種組合提供 IMX568 相機：標準相機、搭配 e-con FPGA 板的相機，以及搭配 e-con KOBE1 FPGA 板的相機。每種組合各有專屬的 overlay，請使用與您的組合相符的 overlay。
+
+## 相機規格 {#specifications}
+
+加入一款相機即可檢視其規格。最多可加入四款相機並排比較，並可使用 × 移除。感測器模式是版本 2.1.3 的驅動程式為各相機設定的模式，為縮放前的數值。
+
+<CameraSpecs />
+
+## 連接相機 {#connect}
+
+1. 連接或拔除相機之前，請先關閉電路板電源。
+2. 將相機連接至載板上的 MIPI CSI-2 連接器。Modalix DevKit 有兩個。
+3. 記下您使用的連接埠。overlay 名稱中包含連接埠。
+4. 依照[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)的說明，選擇與您的載板、相機及連接埠相符的 overlay。
+
+本頁的所有 overlay 都使用兩條 MIPI 資料通道。
+
+相機上的連接器通常與載板上的連接器不同，因此您可能需要轉接排線。各相機的排線與轉接器料號尚未公開，請洽詢相機廠商或您的 SiMa.ai 聯絡人。關於參考載板上的連接器，請參閱[載板硬體啟動](../design/som-carrier.mdx)。
+
+## 載板與連接埠 {#ports}
+
+版本 2.1.3 針對本表中的每種組合都提供 overlay。overlay 檔名格式為 `modalix-som-<carrier>-<camera>-<port>.dtbo`，例如 `modalix-som-waveshare-ARDU-IMX477-1CAM.dtbo`。
+
+<CameraOverlays />
+
+- Modalix DevKit 預設搭載 Waveshare 載板，因此請使用 Waveshare 欄中的 overlay。
+- 連接埠中的數字代表該連接器所接的 SoM MIPI CSI 介面，例如 `1CAM` 為 CSI1。各載板的數字並不相同。
+- `DUAL` 以單一 overlay 將 Waveshare 的兩個連接埠設定為相同的相機型號。
+- 若要使用兩台不同型號的相機，請為每個連接埠各指定一個 overlay。請參閱[使用多台相機](../getting-started/standalone-mode/mipi-camera-interfaces.mdx#multiple-cameras)。
+- 破折號（—）表示該組合沒有 overlay。
+- 載板名稱代表載板的廠商，而非特定的載板型號。若要比較載板，請參閱[第三方載板](../design/third-party-carriers.mdx)。
+
+overlay 位於電路板的作用中開機目錄。若要列出您電路板上的 overlay：
+
+```console
+sima@modalix:~$ ls /boot/boot-*/modalix-som-*.dtbo
+```
+
+### 先前版本的 overlay 名稱 {#earlier-releases}
+
+| 版本 | 相機 overlay |
+| --- | --- |
+| 2.1.0 | `ARDU-IMX477`、`ECON-IMX568`、`ECON-IMX678`、`LI-AR0234` 與 `LI-OG05C10` |
+| 2.1.1 | 新增 `ECON-KOBE1-IMX568` |
+| 2.1.3 | 將 `ECON-IMX568` 更名為 `ECON-FPGA-IMX568`，並新增適用於 Waveshare 載板上標準相機的 `ECON-IMX568` |
+
+:::caution ECON-IMX568 overlay 已於版本 2.1.3 變更
+在版本 2.1.0 與 2.1.1 中，`ECON-IMX568` 是搭配 e-con FPGA 板之相機的 overlay。自版本 2.1.3 起，該 overlay 名為 `ECON-FPGA-IMX568`，而 `ECON-IMX568` 則是標準相機的 overlay。更新後請檢查 U-Boot 中的 `dtbos` 變數。
+:::
+
+## 感測器模式 {#sensor-modes}
+
+各相機的感測器模式列於[相機規格](#specifications)。
+
+- 相機的資料手冊可能會列出相同感測器的其他模式。請勿因資料手冊列出某個模式，就認定該模式可以運作。
+- 以您的電路板所回報的模式為準。若要列出這些模式，請依照[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)的說明執行 `cam -c <camera> -I`。
+
+### ISP 輸出 {#isp-output}
+
+應用程式接收的是 ISP 的輸出，而非感測器的原始資料。在版本 2.1.3 中，ISP 驅動程式以 NV12、RGB24 與 BGRA32 格式提供輸出，並以感測器模式的尺寸作為其輸出尺寸。
+
+ISP 縮放後的輸出尺寸尚未確認。若要在 Neat 應用程式中使用不同的尺寸，請依照[使用 MIPI 相機](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)的說明，在模型的前處理中調整尺寸。
+
+相機的影像品質調校是另一項工作。請參閱[參考檔案](../reference/extra-docs.md)中的「Modalix 相機與影像訊號處理器（ISP）調校指南」，該指南可向您的 SiMa.ai 聯絡人索取。
+
+關於調校的範圍與如何取得指南，請參閱 [ISP 調校](./isp-tuning.mdx)。
+
+## 後續步驟
+
+- [MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)：選擇 overlay 並驗證相機。
+- [使用 MIPI 相機](https://developer.sima.ai/software/develop-apps/advanced-concepts/mipi-camera-input)：在 Neat 應用程式中讀取相機影格。
+- [整合您自己的相機](./custom-camera.mdx)：本頁未列出的相機。
+- [載板硬體啟動](../design/som-carrier.mdx)：自有載板上的相機。

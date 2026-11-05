@@ -1,0 +1,167 @@
+---
+title: eLxr にパッケージとサービスを追加する
+description: eLxr ボードに Debian パッケージをインストールし、独自のサービスを .deb ファイルとしてパッケージ化する方法と、ファームウェアのアップデートが変更に与える影響を説明します。
+sidebar_position: 3
+---
+
+# eLxr にパッケージとサービスを追加する
+
+Modalix のイメージは、Debian 派生のディストリビューションである eLxr をベースにしています。
+ボードへのソフトウェアの追加は Debian と同じ方法で行います。つまり、`apt` でインストールする
+パッケージとして追加します。このページでは、パッケージのインストール方法、独自のサービスを
+パッケージ化する方法、ファームウェアのアップデートが変更に与える影響を説明します。
+
+:::caution[ハードウェアでは未検証]
+このページは、公開されている SiMa.ai のリポジトリをもとに作成しています。例のパッケージは
+Debian のコンテナー内でビルドし、インストールしました。ここに記載した手順をそのまま
+ボード上で実行したわけではありません。
+:::
+
+## パッケージをインストールする {#install}
+
+1. パッケージリポジトリに到達できるネットワークにボードを接続します。
+2. パッケージリストを更新します。
+
+   ```console
+   sima@modalix:~$ sudo apt update
+   ```
+
+3. パッケージをインストールします。たとえば、I2C ツールをインストールするには次のようにします。
+
+   ```console
+   sima@modalix:~$ sudo apt install i2c-tools
+   ```
+
+SiMa.ai は、自社のソフトウェアを Debian パッケージとしてボードに提供しています。ボード上の
+SiMa.ai パッケージを一覧表示するには、次のようにします。
+
+```console
+sima@modalix:~$ dpkg -l | grep simaai
+```
+
+## 独自のサービスをパッケージ化する {#package-service}
+
+独自のプログラムをサービスとして実行するには、そのための Debian パッケージをビルドします。
+パッケージがファイルをインストールし、インストール後スクリプトがサービスを有効にします。
+この例では、`my-app` という名前のプログラムをパッケージ化します。
+
+1. ビルドホストで、次のディレクトリツリーを作成します。プログラムは `usr/bin/my-app` に
+   配置します。ボード上で動作する必要があるため、arm64 向けにビルドしてください。
+   ビルドコンテナーについては、
+   [BSP をソースからビルドする](./build-from-source.mdx#set-up-the-build-container)を参照してください。
+
+   ```text
+   my-app/
+   ├── DEBIAN/
+   │   ├── control
+   │   └── postinst
+   ├── lib/systemd/system/my-app.service
+   └── usr/bin/my-app
+   ```
+
+2. `DEBIAN/control` を作成します。`Depends` には、プログラムが必要とするパッケージを
+   列挙します。
+
+   ```text
+   Package: my-app
+   Version: 1.0.0
+   Section: utils
+   Priority: optional
+   Architecture: arm64
+   Depends: python3
+   Maintainer: Your Name <you@example.com>
+   Description: Example service for a Modalix board
+   ```
+
+3. ユニットファイル `lib/systemd/system/my-app.service` を作成します。
+
+   ```ini
+   [Unit]
+   Description=My application
+   After=network.target
+
+   [Service]
+   Type=simple
+   ExecStart=/usr/bin/my-app
+   Restart=on-failure
+   RestartSec=5
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+4. `DEBIAN/postinst` を作成します。パッケージのインストール時に、このスクリプトがサービスを
+   有効にして起動します。
+
+   ```sh
+   #!/bin/sh
+   set -e
+   if [ -d /run/systemd/system ]; then
+       systemctl daemon-reload
+       systemctl enable my-app.service
+       systemctl restart my-app.service
+   fi
+   ```
+
+5. スクリプトとプログラムに実行権限を付与し、パッケージをビルドします。
+
+   ```console
+   sima-user@sima-user-machine:~$ chmod 0755 my-app/DEBIAN/postinst my-app/usr/bin/my-app
+   sima-user@sima-user-machine:~$ dpkg-deb --root-owner-group --build my-app my-app_1.0.0_arm64.deb
+   ```
+
+6. パッケージをボードにコピーしてインストールします。`apt` は、依存するパッケージも
+   インストールします。
+
+   ```console
+   sima-user@sima-user-machine:~$ scp my-app_1.0.0_arm64.deb sima@<board-ip>:/tmp/
+   sima@modalix:~$ sudo apt install /tmp/my-app_1.0.0_arm64.deb
+   ```
+
+7. サービスが動作していることを確認し、ログを読みます。
+
+   ```console
+   sima@modalix:~$ systemctl status my-app.service
+   sima@modalix:~$ journalctl -u my-app.service
+   ```
+
+この種のパッケージの完全な例については、SiMa.ai の Insight リポジトリにある
+[MIPI カメラユーティリティ](https://github.com/sima-neat/insight/tree/main/mipi-util)
+を参照してください。
+
+## ファームウェアのアップデートが変更に与える影響 {#updates}
+
+`sima-cli update` の動作はリリース系列によって異なるため、パッケージの扱いも異なります。
+
+| プラットフォームリリース | アップデートの動作 | パッケージとサービス |
+| --- | --- | --- |
+| 2.1 | SiMa.ai のパッケージをその場でアップグレードします。新しいイメージは書き込みません。 | 未確認です。アップデート後に確認してください。 |
+| 3.0 以降 | 完全なルートファイルシステムを非アクティブなスロットに書き込み、そこから起動します。 | アップデートがオーバーレイを消去しない限り、`/data` 上のオーバーレイファイルシステムに保持されます。消去された場合は、再度インストールしてください。 |
+
+- リリース 2.1 では、アップデートによって U-Boot の環境がリセットされます。`dtbos` など、
+  変更した変数はアップデート後に再度設定してください。
+- ボードのリカバリー、または完全なイメージの書き込みを行うと、どのリリースでも
+  パッケージは削除されます。
+- 再インストールできるように、`.deb` ファイルとインストールしたものの一覧を
+  保管しておいてください。
+- リリース 3.0 以降では、`sima-cli update --inspect` でオーバーレイファイルシステムの
+  内容を確認できます。
+
+プラットフォームリリース 3.0 はまだリリースされていません。ここでは `sima-cli` の
+[システムアップデートガイド](https://github.com/sima-neat/sima-cli/blob/main/docs/sima-cli/guides/system-updates.md)
+をもとにその動作を説明しており、変更される可能性があります。
+
+## 対象外 {#not-covered}
+
+- パッケージをあらかじめ含んだ完全な eLxr イメージのビルド。
+  [eLxr と Yocto](./index.md#elxr-or-yocto)を参照してください。
+- 独自のパッケージリポジトリでのパッケージの公開。
+
+## 次のステップ
+
+- [BSP をソースからビルドする](./build-from-source.mdx)：カーネル、U-Boot、
+  デバイスツリーをビルドします。
+- [デバイスツリーとオーバーレイ](./device-tree.mdx)：新しいハードウェアをカーネルに
+  記述します。
+- [ファームウェアのアップデート](../getting-started/firmware-update/index.mdx)：SiMa.ai のイメージで
+  ボードをアップデートします。

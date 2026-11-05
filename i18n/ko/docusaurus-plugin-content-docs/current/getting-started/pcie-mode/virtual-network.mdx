@@ -1,0 +1,77 @@
+---
+title: "가상 네트워크"
+description: "Modalix PCIe 카드에 대해 이더넷-오버-PCIe 액세스를 구성합니다."
+sidebar_position: 3
+---
+
+# 가상 네트워크
+
+:::note
+가상 네트워크 기능을 사용하기 전에 DevKit이 최신 펌웨어 버전으로 [업데이트](/hardware/getting-started/firmware-update)되었는지 확인하십시오.
+
+이 기능은 Linux 호스트에서만 사용할 수 있습니다.
+:::
+
+Modalix PCIe 카드가 PCIe를 통해 연결되면 호스트와 카드 사이에 가상 이더넷 인터페이스가 생성됩니다.
+
+다음과 같은 용도로 가상 네트워크를 사용하십시오.
+
+- **Secure Shell(SSH)**: 문제 해결 및 시스템 관리를 위해 DevKit 명령줄에 접속합니다.
+- **안전한 복사 프로토콜(SCP)**: 호스트와 DevKit 간에 로그, 구성 파일 및 기타 파일을 전송합니다.
+
+## 수동 IP 주소 할당
+
+`insmod`를 사용하여 모듈을 수동으로 로드할 때 아래 명령을 사용하십시오. 이렇게 하면 호스트 인터페이스에 고정 IP 주소를 할당한 다음 Modalix PCIe 카드에 할당할 수 있습니다.
+
+```console
+sudo insmod sima_mla_drv.ko default_ip=false
+```
+
+이 작업에는 호스트에서 `ifconfig` 유틸리티가 필요합니다.
+
+```console
+ifconfig <eth interface> 20.1.2.1
+```
+
+호스트 인터페이스에 IP 주소를 할당한 후에는 SoC 인터페이스에 자동으로 IP + 1이 할당됩니다. 예를 들어, 호스트가 `20.1.2.1`을 사용하는 경우, MLSoC의 IP는 `20.1.2.2`입니다.
+
+인터페이스가 생성될 때 호스트 인터페이스는 `cardnum:S:I:m:A:0` 형식의 MAC 주소를 사용하고, SoC 인터페이스는 `cardnum:S:I:m:A:1`을 사용합니다. IP 주소는 생성 시 `host:10.0.cardnum.1` 및 `soc:10.0.cardnum.2`로 할당됩니다.
+
+1. 호스트 머신에서 `ifconfig` 명령의 출력 결과:
+
+   ```console
+   enp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.1  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4130  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:30  txqueuelen 1000  (Ethernet)
+       RX packets 14107  bytes 4460994 (4.4 MB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 818  bytes 74840 (74.8 KB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+2. SiMa.ai DevKit에서 `ifconfig` 명령의 출력 결과:
+
+   ```console
+   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+       inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
+       inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
+       ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
+       RX packets 818  bytes 74840 (73.0 KiB)
+       RX errors 0  dropped 0  overruns 0  frame 0
+       TX packets 14109  bytes 4461636 (4.2 MiB)
+       TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+   ```
+
+3. 호스트에서 장치로 SSH를 통해 접속합니다. 기본 사용자 이름 `sima`와 비밀번호 `edgeai`를 사용하세요.
+
+   ```console
+   sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+   The authenticity of host '10.0.0.2 (10.0.0.2)' can't be established.
+   ED25519 key fingerprint is SHA256:ulxwiRM+cCQNJ90R5Qn5eV+9hqvkVNo0eWQ9pY3l8E0.
+   This key is not known by any other names
+   Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+   Warning: Permanently added '10.0.0.2' (ED25519) to the list of known hosts..
+   sima@10.0.0.2's password:
+   sima@modalix:~#
+   ```

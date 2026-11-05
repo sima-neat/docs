@@ -1,0 +1,45 @@
+{
+  "id": "waveshare-jetson-orin-io-base-h",
+  "vendor": "Waveshare",
+  "model": "JETSON-ORIN-IO-BASE-H",
+  "reference": true,
+  "ordering": {
+    "partNumber": "33495",
+    "url": "https://www.waveshare.com/jetson-orin-io-base-h.htm"
+  },
+  "applications": {
+    "en": "Evaluation, robotics",
+    "ja": "評価、ロボティクス",
+    "ko": "평가, 로보틱스",
+    "zh-Hant": "評估、機器人",
+    "uk": "Оцінювання, робототехніка"
+  },
+  "cooling": {
+    "en": "Fan",
+    "ja": "ファン",
+    "ko": "팬",
+    "zh-Hant": "風扇",
+    "uk": "Вентилятор"
+  },
+  "interfaces": {
+    "hdmi": 1,
+    "ethernet": 1,
+    "usb3": {
+      "en": "5 (4 Type-A, 1 Type-C)",
+      "ja": "5（Type-A × 4、Type-C × 1）",
+      "ko": "5(Type-A 4개, Type-C 1개)",
+      "zh-Hant": "5（4 個 Type-A、1 個 Type-C）",
+      "uk": "5 (4 Type-A, 1 Type-C)"
+    },
+    "m2KeyMx4": 1,
+    "m2KeyMx2": 1,
+    "m2KeyE": 1,
+    "csi4Lane": {
+      "en": "2 (22-pin; the Modalix SoM uses 2 lanes on each)",
+      "ja": "2（22 ピン。Modalix SoM は各コネクターで 2 レーンを使用）",
+      "ko": "2(22핀, Modalix SoM은 각 커넥터에서 2레인 사용)",
+      "zh-Hant": "2（22 針；Modalix SoM 在每個連接器上使用 2 個通道）",
+      "uk": "2 (22 контакти; Modalix SoM використовує по 2 лінії на кожному)"
+    }
+  }
+}

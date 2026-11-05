@@ -1,0 +1,26 @@
+{
+  "id": "leopard-imaging-li-onx-cb-4cam-fp",
+  "vendor": "Leopard Imaging",
+  "model": "LI-ONX-CB-4CAM-FP",
+  "reference": false,
+  "ordering": {
+    "url": "https://leopardimaging.com/product/accessories/adapters-carrier-boards/for-nvidia-jetson/li-onx-cb-4cam-fp/"
+  },
+  "applications": {
+    "en": "Cameras",
+    "ja": "カメラ",
+    "ko": "카메라",
+    "zh-Hant": "相機",
+    "uk": "Камери"
+  },
+  "temperatureGrade": "-20 °C to +60 °C",
+  "interfaces": {
+    "ethernet": 1,
+    "usb3": 3,
+    "m2KeyMx4": 1,
+    "m2KeyE": 1,
+    "csi2Lane": 4,
+    "uart": 1,
+    "can": 1
+  }
+}

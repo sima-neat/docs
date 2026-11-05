@@ -1,0 +1,173 @@
+---
+title: "PCIe 카드 bring-up 및 문제 해결"
+description: "Modalix HHHL PCIe 카드에서 PCIe 가상 이더넷 링크를 활성화하고 확인한 후 처리량 테스트를 실행합니다."
+sidebar_position: 6
+---
+
+# PCIe 카드 bring-up 및 문제 해결
+
+호스트가 Modalix HHHL PCIe 카드를 감지했지만 PCIe 가상 이더넷 링크가 활성화되지 않을 때 이 참고 사항을 사용하십시오. 이 문제는 주로 카드가 외부 Thunderbolt/USB4 인클로저에 장착된 경우에 발생합니다.
+
+:::note
+하드웨어 준비 및 드라이버 설치는 [PCIe 모드](/hardware/getting-started/pcie-mode)부터 시작하십시오. `sima-cli device discover`가 가상 이더넷 링크를 감지하지 못하거나, 감지했지만 `ping` 및 SSH가 작동하지 않을 때 이 페이지로 돌아오십시오.
+:::
+
+PCIe 스택은 호스트와 카드 사이에 가상 이더넷 링크를 제공하므로 이더넷 케이블 없이도 PCIe를 통해 `ping`, `ssh`, `scp`, `iperf3`를 사용할 수 있습니다.
+
+```text
+[HOST] 10.0.0.1/24  <--- PCIe --->  10.0.0.2/24 [MODALIX]
+```
+
+**[HOST]**는 Ubuntu 머신이고 **[MODALIX]**는 카드에서 실행되는 Linux입니다.
+
+## 외부 인클로저의 전원 순서
+
+외부 인클로저는 별도의 전원 도메인을 가지므로 호스트를 재부팅해도 카드의 전원이 재투입되지 않습니다.
+
+- **전원 끄기:** 호스트를 먼저 끈 후 인클로저를 끕니다.
+- **전원 켜기:** 인클로저를 먼저 켠 후 호스트를 켭니다.
+
+마더보드 내부 슬롯에 장착된 카드는 호스트 전원을 공유하므로 특별한 순서가 필요하지 않습니다.
+
+## 인터페이스 이름 지정 (선택 사항)
+
+`sima-cli`는 sysfs에서 카드의 PCI 주소를 기준으로 PCIe 가상 이더넷 인터페이스를 찾으므로, 호스트가 인터페이스에 어떤 이름(보통 `enp47s0`과 같은 예측 가능한 이름)을 지정하든 검색이 작동합니다. 이름 변경은 **필수가 아닙니다**.
+
+그래도 여러 호스트에서 일관된 인터페이스 이름을 사용하고 NetworkManager가 링크를 재구성하지 못하도록 하려면 이름 변경이 유용합니다. 적용하려면 **호스트**에 두 개의 파일을 생성하십시오.
+
+:::note 이름 변경 생략
+여기서 두 작업은 분리할 수 있습니다. NetworkManager가 인터페이스를 점유하여
+드라이버가 제공한 `10.0.<cardnum>.1` 주소를 대체하는 경우, 검색은 PCI 주소로
+계속 작동하지만 `ping` 및 SSH는 실패합니다. 따라서 이름 변경 없이 unmanaged
+설정만 적용할 수 있습니다. 이름 대신 MAC으로 장치를 매칭하고 다음 파일만
+생성하십시오.
+
+```ini
+[device-simaai-unmanaged]
+match-device=mac:00:53:49:4d:41:30
+managed=0
+```
+
+호스트 인터페이스의 실제 MAC으로 대체하십시오. 첫 번째 옥텟이 카드 번호입니다.
+그런 다음 `sudo systemctl restart NetworkManager`를 실행하십시오. 이름을 변경하지
+않으므로 `udev` 규칙이나 새 장치 이벤트가 필요하지 않습니다.
+:::
+
+`/etc/udev/rules.d/90-network.rules`:
+
+```text
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="*:53:49:4d:41:30", NAME="veth-simaai", ENV{NM_UNMANAGED}="1"
+```
+
+이 규칙은 호스트에 Modalix 카드가 **하나**만 있다고 가정합니다. 앞쪽 와일드카드는
+카드 번호인 첫 번째 MAC 옥텟을 포함하므로([가상 네트워크](/hardware/getting-started/pcie-mode/virtual-network) 참조),
+카드가 두 개 이상인 호스트에서는 이 규칙이 모든 카드의 호스트 측 인터페이스와
+매칭되며, 그중 하나만 `veth-simaai`라는 이름을 사용할 수 있습니다. 다중 카드
+호스트에서는 각 카드에 전체 MAC과 매칭되는 개별 규칙과 고유한 이름(예:
+`veth-simaai0`, `veth-simaai1`)을 지정하고, 아래 단계에서 해당 이름을 사용하십시오.
+
+`/etc/NetworkManager/conf.d/99-unmanaged-devices.conf`:
+
+```ini
+[device-vethsimaai-unmanaged]
+match-device=interface-name:veth-simaai
+managed=0
+```
+
+:::warning
+위의 단일 카드 규칙에서는 특정 시스템의 정확한 MAC 대신 와일드카드
+`*:53:49:4d:41:30`을 그대로 사용하십시오. 와일드카드가 카드 번호 옥텟을 포함합니다.
+예외는 위에서 설명한 다중 카드의 경우로, 각 카드를 구분하려면 카드별 전체 MAC과
+매칭되는 규칙이 필요합니다.
+
+어느 경우든 규칙은 MAC이 `:41:30`으로 끝나는 **호스트** 인터페이스와 매칭되어야
+합니다. 카드 자체의 인터페이스는 `:41:31`로 끝납니다.
+:::
+
+두 파일은 함께 작동합니다. NetworkManager 드롭인 파일은 `interface-name:veth-simaai`와 매칭되므로 `udev` 규칙이 해당 이름을 적용한 후에만 적용됩니다.
+
+구성을 적용합니다.
+
+```console
+sima-user@sima-user-machine:~$ sudo udevadm control --reload-rules
+sima-user@sima-user-machine:~$ sudo systemctl restart NetworkManager
+```
+
+규칙은 `ACTION=="add"`와 매칭되므로, 규칙을 다시 로드하는 것만으로는 이미 존재하는
+인터페이스의 이름이 변경되지 않습니다. 새 장치 이벤트가 발생해야 합니다.
+
+- **외부 인클로저:** 인클로저를 다시 연결하거나 전원을 재투입하십시오.
+- **마더보드 내부 슬롯:** 호스트를 재부팅하거나, 재부팅 없이 카드의 PCI 주소로
+  대체하여 장치를 제거한 후 다시 스캔하십시오.
+
+  ```console
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/devices/0000:2f:00.0/remove
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/rescan
+  ```
+
+## 링크 확인
+
+양쪽의 주소를 확인하십시오. 위의 이름 변경을 적용하지 않았다면 호스트의 실제 인터페이스 이름으로 대체하십시오.
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima-user@sima-user-machine:~$ ip -br addr show veth-simaai
+veth-simaai   UNKNOWN   10.0.0.1/24
+```
+
+<img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima@modalix:~$ ip -br addr show veth-simaai
+veth-simaai   UNKNOWN   10.0.0.2/24
+```
+
+그런 다음 호스트에서 경로와 검색을 확인하십시오.
+
+```console
+sima-user@sima-user-machine:~$ ping 10.0.0.2
+sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+sima-user@sima-user-machine:~$ sima-cli device discover
+Detected PCIe virtual ethernet.
+```
+
+:::note
+가상 인터페이스에서는 `UNKNOWN`이 정상입니다. 이름 변경을 적용한 경우 인터페이스가 unmanaged로 표시되므로 **설정 → 네트워크**에 나타나지 않습니다. GUI가 아닌 `ip`로 확인하십시오.
+
+SiMa 엔지니어링 팀의 지시가 없는 한 기본 주소 `10.0.0.1` / `10.0.0.2`를 변경하지 마십시오.
+
+이 주소는 이 참고 사항이 가정하는 단일 카드의 경우인 카드 번호 0의 주소입니다.
+패턴은 호스트에서 `10.0.<cardnum>.1`, 카드에서 `10.0.<cardnum>.2`이므로([가상 네트워크](/hardware/getting-started/pcie-mode/virtual-network) 참조),
+두 번째 카드는 `10.0.1.1` 및 `10.0.1.2`를 사용합니다. 전체적으로 이에 맞게 대체하십시오.
+:::
+
+## 처리량 테스트
+
+`sima-cli device discover`는 가상 이더넷 경로에 대한 처리량 테스트를 제공합니다. 양쪽 끝을 자동으로 설정하므로 카드에서 서버를 시작할 필요가 없습니다.
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima-user@sima-user-machine:~$ sima-cli device discover
+Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
+Virtual Ethernet Throughput: 7.61 Gbps (healthy)
+```
+
+테스트한 구성에서는 약 7–8 Gbps가 측정되었습니다. 실제 처리량은 호스트, 인클로저 및 Thunderbolt 경로에 따라 달라집니다.
+
+## 문제 해결
+
+| 증상 | 확인 사항 |
+| --- | --- |
+| `lspci -nnk -d 1f06:`에 카드가 나타나지 않음 | 인클로저 전원, Thunderbolt/USB4 연결 및 카드 장착 상태를 확인하십시오. 그런 다음 호스트와 인클로저의 전원을 모두 완전히 껐다 켜십시오. |
+| `sima-cli`가 `veth-simaai not found`를 보고함 | 인터페이스 이름으로 매칭하던 이전 버전의 `sima-cli`입니다. `sima-cli`를 업데이트하거나, 위의 `udev` 규칙을 적용한 후 카드를 다시 추가하거나 전원을 재투입하십시오. |
+| 인터페이스는 있지만 `ping 10.0.0.2`가 실패함 | 호스트의 `10.0.0.1/24`와 카드의 `10.0.0.2/24`를 확인하고, 두 인터페이스가 모두 활성화되어 있는지 확인하십시오. 주소를 변경하지 마십시오. |
+| `Device "veth-simaai" does not exist` | 이름 변경을 적용하지 않았거나, 카드 측 인터페이스 이름이 `eth2`인 이전 pre-eLxr 카드 빌드에서는 예상되는 동작입니다. `ip addr`를 실행하고(간략 형식에는 MAC이 표시되지 않음), 주소와 `:41:30`(호스트) 또는 `:41:31`(카드)로 끝나는 MAC으로 매칭하십시오. |
+| 재부팅 전에는 PCIe가 작동했으나 이후 불안정함 | 위의 전원 순서를 따르십시오. 인클로저는 별도의 전원을 사용합니다. |
+
+## 관련 문서
+
+- [PCIe 모드](/hardware/getting-started/pcie-mode) — 하드웨어 준비 및 드라이버 설치.
+- [가상 네트워크](/hardware/getting-started/pcie-mode/virtual-network) — 수동 IP 할당 및 MAC/IP 주소 체계.
+- [Modalix PCIe 카드](/hardware/devkit/modalix-pcie-card) — 카드 인터페이스, 스위치 및 커넥터.

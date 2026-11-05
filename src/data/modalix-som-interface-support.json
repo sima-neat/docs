@@ -1,0 +1,29 @@
+{
+  "hdmi": {"status": "supported"},
+  "ethernet": {"status": "supported"},
+  "usb3": {"status": "supported"},
+  "usb2": {"status": "supported"},
+  "m2KeyMx4": {"status": "carrier"},
+  "m2KeyMx2": {"status": "carrier"},
+  "m2KeyE": {"status": "carrier"},
+  "m2KeyB": {"status": "unconfirmed"},
+  "csi4Lane": {
+    "status": "unsupported",
+    "note": {
+      "en": "Two independent 2-lane paths cannot be combined into one 4-lane path",
+      "ja": "独立した 2 つの 2 レーン経路を 1 つの 4 レーン経路にまとめることはできません",
+      "ko": "독립된 2레인 경로 두 개를 하나의 4레인 경로로 합칠 수 없습니다",
+      "zh-Hant": "兩條獨立的 2-lane 路徑無法合併為一條 4-lane 路徑",
+      "uk": "Два незалежні 2-лінійні тракти не можна об’єднати в один 4-лінійний"
+    }
+  },
+  "csi2Lane": {"status": "carrier"},
+  "gmsl": {"status": "carrier"},
+  "uart": {"status": "supported"},
+  "i2c": {"status": "supported"},
+  "i2s": {"status": "supported"},
+  "gpio": {"status": "supported"},
+  "can": {"status": "unsupported"},
+  "spi": {"status": "supported"},
+  "rs232": {"status": "unconfirmed"}
+}

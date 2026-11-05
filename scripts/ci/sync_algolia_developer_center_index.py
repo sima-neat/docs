@@ -10,6 +10,7 @@ import json
 import os
 import re
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -18,10 +19,144 @@ from pathlib import Path
 
 
 SOURCE = "hardware"
+DEFAULT_LOCALE = "en"
+SECTION_LABELS = {
+    "en": {"hardware": "Hardware", "references": "References", "tools": "Tools"},
+    "ko": {"hardware": "하드웨어", "references": "참조", "tools": "도구"},
+    "ja": {"hardware": "ハードウェア", "references": "リファレンス", "tools": "ツール"},
+    "zh-Hant": {"hardware": "硬體", "references": "參考資料", "tools": "工具"},
+    "uk": {
+        "hardware": "Апаратне забезпечення",
+        "references": "Довідкові матеріали",
+        "tools": "Інструменти",
+    },
+}
+I18N_DOCS_SUBDIR = Path("docusaurus-plugin-content-docs/current")
 DEFAULT_MAX_RECORD_BYTES = 9_500
+# Share of a record kept for table text that a component renders from JSON, when the page's
+# prose alone would fill the record. Capped at half of the record.
+DERIVED_RESERVED_BYTES = 4_000
 DEFAULT_BATCH_SIZE = 500
+DEFAULT_TASK_TIMEOUT_SECONDS = 300
+DEFAULT_TASK_POLL_INTERVAL_SECONDS = 1
 SKIP_PARTS = {"build", "node_modules", ".git"}
 EXTENSIONS = {".md", ".mdx"}
+
+# Data-driven pages. A doc that imports one of these component modules
+# (`import {...} from '@site/src/components/<module>'`) renders its tables from JSON, so the
+# Markdown source never contains that text. Each entry names the JSON the component reads
+# (paths relative to the repository root; a `*` pattern yields one item per file, in file-name
+# order) and the describe_* function below that lists the fields to index. Adding a
+# data-driven page is one entry here plus its describe function. The components themselves
+# are never parsed or executed.
+DATA_COMPONENTS = {
+    "CarrierBoards": {
+        "describe": "describe_carrier_boards",
+        "sources": {
+            "boards": "src/data/carrier-boards/*.json",
+            "som": "src/data/modalix-som-interface-support.json",
+        },
+    },
+    "Cameras": {
+        "describe": "describe_cameras",
+        "sources": {"cameras": "src/data/cameras/*.json"},
+    },
+    "BoardSupport": {
+        "describe": "describe_board_support",
+        "sources": {"board": "src/data/board-support/modalix-devkit.json"},
+    },
+}
+DATA_COMPONENT_IMPORT = re.compile(
+    r"""^import\s[^'"]*?\bfrom\s+['"]@site/src/components/(\w+)(?:/index(?:\.jsx?)?)?['"]""",
+    re.MULTILINE,
+)
+# Status words as the components print them (their LOCALIZED_UI objects). The data stores the
+# key; the reader sees, and searches for, the word.
+STATUS_LABELS = {
+    "en": {
+        "supported": "Supported",
+        "overlay": "Needs an overlay",
+        "unsupported": "Not supported",
+        "unconfirmed": "Not confirmed",
+        "carrier": "Carrier-dependent",
+        "reference": "Reference board",
+        "broughtUp": "Brought up",
+        "untested": "Not tested",
+    },
+    "ja": {
+        "supported": "対応",
+        "overlay": "オーバーレイが必要",
+        "unsupported": "非対応",
+        "unconfirmed": "未確認",
+        "carrier": "キャリアボードに依存",
+        "reference": "リファレンスボード",
+        "broughtUp": "立ち上げ済み",
+        "untested": "未確認",
+    },
+    "ko": {
+        "supported": "지원",
+        "overlay": "오버레이 필요",
+        "unsupported": "지원되지 않음",
+        "unconfirmed": "확인되지 않음",
+        "carrier": "캐리어 보드에 따라 다름",
+        "reference": "레퍼런스 보드",
+        "broughtUp": "브링업 완료",
+        "untested": "테스트되지 않음",
+    },
+    "zh-Hant": {
+        "supported": "支援",
+        "overlay": "需要 overlay",
+        "unsupported": "不支援",
+        "unconfirmed": "尚未確認",
+        "carrier": "視載板而定",
+        "reference": "參考載板",
+        "broughtUp": "已完成硬體啟動",
+        "untested": "尚未測試",
+    },
+    "uk": {
+        "supported": "Підтримується",
+        "overlay": "Потрібен оверлей",
+        "unsupported": "Не підтримується",
+        "unconfirmed": "Не підтверджено",
+        "carrier": "Залежить від плати-носія",
+        "reference": "Еталонна плата",
+        "broughtUp": "Запущена",
+        "untested": "Не тестувалася",
+    },
+}
+# Shutter type of a camera, as a phrase a reader would search for.
+SHUTTER_LABELS = {
+    "en": {"rolling": "Rolling shutter", "global": "Global shutter"},
+    "ja": {"rolling": "ローリングシャッター", "global": "グローバルシャッター"},
+    "ko": {"rolling": "롤링 셔터", "global": "글로벌 셔터"},
+    "zh-Hant": {"rolling": "捲簾快門", "global": "全域快門"},
+    "uk": {"rolling": "Ковзний затвор", "global": "Глобальний затвор"},
+}
+# Carrier-board specification rows, in the order the comparison table shows them. The label
+# is the language-neutral interface name; None means the value is indexed on its own.
+CARRIER_SPEC_LABELS = {
+    "applications": None,
+    "cooling": None,
+    "temperatureGrade": None,
+    "hdmi": "HDMI",
+    "ethernet": "Ethernet",
+    "usb3": "USB 3.1",
+    "usb2": "USB 2.0",
+    "m2KeyMx4": "M.2 Key M PCIe x4 NVMe",
+    "m2KeyMx2": "M.2 Key M PCIe x2",
+    "m2KeyE": "M.2 Key E",
+    "m2KeyB": "M.2 Key B",
+    "csi4Lane": "MIPI CSI 4-lane",
+    "csi2Lane": "MIPI CSI 2-lane",
+    "gmsl": "GMSL",
+    "uart": "UART",
+    "i2c": "I2C",
+    "i2s": "I2S",
+    "gpio": "GPIO",
+    "can": "CAN",
+    "spi": "SPI",
+    "rs232": "RS-232",
+}
 
 # A record's URL is pruned only when the live site gives a DEFINITIVE "gone" response.
 # 403 covers the S3 "AccessDenied" pages this reaper was built to remove; 404/410 are the
@@ -37,6 +172,11 @@ def parse_args() -> argparse.Namespace:
         description="Generate or sync hardware docs records in the shared Developer Center Algolia index.",
     )
     parser.add_argument("--docs-dir", default="docs", help="Docs root directory.")
+    parser.add_argument(
+        "--i18n-dir",
+        default="i18n",
+        help="Docusaurus i18n root containing localized docs (default: i18n).",
+    )
     parser.add_argument("--site-base-url", required=True, help="Public sysdoc base URL.")
     parser.add_argument("--records-json", help="Write generated records to this JSON file.")
     parser.add_argument("--input-records-json", help="Read records from this JSON file instead of generating them.")
@@ -48,6 +188,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-record-bytes", type=int, default=DEFAULT_MAX_RECORD_BYTES)
     parser.add_argument("--generate-only", action="store_true", help="Only generate records; do not upload.")
     parser.add_argument("--sync", action="store_true", help="Upload records and remove stale records for this source.")
+    parser.add_argument(
+        "--configure-language-facet-only",
+        action="store_true",
+        help="Configure the shared index language facet without generating or syncing records.",
+    )
     parser.add_argument(
         "--prune-dead-links",
         action="store_true",
@@ -122,18 +267,19 @@ def title_from_markdown(path: Path, text: str) -> str:
     return path.stem.replace("-", " ").replace("_", " ").title()
 
 
-def section_for_path(path: Path, docs_dir: Path) -> str:
+def section_for_path(path: Path, docs_dir: Path, language: str = DEFAULT_LOCALE) -> str:
     rel = path.relative_to(docs_dir).as_posix()
+    labels = SECTION_LABELS.get(language, SECTION_LABELS[DEFAULT_LOCALE])
     if rel.startswith("hardware/"):
-        return "Hardware"
+        return labels["hardware"]
     if rel.startswith("reference/"):
-        return "References"
+        return labels["references"]
     if rel.startswith("tools/"):
-        return "Tools"
-    return "Hardware"
+        return labels["tools"]
+    return labels["hardware"]
 
 
-def route_for_path(path: Path, docs_dir: Path, site_base_url: str) -> str:
+def route_for_path(path: Path, docs_dir: Path, site_base_url: str, language: str = DEFAULT_LOCALE) -> str:
     rel = path.relative_to(docs_dir).as_posix()
     stem = rel.rsplit(".", 1)[0]
     if stem.endswith("/index"):
@@ -145,31 +291,66 @@ def route_for_path(path: Path, docs_dir: Path, site_base_url: str) -> str:
     route = f"/{stem}".rstrip("/")
     if route == "":
         route = "/hardware"
+    if language != DEFAULT_LOCALE:
+        route = f"/{language}{route}"
     return f"{site_base_url.rstrip('/')}{route}"
+
+
+def route_relative_to_site_base(url: str, site_base_url: str) -> str:
+    route = urllib.parse.urlparse(url).path or "/"
+    site_base_path = urllib.parse.urlparse(site_base_url).path.rstrip("/")
+    if site_base_path and (route == site_base_path or route.startswith(f"{site_base_path}/")):
+        route = route[len(site_base_path) :] or "/"
+    return route
 
 
 def record_size(record: dict) -> int:
     return len(json.dumps(record, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
 
 
-def fit_record(record: dict, max_record_bytes: int) -> tuple[dict, bool]:
-    if record_size(record) <= max_record_bytes:
-        return record, False
+def join_content(prose: str, derived: str) -> str:
+    return " ".join(part for part in (prose, derived) if part)
 
-    content = str(record.get("content", ""))
+
+def longest_fitting_content(record: dict, build, upper: int, max_record_bytes: int) -> str:
+    """Return build(n) for the largest n in 0..upper whose record fits the size limit."""
     lo = 0
-    hi = len(content)
-    best = ""
+    hi = upper
+    best = build(0)
     while lo <= hi:
         mid = (lo + hi) // 2
         candidate = dict(record)
-        candidate["content"] = content[:mid]
+        candidate["content"] = build(mid)
         candidate["content_truncated"] = True
         if record_size(candidate) <= max_record_bytes:
             best = candidate["content"]
             lo = mid + 1
         else:
             hi = mid - 1
+    return best
+
+
+def fit_record(record: dict, max_record_bytes: int, derived: str = "") -> tuple[dict, bool]:
+    """Cut the record's content to the size limit. `derived` is the table text at the end of
+    the content: the prose is cut first, down to what leaves the reserved share for the table
+    text, and the table text then fills the room that is left."""
+    if record_size(record) <= max_record_bytes:
+        return record, False
+
+    content = str(record.get("content", ""))
+    if derived and content.endswith(derived):
+        prose = content[: len(content) - len(derived)].rstrip()
+        reserved = min(DERIVED_RESERVED_BYTES, max_record_bytes // 2)
+        tail = derived.encode("utf-8")[:reserved].decode("utf-8", errors="ignore")
+        kept = longest_fitting_content(
+            record, lambda n: join_content(prose[:n], tail), len(prose), max_record_bytes
+        )
+        prose = kept[: len(kept) - len(tail)].rstrip() if kept.endswith(tail) else ""
+        best = longest_fitting_content(
+            record, lambda n: join_content(prose, derived[:n]), len(derived), max_record_bytes
+        )
+    else:
+        best = longest_fitting_content(record, lambda n: content[:n], len(content), max_record_bytes)
 
     record["content"] = best
     record["content_truncated"] = True
@@ -182,62 +363,300 @@ def fit_record(record: dict, max_record_bytes: int) -> tuple[dict, bool]:
     return record, True
 
 
-def generate_records(docs_dir: Path, site_base_url: str, max_record_bytes: int, versions: dict[str, str]) -> tuple[list[dict], dict]:
+def localized_text(value: object, language: str) -> str:
+    """Mirror the components' text(): a value is a number, a language-neutral string, or an
+    object keyed by locale, which falls back to English. Backticks mark code in the data and
+    a lone dash marks an empty cell; neither is searchable text."""
+    if isinstance(value, dict):
+        value = value.get(language) or value.get(DEFAULT_LOCALE)
+    if value is None or isinstance(value, (bool, dict, list)):
+        return ""
+    if isinstance(value, float) and value.is_integer():
+        value = int(value)
+    text = re.sub(r"\s+", " ", str(value).replace("`", "")).strip()
+    return "" if text == "—" else text
+
+
+def status_label(key: object, language: str) -> str:
+    labels = STATUS_LABELS.get(language, STATUS_LABELS[DEFAULT_LOCALE])
+    return labels.get(key, "") if isinstance(key, str) else ""
+
+
+def join_text(parts: list[str], separator: str) -> str:
+    """Join the non-empty parts. Sentence stops are dropped from each part first so that a
+    note written as a sentence does not leave doubled punctuation at the join."""
+    return separator.join(part.rstrip(".。 ") for part in parts if part and part.strip(".。 "))
+
+
+def describe_carrier_boards(data: dict, language: str) -> list[str]:
+    """CarrierBoardList and CarrierBoardSpecs: the reference board, the boards brought up, then by vendor."""
+    boards = sorted(
+        data["boards"],
+        key=lambda board: (
+            0 if board.get("reference") else 1 if board.get("broughtUp") else 2,
+            str(board.get("vendor", "")).casefold(),
+        ),
+    )
+
+    def name(board: dict) -> str:
+        return join_text([localized_text(board.get(key), language) for key in ("vendor", "model")], " ")
+
+    listing = [
+        join_text(
+            [
+                name(board),
+                localized_text((board.get("ordering") or {}).get("partNumber"), language),
+                status_label(
+                    "reference" if board.get("reference") else "broughtUp" if board.get("broughtUp") else "untested",
+                    language,
+                ),
+            ],
+            ", ",
+        )
+        for board in boards
+    ]
+
+    som = data["som"] or {}
+    som_rows = []
+    for key, label in CARRIER_SPEC_LABELS.items():
+        support = som.get(key)
+        if label and isinstance(support, dict):
+            som_rows.append(
+                join_text(
+                    [
+                        f"{label} {status_label(support.get('status'), language)}".strip(),
+                        localized_text(support.get("note"), language),
+                    ],
+                    ", ",
+                )
+            )
+
+    specs = []
+    for board in boards:
+        rows = []
+        for key, label in CARRIER_SPEC_LABELS.items():
+            # A specification is a top-level field or an entry under "interfaces".
+            value = board[key] if key in board else (board.get("interfaces") or {}).get(key)
+            value = localized_text(value, language)
+            if value:
+                rows.append(f"{label} {value}" if label else value)
+        if rows:
+            specs.append(f"{name(board)}: {join_text(rows, ', ')}")
+
+    return [
+        join_text(listing, "; "),
+        f"Modalix SoM: {join_text(som_rows, '; ')}" if som_rows else "",
+        join_text(specs, "; "),
+    ]
+
+
+def describe_cameras(data: dict, language: str) -> list[str]:
+    """CameraList, CameraSpecs, and CameraOverlays: cameras by their "order" field."""
+    cameras = sorted(
+        data["cameras"],
+        key=lambda camera: camera["order"] if isinstance(camera.get("order"), (int, float)) else float("inf"),
+    )
+    listing = []
+    overlays = []
+    modes = []
+    for camera in cameras:
+        overlay = localized_text(camera.get("overlay"), language)
+        ordering = camera.get("ordering") or {}
+        listing.append(
+            join_text(
+                [
+                    join_text([localized_text(camera.get(key), language) for key in ("vendor", "sensor")], " "),
+                    localized_text(camera.get("variant"), language),
+                    SHUTTER_LABELS.get(language, SHUTTER_LABELS[DEFAULT_LOCALE]).get(camera.get("shutter"), ""),
+                    overlay,
+                    # The page prints the part number only when the vendor lists it.
+                    localized_text(ordering.get("partNumber"), language)
+                    if ordering.get("status") == "vendor-listed"
+                    else "",
+                ],
+                ", ",
+            )
+        )
+        ports = [
+            join_text([str(carrier), *(localized_text(port, language) for port in names)], " ")
+            for carrier, names in (camera.get("overlays") or {}).items()
+            if isinstance(names, list) and names
+        ]
+        if overlay and ports:
+            overlays.append(f"{overlay}: {join_text(ports, ', ')}")
+        rows = []
+        for mode in camera.get("modes") or []:
+            if not isinstance(mode, dict):
+                continue
+            width, height, fps, bits = (
+                localized_text(mode.get(key), language) for key in ("width", "height", "fps", "bitDepth")
+            )
+            if width and height:
+                rows.append(
+                    join_text([f"{width} × {height}", f"{fps} fps" if fps else "", f"{bits}-bit" if bits else ""], " ")
+                )
+        if overlay and rows:
+            modes.append(f"{overlay}: {join_text(rows, ', ')}")
+    return [join_text(listing, "; "), join_text(overlays, "; "), join_text(modes, "; ")]
+
+
+def describe_board_support(data: dict, language: str) -> list[str]:
+    """BoardSupportTable: one row per interface, in file order."""
+    rows = []
+    for row in (data["board"] or {}).get("rows") or []:
+        if not isinstance(row, dict):
+            continue
+        cells = [localized_text(row.get(key), language) for key in ("connector", "som", "deviceTree")]
+        cells += [status_label(row.get("status"), language), localized_text(row.get("note"), language)]
+        name = localized_text(row.get("name"), language)
+        details = join_text(cells, ", ")
+        rows.append(f"{name}: {details}" if name and details else name or details)
+    return [join_text(rows, "; ")]
+
+
+def load_json(path: Path) -> object:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        raise SystemExit(f"invalid JSON in data file {path}: {error}") from error
+
+
+def load_component_data(repo_root: Path, sources: dict[str, str]) -> dict:
+    """Load each named source: a list of JSON objects for a `*` pattern (empty when nothing
+    matches), or the parsed file for a single path (None when the file is missing)."""
+    data: dict = {}
+    for name, pattern in sources.items():
+        if "*" in pattern:
+            items = [load_json(path) for path in sorted(repo_root.glob(pattern)) if path.is_file()]
+            data[name] = [item for item in items if isinstance(item, dict)]
+        else:
+            path = repo_root / pattern
+            loaded = load_json(path) if path.is_file() else None
+            data[name] = loaded if isinstance(loaded, dict) else None
+    return data
+
+
+def data_component_text(raw: str, repo_root: Path, language: str) -> str:
+    """Searchable text for the JSON-backed tables of a doc, or "" when the doc imports no
+    data-driven component or the data is not there."""
+    # An import shown inside a fenced example is not an import of the page.
+    source = re.sub(r"```[\s\S]*?```", " ", raw)
+    passages: list[str] = []
+    for module in dict.fromkeys(DATA_COMPONENT_IMPORT.findall(source)):
+        component = DATA_COMPONENTS.get(module)
+        if component is None:
+            continue
+        data = load_component_data(repo_root, component["sources"])
+        passages.extend(globals()[component["describe"]](data, language))
+    return join_text(passages, ". ")
+
+
+def localized_doc_roots(docs_dir: Path, i18n_dir: Path | None) -> list[tuple[str, Path]]:
+    roots = [(DEFAULT_LOCALE, docs_dir.resolve())]
+    if i18n_dir is None or not i18n_dir.is_dir():
+        return roots
+    for locale_dir in sorted(i18n_dir.iterdir()):
+        localized_docs = locale_dir / I18N_DOCS_SUBDIR
+        if locale_dir.is_dir() and localized_docs.is_dir():
+            roots.append((locale_dir.name, localized_docs.resolve()))
+    return roots
+
+
+def generate_records(
+    docs_dir: Path,
+    site_base_url: str,
+    max_record_bytes: int,
+    i18n_dir: Path | None = None,
+    versions: dict[str, str] | None = None,
+) -> tuple[list[dict], dict]:
     docs_dir = docs_dir.resolve()
+    # The docs directory sits at the repository root, next to src/ (see agents.md below).
+    repo_root = docs_dir.parent
+    versions = versions or {}
     records: list[dict] = []
     by_section: dict[str, int] = {}
+    by_language: dict[str, int] = {}
     trimmed = 0
     max_seen = 0
 
-    # (path, rel, section, url) sources: every markdown file under docs/ (served under
-    # /hardware), plus the agent onboarding page which lives in src/pages/ and is served
-    # at the site root (/agents) because it spans the hardware AND software pillars.
-    sources: list[tuple[Path, str, str, str]] = []
-    for path in sorted(docs_dir.rglob("*")):
-        if not path.is_file() or path.suffix.lower() not in EXTENSIONS:
-            continue
-        if any(part in SKIP_PARTS for part in path.relative_to(docs_dir).parts):
-            continue
-        rel = path.relative_to(docs_dir).as_posix()
-        sources.append((path, rel, section_for_path(path, docs_dir), route_for_path(path, docs_dir, site_base_url)))
+    for language, language_docs_dir in localized_doc_roots(docs_dir, i18n_dir):
+        # Every Markdown file under each locale's docs root is served under
+        # /hardware. The English-only agent onboarding page lives in src/pages
+        # and is served at /agents because it spans Hardware and Software.
+        sources: list[tuple[Path, str, str, str]] = []
+        for path in sorted(language_docs_dir.rglob("*")):
+            if not path.is_file() or path.suffix.lower() not in EXTENSIONS:
+                continue
+            if any(part in SKIP_PARTS for part in path.relative_to(language_docs_dir).parts):
+                continue
+            rel = path.relative_to(language_docs_dir).as_posix()
+            sources.append(
+                (
+                    path,
+                    rel,
+                    section_for_path(path, language_docs_dir, language),
+                    route_for_path(path, language_docs_dir, site_base_url, language),
+                )
+            )
 
-    agents_page = docs_dir.parent / "src" / "pages" / "agents.md"
-    if agents_page.is_file():
-        sources.append((agents_page, "src/pages/agents.md", "Agents", f"{site_base_url.rstrip('/')}/agents"))
+        if language == DEFAULT_LOCALE:
+            agents_page = docs_dir.parent / "src" / "pages" / "agents.md"
+            if agents_page.is_file():
+                sources.append(
+                    (
+                        agents_page,
+                        "src/pages/agents.md",
+                        "Agents",
+                        f"{site_base_url.rstrip('/')}/agents",
+                    )
+                )
 
-    for path, rel, section, url in sources:
-        # Substitute %platform_version% (and any other versions.json key) up front so both the
-        # title and the cleaned body carry real values — matching the rendered, remark-processed
-        # page instead of indexing the literal token.
-        raw = substitute_versions(strip_frontmatter(path.read_text(encoding="utf-8")), versions)
-        body = clean_markdown(raw)
-        if not body:
-            continue
+        for path, rel, section, url in sources:
+            # Match the rendered Docusaurus content by substituting version
+            # tokens before deriving both the title and searchable body.
+            raw = substitute_versions(
+                strip_frontmatter(path.read_text(encoding="utf-8")),
+                versions,
+            )
+            body = clean_markdown(raw)
+            if not body:
+                continue
 
-        title = title_from_markdown(path, raw)
-        route = urllib.parse.urlparse(url).path or "/hardware"
-        record = {
-            "objectID": f"{SOURCE}:{hashlib.sha1(rel.encode('utf-8')).hexdigest()}",
-            "source": SOURCE,
-            "url": url,
-            "route": route,
-            "path": rel,
-            "section": section,
-            "category": section,
-            "title": title,
-            "content": body[:20_000],
-            "hierarchy": {"lvl0": section, "lvl1": title},
-        }
-        record, was_trimmed = fit_record(record, max_record_bytes)
-        trimmed += int(was_trimmed)
-        max_seen = max(max_seen, record_size(record))
-        records.append(record)
-        by_section[section] = by_section.get(section, 0) + 1
+            # Tables that a component renders from JSON are not in the Markdown source.
+            # There is one record per page, so their text goes after the prose. When the
+            # record is over the size limit, fit_record keeps a reserved share for it, so
+            # that values found only in a table stay searchable on a long page.
+            derived = data_component_text(raw, repo_root, language)[:20_000]
+            content = join_content(body[:20_000], derived)
+
+            title = title_from_markdown(path, raw)
+            route = route_relative_to_site_base(url, site_base_url)
+            record_key = f"{language}:{rel}"
+            record = {
+                "objectID": f"{SOURCE}:{hashlib.sha1(record_key.encode('utf-8')).hexdigest()}",
+                "source": SOURCE,
+                "language": language,
+                "url": url,
+                "route": route,
+                "path": rel,
+                "section": section,
+                "category": section,
+                "title": title,
+                "content": content,
+                "hierarchy": {"lvl0": section, "lvl1": title},
+            }
+            record, was_trimmed = fit_record(record, max_record_bytes, derived)
+            trimmed += int(was_trimmed)
+            max_seen = max(max_seen, record_size(record))
+            records.append(record)
+            by_section[section] = by_section.get(section, 0) + 1
+            by_language[language] = by_language.get(language, 0) + 1
 
     summary = {
         "source": SOURCE,
         "count": len(records),
         "by_section": by_section,
+        "by_language": by_language,
         "trimmed_records": trimmed,
         "max_record_bytes": max_seen,
     }
@@ -256,20 +675,66 @@ class AlgoliaClient:
         }
 
     def post(self, path: str, payload: dict) -> dict:
+        return self.request("POST", path, payload)
+
+    def request(self, method: str, path: str, payload: dict | None = None) -> dict:
         request = urllib.request.Request(
             self.host + path,
-            data=json.dumps(payload).encode("utf-8"),
+            data=json.dumps(payload).encode("utf-8") if payload is not None else None,
             headers=self.headers,
-            method="POST",
+            method=method,
         )
         try:
             with urllib.request.urlopen(request, timeout=45) as response:
                 return json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as error:
             body = error.read().decode("utf-8", errors="replace")
-            if error.code == 404 and path.endswith("/browse"):
+            if error.code == 404 and (
+                path.endswith("/browse") or (method == "GET" and path.endswith("/settings"))
+            ):
                 return {"hits": []}
             raise SystemExit(f"Algolia API error: HTTP {error.code} on {path}\n{body}") from error
+
+    def ensure_language_filter(self) -> None:
+        path = f"/1/indexes/{self.index}/settings"
+        settings = self.request("GET", path)
+        attributes = list(settings.get("attributesForFaceting") or [])
+        configured = any(re.fullmatch(r"(?:(?:filterOnly|searchable)\()?language\)?", item) for item in attributes)
+        if not configured:
+            result = self.request(
+                "PUT",
+                path,
+                {"attributesForFaceting": [*attributes, "filterOnly(language)"]},
+            )
+            self.wait_for_task(result.get("taskID"))
+            print("[algolia-index] configured filterOnly(language)")
+
+    def wait_for_task(
+        self,
+        task_id: int | str | None,
+        timeout_seconds: float = DEFAULT_TASK_TIMEOUT_SECONDS,
+        poll_interval_seconds: float = DEFAULT_TASK_POLL_INTERVAL_SECONDS,
+    ) -> None:
+        if task_id is None:
+            raise SystemExit("Algolia mutation response did not include a taskID")
+
+        path = f"/1/indexes/{self.index}/task/{urllib.parse.quote(str(task_id), safe='')}"
+        deadline = time.monotonic() + timeout_seconds
+        while True:
+            result = self.request("GET", path)
+            status = result.get("status")
+            if status == "published":
+                print(f"[algolia-index] taskID={task_id} status=published")
+                return
+            if status != "notPublished":
+                raise SystemExit(
+                    f"Algolia task {task_id} returned unexpected status: {status!r}"
+                )
+            if time.monotonic() >= deadline:
+                raise SystemExit(
+                    f"Timed out waiting {timeout_seconds:g}s for Algolia task {task_id}"
+                )
+            time.sleep(poll_interval_seconds)
 
     def browse_source_object_ids(self, source: str) -> list[str]:
         object_ids: list[str] = []
@@ -278,6 +743,24 @@ class AlgoliaClient:
             result = self.post(f"/1/indexes/{self.index}/browse", payload)
             for hit in result.get("hits", []):
                 if hit.get("source") == source and hit.get("objectID"):
+                    object_ids.append(hit["objectID"])
+            cursor = result.get("cursor")
+            if not cursor:
+                return object_ids
+            payload = {"cursor": cursor}
+
+    def browse_untagged_object_ids(self) -> list[str]:
+        """Find records that predate the shared index language facet."""
+        object_ids: list[str] = []
+        payload = {
+            "query": "",
+            "attributesToRetrieve": ["objectID", "source", "language"],
+            "hitsPerPage": 1000,
+        }
+        while True:
+            result = self.post(f"/1/indexes/{self.index}/browse", payload)
+            for hit in result.get("hits", []):
+                if not hit.get("language") and hit.get("objectID"):
                     object_ids.append(hit["objectID"])
             cursor = result.get("cursor")
             if not cursor:
@@ -307,6 +790,7 @@ class AlgoliaClient:
             return
         result = self.post(f"/1/indexes/{self.index}/batch", {"requests": requests})
         print(f"[algolia-index] taskID={result.get('taskID')} requests={len(requests)}")
+        self.wait_for_task(result.get("taskID"))
 
 
 def url_is_accessible(url: str, timeout: float) -> bool | None:
@@ -415,19 +899,52 @@ def sync_records(args: argparse.Namespace, records: list[dict]) -> None:
         raise SystemExit("--app-id, --api-key, and --index-name are required for --sync")
 
     client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
+    client.ensure_language_filter()
+    backfill_legacy_language(client, args.batch_size)
     desired_ids = {record["objectID"] for record in records}
     existing_ids = set(client.browse_source_object_ids(SOURCE))
     stale_ids = sorted(existing_ids - desired_ids)
 
     print(f"[algolia-index] existing {SOURCE} records={len(existing_ids)} stale={len(stale_ids)}")
-    for start in range(0, len(stale_ids), args.batch_size):
-        chunk = stale_ids[start : start + args.batch_size]
-        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
-
     print(f"[algolia-index] uploading {len(records)} {SOURCE} records...")
     for start in range(0, len(records), args.batch_size):
         chunk = records[start : start + args.batch_size]
         client.batch([{"action": "addObject", "body": record} for record in chunk])
+
+    # Wait for every replacement record to be published before removing stale
+    # object IDs. This keeps the existing index intact if an upload fails.
+    print(f"[algolia-index] deleting {len(stale_ids)} stale {SOURCE} records...")
+    for start in range(0, len(stale_ids), args.batch_size):
+        chunk = stale_ids[start : start + args.batch_size]
+        client.batch([{"action": "deleteObject", "body": {"objectID": object_id}} for object_id in chunk])
+
+
+def backfill_legacy_language(client: AlgoliaClient, batch_size: int) -> None:
+    legacy_ids = client.browse_untagged_object_ids()
+    print(f"[algolia-index] legacy records to tag as English={len(legacy_ids)}")
+    for start in range(0, len(legacy_ids), batch_size):
+        chunk = legacy_ids[start : start + batch_size]
+        client.batch(
+            [
+                {
+                    "action": "partialUpdateObject",
+                    "body": {"objectID": object_id, "language": DEFAULT_LOCALE},
+                }
+                for object_id in chunk
+            ]
+        )
+
+
+def configure_language_facet(args: argparse.Namespace) -> None:
+    if not args.app_id or not args.api_key or not args.index_name:
+        raise SystemExit(
+            "--app-id, --api-key, and --index-name are required for "
+            "--configure-language-facet-only"
+        )
+
+    client = AlgoliaClient(args.app_id, args.api_key, args.index_name)
+    client.ensure_language_filter()
+    backfill_legacy_language(client, args.batch_size)
 
 
 def main() -> int:
@@ -439,6 +956,10 @@ def main() -> int:
 
     if args.prune_dead_links:
         prune_dead_links(args)
+        return 0
+
+    if args.configure_language_facet_only:
+        configure_language_facet(args)
         return 0
 
     if not args.generate_only and not args.sync:
@@ -456,7 +977,13 @@ def main() -> int:
         print("[algolia-index] loaded records:")
     else:
         versions = load_versions(args.versions_json)
-        records, summary = generate_records(Path(args.docs_dir), args.site_base_url, args.max_record_bytes, versions)
+        records, summary = generate_records(
+            Path(args.docs_dir),
+            args.site_base_url,
+            args.max_record_bytes,
+            Path(args.i18n_dir),
+            versions,
+        )
         print("[algolia-index] generated records:")
     print(json.dumps(summary, indent=2))
 

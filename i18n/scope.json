@@ -1,0 +1,6 @@
+{
+  "excludedPrefixes": [],
+  "generatedRoutePrefixes": [],
+  "localizedRouteExceptions": [],
+  "reason": "All authored Hardware documentation is localized. Static interactive tools remain language-neutral assets outside the Docusaurus docs plugin."
+}

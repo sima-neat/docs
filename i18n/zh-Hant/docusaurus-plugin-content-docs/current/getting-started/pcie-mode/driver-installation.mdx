@@ -1,0 +1,91 @@
+---
+title: 驅動程式安裝
+description: 安裝 Modalix PCIe 卡驅動程式並驗證 PCIe 偵測。
+sidebar_position: 2
+---
+
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# 驅動程式安裝
+
+為您的作業系統安裝主機驅動程式，然後驗證主機是否可以偵測到 Modalix PCIe 卡。
+
+<Tabs groupId="pcie-driver">
+<TabItem value="linux" label="Linux" default>
+
+在 Linux 主機上執行以下命令以安裝最新的驅動程式。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux
+... ... ...
+=== Driver Installation Validation ===
+  Component            | Status     | Details
+  ----------------------------------------------------------------
+  GStreamer            | PASS       | ✅ GStreamer plugin 'pciehost' installed
+  Kernel Module        | PASS       | ✅ Kernel module 'sima_mla_drv' installed
+  PCI Devices          | PASS       | ✅ Detected SiMa PCIe device(s):
+  - 0000:04:00.0 Modalix HHHL v2              driver=sima_mla_drv
+
+✅ Installation complete.
+```
+
+要安裝特定的驅動程式版本，請使用 `-v` 標誌：
+
+```console
+sima-user@sima-user-machine:~$ sima-cli install drivers/linux -v %platform_version%
+```
+
+:::note
+驅動程式安裝後，在進行驗證之前，請重新啟動主機機器。
+:::
+
+:::warning
+對舊版 **MLSoC PCIe 卡** 的 PCIe 驅動程式支援已在 SDK 2.0.0 中結束。上述命令安裝的驅動程式支援 **Modalix**。如果您使用的是舊版 MLSoC PCIe 卡，請使用 `sima-cli install drivers/linux -v 2.0.0` 安裝 2.0.0 驅動程式。
+:::
+
+</TabItem>
+<TabItem value="windows" label="Windows">
+
+在 Windows 主機上執行以下命令以安裝驅動程式。
+
+:::warning
+此功能目前處於技術預覽階段。安裝此驅動程式會將系統置於驅動程式測試簽署模式。在進行任何系統更改之前，請確認提示。
+:::
+
+```console
+C:\Users\sima> sima-cli install drivers/windows
+... ... ...
+  ✅ Downloaded: pcie_develop_10082025_2.00.081025.1_B31.exe
+  🚀 Running installation script in: C:\Users\sima
+  📜 Script: pcie_develop_10082025_2.00.081025.1_B31.exe
+  ╭─ Post-Installation Instructions ─╮
+  │                                  │
+  │  Driver successfully installed   │
+  │                                  │
+  ╰──────────────────────────────────╯
+  ✅ Installation completed successfully.
+```
+
+檢查 Windows 裝置管理員中是否有 SiMa AI 裝置。
+
+<img src={useBaseUrl('/img/devkit/windows-device.jpg')} alt="Windows 裝置管理員顯示 SiMa AI 裝置" style={{width: '80%', display: 'block', margin: '0 auto'}} />
+
+:::note
+驅動程式安裝後，在進行驗證之前，請重新啟動主機機器。
+:::
+
+</TabItem>
+</Tabs>
+
+## 驗證和測試
+
+執行偵測命令以確認 PCIe 列舉：
+
+```console
+sima-cli device discover
+```
+
+如果設定正確，則命令輸出將列出已連接的 SiMa PCIe 裝置。

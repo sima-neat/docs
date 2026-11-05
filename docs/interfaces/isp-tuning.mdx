@@ -1,0 +1,61 @@
+---
+title: ISP Tuning
+description: What ISP tuning is, which cameras are already tuned for the Modalix ISP, when you need tuning, and how to get the tuning guide.
+sidebar_position: 4
+---
+
+# ISP Tuning
+
+The image signal processor (ISP) of MLSoC Modalix turns the raw data of a camera
+sensor into the image that an application receives. Getting frames from a
+camera and getting good images from it are two separate steps. This page says
+what tuning is, which cameras are already tuned, and how to get the tuning
+guide.
+
+:::caution[Not yet validated on hardware]
+This page summarizes the other camera pages of this site and the kernel source
+for platform release 2.1.3. The camera and ISP owners have not reviewed it yet.
+:::
+
+## Capture and Tuning {#capture-and-tuning}
+
+| | Capture | Image-quality tuning |
+| --- | --- | --- |
+| Result | The board lists the camera, and the camera delivers frames | The frames have the right exposure, white balance, and color |
+| What it needs | A sensor driver and a device-tree overlay | Tuning data for the sensor and its lens |
+| Where to start | [MIPI Camera Interfaces](../getting-started/standalone-mode/mipi-camera-interfaces.mdx) | The Modalix Camera & ISP Tuning Guide |
+
+The ISP is an Arm Mali-C71.
+
+## Cameras That Are Already Tuned {#tuned-cameras}
+
+The platform release is tuned for the cameras in
+[Supported MIPI Cameras](./supported-cameras.mdx): the Arducam IMX477, the
+e-con Systems IMX568 and IMX678, and the Leopard Imaging AR0234 and OG05C10.
+With one of these cameras, you do not need to tune the ISP to get started.
+
+## When You Need Tuning {#when}
+
+- You use a sensor that is not in the list above. See
+  [Integrate Your Own Camera](./custom-camera.mdx).
+- You use a supported sensor with a different lens or camera module.
+- The image quality of a supported camera does not meet the needs of your
+  application.
+
+## Get the ISP Tuning Guide {#tuning-guide}
+
+The Modalix Camera & ISP Tuning Guide describes how to tune the ISP for a
+camera. It is available on request. See
+[Reference Documents](../reference/extra-docs.md).
+
+To ask SiMa.ai about tuning a camera, contact your SiMa.ai representative, or
+use the [SiMa.ai contact page](https://sima.ai/contact/).
+
+## Next Steps
+
+- [Supported MIPI Cameras](./supported-cameras.mdx): the cameras that are
+  already tuned, with their sensor modes.
+- [Integrate Your Own Camera](./custom-camera.mdx): get a new camera to capture
+  before you tune it.
+- [Reference Documents](../reference/extra-docs.md): how to get the tuning
+  guide.

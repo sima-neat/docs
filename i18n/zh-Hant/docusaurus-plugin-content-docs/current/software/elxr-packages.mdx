@@ -1,0 +1,141 @@
+---
+title: 在 eLxr 上新增套件與服務
+description: 在 eLxr 電路板上安裝 Debian 套件、將您自己的服務封裝為 .deb 檔，並瞭解韌體更新對您所做變更的影響。
+sidebar_position: 3
+---
+
+# 在 eLxr 上新增套件與服務
+
+Modalix 映像檔以 eLxr 為基礎，eLxr 是衍生自 Debian 的發行版。在電路板上新增軟體的方式與 Debian 相同：以套件的形式，使用 `apt` 安裝。本頁說明如何安裝套件、如何將您自己的服務封裝為套件，以及韌體更新對您所做變更的影響。
+
+:::caution[尚未在硬體上驗證]
+本頁依據公開的 SiMa.ai 儲存庫撰寫。範例套件已在 Debian 容器中建置並安裝，但尚未依照本頁所述步驟在電路板上執行。
+:::
+
+## 安裝套件 {#install}
+
+1. 將電路板連接到可存取套件儲存庫的網路。
+2. 更新套件清單：
+
+   ```console
+   sima@modalix:~$ sudo apt update
+   ```
+
+3. 安裝套件。例如，若要安裝 I2C 工具：
+
+   ```console
+   sima@modalix:~$ sudo apt install i2c-tools
+   ```
+
+SiMa.ai 以 Debian 套件的形式將自家軟體提供給電路板。若要列出電路板上的 SiMa.ai 套件：
+
+```console
+sima@modalix:~$ dpkg -l | grep simaai
+```
+
+## 封裝您自己的服務 {#package-service}
+
+若要將您自己的程式作為服務執行，請為它建置 Debian 套件。套件會安裝檔案，其安裝後指令碼則會啟用服務。此範例封裝一個名為 `my-app` 的程式。
+
+1. 在建置主機上建立下列目錄樹。將您的程式放在 `usr/bin/my-app`。程式必須能在電路板上執行，因此請以 arm64 為目標建置。建置容器請參閱[從原始碼建置 BSP](./build-from-source.mdx#set-up-the-build-container)。
+
+   ```text
+   my-app/
+   ├── DEBIAN/
+   │   ├── control
+   │   └── postinst
+   ├── lib/systemd/system/my-app.service
+   └── usr/bin/my-app
+   ```
+
+2. 撰寫 `DEBIAN/control`。`Depends` 列出您的程式所需的套件：
+
+   ```text
+   Package: my-app
+   Version: 1.0.0
+   Section: utils
+   Priority: optional
+   Architecture: arm64
+   Depends: python3
+   Maintainer: Your Name <you@example.com>
+   Description: Example service for a Modalix board
+   ```
+
+3. 撰寫 unit 檔 `lib/systemd/system/my-app.service`：
+
+   ```ini
+   [Unit]
+   Description=My application
+   After=network.target
+
+   [Service]
+   Type=simple
+   ExecStart=/usr/bin/my-app
+   Restart=on-failure
+   RestartSec=5
+
+   [Install]
+   WantedBy=multi-user.target
+   ```
+
+4. 撰寫 `DEBIAN/postinst`。安裝套件時，它會啟用並啟動服務：
+
+   ```sh
+   #!/bin/sh
+   set -e
+   if [ -d /run/systemd/system ]; then
+       systemctl daemon-reload
+       systemctl enable my-app.service
+       systemctl restart my-app.service
+   fi
+   ```
+
+5. 將指令碼與程式設為可執行，然後建置套件：
+
+   ```console
+   sima-user@sima-user-machine:~$ chmod 0755 my-app/DEBIAN/postinst my-app/usr/bin/my-app
+   sima-user@sima-user-machine:~$ dpkg-deb --root-owner-group --build my-app my-app_1.0.0_arm64.deb
+   ```
+
+6. 將套件複製到電路板並安裝。`apt` 也會安裝它所相依的套件：
+
+   ```console
+   sima-user@sima-user-machine:~$ scp my-app_1.0.0_arm64.deb sima@<board-ip>:/tmp/
+   sima@modalix:~$ sudo apt install /tmp/my-app_1.0.0_arm64.deb
+   ```
+
+7. 確認服務正在執行，並查看其記錄：
+
+   ```console
+   sima@modalix:~$ systemctl status my-app.service
+   sima@modalix:~$ journalctl -u my-app.service
+   ```
+
+這類套件的完整範例，請參閱 SiMa.ai Insight 儲存庫中的 [MIPI 相機公用程式](https://github.com/sima-neat/insight/tree/main/mipi-util)。
+
+## 韌體更新對您所做變更的影響 {#updates}
+
+`sima-cli update` 在各版本系列中的運作方式不同，因此您的套件也會受到不同的處理。
+
+| 平台版本 | 更新的動作 | 您的套件與服務 |
+| --- | --- | --- |
+| 2.1 | 就地升級 SiMa.ai 套件，不會寫入新的映像檔。 | 尚未確認。請在更新後檢查。 |
+| 3.0 及更新版本 | 將完整的根檔案系統寫入非使用中的 slot，並由該 slot 開機。 | 保留在 `/data` 上的 overlay 檔案系統中，除非更新清除了該 overlay。若已清除，請重新安裝。 |
+
+- 在版本 2.1 中，更新會重設 U-Boot 環境。更新後，請重新設定 `dtbos` 以及您變更過的其他變數。
+- 無論哪個版本，恢復電路板或將完整映像檔寫入電路板都會移除您的套件。
+- 請保留您的 `.deb` 檔以及已安裝項目的清單，以便重新安裝。
+- 在版本 3.0 及更新版本中，`sima-cli update --inspect` 會顯示 overlay 檔案系統的內容。
+
+平台版本 3.0 尚未發布。此處依據 `sima-cli` 的[系統更新指南](https://github.com/sima-neat/sima-cli/blob/main/docs/sima-cli/guides/system-updates.md)說明其行為，日後可能變更。
+
+## 未涵蓋的內容 {#not-covered}
+
+- 建置已包含您的套件的完整 eLxr 映像檔。請參閱 [eLxr 或 Yocto](./index.md#elxr-or-yocto)。
+- 在您自己的套件儲存庫中發布套件。
+
+## 後續步驟
+
+- [從原始碼建置 BSP](./build-from-source.mdx)：建置核心、U-Boot 與 device tree。
+- [Device Tree 與 Overlay](./device-tree.mdx)：向核心描述新的硬體。
+- [韌體更新](../getting-started/firmware-update/index.mdx)：以 SiMa.ai 映像檔更新電路板。
