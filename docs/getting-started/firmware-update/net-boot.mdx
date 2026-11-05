@@ -81,7 +81,9 @@ To flash automatically once the device has netbooted, also append `--autoflash`:
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-On Linux, use the same `sudo ~/.sima-cli/.venv/bin/sima-cli` prefix shown above. With `--autoflash`, you do not need to enter the manual `f` command in Step 4. Keep the serial console connected, if available, to monitor progress, and wait for the CLI to tell you to reboot.
+On Linux, use the same `sudo ~/.sima-cli/.venv/bin/sima-cli` prefix shown above. With `--autoflash`, you do not need to enter the manual `f` command in Step 4. Keep the serial console connected, if available, to monitor progress. When flashing finishes, `sima-cli` reboots the device so that it boots from eMMC.
+
+If `sima-cli` cannot reach the device over SSH, or cannot change its U-Boot environment safely, it leaves the device unchanged and keeps the TFTP server running. Configure netboot through the serial console in Step 3 instead.
 
 This command:
 
@@ -140,12 +142,14 @@ sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
 <details open>
 <summary><strong>Step 4. Flash the eMMC</strong></summary>
 
-If you enabled `--autoflash` in Step 2, flashing starts automatically once the netbooted device is ready. Monitor progress and reboot when instructed. Otherwise, use the manual commands below.
+If you enabled `--autoflash` in Step 2, flashing starts automatically once the netbooted device is ready, and `sima-cli` reboots the device into eMMC when it finishes. Otherwise, use the manual commands below.
 
-The `--netboot` shell on the host supports two commands:
+The `--netboot` shell on the host supports these commands:
 
 - `c` — Show all connected clients and the firmware version currently running on them.
+- `d` — Look for devices on the network.
 - `f` — Flash the selected client's eMMC.
+- `q` — End the session and stop the TFTP server.
 
 Wait for the DevKit to finish netbooting. This may take several minutes. Once the login prompt is shown on the serial console, the board is ready. We recommend keeping the serial console connected throughout to observe the full boot sequence.
 
@@ -172,7 +176,7 @@ The image is roughly 1.6 GB, and the transfer takes a few minutes. Example progr
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-After flashing completes, power-cycle the DevKit. It boots the target version from eMMC.
+After flashing completes, `sima-cli` asks whether to reboot the DevKit now. Answer `y`, and the DevKit boots the target version from eMMC. If you answer `n`, it boots from eMMC at the next reboot.
 
 
 </details>
