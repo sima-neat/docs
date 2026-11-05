@@ -177,18 +177,16 @@ sudo "$(which sima-cli)" bootimg --netboot --images images
 
 The command uses the local files to start the TFTP server. Follow the board boot and flashing steps in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Then continue with Section 4 below.
 
-## 4. Reboot the Board
+## 4. Check the Board
 
-1. Wait for `sima-cli` to tell you to reboot the board.
-2. Reboot the board.
-3. Wait for the board to start.
-4. Connect to the board through serial or SSH.
-5. Check the firmware version **on the board**:
+1. Wait for the board to restart from eMMC. With `--autoflash`, `sima-cli` reboots the board itself when flashing finishes; you do not need to reboot it. After an offline conversion, answer `y` when `sima-cli` asks whether to reboot the board now.
+2. Connect to the board through serial or SSH.
+3. Check the firmware version **on the board**:
 
    ```bash
    cat /etc/buildinfo
    ```
 
-6. Make sure the version is **3.0.0** before you continue with system setup.
+4. Make sure the version is **3.0.0** before you continue with system setup.
 
 For PCIe host systems, follow [PCIe Driver Installation](/hardware/getting-started/pcie-mode/driver-installation) to set up the host driver.

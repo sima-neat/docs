@@ -177,18 +177,16 @@ sudo "$(which sima-cli)" bootimg --netboot --images images
 
 這個指令會使用本機檔案來啟動 TFTP 伺服器。請依照 [網路開機恢復](/hardware/getting-started/firmware-update/net-boot) 中的板卡啟動和燒錄步驟進行操作。然後繼續執行下方第 4 節的說明。
 
-## 4. 重新啟動板卡。
+## 4. 檢查板卡。
 
-1. 請等待 `sima-cli` 指示您重新啟動板卡。
-2. 重新啟動板卡。
-3. 請等待板卡啟動。
-4. 透過序列埠或 SSH 連接到板卡上。
-5. 請檢查**板卡上**的韌體版本：
+1. 等待板卡從 eMMC 重新啟動。使用 `--autoflash` 時，燒錄完成後 `sima-cli` 會自行重新啟動板卡，您不需要手動重新啟動。離線轉換後，當 `sima-cli` 詢問是否立即重新啟動板卡時，請回答 `y`。
+2. 透過序列埠或 SSH 連接到板卡上。
+3. 請檢查**板卡上**的韌體版本：
 
    ```bash
    cat /etc/buildinfo
    ```
 
-6. 請確認版本為 **3.0.0** 後，再繼續進行系統設定。
+4. 請確認版本為 **3.0.0** 後，再繼續進行系統設定。
 
 對於 PCIe 主機系統，請依照 [PCIe 驅動程式安裝](/hardware/getting-started/pcie-mode/driver-installation) 的步驟來設定主機驅動程式。
