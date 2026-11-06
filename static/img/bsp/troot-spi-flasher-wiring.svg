@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="760" height="380" font-family="Inter, Helvetica, Arial, sans-serif" font-size="14">
+  <title>Aardvark SPI flasher to Modalix DevKit wiring (Modalix SoM Rev 2)</title>
+
+  <!-- Aardvark 10-pin header -->
+  <rect x="20" y="20" width="230" height="340" rx="8" fill="#f4f6f8" stroke="#5b6670" stroke-width="1.5"/>
+  <text x="135" y="44" text-anchor="middle" font-weight="700" fill="#1d2329">Aardvark</text>
+  <text x="135" y="62" text-anchor="middle" fill="#3d4750">10-pin header</text>
+
+  <!-- DevKit 12-pin header -->
+  <rect x="510" y="20" width="230" height="140" rx="8" fill="#f4f6f8" stroke="#5b6670" stroke-width="1.5"/>
+  <text x="625" y="44" text-anchor="middle" font-weight="700" fill="#1d2329">DevKit</text>
+  <text x="625" y="62" text-anchor="middle" fill="#3d4750">12-pin header</text>
+
+  <!-- DevKit 40-pin header -->
+  <rect x="510" y="180" width="230" height="180" rx="8" fill="#f4f6f8" stroke="#5b6670" stroke-width="1.5"/>
+  <text x="625" y="204" text-anchor="middle" font-weight="700" fill="#1d2329">DevKit</text>
+  <text x="625" y="222" text-anchor="middle" fill="#3d4750">40-pin header (J12)</text>
+
+  <!-- Wires -->
+  <g stroke-width="4" stroke-linecap="round">
+    <line x1="250" y1="95" x2="510" y2="95" stroke="#1d2329"/>
+    <line x1="250" y1="135" x2="510" y2="135" stroke="#7b3fa8"/>
+    <line x1="250" y1="250" x2="510" y2="250" stroke="#d9771e"/>
+    <line x1="250" y1="280" x2="510" y2="280" stroke="#2e8b3e"/>
+    <line x1="250" y1="310" x2="510" y2="310" stroke="#1f6fc4"/>
+    <line x1="250" y1="340" x2="510" y2="340" stroke="#139a9a"/>
+  </g>
+
+  <!-- Aardvark pins -->
+  <g fill="#1d2329">
+    <text x="40" y="100" font-weight="700">2</text><text x="80" y="100">GND</text>
+    <text x="40" y="140" font-weight="700">3</text><text x="80" y="140">SDA</text>
+    <text x="40" y="255" font-weight="700">7</text><text x="80" y="255">SCLK</text>
+    <text x="40" y="285" font-weight="700">9</text><text x="80" y="285">SS</text>
+    <text x="40" y="315" font-weight="700">5</text><text x="80" y="315">MISO</text>
+    <text x="40" y="345" font-weight="700">8</text><text x="80" y="345">MOSI</text>
+  </g>
+  <g fill="#ffffff" stroke="#5b6670" stroke-width="1.5">
+    <circle cx="250" cy="95" r="6"/><circle cx="250" cy="135" r="6"/>
+    <circle cx="250" cy="250" r="6"/><circle cx="250" cy="280" r="6"/>
+    <circle cx="250" cy="310" r="6"/><circle cx="250" cy="340" r="6"/>
+    <circle cx="510" cy="95" r="6"/><circle cx="510" cy="135" r="6"/>
+    <circle cx="510" cy="250" r="6"/><circle cx="510" cy="280" r="6"/>
+    <circle cx="510" cy="310" r="6"/><circle cx="510" cy="340" r="6"/>
+  </g>
+
+  <!-- DevKit pins -->
+  <g fill="#1d2329">
+    <text x="530" y="100" font-weight="700">9</text><text x="570" y="100">GND</text>
+    <text x="530" y="140" font-weight="700">10</text><text x="570" y="140">FORCE_RECOVERY</text>
+    <text x="530" y="255" font-weight="700">13</text><text x="570" y="255">SPI1_SCK</text>
+    <text x="530" y="285" font-weight="700">18</text><text x="570" y="285">SPI1_CS0</text>
+    <text x="530" y="315" font-weight="700">22</text><text x="570" y="315">SPI1_MISO</text>
+    <text x="530" y="345" font-weight="700">37</text><text x="570" y="345">SPI1_MOSI</text>
+  </g>
+</svg>

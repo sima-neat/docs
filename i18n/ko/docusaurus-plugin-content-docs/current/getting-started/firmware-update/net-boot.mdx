@@ -16,6 +16,8 @@ sidebar_position: 2
 
 :::note
 이 가이드는 SiMa.ai가 제공하는 이미지를 사용하며, 보드에서 U-Boot 프롬프트가 동작해야 합니다. 직접 빌드한 이미지를 설치하는 방법은 이 가이드에서 다루지 않습니다. 그 경우에는 [eMMC에 이미지 플래싱](/hardware/deployment/flash-image)을 참조하십시오.
+
+전원을 켰을 때 시리얼 콘솔에 아무것도 표시되지 않으면 tRoot 펌웨어가 손상되어 보드가 U-Boot에 도달하지 못하는 것일 수 있습니다. 먼저 SPI 플래시 프로그래머로 tRoot를 다시 프로그래밍하십시오. [Aardvark를 Modalix DevKit에 연결](/hardware/deployment/factory-build-and-test#connect-the-aardvark-to-the-modalix-devkit)을 참조하십시오.
 :::
 
 `sima-cli bootimg`와 함께 `--netboot` 옵션을 사용하세요. 그러면 대상 보드의 부트 이미지를 다운로드하여 호스트의 내장 TFTP 서버에서 제공합니다. 펌웨어 버전 2.1.3 이상을 실행 중인 접근 가능한 DevKit 또는 PCIe 카드의 경우, `--devkit <ip>`를 추가하여 호스트가 U-Boot 환경을 구성하고 네트워크 부팅을 시작할 수 있도록 합니다. 이렇게 하면 3단계를 건너뛸 수 있습니다. 이전 펌웨어를 사용하거나 접근할 수 없는 장치의 경우, 3단계에서 직렬 콘솔을 통해 U-Boot를 구성합니다.

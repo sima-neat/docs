@@ -4,6 +4,9 @@ description: 공장에서 Modalix 기반 보드를 조립, 프로그래밍 및 �
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
+
 # 공장 빌드 및 테스트
 
 이 문서는 공장에서 Modalix 기반 보드를 제작하고 테스트하기 위한 권장 절차입니다.
@@ -87,20 +90,108 @@ OTP 메모리는 한 번만 기록할 수 있습니다. 각 값을 확정하기 
 
 ### tRoot SPI 플래시 프로그래밍 {#program-the-troot-spi-flash}
 
-tRoot 펌웨어는 단일 바이너리 `troot_blob.be`입니다. 위에서 사용한 OTP 프로그래밍용
-펌웨어 또는 양산용 펌웨어, 두 버전 중 하나를 기록합니다. SiMa.ai는 Total Phase
-Flash Center 소프트웨어와 함께 Total Phase Aardvark I2C/SPI 호스트 어댑터를 사용할
-것을 권장합니다.
+tRoot 펌웨어는 단일 바이너리 `troot_blob.be`입니다. 위에서 사용한 OTP 프로그래밍 펌웨어나 양산용 펌웨어 중
+하나를 기록합니다. SiMa.ai는 호스트를 보드의 SPI 플래시에 연결하는 Total Phase의 USB 어댑터인
+[Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)와, 이를 통해 플래시를 프로그래밍하는 Python 스크립트를 권장합니다.
+스크립트는 기록하기 전에 SPI 멀티플렉서를 플래시 쪽으로 전환하고, 끝나면 원래대로 되돌립니다.
 
-1. 호스트에 Flash Center를 설치합니다.
-2. 프로그래머를 보드의 SPI 플래시 헤더에 연결합니다. 이 커넥터는 보드에 따라 다르며,
-   일반적으로 2열 헤더입니다.
-3. Flash Center를 시작합니다. 이 단계를 자동화하려는 경우 명령줄 도구도 제공됩니다.
-4. 어댑터를 추가합니다.
-5. 대상 장치를 선택합니다. **SPI Flash**를 선택한 다음 보드에 실장된 부품을
-   선택합니다(예: Winbond W25Q16(2 MB)).
-6. `troot_blob.be`를 로드합니다.
-7. 플래시를 프로그래밍합니다.
+1. Windows, Linux 또는 macOS 호스트에 Python 3을 설치합니다.
+2. Aardvark용 Total Phase USB 드라이버를 설치합니다. 드라이버는
+   [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) 페이지의 **Downloads**에 있습니다.
+3. 같은 페이지에서 Aardvark Software API를 설치합니다. 호스트에 맞는 패키지를 다운로드하여 압축을 풉니다.
+   `python` 폴더에는 스크립트에 필요한 `aardvark_py.py`와 네이티브 라이브러리
+   (Windows에서는 `aardvark.dll`, Linux와 macOS에서는 `aardvark.so`)가 들어 있습니다.
+4. [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py)를 Software API의 `python` 폴더에 다운로드하고, `troot_blob.be`도 그 폴더에 복사합니다.
+5. 프로그래머를 보드의 SPI 플래시 신호에 연결합니다. Modalix DevKit의 경우
+   [Aardvark를 Modalix DevKit에 연결](#connect-the-aardvark-to-the-modalix-devkit)을
+   참조하십시오. 다른 보드에서는 커넥터가 보드에 따라 다르며, 일반적으로 2열 헤더입니다.
+6. `python` 폴더에서 스크립트를 실행합니다.
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   인수는 Aardvark 포트(첫 번째 어댑터는 `0`), SPI 모드(`0`), 기록 후 플래시를 다시 읽어 검증할지 여부
+   (`0`은 건너뜀, `1`은 검증), 그리고 이미지입니다. SPI 전송이 실패하면 스크립트는 최대 10회 재시도하고
+   (`--retry`로 변경 가능), 그래도 실패하면 칩 지우기부터 다시 시작합니다.
+7. `Flash programming completed successfully.`와 `DONE!`이 표시될 때까지 기다립니다.
+
+#### Aardvark를 Modalix DevKit에 연결 {#connect-the-aardvark-to-the-modalix-devkit}
+
+다음 연결을 사용하여 Modalix DevKit의 tRoot를 프로그래밍합니다. tRoot 펌웨어가 손상된
+DevKit(예: 전원을 켤 때 tRoot 콘솔에 아무것도 출력되지 않는 경우)을 복구할 때도 사용합니다.
+
+<figure className="doc-figure doc-figure--diagram">
+  <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="Aardvark 10핀 헤더에서 Modalix DevKit으로의 배선: GND와 SDA는 12핀 헤더로, SCLK, SS, MISO, MOSI는 40핀 헤더로 연결" />
+  <figcaption>
+    <strong>그림 1.</strong> Aardvark와 Modalix DevKit 연결(Modalix SoM Rev 2)
+  </figcaption>
+</figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Modalix DevKit의 40핀 헤더(J12)에 연결한 Aardvark 점퍼선" />
+    <figcaption>
+      <strong>그림 2.</strong> 40핀 헤더(J12)에 연결한 Aardvark 배선. 이 보드는 SoM Rev 1이므로 MISO와 MOSI 배선이 SoM Rev 2와 반대 핀에 연결되어 있습니다. 핀은 표를 따르십시오.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Aardvark 10핀 리본 케이블에 꽂은 점퍼선" />
+    <figcaption>
+      <strong>그림 3.</strong> Aardvark 10핀 케이블에 꽂은 점퍼선.
+    </figcaption>
+  </figure>
+</div>
+
+| Aardvark 핀 | Aardvark 신호 | DevKit 헤더 | DevKit 핀 | DevKit 신호 |
+| --- | --- | --- | --- | --- |
+| 2 | GND | 12핀 헤더 | 9 | GND |
+| 3 | SDA | 12핀 헤더 | 10 | `FORCE_RECOVERY` |
+| 7 | SCLK | 40핀 헤더(J12) | 13 | `SPI1_SCK` |
+| 9 | SS | 40핀 헤더(J12) | 18 | `SPI1_CS0` |
+| 5 | MISO | 40핀 헤더(J12) | 22 | `SPI1_MISO` |
+| 8 | MOSI | 40핀 헤더(J12) | 37 | `SPI1_MOSI` |
+
+12핀 헤더의 핀 번호는 Waveshare 캐리어 보드에 표시된 1번 핀부터 셉니다. 배선하기 전에 보드에서 1번 핀의 위치를 확인하십시오.
+
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="왼쪽 끝이 1번 핀인 12핀 헤더. PWR 버튼은 12번 핀 너머에 있고 3, 4, 7, 9, 10번 핀에 배선되어 있습니다" />
+  <figcaption>
+    <strong>그림 4.</strong> 12핀 헤더와 오른쪽의 PWR 버튼. 1번 핀은 왼쪽 끝에 있습니다.
+  </figcaption>
+</figure>
+
+이 연결은 Modalix SoM Rev 2용입니다. Modalix SoM Rev 1에서는 MISO와 MOSI를 서로 바꿉니다.
+Aardvark 핀 5(MISO)는 핀 37에, Aardvark 핀 8(MOSI)은 핀 22에 연결합니다. DevKit의 SoM
+리비전을 확인하려면 [Modalix DevKit](/hardware/devkit/modalix-devkit)을 참조하십시오.
+
+`FORCE_RECOVERY`는 모듈의 QSPI 플래시를 `SPI1`에 연결하는 SPI 멀티플렉서를 제어합니다.
+스크립트는 플래시를 프로그래밍하는 동안 이 신호를 Low로 유지하고, 끝나면 High로 설정합니다.
+[캐리어 보드 브링업](/hardware/design/som-carrier)을 참조하십시오. 스크립트는 Aardvark의 SCL 핀(1번 핀)도
+코어 리셋으로 구동합니다. Modalix DevKit에서는 SCL을 연결하지 마십시오.
+
+작업하는 동안 tRoot 콘솔을 보려면 같은 12핀 헤더에 USB-UART 케이블을 연결합니다.
+
+| USB-UART 케이블 | DevKit 핀 | DevKit 신호 |
+| --- | --- | --- |
+| GND | 7 | GND |
+| TX | 3 | `UART2_RXD` |
+| RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="Modalix DevKit의 12핀 헤더에 연결한 USB-UART 케이블과 Aardvark 배선" />
+    <figcaption>
+      <strong>그림 5.</strong> 12핀 헤더의 배선: USB-UART 케이블(주황 TX, 노랑 RX, 검정 GND)과 그 옆의 Aardvark 배선.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="USB-UART 케이블에 연결한 점퍼선" />
+    <figcaption>
+      <strong>그림 6.</strong> USB-UART 케이블에 연결한 점퍼선.
+    </figcaption>
+  </figure>
+</div>
 
 ## 테스트 스테이션 설정 {#set-up-the-test-station}
 
