@@ -1,19 +1,19 @@
 ---
 title: "BluetoothをModalix SoM DevKitに設定します。"
-description: "BluetoothとUSBアダプターをModalix SoM DevKitに接続し、bluezスタックを起動します。"
+description: "Bluetooth USBアダプターをModalix SoM DevKitに接続し、bluezスタックを起動して、Bluetoothヘッドセットでオーディオを再生および録音します。"
 sidebar_position: 4
 ---
 
 # BluetoothをModalix SoM DevKitに設定します。
 
-このガイドを参照して、Bluetooth USBアダプターをModalix SoM DevKitに接続し、`bluez`を使用してBluetoothスタックを起動してください。
+このガイドを参照して、Bluetooth USBアダプターをModalix SoM DevKitに接続し、`bluez`を使用してBluetoothスタックを起動し、Bluetoothスピーカーまたはヘッドセットにオーディオを再生し、ヘッドセットのマイクから録音してください。
 
 :::info
 Bluetoothのサポートには、eLxrランタイム上で動作するSDKリリース**2.1.0**以降が必要です。ランタイムを確認するには、[「eLxr」への変換](./elxr-conversion)を参照してください。
 :::
 
 <details open>
-<summary> <strong>ステップ1：Bluetooth USBアダプターを接続</strong> </summary>
+<summary><strong>ステップ1：Bluetooth USBアダプターを接続</strong></summary>
 
 Bluetooth USBアダプターをDevKitのUSBポートのいずれかに接続し、`lsusb`を使用してカーネルがそれを認識していることを確認します。
 
@@ -31,7 +31,7 @@ Bluetoothアダプターがリストに表示されるはずです。この例�
 </details>
 
 <details open>
-<summary><strong>ステップ2：BlueZ</strong></summary>をインストールします。
+<summary><strong>ステップ2：BlueZのインストール</strong></summary>
 
 `bluez`スタックと`bluetooth`サービスをインストールします。
 
@@ -42,7 +42,7 @@ sima@modalix:~$ sudo apt update && sudo apt-get install bluez bluetooth -y
 </details>
 
 <details open>
-<summary><strong>ステップ3：確認します。 Bluetooth カーネルモジュール</strong></summary>
+<summary><strong>ステップ3：Bluetoothカーネルモジュールの確認</strong></summary>
 
 ツリー内の状態を確認します。 `bluetooth` カーネルモジュールが利用可能です。
 
@@ -87,13 +87,13 @@ Agent registered
 | `devices` | コントローラーが検出したデバイスのリスト。 |
 | `pair <MAC>` | MACアドレスを使用してデバイスとペアリングします。両方のデバイスでパスキーの確認を求められる場合があります。 |
 | `trust <MAC>` | このデバイスを信頼済みとして登録することで、次回起動時に再ペアリングなしで自動的に再接続されるようにします。 |
-| `connect <MAC>` | アクティブな接続を確立します。オーディオデバイスの場合、これはステップ6で使用されるA2DPシンクを公開する役割を果たします。 |
+| `connect <MAC>` | アクティブな接続を確立します。オーディオデバイスの場合、これはステップ7で使用されるA2DPシンクを公開する役割を果たします。 |
 | `info <MAC>` | デバイスの詳細を表示します（ペアリング済み、信頼済み、接続済み、対応プロファイル）。 |
 | `disconnect <MAC>` / `remove <MAC>` | セッションを切断するか、ペアリング情報を完全に削除します。 |
 | `help` | 利用可能なすべてのコマンドとその引数をリストアップしてください。 |
 | `quit` / `exit` | `bluetoothctl` シェルを終了します。 |
 
-最もシンプルなペアプログラミングのセッションは、以下のようになります。
+最もシンプルなペアリングの手順は、以下のようになります。
 
 ```console
 [bluetooth]# power on
@@ -112,47 +112,105 @@ Agent registered
 </details>
 
 :::note
-手順5から7は、スピーカーやヘッドセットなどのBluetooth **オーディオ**デバイスにのみ必要です。キーボード、マウス、ゲームパッド、センサー、ファイル転送デバイスなどのオーディオ以外の周辺機器については、手順4でのペアリングで十分です。
+ステップ5以降は、スピーカーやヘッドセットなどのBluetooth **オーディオ**デバイスにのみ必要です。キーボード、マウス、ゲームパッド、センサー、ファイル転送デバイスなどのオーディオ以外の周辺機器については、ステップ4でのペアリングで十分です。
 :::
 
 <details open>
-<summary> <strong>ステップ5：オーディオライブラリとプレーヤーをインストール</strong> </summary>
+<summary><strong>ステップ5：オーディオライブラリとプレーヤーをインストール</strong></summary>
 
-DevKitからペアリングされたBluetoothスピーカーまたはヘッドセットにオーディオをストリーミングするには、PipeWire、BlueZ SPAプラグイン、およびコンソールオーディオプレーヤーをインストールします。
+DevKitからペアリングされたBluetoothスピーカーまたはヘッドセットにオーディオをストリーミングするには、PipeWire、WirePlumber、BlueZ SPAプラグイン、およびコンソールオーディオプレーヤーをインストールします。
 
 ```console
-sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
+sima@modalix:~$ sudo apt install pipewire-audio wireplumber libspa-0.2-bluetooth cmus
+```
+
+PipeWireとWirePlumberのすべてのパッケージのインストールが完了していることを確認します。各行は`ii`で始まる必要があります。
+
+```console
+sima@modalix:~$ dpkg -l | grep -E 'pipewire|wireplumber' | cut -c1-60
+ii  libpipewire-0.3-0t64:arm64        1.4.2-1
+ii  pipewire:arm64                    1.4.2-1
+ii  pipewire-pulse                    1.4.2-1
+ii  wireplumber                       0.5.8-2
+...
+```
+
+`iU`または`iF`で始まる行がある場合は、インストールが中断されており、オーディオサービスを起動できません。インストールを完了してください。
+
+```console
+sima@modalix:~$ sudo dpkg --configure -a
+```
+
+PipeWire、WirePlumber、`pipewire-pulse`は、システムサービスではなく、`sima`ユーザーの**ユーザー**サービスとして動作します。`sudo`を付けずに起動してください。
+
+```console
+sima@modalix:~$ systemctl --user enable --now pipewire pipewire-pulse wireplumber
+sima@modalix:~$ pactl info | grep 'Server Name'
+Server Name: PulseAudio (on PipeWire 1.4.2)
+```
+
+プラットフォーム3.0.0にはPipeWire 1.4とWirePlumber 0.5が含まれています。プラットフォーム2.1.xにはPipeWire 0.3とWirePlumber 0.4が含まれています。
+
+</details>
+
+<details open>
+<summary><strong>ステップ6：デスクトップにログインせずにBluetoothオーディオを使用できるようにする</strong></summary>
+
+DevKitのデスクトップにログインして使用する場合は、このステップをスキップしてください。SSHまたはシリアル接続のみでDevKitを使用する場合は、このステップを実行してください。
+
+誰もログインしていないときも`sima`ユーザーのサービスが動作し続けるようにします。この設定がないと、最後のSSHセッションを閉じるたびにPipeWireが停止します。
+
+```console
+sima@modalix:~$ sudo loginctl enable-linger sima
+```
+
+プラットフォーム3.0.0以降では、WirePlumber 0.5はDevKitのディスプレイでログインしているユーザーに対してのみBluetoothオーディオを有効にします。そのため、SSH経由では`bluetoothctl connect`が`br-connection-profile-unavailable`で失敗します。ディスプレイにログインしていなくてもBluetoothオーディオを使用できるようにします。
+
+```console
+sima@modalix:~$ mkdir -p ~/.config/wireplumber/wireplumber.conf.d
+sima@modalix:~$ cat > ~/.config/wireplumber/wireplumber.conf.d/80-bluez-no-seat.conf <<'EOF'
+wireplumber.profiles = {
+  main = {
+    monitor.bluez.seat-monitoring = disabled
+  }
+}
+EOF
+sima@modalix:~$ systemctl --user restart wireplumber pipewire pipewire-pulse
+```
+
+SSH経由で`systemctl --user`または`pactl`が接続できない場合は、先にランタイムディレクトリを設定してください。
+
+```console
+sima@modalix:~$ export XDG_RUNTIME_DIR=/run/user/$(id -u)
 ```
 
 </details>
 
 <details open>
-<summary><strong>ステップ6：オーディオを次の場所にルーティングします。 Bluetooth シンク</strong></summary>
+<summary><strong>ステップ7：オーディオをBluetoothシンクにルーティング</strong></summary>
 
-ステップ4で Bluetooth オーディオデバイスをペアリングして接続したら、利用可能な PipeWire/PulseAudio シンクを一覧表示します。
+ステップ4でBluetoothオーディオデバイスをペアリングして接続したら、利用可能なシンクを一覧表示します。
 
 ```console
 sima@modalix:~$ pactl list short sinks
+35      auto_null                         PipeWire  float32le 2ch 48000Hz  SUSPENDED
+90      bluez_output.00_A4_1C_4D_DA_D3.1  PipeWire  s16le 2ch 48000Hz      SUSPENDED
 ```
 
-ペアリングされたデバイスに対応する`bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink`のエントリを見つけ、それをデフォルトのシンクとして設定します（プレースホルダーのMACアドレスを、前のコマンドからの値に置き換えてください）。
+PipeWireはBluetoothシンクに`bluez_output.<MAC>.1`という名前を付けます。MACアドレスの`:`は`_`に置き換えられます。前のコマンドで表示された名前を使用して、使用するデバイスのシンクをデフォルトに設定します。
 
 ```console
-sima@modalix:~$ pactl set-default-sink bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink
+sima@modalix:~$ pactl set-default-sink bluez_output.00_A4_1C_4D_DA_D3.1
 ```
 
-新しいルーティングを有効にするために、Bluetoothとオーディオサービスを再起動してください。
-
-```console
-sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-pulse
-```
+変更はすぐに反映されます。再起動は不要です。
 
 </details>
 
 <details open>
-<summary><strong>手順7：cmusでオーディオを再生します。</strong></summary>
+<summary><strong>ステップ8：cmusでオーディオを再生</strong></summary>
 
-`cmus` を起動し、オーディオファイルまたはディレクトリをキューに追加して、Bluetooth シンクから再生されることを確認します。
+`cmus`を起動し、オーディオファイルまたはディレクトリをキューに追加して、Bluetoothシンクから再生されることを確認します。
 
 ```console
 sima@modalix:~$ cmus
@@ -160,4 +218,262 @@ sima@modalix:~$ cmus
 
 `cmus`インターフェースで、`5`を押してファイルブラウザに切り替え、メディアファイルを選択し、`Enter`を押して再生します。これで、オーディオがペアリングされたBluetoothデバイスにストリーミングされるはずです。
 
+`cmus`を使用せずにテストするには、サンプルサウンドを再生します。
+
+```console
+sima@modalix:~$ pw-play --target bluez_output.00_A4_1C_4D_DA_D3.1 /usr/share/sounds/alsa/Front_Center.wav
+```
+
 </details>
+
+ヘッドセットのマイクで録音するには、[ヘッドセットのマイク](#headset-microphone)に進んでください。マイクのないスピーカーやヘッドホンでは、ステップ1～8のみが必要です。
+
+## ヘッドセットのマイク {#headset-microphone}
+
+Bluetoothヘッドセットへの音楽再生は、標準のModalixカーネルで動作します。ヘッドセットの**マイク**は動作しません。マイクはHands-Free Profile（HFP）を使用し、HFPにはカーネルのRFCOMMプロトコルが必要ですが、ModalixカーネルはRFCOMMなしでビルドされています（`# CONFIG_BT_RFCOMM is not set`）。
+
+RFCOMMがない場合、PipeWireは`socket(STREAM, RFCOMM): Protocol not supported`をログに出力し、ヘッドセットは再生用（A2DP）プロファイルのみを提供します。ステップ9～15では、RFCOMMモジュール`rfcomm.ko`をDevKit上でビルドし、実行中のカーネルに読み込みます。ボード上のカーネルイメージは変更されません。
+
+始める前に、次のものが必要です。
+
+- Bluetoothオーディオの再生が動作していること（ステップ1～8）。
+- マイク付きのヘッドセットがペアリングされ、接続されていること。
+- カーネルソースとビルド用に、NVMeドライブに約5 GBの空き容量があること。空き容量の少ないルートファイルシステムではなく、`/media/nvme`上でビルドしてください。
+- DevKitがインターネットにアクセスできること。
+
+<details open>
+<summary><strong>ステップ9：RFCOMMを確認</strong></summary>
+
+実行中のカーネルがRFCOMMをサポートしていないことを確認します。
+
+```console
+sima@modalix:~$ uname -r
+6.18.3-modalix
+sima@modalix:~$ zcat /proc/config.gz | grep BT_RFCOMM
+# CONFIG_BT_RFCOMM is not set
+```
+
+`lsmod | grep rfcomm`ですでにモジュールが表示される場合は、ステップ14に進んでください。
+
+</details>
+
+<details open>
+<summary><strong>ステップ10：カーネルソースを取得</strong></summary>
+
+ビルドツールをインストールします。
+
+```console
+sima@modalix:~$ sudo apt install build-essential git bc bison flex libssl-dev libelf-dev
+```
+
+DevKitのリリースに対応するカーネルソースをダウンロードします。各リリースのカーネルコミットは[リリース互換性](../../software/release-compatibility.mdx)に記載されています。ソースのカーネルバージョンは`uname -r`（`6.18.3`）と一致している必要があります。この例では2.1.3のコミットを使用します。
+
+```console
+sima@modalix:~$ cd /media/nvme
+sima@modalix:/media/nvme$ git init simaai-linux && cd simaai-linux
+sima@modalix:/media/nvme/simaai-linux$ git remote add origin https://github.com/SiMa-ai/simaai-linux.git
+sima@modalix:/media/nvme/simaai-linux$ git fetch --depth 1 origin 65aba29989da02d7612da5484dbbcd50643fdd60
+sima@modalix:/media/nvme/simaai-linux$ git checkout FETCH_HEAD
+```
+
+</details>
+
+<details open>
+<summary><strong>ステップ11：カーネルを構成</strong></summary>
+
+**実行中の**カーネルの構成をベースにして、RFCOMMをモジュールとして有効にします。
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ zcat /proc/config.gz > .config
+sima@modalix:/media/nvme/simaai-linux$ ./scripts/config -m BT_RFCOMM -e BT_RFCOMM_TTY
+sima@modalix:/media/nvme/simaai-linux$ make olddefconfig
+sima@modalix:/media/nvme/simaai-linux$ grep BT_RFCOMM .config
+CONFIG_BT_RFCOMM=m
+CONFIG_BT_RFCOMM_TTY=y
+```
+
+:::warning
+`simaai_modalix_defconfig`をベースにしないでください。リリースされたイメージでは、device-mapper、cgroup、netfilterのオプションなど、defconfigでは有効になっていないオプションが有効になっています。プラットフォーム3.0.0では、約400個のオプションが異なります。異なる構成でビルドしたモジュールは、実行中のカーネルとは異なるレイアウトでカーネルのデータ構造を扱うことがあり、カーネルをクラッシュさせる可能性があります。
+:::
+
+</details>
+
+<details open>
+<summary><strong>ステップ12：モジュールをビルド</strong></summary>
+
+カーネルツリーをビルドしてから、RFCOMMモジュールをビルドします。最初のコマンドは、モジュールのビルドに必要な`Module.symvers`と生成ヘッダーを作成します。何もインストールしません。
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ make -j$(nproc) LOCALVERSION="-modalix"
+sima@modalix:/media/nvme/simaai-linux$ make -j$(nproc) LOCALVERSION="-modalix" M=net/bluetooth/rfcomm modules
+```
+
+DevKitでのツリーのビルドには約35分かかります。モジュールのバージョンを`uname -r`と一致させるため、`LOCALVERSION="-modalix"`を必ず設定してください。`ARCH`や`CROSS_COMPILE`は設定しないでください。DevKitは自分自身向けにビルドします。
+
+モジュールのバージョン文字列が実行中のカーネルと一致していることを確認します。
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ /usr/sbin/modinfo net/bluetooth/rfcomm/rfcomm.ko | grep vermagic
+vermagic:       6.18.3-modalix SMP preempt mod_unload aarch64
+```
+
+</details>
+
+<details open>
+<summary><strong>ステップ13：モジュールをインストールして読み込む</strong></summary>
+
+標準モジュールと同じ場所にモジュールをインストールし、読み込みます。
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ sudo install -D -m644 net/bluetooth/rfcomm/rfcomm.ko /lib/modules/$(uname -r)/updates/rfcomm.ko
+sima@modalix:/media/nvme/simaai-linux$ sudo depmod -a
+sima@modalix:/media/nvme/simaai-linux$ sudo modprobe rfcomm
+sima@modalix:/media/nvme/simaai-linux$ sudo dmesg | grep RFCOMM
+[ 2396.491116] Bluetooth: RFCOMM TTY layer initialized
+[ 2396.496637] Bluetooth: RFCOMM socket layer initialized
+[ 2396.502451] Bluetooth: RFCOMM ver 1.11
+```
+
+`depmod`の実行後は、PipeWireが最初に`rfcomm`を使用するときに、カーネルが自動的に読み込みます。再起動後も同様です。
+
+:::note
+カーネルが変更されるプラットフォームのアップデートを行うたびに、モジュールを再ビルドして再インストールしてください。別のカーネル向けにビルドされたモジュールは、`Invalid module format`で読み込みに失敗します。
+:::
+
+</details>
+
+<details open>
+<summary><strong>ステップ14：ヘッドセットを再接続</strong></summary>
+
+オーディオサービスを再起動してヘッドセットを再接続し、PipeWireにハンズフリープロファイルを追加させます。MACアドレスは使用するヘッドセットのものに置き換えてください。
+
+```console
+sima@modalix:~$ systemctl --user restart wireplumber pipewire pipewire-pulse
+sima@modalix:~$ bluetoothctl disconnect 00:A4:1C:4D:DA:D3
+sima@modalix:~$ bluetoothctl connect 00:A4:1C:4D:DA:D3
+sima@modalix:~$ pactl list cards | grep -E '^\s+(a2dp-sink|headset-head-unit)[^:]*:' | cut -c1-80
+        a2dp-sink: High Fidelity Playback (A2DP Sink, codec SBC) (sinks: 1, sour
+        a2dp-sink-sbc_xq: High Fidelity Playback (A2DP Sink, codec SBC-XQ) (sink
+        headset-head-unit-cvsd: Headset Head Unit (HSP/HFP, codec CVSD) (sinks:
+        headset-head-unit: Headset Head Unit (HSP/HFP, codec mSBC) (sinks: 1, so
+```
+
+`headset-head-unit`プロファイルがマイクを扱います。`a2dp-sink`は高音質の再生用プロファイルで、マイクは使用できません。
+
+</details>
+
+<details open>
+<summary><strong>ステップ15：録音して再生</strong></summary>
+
+ヘッドセットをハンズフリープロファイルに切り替えます。このプロファイルが有効な間は再生音質が低下します。
+
+```console
+sima@modalix:~$ pactl set-card-profile bluez_card.00_A4_1C_4D_DA_D3 headset-head-unit
+sima@modalix:~$ pactl list short sources | grep bluez
+91      bluez_input.00:A4:1C:4D:DA:D3     PipeWire  float32le 1ch 48000Hz  SUSPENDED
+sima@modalix:~$ pactl list short sinks | grep bluez
+104     bluez_output.00_A4_1C_4D_DA_D3.1  PipeWire  s16le 1ch 16000Hz      SUSPENDED
+```
+
+プラットフォーム3.0.0では、マイクのソース名に`:`の文字がそのまま残ります。DevKitに表示された名前を使用してください。`.monitor`エントリからは録音しないでください。このエントリは再生音を扱い、マイクの音は含みません。
+
+話しながら10秒間録音し、録音した音声をヘッドセットで再生します。
+
+```console
+sima@modalix:~$ pw-record --target "bluez_input.00:A4:1C:4D:DA:D3" /tmp/mic.wav & sleep 10; kill $!
+sima@modalix:~$ pw-play --target bluez_output.00_A4_1C_4D_DA_D3.1 /tmp/mic.wav
+```
+
+終わったら、再生用プロファイルに戻します。
+
+```console
+sima@modalix:~$ pactl set-card-profile bluez_card.00_A4_1C_4D_DA_D3 a2dp-sink
+```
+
+録音が無音の場合は、`headset-head-unit-cvsd`プロファイルでこのステップを繰り返してください。
+
+</details>
+
+<details>
+<summary><strong>オプション：スクリプトで録音</strong></summary>
+
+このスクリプトは、接続されているヘッドセットに対してステップ15を実行します。ヘッドセットのマイクとスピーカーを検出し、カウントダウン付きで録音し、録音のピークレベルを表示して再生します。`Ctrl+C`を押した場合でも、必ずヘッドセットを再生用プロファイルに戻します。
+
+```bash title="record-mic.sh"
+#!/usr/bin/env bash
+# Record from a Bluetooth headset microphone, play it back, then return to A2DP.
+#   ./record-mic.sh [seconds] [cvsd]
+set -euo pipefail
+
+SECS="${1:-10}"
+PROFILE="headset-head-unit"; [[ "${2:-}" == "cvsd" ]] && PROFILE="headset-head-unit-cvsd"
+OUT_FILE="${OUT_FILE:-$PWD/mic-$(date +%Y%m%d-%H%M%S).wav}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+MAC="${HEADSET_MAC:-$(bluetoothctl devices Connected | awk 'NR == 1 {print $2}')}"
+[[ -n "$MAC" ]] || { echo "No Bluetooth device is connected. Set HEADSET_MAC or connect the headset."; exit 1; }
+M_="${MAC//:/_}"
+CARD="bluez_card.$M_"
+
+trap 'pactl set-card-profile "$CARD" a2dp-sink 2>/dev/null && echo "Back to A2DP playback."' EXIT
+
+pactl set-card-profile "$CARD" "$PROFILE"
+sleep 2
+
+# Source and sink names differ between PipeWire versions, so look them up.
+SRC=$(pactl list short sources | awk -v m="$MAC" -v u="$M_" '$2 ~ /^bluez_input\./ && ($2 ~ m || $2 ~ u) {print $2; exit}')
+SINK=$(pactl list short sinks | awk -v u="$M_" '$2 ~ /^bluez_output\./ && $2 ~ u && $2 !~ /monitor/ {print $2; exit}')
+[[ -n "$SRC" && -n "$SINK" ]] || { echo "Headset microphone not found. Is the rfcomm module loaded?"; exit 1; }
+
+echo "Recording $SECS seconds ($PROFILE). Speak now."
+pw-record --target "$SRC" "$OUT_FILE" & PID=$!
+for ((i = SECS; i > 0; i--)); do printf "\r  %2d s left " "$i"; sleep 1; done
+kill "$PID"; wait "$PID" 2>/dev/null || true
+printf "\rDone.          \n"
+
+python3 - "$OUT_FILE" <<'PY'
+import array, sys, wave
+w = wave.open(sys.argv[1]); a = array.array("h", w.readframes(w.getnframes()))
+peak = max((abs(x) for x in a), default=0) / 32768
+print(f"Saved {sys.argv[1]} (peak level {peak:.3f}{', silent: try the cvsd option' if peak < 0.01 else ''})")
+PY
+
+echo "Playing it back."
+pw-play --target "$SINK" "$OUT_FILE"
+```
+
+`record-mic.sh`として保存し、実行権限を付与して実行します。
+
+```console
+sima@modalix:~$ chmod +x record-mic.sh
+sima@modalix:~$ ./record-mic.sh           # record 10 seconds
+sima@modalix:~$ ./record-mic.sh 20 cvsd   # record 20 seconds with the CVSD codec
+```
+
+</details>
+
+## トラブルシューティング {#troubleshooting}
+
+| 症状 | 原因と対処 |
+| --- | --- |
+| `sudo systemctl restart wireplumber`で`Unit wireplumber.service not found.`と表示される | PipeWire、WirePlumber、`pipewire-pulse`はユーザーサービスです。`sudo`を付けずに再起動してください：`systemctl --user restart wireplumber pipewire pipewire-pulse`。システムサービスは`bluetooth`のみです：`sudo systemctl restart bluetooth`。 |
+| `pactl`で`Connection failure: Connection refused`と表示される | オーディオサービスが動作していません。パッケージのインストールが完了し、サービスが起動していることを確認してください（ステップ5）。SSH経由の場合は、`XDG_RUNTIME_DIR`を設定してください（ステップ6）。 |
+| `bluetoothctl connect`で`org.bluez.Error.Failed br-connection-profile-unavailable`と表示される | WirePlumberがBluetoothオーディオプロファイルを登録していません。プラットフォーム3.0.0以降でSSH経由で使用している場合は、ステップ6を実行してください。 |
+| WirePlumberのログに`RegisterProfile() failed: org.bluez.Error.NotPermitted`が表示され、`pactl list short sinks`に`auto_null`しか表示されない | ログイン画面（`lightdm`）が独自のPipeWireを実行しており、先にBluetoothプロファイルを登録しています。以下に示すように、これを停止してから`sima`のサービスを再起動してください。 |
+| `modprobe`または`insmod`で`Invalid module format`と表示される | モジュールが別のカーネル向けにビルドされています。`modinfo`が実行中のカーネルと同じ`vermagic`を表示することを確認し、`LOCALVERSION="-modalix"`を指定して再ビルドしてください（ステップ12）。 |
+| `insmod`で`Unknown symbol in module`と表示される | `bluetooth`モジュールが読み込まれていません。このモジュールを先に読み込む`modprobe rfcomm`を使用してください。 |
+| カードに`headset-head-unit`プロファイルが表示されない | RFCOMMが読み込まれていないか、RFCOMMより先にヘッドセットが接続されています。`lsmod \| grep rfcomm`を確認してから、ステップ14を繰り返してください。 |
+| WirePlumberのログに`RFCOMM receive command but modem not available`が表示される | 問題ありません。ヘッドセットが通話用のコマンドを送信しましたが、DevKitには電話モデムがありません。 |
+| 録音が無音になる | カウントダウン中に話し、マイクがミュートされていないこと（`pactl get-source-mute`）を確認してから、`headset-head-unit-cvsd`プロファイルを試してください。 |
+
+ログイン画面のオーディオサービスを停止し、再び起動しないようにするには、次のコマンドを実行します。
+
+```console
+sima@modalix:~$ sudo -u lightdm XDG_RUNTIME_DIR=/run/user/$(id -u lightdm) \
+  systemctl --user stop pipewire.socket pipewire-pulse.socket wireplumber pipewire pipewire-pulse
+sima@modalix:~$ sudo -u lightdm XDG_RUNTIME_DIR=/run/user/$(id -u lightdm) \
+  systemctl --user mask pipewire.service pipewire.socket pipewire-pulse.service pipewire-pulse.socket wireplumber.service
+sima@modalix:~$ systemctl --user restart wireplumber pipewire pipewire-pulse
+```
+
+この操作の後、ログイン画面ではサウンドが出なくなります。元に戻すには、同じ`mask`コマンドを`unmask`に変えて実行してください。
