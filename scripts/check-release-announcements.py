@@ -3,6 +3,7 @@
 
 import csv
 import json
+from datetime import date
 from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
@@ -70,7 +71,36 @@ def validate_encoder(release):
                for row in rows if row['resolution'] == '4K')
 
 
+def validate_release_map():
+    data = json.loads((ROOT / 'release-map.json').read_text())
+    assert data['schema_version'] == 1, 'Unsupported release-map schema'
+    components = [component['id'] for component in data['components']]
+    assert components and len(set(components)) == len(components), 'Duplicate or empty components'
+    assert all(component['label'].strip() for component in data['components'])
+    assert data['releases'], 'Empty release map'
+    ids = set()
+    for release in data['releases']:
+        assert release['id'] not in ids, 'Duplicate bundle ID'
+        ids.add(release['id'])
+        assert release.get('status', 'released') in ('draft', 'released'), 'Unknown bundle status'
+        assert date.fromisoformat(release['release_date']).isoformat() == release['release_date']
+        assert set(release['versions']) == set(components), 'Missing or unknown component'
+        for versions in release['versions'].values():
+            if versions is None:
+                assert release.get('status') == 'draft', 'Only draft bundles may have unconfirmed versions'
+                continue
+            assert isinstance(versions, list) and versions, 'Versions must be nonempty arrays'
+            assert all(isinstance(version, str) and version.strip() for version in versions)
+        url = urlsplit(release['announcement'])
+        assert not url.scheme and not url.netloc and not url.path.startswith('/')
+        target = (ROOT / url.path).resolve()
+        assert target.is_relative_to(ROOT.resolve()), 'Announcement escapes website'
+        assert (target / 'index.html').is_file(), 'Missing bundle announcement'
+    print('release-map.json: schema, versions, dates and announcement links verified')
+
+
 def main():
+    validate_release_map()
     pages = sorted(ROOT.rglob('index.html'))
     assert pages, 'No release announcement pages found'
     assert not list(ROOT.rglob('.openai')), 'Sites metadata must not be published'
