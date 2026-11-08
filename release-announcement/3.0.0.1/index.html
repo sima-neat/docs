@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Palette SDK 3.0.0.1 brings Insight into code-server. View vision results, test GenAI, manage models and check system stats alongside your coding agent.">
+  <title>Palette SDK 3.0.0.1</title>
+  <link rel="icon" type="image/svg+xml" href="../3.0.0/assets/sima-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;550;600;650&family=Manrope:wght@400;500;600;650&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../brand.css">
+  <link rel="stylesheet" href="../landing.css">
+  <link rel="stylesheet" href="styles.css?v=11">
+</head>
+<body>
+<a class="skip-link" href="#release-overview">Skip to release notes</a>
+<header class="site-header">
+  <a href="../index.html" aria-label="SiMa.ai Palette releases home"><img src="../3.0.0/assets/sima-logo.svg" alt="SiMa.ai" width="131" height="32"></a>
+  <span class="header-divider" aria-hidden="true"></span><a class="journal-name" href="../index.html">Palette <span>Release journal</span></a>
+  <nav aria-label="Release navigation"><a href="#insight">Insight</a><a href="#llima">GPT-OSS</a><a href="#neat-library">Neat Library</a><a href="#apps">Apps</a><a href="#model-compiler">Model Compiler</a></nav>
+  <a class="header-link" href="../index.html#releases">All releases <span aria-hidden="true">←</span></a>
+</header>
+<main>
+  <section class="draft-hero" id="release-overview" aria-labelledby="draft-title">
+    <a class="draft-back" href="../index.html#releases">← All releases</a>
+    <p class="eyebrow">NOVEMBER 7, 2026 / RELEASE NOTES</p>
+    <h1 id="draft-title">Palette SDK 3.0.0.1</h1>
+    <p class="draft-component-line">Neat 0.6.1 <span aria-hidden="true">·</span> Insight 0.0.11</p>
+    <p class="draft-description">Insight now opens inside code-server. Work with your coding agent, run your application, and check vision and GenAI output in the same workspace. Use Chrome, Safari or Edge to access the code-server web interface.</p>
+    <div class="draft-versions" aria-label="Confirmed version numbers"><div><span>NEAT SDK</span><strong>3.0.0.1</strong></div><div><span>NEAT LIBRARY (CORE)</span><strong>0.6.1</strong></div><div><span>INSIGHT</span><strong>0.0.11</strong></div><p>See all bundled component versions in the <a href="../index.html#releases">full release map</a>.</p></div>
+  </section>
+  <section class="insight-feature" id="insight" aria-labelledby="insight-title">
+    <div class="section-heading"><div><p class="eyebrow">01 / INSIGHT IN YOUR WORKSPACE</p><h2 id="insight-title">Write code.<br>See the results.</h2></div><p>Keep your files, coding agent and model output together. Check results in the Insight editor tab without switching to a separate window.</p></div>
+    <div class="insight-carousel" role="region" aria-roledescription="carousel" aria-label="Insight developer workflow">
+      <div class="insight-slide-picker" role="group" aria-label="Choose an Insight feature" hidden>
+        <button type="button" data-insight-slide="0" aria-pressed="true" aria-controls="insight-slide-launchpad">SDK Launchpad</button>
+        <button type="button" data-insight-slide="1" aria-pressed="false" aria-controls="insight-slide-vision">Vision output</button>
+        <button type="button" data-insight-slide="2" aria-pressed="false" aria-controls="insight-slide-genai">GenAI output</button>
+        <button type="button" data-insight-slide="3" aria-pressed="false" aria-controls="insight-slide-models">GenAI Models</button>
+        <button type="button" data-insight-slide="4" aria-pressed="false" aria-controls="insight-slide-stats">System stats</button>
+        <button type="button" data-insight-slide="5" aria-pressed="false" aria-controls="insight-slide-peripherals">Local peripherals</button>
+      </div>
+      <div class="insight-slides">
+        <figure class="insight-slide" id="insight-slide-launchpad" role="group" aria-roledescription="slide" aria-label="1 of 6: SDK Launchpad">
+          <a class="insight-image" href="assets/insight-launchpad-2400.jpg" target="_blank" rel="noopener" aria-label="Open larger screenshot of SDK Launchpad (opens in a new tab)"><img src="assets/insight-launchpad-1440.jpg" srcset="assets/insight-launchpad-1440.jpg 1440w, assets/insight-launchpad-2400.jpg 2400w" sizes="88vw" width="2400" height="1267" loading="lazy" decoding="async" alt="Palette SDK Launchpad inside code-server showing the running SDK environment, connected DevKit, Apps, Models, Insight, Agents and Docs, alongside the coding agent."></a>
+          <figcaption><div><p class="eyebrow">SDK LAUNCHPAD</p><h3>Start from one workspace.</h3><p>Check your SDK environment and DevKit connection, then choose Apps, Models, Insight, Agents or Docs. Launch Insight directly into an editor tab.</p></div><div class="insight-benefit"><h4>In your workflow</h4><p>Confirm your setup, open the tools you need, and work with your coding agent without leaving code-server.</p></div></figcaption>
+        </figure>
+        <figure class="insight-slide" id="insight-slide-vision" role="group" aria-roledescription="slide" aria-label="2 of 6: Vision output">
+          <a class="insight-image" href="assets/insight-vision-2400.jpg" target="_blank" rel="noopener" aria-label="Open larger screenshot of vision output (opens in a new tab)"><img src="assets/insight-vision-1440.jpg" srcset="assets/insight-vision-1440.jpg 1440w, assets/insight-vision-2400.jpg 2400w" sizes="(max-width: 700px) 88vw, 88vw" width="2400" height="1264" loading="lazy" decoding="async" alt="Insight Video Viewer inside code-server showing detection boxes, segmentation masks, pose keypoints and a combined view, with the coding agent alongside."></a>
+          <figcaption><div><p class="eyebrow">VISION OUTPUT</p><h3>Check what your vision model sees.</h3><p>View detection boxes, segmentation masks and pose keypoints in the Video Viewer. The screenshot shows four channels with separate and combined overlays.</p></div><div class="insight-benefit"><h4>In your workflow</h4><p>Run your pipeline, inspect the overlays, then ask your coding agent to change the code—all in the same workspace.</p></div></figcaption>
+        </figure>
+        <figure class="insight-slide" id="insight-slide-genai" role="group" aria-roledescription="slide" aria-label="3 of 6: GenAI output">
+          <a class="insight-image" href="assets/insight-genai-2400.jpg?v=2" target="_blank" rel="noopener" aria-label="Open larger screenshot of GenAI output (opens in a new tab)"><img src="assets/insight-genai-1440.jpg?v=2" srcset="assets/insight-genai-1440.jpg?v=2 1440w, assets/insight-genai-2400.jpg?v=2 2400w" sizes="88vw" width="2400" height="1262" loading="lazy" decoding="async" alt="GenAI Studio in the Insight editor tab showing a Qwen3 response and first-token time, generation speed and token count beside the coding agent."></a>
+          <figcaption><div><p class="eyebrow">GENAI OUTPUT</p><h3>Try a prompt. Read the response.</h3><p>Test a model in GenAI Studio and inspect its response. See the time to the first token, generation speed and token count below the output.</p></div><div class="insight-benefit"><h4>In your workflow</h4><p>Try different prompts and check the results while your application code and coding agent stay in view.</p></div></figcaption>
+        </figure>
+        <figure class="insight-slide" id="insight-slide-models" role="group" aria-roledescription="slide" aria-label="4 of 6: GenAI Models">
+          <a class="insight-image" href="assets/insight-models-2400.jpg?v=2" target="_blank" rel="noopener" aria-label="Open larger screenshot of GenAI Models (opens in a new tab)"><img src="assets/insight-models-1440.jpg?v=2" srcset="assets/insight-models-1440.jpg?v=2 1440w, assets/insight-models-2400.jpg?v=2 2400w" sizes="88vw" width="2400" height="1267" loading="lazy" decoding="async" alt="GenAI Studio Settings inside code-server showing models on the DevKit and a catalog filtered for Gemma models, with model sizes and download controls beside the coding agent."></a>
+          <figcaption><div><p class="eyebrow">GENAI MODELS</p><h3>Choose the model for your next test.</h3><p>Use Settings to see models on the DevKit, check which ones are in use, and load or unload them. Search the catalog for models to download.</p></div><div class="insight-benefit"><h4>In your workflow</h4><p>Check model size and availability before a test. Switch models from Insight without leaving your development workspace.</p></div></figcaption>
+        </figure>
+        <figure class="insight-slide" id="insight-slide-stats" role="group" aria-roledescription="slide" aria-label="5 of 6: System stats">
+          <a class="insight-image" href="assets/insight-stats-2400.jpg?v=2" target="_blank" rel="noopener" aria-label="Open larger screenshot of system stats (opens in a new tab)"><img src="assets/insight-stats-1440.jpg?v=2" srcset="assets/insight-stats-1440.jpg?v=2 1440w, assets/insight-stats-2400.jpg?v=2 2400w" sizes="88vw" width="2400" height="1264" loading="lazy" decoding="async" alt="Insight Stats Power view inside code-server showing current, average and peak estimated board power, a power history chart and power rails alongside the coding agent’s workload summary."></a>
+          <figcaption><div><p class="eyebrow">SYSTEM STATS</p><h3>Watch the system while your app runs.</h3><p>Check temperature, estimated board power, CPU use, memory and network activity in Stats. Export the measurements as CSV for review.</p></div><div class="insight-benefit"><h4>In your workflow</h4><p>Look for resource pressure while testing your application. Use the charts to guide what you investigate next with your coding agent.</p></div></figcaption>
+        </figure>
+        <figure class="insight-slide" id="insight-slide-peripherals" role="group" aria-roledescription="slide" aria-label="6 of 6: Local peripherals">
+          <a class="insight-image" href="assets/insight-peripherals-2400.jpg" target="_blank" rel="noopener" aria-label="Open larger screenshot of local peripherals (opens in a new tab)"><img src="assets/insight-peripherals-1440.jpg" srcset="assets/insight-peripherals-1440.jpg 1440w, assets/insight-peripherals-2400.jpg 2400w" sizes="88vw" width="2400" height="1258" loading="lazy" decoding="async" alt="Insight Peripherals inside code-server showing a connected USB camera, MJPG pixel format, 1920 by 1080 resolution and a live camera preview beside the coding agent."></a>
+          <figcaption><div><p class="eyebrow">LOCAL PERIPHERALS</p><h3>Check your camera before you run.</h3><p>Open Peripherals to inspect devices attached to the DevKit. For a detected camera, check its connection, choose an input format and resolution, and preview the image.</p></div><div class="insight-benefit"><h4>In your workflow</h4><p>Confirm that the camera is detected and its input looks right before testing your vision pipeline. Keep the device view and your coding agent in the same workspace.</p></div></figcaption>
+        </figure>
+      </div>
+      <p class="sr-only" id="insight-zoom-help">Hover for two seconds to magnify. With the image link focused, use arrow keys to move the lens and Escape to dismiss it. Select the image to open the full-size screenshot.</p>
+      <div class="insight-carousel-controls" hidden><span id="insight-slide-status" role="status" aria-live="polite" aria-atomic="true">1 / 6 · SDK Launchpad</span><span class="insight-enlarge-note"><span class="insight-zoom-hint">Hover 2 seconds to magnify · </span><span class="insight-touch-hint">Select an image for a </span><span>Full-size view ↗</span></span><div><button type="button" id="insight-prev" aria-label="Previous Insight feature">← Previous</button><button type="button" id="insight-next" aria-label="Next Insight feature">Next →</button></div></div>
+    </div>
+  </section>
+  <section class="gptoss-feature" id="llima" aria-labelledby="llima-title">
+    <div class="gptoss-hero">
+      <div class="gptoss-copy"><p class="eyebrow">02 / GPT-OSS WITH LLIMA 0.6.1</p><span class="gptoss-hardware">16 GB Modalix DevKits only</span><h2 id="llima-title">Run GPT-OSS 20B.</h2><p>Offload embedding data to local NVMe.</p></div>
+      <figure class="gptoss-art">
+        <div class="gptoss-diagram" role="img" aria-label="GPT-OSS 20B on 16 GB Modalix DevKits: model execution on the SoM, with embedding data stored on local NVMe and read through NVMe embedding offload.">
+          <img src="assets/gpt-oss-unlabelled-1440.jpg" srcset="assets/gpt-oss-unlabelled-836.jpg 836w, assets/gpt-oss-unlabelled-1440.jpg 1440w" sizes="(max-width: 800px) 88vw, 53vw" width="1440" height="810" loading="lazy" decoding="async" alt="">
+          <div class="gptoss-diagram-labels" aria-hidden="true"><span class="diagram-title">GPT-OSS 20B</span><span class="diagram-subtitle">On 16 GB Modalix DevKits</span><span class="diagram-execution">Model execution</span><span class="diagram-offload">NVMe embedding<br>offload</span><span class="diagram-embeddings">Embedding data</span><span class="diagram-som">Modalix SoM</span><span class="diagram-nvme">Local NVMe</span></div>
+        </div>
+        <figcaption>Concept illustration · Model execution on the SoM, embedding data on local NVMe</figcaption>
+      </figure>
+    </div>
+    <div class="gptoss-details"><article><p class="eyebrow">LOCAL STORAGE</p><h3>Offload embedding data.</h3><p>Use NVMe embedding offload with the compatible GPT-OSS 20B model. The validated setup uses local PCIe NVMe storage.</p></article><article><p class="eyebrow">RUNTIME FIX</p><h3>Get past startup failures.</h3><p>LLiMa 0.6.1 fixes a memory-allocation issue that could stop large models from loading when the model weights filled the device memory pool.</p></article><article><p class="eyebrow">TESTED CONFIGURATION</p><h3>Start with the validated setup.</h3><p>Model loading, server warm-up and a response-generation smoke test passed with A16W4 quantization and a 4,096-token context.</p></article></div>
+  </section>
+  <section class="release-highlights library-highlights" id="neat-library" aria-labelledby="library-title">
+    <div class="library-intro"><p class="eyebrow">03 / NEAT LIBRARY 0.6.1</p><h2 id="library-title">Keep your pipeline<br>moving.</h2><p>Resume after input pauses, move tensors efficiently, and read model results correctly.</p><a class="library-jump" href="#library-improvements">Explore runtime improvements <span aria-hidden="true">↓</span></a></div>
+    <aside class="library-actions" aria-labelledby="library-upgrade-title">
+      <p class="eyebrow">WHEN UPDATING TO 0.6.1</p><h3 id="library-upgrade-title">Check your application.</h3>
+      <ol>
+        <li><div><h4>Use the returned tensor views.</h4><p>If you manually split packed MLA-only byte outputs, use each returned view’s type, shape and strides instead.</p></div></li>
+        <li><div><h4>Set a deadline for stalled requests.</h4><p>If your application needs to detect a stall, set an explicit deadline while the request is pending.</p></div></li>
+      </ol>
+    </aside>
+    <div class="library-improvements" id="library-improvements" aria-labelledby="library-improvements-title">
+      <h3 id="library-improvements-title">Runtime improvements</h3>
+      <article><h4>Resume after input pauses.</h4><p>An asynchronous run can resume after a normal input pause. Timed-out model calls clear cached execution state so a late result is not returned for the next call.</p></article>
+      <article><h4>Transfer tensors with less overhead.</h4><p>Repeated host-to-device transfers reuse buffers, reducing allocation and mapping overhead for NumPy and C++ tensor inputs.</p></article>
+      <article><h4>Read batches and outputs correctly.</h4><p>Native inference accepts the full compiled input batch. Affected packed outputs retain their correct tensor types and shapes.</p></article>
+      <article><h4>Use the encoder’s supported sizes.</h4><p>VideoSender removes its fixed 3840 × 2160 raw-input limit. Supported resolutions and frame rates still depend on the encoder backend.</p></article>
+    </div>
+  </section>
+  <section class="release-highlights apps-highlights" id="apps" aria-labelledby="apps-title">
+    <div class="section-heading"><div><p class="eyebrow">04 / NEAT APPS 0.6.1</p><h2 id="apps-title">Less setup.<br>More time to build.</h2></div><p>Keep models ready, simplify installation, and inspect live results with the updated application examples.</p></div>
+    <div class="release-benefit-list">
+      <article><h3>Keep two GenAI models ready.</h3><p>GenAI Studio keeps up to two chat or vision-language models loaded by default, when memory allows. Switch between loaded models without reloading them. Your model limit is kept when you run setup again.</p></article>
+      <article><h3>Install only what needs updating.</h3><p>The Apps installer checks your existing setup, skips a matching Neat Library, and offers to install or update Insight. Keep working with the tools you already have when they are compatible.</p></article>
+      <article><h3>Inspect live vision results more easily.</h3><p>PatchCore improves live heatmap rendering. The FastFlow sample holds each disc longer so defects are easier to see. SuperPoint now reads an RTSP stream and sends annotated results to Insight.</p></article>
+      <article><h3>Find PCIe stream problems faster.</h3><p>The high-density detector fixes detection-result parsing and checks each stream separately. A stalled stream is identified instead of being hidden by activity on other streams.</p></article>
+    </div>
+  </section>
+  <section class="compiler-feature" id="model-compiler" aria-labelledby="compiler-title">
+    <div class="section-heading"><div><p class="eyebrow">05 / MODEL COMPILER</p><h2 id="compiler-title">Model Compiler 3.0.0.1</h2></div><p>Fixes for Qwen3.5 performance and Whisper compilation, with the LLiMa 0.6.1 compiler.</p></div>
+    <div class="compiler-updates">
+      <article><p class="eyebrow">QWEN3.5</p><h3>Restore generation performance.</h3><p>This release fixes a compiler regression that reduced the tokens per second of compiled Qwen3.5 models.</p><p class="compiler-action"><strong>What to do:</strong> Recompile your Qwen3.5 models with Model Compiler 3.0.0.1. Existing compiled models keep the behavior of the compiler that built them.</p></article>
+      <article><p class="eyebrow">WHISPER</p><h3>Update activation and cache handling.</h3><p>The LLiMa 0.6.1 compiler changes how Whisper GELU activations are compiled. Reference tests showed lower numerical error. It also fixes the decoder-cache input order, which could corrupt transcription after the first word.</p><p class="compiler-action"><strong>What to do:</strong> Recompile Whisper models to get the activation change. For packages affected by the cache-order issue, regenerate and replace the decoder-cache ELF. The encoder, initialization and decoder pre/post ELFs can be kept.</p></article>
+    </div>
+    <div class="compiler-validation"><strong>Validation scope</strong><p>Compiler graph checks passed. Full transcription correctness on hardware has not been established for every affected model. Existing working Whisper packages already use the expected cache input order.</p></div>
+    <a class="compiler-changelog" href="https://github.com/sima-neat/model-compiler/compare/v3.0.0...v3.0.0.1" target="_blank" rel="noopener">View compiler changes <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+  </section>
+  <section class="draft-previous"><div><p class="eyebrow">PREVIOUS RELEASE</p><h2>Explore Palette 3.0.0.</h2><p>Read the existing feature story, demos and benchmarks.</p></div><a class="button primary" href="../3.0.0/">View 3.0.0 announcement <span aria-hidden="true">→</span></a></section>
+</main>
+<footer class="site-footer"><a href="../index.html" aria-label="SiMa.ai Palette releases home"><img src="../3.0.0/assets/sima-logo.svg" alt="SiMa.ai" width="131" height="32"></a><p>Physical AI. Moving forward.</p><div><a href="../index.html#releases">All releases ↑</a><a href="https://developer.sima.ai" target="_blank" rel="noopener">Developer Center ↗</a></div><small>© 2026 SiMa Technologies, Inc. All rights reserved.</small></footer>
+<script src="insight-carousel.js?v=5"></script>
+</body>
+</html>
