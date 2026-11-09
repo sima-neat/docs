@@ -30,7 +30,9 @@ Docker дозволяє запакувати застосунок разом і�
 
 ## Встановлення з Palette SDK {#palette-sdk}
 
-Використовуйте цей спосіб, якщо ви розробляєте в Palette SDK і вже з’єднали з ним DevKit (`sima-cli sdk setup --devkit <devkit-ip>`). З’єднання також надає користувачу DevKit `sudo` без пароля, що потрібно для цього способу.
+`dk` — це команда Palette SDK, а не DevKit. Запускайте її в оболонці SDK на хості (`sima-cli sdk neat`). Вона під’єднується до DevKit через SSH і виконує встановлення там. Якщо ви не використовуєте Palette SDK, натомість виконайте кроки з розділу [Встановлення вручну на DevKit](#manual).
+
+Спочатку з’єднайте DevKit із SDK на хості: `sima-cli sdk setup --devkit <devkit-ip>`. З’єднання надає користувачу DevKit `sudo` без пароля, що потрібно для `dk container setup`. Коли програма налаштування запитає **Set up a local container registry so the DevKit can download images built in the SDK?**, дайте відповідь `y`. Командам `dk container deploy`, `pull` і `images` потрібен цей локальний реєстр.
 
 1. В оболонці Palette SDK виконайте:
 

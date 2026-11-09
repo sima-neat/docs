@@ -30,7 +30,9 @@ Both methods:
 
 ## Install from the Palette SDK {#palette-sdk}
 
-Use this method if you develop in the Palette SDK and have paired the DevKit with it (`sima-cli sdk setup --devkit <devkit-ip>`). Pairing also gives the DevKit user passwordless `sudo`, which this method needs.
+`dk` is a Palette SDK command, not a DevKit command. Run it in the SDK shell on your host (`sima-cli sdk neat`). It connects to the DevKit over SSH and runs the installation there. If you do not use the Palette SDK, follow [Install by Hand on the DevKit](#manual) instead.
+
+First, pair the DevKit with the SDK on the host: `sima-cli sdk setup --devkit <devkit-ip>`. Pairing gives the DevKit user passwordless `sudo`, which `dk container setup` needs. When setup asks **Set up a local container registry so the DevKit can download images built in the SDK?**, answer `y`. `dk container deploy`, `pull`, and `images` need that local registry.
 
 1. In the Palette SDK shell, run:
 

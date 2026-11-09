@@ -30,7 +30,9 @@ DevKit 使用的容器映像檔必須針對 `linux/arm64` 建置。
 
 ## 從 Palette SDK 安裝 {#palette-sdk}
 
-如果您在 Palette SDK 中開發，且已將 DevKit 與其配對（`sima-cli sdk setup --devkit <devkit-ip>`），請使用此方式。配對也會讓 DevKit 使用者能以免密碼的方式使用 `sudo`，此方式需要這項設定。
+`dk` 是 Palette SDK 的指令，不是 DevKit 的指令。請在主機上的 SDK Shell（`sima-cli sdk neat`）中執行。此指令會透過 SSH 連線到 DevKit，並在 DevKit 上執行安裝。如果您不使用 Palette SDK，請改為依照[在 DevKit 上手動安裝](#manual)操作。
+
+首先，在主機上將 DevKit 與 SDK 配對：`sima-cli sdk setup --devkit <devkit-ip>`。配對會讓 DevKit 使用者能以免密碼的方式使用 `sudo`，這是 `dk container setup` 所需要的。當設定程序詢問 **Set up a local container registry so the DevKit can download images built in the SDK?** 時，請回答 `y`。`dk container deploy`、`pull` 和 `images` 需要這個本機登錄庫。
 
 1. 在 Palette SDK shell 中執行：
 

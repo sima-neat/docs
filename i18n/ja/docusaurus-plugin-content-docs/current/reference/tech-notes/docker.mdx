@@ -30,7 +30,9 @@ DevKit 用のコンテナーイメージは、`linux/arm64` 向けにビルド�
 
 ## Palette SDK からインストールする {#palette-sdk}
 
-Palette SDK で開発しており、DevKit を Palette SDK とペアリング済み（`sima-cli sdk setup --devkit <devkit-ip>`）の場合は、この方法を使用します。ペアリングにより、DevKit のユーザーにはパスワードなしの `sudo` も付与されます。この方法ではそれが必要です。
+`dk` は DevKit のコマンドではなく、Palette SDK のコマンドです。ホスト上の SDK シェル（`sima-cli sdk neat`）で実行してください。このコマンドは SSH で DevKit に接続し、DevKit 上でインストールを実行します。Palette SDK を使用しない場合は、代わりに [DevKit 上で手動でインストールする](#manual) の手順に従ってください。
+
+まず、ホスト上で DevKit を SDK とペアリングします：`sima-cli sdk setup --devkit <devkit-ip>`。ペアリングにより、`dk container setup` に必要な、パスワードなしの `sudo` が DevKit のユーザーに付与されます。セットアップで **Set up a local container registry so the DevKit can download images built in the SDK?** と表示されたら `y` と答えます。`dk container deploy`、`pull`、`images` には、このローカルレジストリが必要です。
 
 1. Palette SDK のシェルで、次を実行します。
 
