@@ -13,3 +13,4 @@ sidebar_position: 1
 - [2.1.3에서 3.0.0으로 변환합니다.](./convert-2-1-3-to-3-0-0.md)
 - [Modalix SoM DevKit에 Bluetooth를 설정합니다.](./bluetooth.mdx)
 - [ROS 2를 Modalix SoM DevKit에 설치합니다.](./ros2.mdx)
+- [Modalix SoM DevKit에 Docker 설치](./docker.mdx)

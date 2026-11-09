@@ -1,0 +1,166 @@
+---
+title: "Modalix SoM DevKit に Docker をインストールする"
+description: "プラットフォームバージョン 3.0 の Modalix SoM DevKit に、Palette SDK から、または手動で Docker をインストールし、コンテナーを実行します。"
+sidebar_position: 6
+---
+
+# Modalix SoM DevKit に Docker をインストールする
+
+Docker を使用すると、アプリケーションを依存関係とともにパッケージ化し、DevKit 上でコンテナーとして実行できます。Modalix SoM DevKit には Docker が付属していません。このノートでは、プラットフォームバージョン 3.0 に Docker をインストールする 2 つの方法を説明します。Palette SDK から 1 つのコマンドでインストールする方法と、DevKit 上で手動でインストールする方法です。どちらの方法でも、インストールされる内容は同じです。
+
+## 始める前に
+
+必要なもの：
+
+- プラットフォームバージョン **3.0** の Modalix SoM DevKit。確認するには、DevKit で `cat /etc/buildinfo` を実行します。
+- Docker をダウンロードするための、DevKit のインターネット接続。
+- Docker がイメージとコンテナーを保存する `/data` の空き容量。DevKit の `/data` は約 3 GB です。`df -h /data` で空き容量を確認し、イメージは小さく保ってください。
+
+DevKit 用のコンテナーイメージは、`linux/arm64` 向けにビルドする必要があります。
+
+## インストールで行われる処理
+
+どちらの方法でも、次の処理が行われます。
+
+1. Docker の Debian `trixie` リポジトリから、ARM64 用の Docker CE（`docker-ce`、`docker-ce-cli`、`containerd.io`）をインストールします。
+2. イメージがルートファイルシステムを圧迫しないように、Docker のデータを `/data/docker` に、containerd のデータを `/data/containerd` に保存します。
+3. コンテナーのネットワークに必要な IP フォワーディングを有効にします。
+4. `docker` サービスと `containerd` サービスを起動し、起動のたびに開始されるようにします。
+5. `sudo` なしで `docker` を実行できるように、ユーザーを `docker` グループに追加します。
+
+## Palette SDK からインストールする {#palette-sdk}
+
+`dk` は DevKit のコマンドではなく、Palette SDK のコマンドです。ホスト上の SDK シェル（`sima-cli sdk neat`）で実行してください。このコマンドは SSH で DevKit に接続し、DevKit 上でインストールを実行します。Palette SDK を使用しない場合は、代わりに [DevKit 上で手動でインストールする](#manual) の手順に従ってください。
+
+まず、ホスト上で DevKit を SDK とペアリングします：`sima-cli sdk setup --devkit <devkit-ip>`。ペアリングにより、`dk container setup` に必要な、パスワードなしの `sudo` が DevKit のユーザーに付与されます。セットアップで **Set up a local container registry so the DevKit can download images built in the SDK?** と表示されたら `y` と答えます。`dk container deploy`、`pull`、`images` には、このローカルレジストリが必要です。
+
+1. Palette SDK のシェルで、次を実行します。
+
+   ```console
+   sdk$ dk container setup
+   ```
+
+   DevKit に Docker をセットアップするかどうか尋ねられたら、`y` と答えます。この質問を省略するには、`dk container setup --yes` を実行します。DevKit で Docker がすでに動作している場合、コマンドはそれをそのまま使用し、ユーザーを `docker` グループに追加するだけです。インストールが中断された場合は、コマンドを再度実行してください。安全に再開されます。
+
+2. `Docker is ready on the DevKit` と表示されたら、SDK のシェルから DevKit 上でコンテナーを実行します。
+
+   | コマンド | 説明 |
+   | --- | --- |
+   | `dk container deploy <image> [docker-run-options] [-- command]` | SDK のローカルレジストリから DevKit にイメージをプルし、実行します。 |
+   | `dk container run <image> [docker-run-options] [-- command]` | DevKit 上にすでにあるイメージを実行します。 |
+   | `dk container pull <image>` | DevKit にイメージをプルします。 |
+   | `dk container images` | SDK のローカルレジストリにあるイメージを一覧表示します。 |
+   | `dk container list` | DevKit 上のコンテナーを一覧表示します。 |
+   | `dk container logs <container>` | コンテナーの出力を表示します。監視を続けるには `--follow` を追加します。 |
+   | `dk container stop <container>` | コンテナーを停止します。 |
+   | `dk container remove <container>` | コンテナーを削除します。 |
+
+   たとえば、SDK で DevKit 用のイメージをビルドし、SDK のローカルレジストリにプッシュして、DevKit 上で起動するには、次のようにします。
+
+   ```console
+   sdk$ docker buildx build --platform linux/arm64 -t "$SIMA_CONTAINER_REGISTRY/my-app:latest" --push .
+   sdk$ dk container deploy my-app:latest --detach --name my-app --network host
+   sdk$ dk container logs my-app --follow
+   ```
+
+## DevKit 上で手動でインストールする {#manual}
+
+Palette SDK を使用しない場合は、この方法を使用します。以下のすべてのコマンドを、SSH またはシリアル経由で **DevKit 上で**実行します。`sudo` はパスワードを要求します。
+
+1. Docker のインストール中は、eLxr パッケージのミラーリストを退避させます。手順 9 で元に戻します。
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /root/apt-disabled
+   sima@modalix:~$ sudo mv /etc/apt/sources.list.d/0000mirror.list /root/apt-disabled/
+   ```
+
+2. Docker のデータを `/data/docker` に保存するように設定します。
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /etc/docker /data/docker
+   sima@modalix:~$ echo '{"data-root": "/data/docker", "firewall-backend": "nftables"}' | sudo tee /etc/docker/daemon.json
+   ```
+
+3. IP フォワーディングを有効にします。
+
+   ```console
+   sima@modalix:~$ printf 'net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1\n' | sudo tee /etc/sysctl.d/99-docker-forward.conf
+   sima@modalix:~$ sudo sysctl --system
+   ```
+
+4. Docker のパッケージリポジトリを追加します。
+
+   ```console
+   sima@modalix:~$ sudo install -m 0755 -d /etc/apt/keyrings
+   sima@modalix:~$ sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ sudo chmod a+r /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ echo 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian trixie stable' | sudo tee /etc/apt/sources.list.d/docker.list
+   ```
+
+5. Docker をインストールします。
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   ```
+
+6. サービスを停止し、containerd のデータを `/data/containerd` に移動します。
+
+   ```console
+   sima@modalix:~$ sudo systemctl stop docker.socket docker containerd
+   sima@modalix:~$ sudo mkdir -p /data/containerd
+   sima@modalix:~$ sudo sh -c 'mv /var/lib/containerd/* /data/containerd/ 2>/dev/null; true'
+   ```
+
+7. `/data/containerd` を `/var/lib/containerd` に、今すぐ、および起動のたびにマウントします。
+
+   ```console
+   sima@modalix:~$ echo '/data/containerd /var/lib/containerd none bind 0 0' | sudo tee -a /etc/fstab
+   sima@modalix:~$ sudo mount /var/lib/containerd
+   ```
+
+8. サービスを起動し、起動のたびに開始されるようにします。
+
+   ```console
+   sima@modalix:~$ sudo systemctl enable containerd docker
+   sima@modalix:~$ sudo systemctl restart containerd docker
+   ```
+
+9. eLxr パッケージのミラーリストを元に戻します。
+
+   ```console
+   sima@modalix:~$ sudo mv /root/apt-disabled/0000mirror.list /etc/apt/sources.list.d/
+   ```
+
+10. ユーザーを `docker` グループに追加し、いったんログアウトしてから再度ログインします。
+
+    ```console
+    sima@modalix:~$ sudo usermod -aG docker "$USER"
+    ```
+
+## インストールを確認する {#check}
+
+DevKit 上で：
+
+1. Docker のデータが `/data/docker` に保存されていることを確認します。
+
+   ```console
+   sima@modalix:~$ docker info --format '{{.DockerRootDir}}'
+   /data/docker
+   ```
+
+2. テストコンテナーを実行します。
+
+   ```console
+   sima@modalix:~$ docker run --rm hello-world
+   ```
+
+   `Hello from Docker!` と表示されます。
+
+3. `/data` の空き容量を確認します。
+
+   ```console
+   sima@modalix:~$ df -h /data
+   ```
+
+   空き容量を確保するには、`docker image prune` と `docker container prune` を使用して、不要になったイメージとコンテナーを削除します。

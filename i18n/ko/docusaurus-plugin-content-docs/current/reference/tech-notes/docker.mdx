@@ -1,0 +1,166 @@
+---
+title: "Modalix SoM DevKit에 Docker 설치"
+description: "플랫폼 버전 3.0을 사용하는 Modalix SoM DevKit에 Palette SDK 또는 수동 방식으로 Docker를 설치하고 컨테이너를 실행합니다."
+sidebar_position: 6
+---
+
+# Modalix SoM DevKit에 Docker 설치
+
+Docker를 사용하면 애플리케이션과 그 종속성을 하나로 패키징하여 DevKit에서 컨테이너로 실행할 수 있습니다. Modalix SoM DevKit에는 Docker가 기본으로 포함되어 있지 않습니다. 이 참고 사항에서는 플랫폼 버전 3.0에 Docker를 설치하는 두 가지 방법을 설명합니다. 하나는 Palette SDK에서 명령 하나로 설치하는 방법이고, 다른 하나는 DevKit에서 직접 수동으로 설치하는 방법입니다. 두 방법 모두 동일한 구성 요소를 설치합니다.
+
+## 시작하기 전에
+
+다음이 필요합니다:
+
+- 플랫폼 버전 **3.0**을 사용하는 Modalix SoM DevKit. 버전을 확인하려면 DevKit에서 `cat /etc/buildinfo`를 실행하십시오.
+- Docker를 다운로드하기 위한 DevKit의 인터넷 연결.
+- Docker가 이미지와 컨테이너를 저장하는 `/data`의 여유 공간. DevKit에서 `/data`의 크기는 약 3 GB입니다. `df -h /data`로 여유 공간을 확인하고 이미지를 작게 유지하십시오.
+
+DevKit용 컨테이너 이미지는 `linux/arm64`용으로 빌드해야 합니다.
+
+## 설치 시 수행되는 작업
+
+두 방법 모두 다음 작업을 수행합니다:
+
+1. Docker의 Debian `trixie` 저장소에서 ARM64용 Docker CE(`docker-ce`, `docker-ce-cli`, `containerd.io`)를 설치합니다.
+2. 이미지가 루트 파일 시스템을 채우지 않도록 Docker 데이터는 `/data/docker`에, containerd 데이터는 `/data/containerd`에 저장합니다.
+3. 컨테이너 네트워킹에 필요한 IP 포워딩을 활성화합니다.
+4. `docker` 및 `containerd` 서비스를 시작하고, 부팅할 때마다 자동으로 시작되도록 설정합니다.
+5. `sudo` 없이 `docker`를 실행할 수 있도록 사용자를 `docker` 그룹에 추가합니다.
+
+## Palette SDK에서 설치 {#palette-sdk}
+
+`dk`는 DevKit 명령이 아니라 Palette SDK 명령입니다. 호스트의 SDK 셸(`sima-cli sdk neat`)에서 실행하십시오. 이 명령은 SSH로 DevKit에 연결하여 DevKit에서 설치를 실행합니다. Palette SDK를 사용하지 않는 경우 대신 [DevKit에서 수동으로 설치](#manual)를 따르십시오.
+
+먼저 호스트에서 DevKit를 SDK와 페어링하십시오: `sima-cli sdk setup --devkit <devkit-ip>`. 페어링하면 `dk container setup`에 필요한 비밀번호 없는 `sudo` 권한이 DevKit 사용자에게 부여됩니다. 설정 중 **Set up a local container registry so the DevKit can download images built in the SDK?**라고 물으면 `y`로 답하십시오. `dk container deploy`, `pull`, `images`에는 이 로컬 레지스트리가 필요합니다.
+
+1. Palette SDK 셸에서 다음을 실행하십시오:
+
+   ```console
+   sdk$ dk container setup
+   ```
+
+   DevKit에 Docker를 설정할지 묻는 메시지가 표시되면 `y`를 입력하십시오. 질문을 건너뛰려면 `dk container setup --yes`를 실행하십시오. DevKit에서 Docker가 이미 작동 중이면 명령은 기존 Docker를 유지하고 사용자를 `docker` 그룹에 추가하기만 합니다. 설치가 중단된 경우 명령을 다시 실행하십시오. 안전하게 이어서 진행됩니다.
+
+2. `Docker is ready on the DevKit`이 출력되면 SDK 셸에서 DevKit의 컨테이너를 실행하십시오:
+
+   | 명령 | 기능 |
+   | --- | --- |
+   | `dk container deploy <image> [docker-run-options] [-- command]` | SDK의 로컬 레지스트리에서 DevKit로 이미지를 가져온 다음 실행합니다. |
+   | `dk container run <image> [docker-run-options] [-- command]` | DevKit에 이미 있는 이미지를 실행합니다. |
+   | `dk container pull <image>` | DevKit로 이미지를 가져옵니다. |
+   | `dk container images` | SDK의 로컬 레지스트리에 있는 이미지를 나열합니다. |
+   | `dk container list` | DevKit의 컨테이너를 나열합니다. |
+   | `dk container logs <container>` | 컨테이너의 출력을 표시합니다. 계속 확인하려면 `--follow`를 추가하십시오. |
+   | `dk container stop <container>` | 컨테이너를 중지합니다. |
+   | `dk container remove <container>` | 컨테이너를 제거합니다. |
+
+   예를 들어 SDK에서 DevKit용 이미지를 빌드하고, SDK의 로컬 레지스트리에 푸시한 다음, DevKit에서 시작하려면 다음을 실행하십시오:
+
+   ```console
+   sdk$ docker buildx build --platform linux/arm64 -t "$SIMA_CONTAINER_REGISTRY/my-app:latest" --push .
+   sdk$ dk container deploy my-app:latest --detach --name my-app --network host
+   sdk$ dk container logs my-app --follow
+   ```
+
+## DevKit에서 수동으로 설치 {#manual}
+
+Palette SDK를 사용하지 않는 경우 이 방법을 사용하십시오. 아래의 모든 명령은 SSH 또는 시리얼을 통해 **DevKit에서** 실행하십시오. `sudo`는 비밀번호를 요청합니다.
+
+1. Docker를 설치하는 동안 eLxr 패키지 미러 목록을 다른 위치로 옮겨 두십시오. 9단계에서 원래 위치로 되돌립니다.
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /root/apt-disabled
+   sima@modalix:~$ sudo mv /etc/apt/sources.list.d/0000mirror.list /root/apt-disabled/
+   ```
+
+2. Docker가 데이터를 `/data/docker`에 저장하도록 설정하십시오:
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /etc/docker /data/docker
+   sima@modalix:~$ echo '{"data-root": "/data/docker", "firewall-backend": "nftables"}' | sudo tee /etc/docker/daemon.json
+   ```
+
+3. IP 포워딩을 활성화하십시오:
+
+   ```console
+   sima@modalix:~$ printf 'net.ipv4.ip_forward=1\nnet.ipv6.conf.all.forwarding=1\n' | sudo tee /etc/sysctl.d/99-docker-forward.conf
+   sima@modalix:~$ sudo sysctl --system
+   ```
+
+4. Docker 패키지 저장소를 추가하십시오:
+
+   ```console
+   sima@modalix:~$ sudo install -m 0755 -d /etc/apt/keyrings
+   sima@modalix:~$ sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ sudo chmod a+r /etc/apt/keyrings/docker.asc
+   sima@modalix:~$ echo 'deb [arch=arm64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian trixie stable' | sudo tee /etc/apt/sources.list.d/docker.list
+   ```
+
+5. Docker를 설치하십시오:
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+   ```
+
+6. 서비스를 중지하고 containerd 데이터를 `/data/containerd`로 옮기십시오:
+
+   ```console
+   sima@modalix:~$ sudo systemctl stop docker.socket docker containerd
+   sima@modalix:~$ sudo mkdir -p /data/containerd
+   sima@modalix:~$ sudo sh -c 'mv /var/lib/containerd/* /data/containerd/ 2>/dev/null; true'
+   ```
+
+7. `/data/containerd`를 `/var/lib/containerd`에 지금 마운트하고, 부팅할 때마다 마운트되도록 설정하십시오:
+
+   ```console
+   sima@modalix:~$ echo '/data/containerd /var/lib/containerd none bind 0 0' | sudo tee -a /etc/fstab
+   sima@modalix:~$ sudo mount /var/lib/containerd
+   ```
+
+8. 서비스를 시작하고, 부팅할 때마다 자동으로 시작되도록 설정하십시오:
+
+   ```console
+   sima@modalix:~$ sudo systemctl enable containerd docker
+   sima@modalix:~$ sudo systemctl restart containerd docker
+   ```
+
+9. eLxr 패키지 미러 목록을 원래 위치로 되돌리십시오:
+
+   ```console
+   sima@modalix:~$ sudo mv /root/apt-disabled/0000mirror.list /etc/apt/sources.list.d/
+   ```
+
+10. 사용자를 `docker` 그룹에 추가한 다음 로그아웃했다가 다시 로그인하십시오:
+
+    ```console
+    sima@modalix:~$ sudo usermod -aG docker "$USER"
+    ```
+
+## 설치 확인 {#check}
+
+DevKit에서 다음을 수행하십시오:
+
+1. Docker가 데이터를 `/data/docker`에 저장하는지 확인하십시오:
+
+   ```console
+   sima@modalix:~$ docker info --format '{{.DockerRootDir}}'
+   /data/docker
+   ```
+
+2. 테스트 컨테이너를 실행하십시오:
+
+   ```console
+   sima@modalix:~$ docker run --rm hello-world
+   ```
+
+   `Hello from Docker!`가 출력됩니다.
+
+3. `/data`의 여유 공간을 확인하십시오:
+
+   ```console
+   sima@modalix:~$ df -h /data
+   ```
+
+   공간을 확보하려면 `docker image prune` 및 `docker container prune`으로 더 이상 필요하지 않은 이미지와 컨테이너를 제거하십시오.
