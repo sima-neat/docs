@@ -83,11 +83,14 @@ Fonts are loaded externally, with local font fallbacks.
 ## GitHub Pages workflow
 
 `.github/workflows/release-announcement-pages.yml` validates changes in pull
-requests and pushes to `develop` and `main`. It publishes only when explicitly
-started with **Run workflow** / `workflow_dispatch`, from either branch.
-Merging or pushing does not deploy the public site. This preserves an explicit
-publication decision for embargoed announcements, including 3.0.0's November
-17, 2026 public announcement date.
+requests and pushes to `develop` and `main`. A push to `main` that changes
+release content, the validation script, or this workflow automatically publishes
+the site after validation. Merging a PR into `main` triggers this push event;
+direct pushes to `main` behave the same way. PRs and pushes to `develop` only
+validate. Merge release content into `main` when it is ready to be public.
+
+Manual publication with **Run workflow** / `workflow_dispatch` remains available
+from `develop` or `main`. Other branches and tags are rejected.
 
 The workflow checks local asset links, benchmark export consistency and all
 release JavaScript syntax before uploading the entire `release-announcement/`
@@ -104,8 +107,8 @@ is required. Pages write and OIDC permissions are restricted to the deploy job.
 2. Under **Settings → Pages**, select **GitHub Actions** as the publishing source.
    Confirm this repository is not already hosting another Pages site.
 3. Configure the `github-pages` environment to allow both `develop` and `main`.
-   Add required reviewers if publication needs an approval in addition to the
-   manual workflow dispatch.
+   Existing environment protection rules still apply to automatic and manual
+   publication; required reviewers will pause deployment until approval.
 4. Verify ownership of the custom domain, then set the Pages custom domain to
    `releases.neat.sima.ai` before adding DNS. Create a DNS CNAME for `releases`
    pointing to `sima-neat.github.io` (not a repository URL or a version path).
@@ -118,13 +121,15 @@ and [custom domain guide](https://docs.github.com/en/pages/configuring-a-custom-
 
 ### Publish an approved release
 
-Open **Actions → Release Announcement Pages → Run workflow**, choose `develop`
-or `main`, then run it. Other branches and tags are rejected. The equivalent
-CLI command is:
+Merge release changes into `main` to publish automatically after validation.
+Changes outside the workflow's path filters do not trigger a publication.
+
+To publish manually, open **Actions → Release Announcement Pages → Run workflow**,
+choose `develop` or `main`, then run it. The equivalent CLI command is:
 
 ```sh
-gh workflow run release-announcement-pages.yml --repo sima-neat/docs --ref develop
-# Use --ref main to publish the main branch instead.
+gh workflow run release-announcement-pages.yml --repo sima-neat/docs --ref main
+# Use --ref develop to publish that branch manually instead.
 ```
 
 Both branches publish to the **same site**. The selected branch must contain all
@@ -136,7 +141,8 @@ assets and downloads. The domain root serves the Palette introduction and releas
 release entry links to its versioned detail page in a new tab. To roll back, restore the approved files on one of the allowed branches and
 manually rerun publication from that branch.
 
-Adding the workflow does not enable Pages, change DNS or trigger publication.
+The workflow does not enable Pages or change DNS. Merging workflow changes into
+`main` triggers automatic publication, just like merging release-content changes.
 Do not include Sites hosting metadata or credentials in the Pages artifact.
 The existing private preview is independent of this repository source.
 
