@@ -34,7 +34,7 @@ eLxr is the preferred path for board bring-up. You can also bring up a board wit
 | Build an update package | Not yet documented | [Build and Apply an Update Package](../deployment/update-package.mdx) |
 | Secure boot and provisioning | Not yet documented | Not yet documented |
 
-Choose Yocto if you need to build a complete image from source today. Otherwise, use eLxr.
+SiMa.ai is not actively testing Yocto releases, so newer builds have no released Yocto support. Use eLxr. Choose Yocto only if you need to build a complete image from source today, and test that image on your board yourself.
 
 ## What You Can Do with the BSP Sources
 
