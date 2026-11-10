@@ -13,3 +13,4 @@ sidebar_position: 1
 - [從 2.1.3 升級到 3.0.0](./convert-2-1-3-to-3-0-0.md)
 - [在 Modalix SoM DevKit 上設定 Bluetooth。](./bluetooth.mdx)
 - [在 Modalix SoM DevKit 上安裝 ROS 2。](./ros2.mdx)
+- [PCIe 卡啟動與疑難排解](./pcie-card-bringup.mdx)

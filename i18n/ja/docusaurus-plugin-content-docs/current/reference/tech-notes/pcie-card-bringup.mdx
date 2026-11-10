@@ -1,0 +1,172 @@
+---
+title: "PCIe カードのブリングアップとトラブルシューティング"
+description: "Modalix HHHL PCIe カードで PCIe 仮想 Ethernet リンクを立ち上げて確認し、スループットテストを実行します。"
+sidebar_position: 6
+---
+
+# PCIe カードのブリングアップとトラブルシューティング
+
+このノートは、Modalix HHHL PCIe カードがホストで検出されているのに PCIe 仮想 Ethernet リンクが立ち上がらない場合に使用してください。これは、カードを外付けの Thunderbolt/USB4 エンクロージャーに装着している場合に最もよく発生します。
+
+:::note
+ハードウェアの準備とドライバーのインストールについては、まず [PCIe モード](/hardware/getting-started/pcie-mode) を参照してください。`sima-cli device discover` が仮想 Ethernet リンクを検出しない場合、または検出されても `ping` と SSH が動作しない場合は、このページに戻ってください。
+:::
+
+PCIe スタックはホストとカードの間に仮想 Ethernet リンクを提供するため、Ethernet ケーブルなしで `ping`、`ssh`、`scp`、`iperf3` を PCIe 経由で使用できます。
+
+```text
+[HOST] 10.0.0.1/24  <--- PCIe --->  10.0.0.2/24 [MODALIX]
+```
+
+**[HOST]** は Ubuntu マシン、**[MODALIX]** はカード上で動作する Linux です。
+
+## 外付けエンクロージャーの電源投入順序
+
+外付けエンクロージャーは独自の電源ドメインを持つため、ホストを再起動してもカードの電源は入れ直されません。
+
+- **電源オフ：** ホストを先に、次にエンクロージャー。
+- **電源オン：** エンクロージャーを先に、次にホスト。
+
+マザーボード内部のスロットに装着したカードはホストと電源を共有するため、特別な順序は不要です。
+
+## インターフェース名の設定（任意）
+
+`sima-cli` は sysfs 内のカードの PCI アドレスから PCIe 仮想 Ethernet インターフェースを解決するため、ホストがインターフェースにどのような名前（通常は `enp47s0` のような予測可能な名前）を付けていても検出は動作します。名前の変更は**必須ではありません**。
+
+ただし、ホスト間で安定したインターフェース名を使いたい場合や、NetworkManager がリンクを再設定しないようにしたい場合には、名前の変更が役立ちます。適用するには、**ホスト**上に 2 つのファイルを作成します。
+
+:::note 名前の変更を省略する場合
+ここでの 2 つの作業は切り分けることができます。NetworkManager がインターフェースを管理し、
+ドライバーが設定した `10.0.<cardnum>.1` アドレスを置き換えてしまう場合、PCI アドレスによる検出は
+引き続き動作しますが、`ping` と SSH は失敗します。そのため、名前を変更せずに unmanaged 設定だけを
+使いたい場合があります。その場合は名前ではなく MAC でデバイスを照合し、次のファイルだけを作成します。
+
+```ini
+[device-simaai-unmanaged]
+match-device=mac:00:53:49:4d:41:30
+managed=0
+```
+
+ホスト側インターフェース自身の MAC に置き換えてください（最初のオクテットがカード番号です）。
+その後 `sudo systemctl restart NetworkManager` を実行します。名前を変更しないため、`udev` ルールも
+新しいデバイスイベントも不要です。
+:::
+
+`/etc/udev/rules.d/90-network.rules`:
+
+```text
+SUBSYSTEM=="net", ACTION=="add", ATTR{address}=="*:53:49:4d:41:30", NAME="veth-simaai", ENV{NM_UNMANAGED}="1"
+```
+
+このルールは、ホストに Modalix カードが **1 枚** だけ装着されていることを前提としています。先頭のワイルドカードは
+MAC の最初のオクテット（カード番号）に対応するため（[仮想ネットワーク](/hardware/getting-started/pcie-mode/virtual-network) を参照）、
+複数のカードを搭載したホストでは、このルールがすべてのカードのホスト側インターフェースに一致してしまい、
+`veth-simaai` という名前を取得できるのはそのうち 1 つだけになります。複数カードのホストでは、各カードに
+完全な MAC に一致する個別のルールと、`veth-simaai0` や `veth-simaai1` のような別々の名前を割り当て、
+以降の手順ではそれらの名前を使用してください。
+
+`/etc/NetworkManager/conf.d/99-unmanaged-devices.conf`:
+
+```ini
+[device-vethsimaai-unmanaged]
+match-device=interface-name:veth-simaai
+managed=0
+```
+
+:::warning
+上記の単一カード用ルールでは、特定のシステムの正確な MAC ではなく、記載どおりのワイルドカード
+`*:53:49:4d:41:30` を使用してください。ワイルドカードはカード番号のオクテットをカバーします。
+例外は前述の複数カードの場合で、各カードを区別するために、それぞれ完全な MAC に一致するルールが必要です。
+
+いずれの場合も、ルールは MAC が `:41:30` で終わる**ホスト**側インターフェースに一致する必要があります。
+カード側のインターフェースの MAC は `:41:31` で終わります。
+:::
+
+2 つのファイルは連携して動作します。NetworkManager のドロップインは `interface-name:veth-simaai` に一致するため、`udev` ルールによってその名前が適用された後でのみ有効になります。
+
+設定を適用します。
+
+```console
+sima-user@sima-user-machine:~$ sudo udevadm control --reload-rules
+sima-user@sima-user-machine:~$ sudo systemctl restart NetworkManager
+```
+
+ルールは `ACTION=="add"` に一致するため、再読み込みだけでは既存のインターフェースの名前は変更されません。
+新しいデバイスイベントを発生させる必要があります。
+
+- **外付けエンクロージャー：** エンクロージャーを再接続するか、電源を入れ直します。
+- **マザーボード内部のスロット：** ホストを再起動するか、再起動せずにデバイスを削除して再スキャンします
+  （カードの PCI アドレスに置き換えてください）。
+
+  ```console
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/devices/0000:2f:00.0/remove
+  sima-user@sima-user-machine:~$ echo 1 | sudo tee /sys/bus/pci/rescan
+  ```
+
+## リンクを確認する
+
+両側のアドレスを確認します。上記の名前変更を適用していない場合は、ホスト自身のインターフェース名に置き換えてください。
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima-user@sima-user-machine:~$ ip -br addr show veth-simaai
+veth-simaai   UNKNOWN   10.0.0.1/24
+```
+
+<img src="/img/media/devkit-cli.png" alt="Run on the Modalix card" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima@modalix:~$ ip -br addr show veth-simaai
+veth-simaai   UNKNOWN   10.0.0.2/24
+```
+
+次に、ホストから経路と検出を確認します。
+
+```console
+sima-user@sima-user-machine:~$ ping 10.0.0.2
+sima-user@sima-user-machine:~$ ssh sima@10.0.0.2
+sima-user@sima-user-machine:~$ sima-cli device discover
+Detected PCIe virtual ethernet.
+```
+
+:::note
+仮想インターフェースでは `UNKNOWN` は正常です。名前の変更を適用した場合、インターフェースは unmanaged としてマークされるため **Settings → Network** には表示されません。GUI ではなく `ip` で確認してください。
+
+SiMa のエンジニアリングから指示がない限り、デフォルトの `10.0.0.1` / `10.0.0.2` アドレスは変更しないでください。
+
+これらはカード番号 0 のアドレスで、このノートが前提とする単一カードの場合に該当します。
+パターンはホスト側が `10.0.<cardnum>.1`、カード側が `10.0.<cardnum>.2` です
+（[仮想ネットワーク](/hardware/getting-started/pcie-mode/virtual-network) を参照）。したがって
+2 枚目のカードは `10.0.1.1` と `10.0.1.2` を使用します。全体を通して適宜置き換えてください。
+:::
+
+## スループットテスト
+
+`sima-cli device discover` は、仮想 Ethernet 経路のスループットテストを提供します。両端のセットアップは自動で行われるため、カード上でサーバーを起動する必要はありません。
+
+<img src="/img/media/host-cli.png" alt="Run on the host machine" width="55" style={{float: 'left', marginRight: '8px'}} />
+
+```console
+sima-user@sima-user-machine:~$ sima-cli device discover
+Detected PCIe virtual ethernet. Run throughput test now? [y/N]: y
+Virtual Ethernet Throughput: 7.61 Gbps (healthy)
+```
+
+テスト環境では約 7～8 Gbps が測定されました。実際のスループットは、ホスト、エンクロージャー、Thunderbolt の経路によって異なります。
+
+## トラブルシューティング
+
+| 症状 | 確認事項 |
+| --- | --- |
+| `lspci -nnk -d 1f06:` にカードが表示されない | エンクロージャーの電源、Thunderbolt/USB4 の接続、カードの装着状態を確認します。その後、ホストとエンクロージャーの両方をコールドパワーサイクルします。 |
+| `sima-cli` が `veth-simaai not found` を報告する | インターフェース名で照合していた古い `sima-cli` です。`sima-cli` を更新するか、上記の `udev` ルールを適用してカードを再接続または電源を入れ直してください。 |
+| インターフェースは存在するが `ping 10.0.0.2` が失敗する | ホストに `10.0.0.1/24`、カードに `10.0.0.2/24` が設定され、両方のインターフェースが up になっていることを確認します。アドレスは変更しないでください。 |
+| `Device "veth-simaai" does not exist` | 名前の変更を適用していない場合や、カード側インターフェースを `eth2` と命名する eLxr 以前の古いカードビルドでは想定どおりの動作です。`ip addr` を実行し（簡易形式では MAC が省略されます）、アドレスと、`:41:30`（ホスト）または `:41:31`（カード）で終わる MAC で照合してください。 |
+| 再起動前は PCIe が動作していたが、再起動後に不安定になる | 上記の電源投入順序に従ってください。エンクロージャーは別電源です。 |
+
+## 関連情報
+
+- [PCIe モード](/hardware/getting-started/pcie-mode) — ハードウェアの準備とドライバーのインストール。
+- [仮想ネットワーク](/hardware/getting-started/pcie-mode/virtual-network) — 手動 IP 割り当てと MAC/IP アドレス体系。
+- [Modalix PCIe カード](/hardware/devkit/modalix-pcie-card) — カードのインターフェース、スイッチ、コネクター。
