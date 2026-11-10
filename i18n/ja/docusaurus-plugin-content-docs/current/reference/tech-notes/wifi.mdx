@@ -1,0 +1,144 @@
+---
+title: "Modalix SoM DevKit で USB WiFi アダプターを使用する"
+description: "プラットフォーム 3.0 向けに MediaTek MT7921AU ドライバーをビルドし、ファームウェアをインストールして、nmcli で Modalix SoM DevKit を WiFi に接続します。"
+sidebar_position: 7
+---
+
+# Modalix SoM DevKit で USB WiFi アダプターを使用する
+
+Modalix SoM DevKit には WiFi が内蔵されていません。USB WiFi アダプターを使用すると WiFi を追加できます。このノートでは、2.4 GHz、5 GHz、6 GHz で WiFi 6E に対応する MediaTek MT7921AU チップを搭載したアダプターを使用します。プラットフォーム 3.0 のカーネルには Linux ワイヤレススタックが含まれていますが、このチップ用のドライバーは含まれていません。そのため、ドライバーをビルドし、チップのファームウェアと一緒にインストールしてから、NetworkManager で接続します。
+
+## 始める前に
+
+必要なもの：
+
+- プラットフォームバージョン **3.0** の Modalix SoM DevKit。確認するには、DevKit で `cat /etc/buildinfo` を実行します。
+- MediaTek MT7921AU チップを搭載した USB WiFi アダプター（USB ID `0e8d:7961`）。たとえば [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62) です。ほかの MT7921AU アダプターも同じ手順で使用できます。
+- パッケージをインストールするための、Ethernet 経由での DevKit のインターネット接続。
+- ドライバーをビルドするための Docker と `git` を備えた Linux ホスト、およびホストから DevKit への SSH アクセス。
+
+アダプターを DevKit の USB ポートに接続し、DevKit がアダプターを検出していることを確認します。
+
+```console
+sima@modalix:~$ lsusb | grep 0e8d:7961
+Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
+```
+
+## 1. ホストでドライバーをビルドする {#build}
+
+SiMa.ai のカーネルソースから、DevKit 自身のカーネル設定を使用して、`mt7921u` ドライバーと、それが依存する `mt76` モジュールをビルドします。ビルドは、DevKit のカーネルと同じコンパイラーを持つ Debian コンテナー内で実行されます。
+
+以下のコマンドを**ホスト上で**実行します。`<devkit-ip>` は DevKit の IP アドレスに置き換えてください。
+
+1. カーネルソースと DevKit のカーネル設定を取得します。
+
+   ```bash
+   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
+   ```
+
+2. モジュールをビルドします。
+
+   ```bash
+   docker run --rm -v "$PWD":/w -w /w/simaai-linux debian:trixie bash -c '
+     apt-get update && apt-get install -y gcc-aarch64-linux-gnu make bc flex bison libssl-dev libelf-dev python3 kmod &&
+     export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LOCALVERSION=-modalix &&
+     cp ../board.config .config &&
+     scripts/config --module MT7921U &&
+     make olddefconfig &&
+     make -j"$(nproc)" modules_prepare &&
+     make -j"$(nproc)" M=drivers/net/wireless/mediatek/mt76 KBUILD_MODPOST_WARN=1 modules'
+   ```
+
+   ビルド中に未解決シンボルに関する警告が表示されます。これは想定どおりです。これらのシンボルは、DevKit にすでに存在する `cfg80211` および `mac80211` モジュールに含まれています。
+
+3. ビルドで 7 つのモジュールが作成されたことを確認します。
+
+   ```bash
+   find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko'
+   ```
+
+   `mt76.ko`、`mt76-usb.ko`、`mt76-connac-lib.ko`、`mt792x-lib.ko`、`mt792x-usb.ko`、`mt7921-common.ko`、`mt7921u.ko` が得られます。
+
+4. これらを DevKit にコピーします。
+
+   ```bash
+   scp $(find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko') sima@<devkit-ip>:/tmp/
+   ```
+
+## 2. DevKit にドライバーとファームウェアをインストールする {#install}
+
+以下のコマンドを**DevKit 上で**実行します。
+
+1. モジュールをインストールし、モジュールインデックスを更新します。
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /lib/modules/$(uname -r)/updates/mt76
+   sima@modalix:~$ sudo mv /tmp/mt7*.ko /lib/modules/$(uname -r)/updates/mt76/
+   sima@modalix:~$ sudo depmod -a
+   ```
+
+2. アダプターのファームウェアとワイヤレス規制データベースをインストールします。
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y firmware-mediatek wireless-regdb
+   ```
+
+3. ドライバーを読み込みます。
+
+   ```console
+   sima@modalix:~$ sudo modprobe mt7921u
+   ```
+
+   以降は、起動時を含め、アダプターを接続するたびにドライバーが自動的に読み込まれます。
+
+4. アダプターにワイヤレスインターフェースがあることを確認します。
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   DEVICE                  TYPE      STATE         CONNECTION
+   end0                    ethernet  connected     end0-dhcp
+   wlxe84e06afdb5e         wifi      disconnected  --
+   ```
+
+   インターフェース名は `wlx` で始まり、その後にアダプターの MAC アドレスが続きます。表示されない場合は、`sudo dmesg | grep mt7921u` でドライバーのメッセージを確認してください。ファームウェアが読み込まれると、メッセージにファームウェアのバージョンが表示されます。
+
+## 3. WiFi ネットワークに接続する {#connect}
+
+DevKit で、NetworkManager のコマンドラインツールである `nmcli` を使用します。
+
+1. ネットワークをスキャンします。
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi rescan
+   sima@modalix:~$ nmcli device wifi list
+   ```
+
+2. 接続します。`<SSID>` と `<password>` は、ネットワークの名前とパスワードに置き換えてください。
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi connect "<SSID>" password "<password>"
+   ```
+
+   NetworkManager は接続を保存し、起動するたびにその接続に再接続します。
+
+3. 接続を確認します。
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   sima@modalix:~$ ip -4 -br addr show
+   sima@modalix:~$ ping -c 3 -I wlxe84e06afdb5e 8.8.8.8
+   ```
+
+   `wlxe84e06afdb5e` は、お使いのインターフェース名に置き換えてください。
+
+代わりにメニューからネットワークを選択するには、`sudo nmtui` を実行して **Activate a connection** を選択します。
+
+DevKit が Ethernet でも接続されている場合、Ethernet 接続がデフォルトルートのままになります。NetworkManager は WiFi に低い優先度を割り当てます。
+
+## 制限事項 {#limitations}
+
+- **ファームウェアを更新するとドライバーが削除されます。** モジュールは実行中のカーネル向けにビルドされています。DevKit のファームウェアを更新した後は、モジュールを再度ビルドしてインストールしてください。
+- **他のアダプターには専用のドライバーが必要です。** このノートは MediaTek MT7921AU を対象としています。他のチップには、別のカーネルドライバーとファームウェアが必要です。
+- **6 GHz はテストしていません。** アダプターは 6 GHz に対応していますが、このノートは 2.4 GHz と 5 GHz でのみテストしています。6 GHz を使用できるかどうかは、お住まいの国の規制にもよります。

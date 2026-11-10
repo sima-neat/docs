@@ -1,0 +1,144 @@
+---
+title: "在 Modalix SoM DevKit 上使用 USB WiFi 轉接器"
+description: "為平台 3.0 建置 MediaTek MT7921AU 驅動程式、安裝其韌體，並使用 nmcli 將 Modalix SoM DevKit 連線到 WiFi。"
+sidebar_position: 7
+---
+
+# 在 Modalix SoM DevKit 上使用 USB WiFi 轉接器
+
+Modalix SoM DevKit 沒有內建 WiFi，您可以使用 USB WiFi 轉接器來新增此功能。本備註使用搭載 MediaTek MT7921AU 晶片的轉接器，此晶片支援 2.4 GHz、5 GHz 和 6 GHz 的 WiFi 6E。平台 3.0 的核心包含 Linux 無線堆疊，但不包含此晶片的驅動程式，因此您需要建置驅動程式、將它與晶片的韌體一起安裝，然後透過 NetworkManager 連線。
+
+## 在您開始之前
+
+您需要：
+
+- 一個平台版本為 **3.0** 的 Modalix SoM DevKit。若要確認版本，請在 DevKit 上執行 `cat /etc/buildinfo`。
+- 一個搭載 MediaTek MT7921AU 晶片的 USB WiFi 轉接器（USB ID `0e8d:7961`），例如 [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62)。其他 MT7921AU 轉接器的使用方式相同。
+- DevKit 需透過乙太網路連上網際網路，以便安裝套件。
+- 一台安裝了 Docker 和 `git` 的 Linux 主機，用來建置驅動程式，且主機能透過 SSH 存取 DevKit。
+
+將轉接器插入 DevKit 的 USB 連接埠，然後確認 DevKit 已偵測到它：
+
+```console
+sima@modalix:~$ lsusb | grep 0e8d:7961
+Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
+```
+
+## 1. 在主機上建置驅動程式 {#build}
+
+使用 DevKit 本身的核心設定，從 SiMa.ai 核心原始碼建置 `mt7921u` 驅動程式及其相依的 `mt76` 模組。建置會在 Debian 容器中執行，該容器使用與 DevKit 核心相同的編譯器。
+
+請**在主機上**執行這些指令。將 `<devkit-ip>` 替換為 DevKit 的 IP 位址。
+
+1. 取得核心原始碼，以及 DevKit 的核心設定：
+
+   ```bash
+   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
+   ```
+
+2. 建置模組：
+
+   ```bash
+   docker run --rm -v "$PWD":/w -w /w/simaai-linux debian:trixie bash -c '
+     apt-get update && apt-get install -y gcc-aarch64-linux-gnu make bc flex bison libssl-dev libelf-dev python3 kmod &&
+     export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LOCALVERSION=-modalix &&
+     cp ../board.config .config &&
+     scripts/config --module MT7921U &&
+     make olddefconfig &&
+     make -j"$(nproc)" modules_prepare &&
+     make -j"$(nproc)" M=drivers/net/wireless/mediatek/mt76 KBUILD_MODPOST_WARN=1 modules'
+   ```
+
+   建置過程會顯示未解析符號的警告。這是預期中的情況：這些符號位於 DevKit 上已有的 `cfg80211` 和 `mac80211` 模組中。
+
+3. 確認建置產生了七個模組：
+
+   ```bash
+   find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko'
+   ```
+
+   您會得到 `mt76.ko`、`mt76-usb.ko`、`mt76-connac-lib.ko`、`mt792x-lib.ko`、`mt792x-usb.ko`、`mt7921-common.ko` 和 `mt7921u.ko`。
+
+4. 將它們複製到 DevKit：
+
+   ```bash
+   scp $(find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko') sima@<devkit-ip>:/tmp/
+   ```
+
+## 2. 在 DevKit 上安裝驅動程式和韌體 {#install}
+
+請**在 DevKit 上**執行以下指令。
+
+1. 安裝模組，並更新模組索引：
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /lib/modules/$(uname -r)/updates/mt76
+   sima@modalix:~$ sudo mv /tmp/mt7*.ko /lib/modules/$(uname -r)/updates/mt76/
+   sima@modalix:~$ sudo depmod -a
+   ```
+
+2. 安裝轉接器的韌體和無線法規資料庫：
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y firmware-mediatek wireless-regdb
+   ```
+
+3. 載入驅動程式：
+
+   ```console
+   sima@modalix:~$ sudo modprobe mt7921u
+   ```
+
+   從現在起，只要插入轉接器（包括開機時），驅動程式就會自動載入。
+
+4. 確認轉接器已有無線介面：
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   DEVICE                  TYPE      STATE         CONNECTION
+   end0                    ethernet  connected     end0-dhcp
+   wlxe84e06afdb5e         wifi      disconnected  --
+   ```
+
+   介面名稱以 `wlx` 開頭，後面接著轉接器的 MAC 位址。如果介面沒有出現，請使用 `sudo dmesg | grep mt7921u` 查看驅動程式訊息。韌體載入時，這些訊息會顯示韌體版本。
+
+## 3. 連線到 WiFi 網路 {#connect}
+
+在 DevKit 上使用 NetworkManager 的命令列工具 `nmcli`。
+
+1. 掃描網路：
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi rescan
+   sima@modalix:~$ nmcli device wifi list
+   ```
+
+2. 連線。將 `<SSID>` 和 `<password>` 替換為網路的名稱和密碼：
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi connect "<SSID>" password "<password>"
+   ```
+
+   NetworkManager 會儲存此連線，並在每次開機時重新連線。
+
+3. 檢查連線：
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   sima@modalix:~$ ip -4 -br addr show
+   sima@modalix:~$ ping -c 3 -I wlxe84e06afdb5e 8.8.8.8
+   ```
+
+   將 `wlxe84e06afdb5e` 替換為您的介面名稱。
+
+若要改從選單中選擇網路，請執行 `sudo nmtui` 並選擇 **Activate a connection**。
+
+如果 DevKit 同時透過乙太網路連線，乙太網路連線仍會是預設路由。NetworkManager 會給予 WiFi 較低的優先順序。
+
+## 限制 {#limitations}
+
+- **韌體更新會移除驅動程式。** 這些模組是針對目前執行的核心所建置。更新 DevKit 韌體後，請重新建置並安裝它們。
+- **其他轉接器需要各自的驅動程式。** 本備註涵蓋 MediaTek MT7921AU。其他晶片需要不同的核心驅動程式和韌體。
+- **未測試 6 GHz。** 轉接器支援 6 GHz，但本備註僅在 2.4 GHz 和 5 GHz 上測試過。能否使用 6 GHz 也取決於您所在國家/地區的法規。

@@ -1,0 +1,144 @@
+---
+title: "Використовуйте USB-адаптер WiFi на Modalix SoM DevKit"
+description: "Зберіть драйвер MediaTek MT7921AU для платформи 3.0, встановіть його мікропрограму та підключіть Modalix SoM DevKit до WiFi за допомогою nmcli."
+sidebar_position: 7
+---
+
+# Використовуйте USB-адаптер WiFi на Modalix SoM DevKit
+
+Modalix SoM DevKit не має вбудованого WiFi. Його можна додати за допомогою USB-адаптера WiFi. У цій примітці використано адаптер із чипом MediaTek MT7921AU, який підтримує WiFi 6E у діапазонах 2,4 ГГц, 5 ГГц і 6 ГГц. Ядро платформи 3.0 містить бездротовий стек Linux, але не містить драйвера для цього чипа, тому ви збираєте драйвер, встановлюєте його разом із мікропрограмою чипа, а потім підключаєтеся за допомогою NetworkManager.
+
+## Перш ніж почати
+
+Вам знадобиться:
+
+- Modalix SoM DevKit з версією платформи **3.0**. Щоб перевірити її, виконайте на DevKit команду `cat /etc/buildinfo`.
+- USB-адаптер WiFi із чипом MediaTek MT7921AU (USB ID `0e8d:7961`), наприклад [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62). Інші адаптери MT7921AU працюють так само.
+- Доступ до Інтернету на DevKit через Ethernet для встановлення пакетів.
+- Хост Linux із Docker і `git` для збирання драйвера, а також доступ SSH із хоста до DevKit.
+
+Під’єднайте адаптер до USB-порту DevKit, а потім переконайтеся, що DevKit його виявив:
+
+```console
+sima@modalix:~$ lsusb | grep 0e8d:7961
+Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
+```
+
+## 1. Зберіть драйвер на хості {#build}
+
+Зберіть драйвер `mt7921u` і модулі `mt76`, від яких він залежить, із вихідного коду ядра SiMa.ai з власною конфігурацією ядра DevKit. Збирання виконується в контейнері Debian, що має той самий компілятор, що й ядро DevKit.
+
+Виконайте ці команди **на хості**. Замініть `<devkit-ip>` на IP-адресу DevKit.
+
+1. Отримайте вихідний код ядра та конфігурацію ядра DevKit:
+
+   ```bash
+   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
+   ```
+
+2. Зберіть модулі:
+
+   ```bash
+   docker run --rm -v "$PWD":/w -w /w/simaai-linux debian:trixie bash -c '
+     apt-get update && apt-get install -y gcc-aarch64-linux-gnu make bc flex bison libssl-dev libelf-dev python3 kmod &&
+     export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LOCALVERSION=-modalix &&
+     cp ../board.config .config &&
+     scripts/config --module MT7921U &&
+     make olddefconfig &&
+     make -j"$(nproc)" modules_prepare &&
+     make -j"$(nproc)" M=drivers/net/wireless/mediatek/mt76 KBUILD_MODPOST_WARN=1 modules'
+   ```
+
+   Під час збирання виводяться попередження про нерозв’язані символи. Це очікувано: ці символи містяться в модулях `cfg80211` і `mac80211`, які вже є на DevKit.
+
+3. Переконайтеся, що збирання створило сім модулів:
+
+   ```bash
+   find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko'
+   ```
+
+   Ви отримаєте `mt76.ko`, `mt76-usb.ko`, `mt76-connac-lib.ko`, `mt792x-lib.ko`, `mt792x-usb.ko`, `mt7921-common.ko` і `mt7921u.ko`.
+
+4. Скопіюйте їх на DevKit:
+
+   ```bash
+   scp $(find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko') sima@<devkit-ip>:/tmp/
+   ```
+
+## 2. Встановіть драйвер і мікропрограму на DevKit {#install}
+
+Виконайте наведені нижче команди **на DevKit**.
+
+1. Встановіть модулі та оновіть індекс модулів:
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /lib/modules/$(uname -r)/updates/mt76
+   sima@modalix:~$ sudo mv /tmp/mt7*.ko /lib/modules/$(uname -r)/updates/mt76/
+   sima@modalix:~$ sudo depmod -a
+   ```
+
+2. Встановіть мікропрограму адаптера та базу даних регуляторних правил бездротового зв’язку:
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y firmware-mediatek wireless-regdb
+   ```
+
+3. Завантажте драйвер:
+
+   ```console
+   sima@modalix:~$ sudo modprobe mt7921u
+   ```
+
+   Відтепер драйвер завантажується автоматично щоразу, коли адаптер під’єднано, зокрема під час завантаження системи.
+
+4. Переконайтеся, що адаптер має бездротовий інтерфейс:
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   DEVICE                  TYPE      STATE         CONNECTION
+   end0                    ethernet  connected     end0-dhcp
+   wlxe84e06afdb5e         wifi      disconnected  --
+   ```
+
+   Назва інтерфейсу починається з `wlx`, після чого йде MAC-адреса адаптера. Якщо інтерфейс не з’являється, перегляньте повідомлення драйвера за допомогою `sudo dmesg | grep mt7921u`. Коли мікропрограма завантажується, вони показують її версію.
+
+## 3. Підключіться до мережі WiFi {#connect}
+
+Використовуйте на DevKit `nmcli` — інструмент командного рядка NetworkManager.
+
+1. Виконайте пошук мереж:
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi rescan
+   sima@modalix:~$ nmcli device wifi list
+   ```
+
+2. Підключіться. Замініть `<SSID>` і `<password>` на назву та пароль мережі:
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi connect "<SSID>" password "<password>"
+   ```
+
+   NetworkManager зберігає з’єднання та повторно підключається до нього під час кожного завантаження.
+
+3. Перевірте з’єднання:
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   sima@modalix:~$ ip -4 -br addr show
+   sima@modalix:~$ ping -c 3 -I wlxe84e06afdb5e 8.8.8.8
+   ```
+
+   Замініть `wlxe84e06afdb5e` на назву вашого інтерфейсу.
+
+Щоб натомість вибрати мережу з меню, виконайте `sudo nmtui` і виберіть **Activate a connection**.
+
+Якщо DevKit також підключено через Ethernet, з’єднання Ethernet залишається маршрутом за замовчуванням. NetworkManager надає WiFi нижчий пріоритет.
+
+## Обмеження {#limitations}
+
+- **Оновлення мікропрограми видаляють драйвер.** Модулі зібрано для поточного ядра. Після оновлення мікропрограми DevKit зберіть і встановіть їх знову.
+- **Іншим адаптерам потрібен власний драйвер.** Ця примітка стосується MediaTek MT7921AU. Іншим чипам потрібні інший драйвер ядра та інша мікропрограма.
+- **6 ГГц не перевірено.** Адаптер підтримує 6 ГГц, але цю примітку перевірено лише в діапазонах 2,4 ГГц і 5 ГГц. Чи можна використовувати 6 ГГц, залежить також від правил вашої країни.

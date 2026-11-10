@@ -1,0 +1,144 @@
+---
+title: Use a USB WiFi Adapter on the Modalix SoM DevKit
+description: Build the MediaTek MT7921AU driver for platform 3.0, install its firmware, and connect the Modalix SoM DevKit to WiFi with nmcli.
+sidebar_position: 7
+---
+
+# Use a USB WiFi Adapter on the Modalix SoM DevKit
+
+The Modalix SoM DevKit has no built-in WiFi. You can add it with a USB WiFi adapter. This note uses an adapter with the MediaTek MT7921AU chip, which supports WiFi 6E on 2.4 GHz, 5 GHz, and 6 GHz. The platform 3.0 kernel includes the Linux wireless stack, but not the driver for this chip, so you build the driver, install it with the chip's firmware, and then connect with NetworkManager.
+
+## Before You Start
+
+You need:
+
+- A Modalix SoM DevKit with platform version **3.0**. To check, run `cat /etc/buildinfo` on the DevKit.
+- A USB WiFi adapter with the MediaTek MT7921AU chip (USB ID `0e8d:7961`), for example the [BrosTrend AXE3000](https://www.amazon.com/dp/B0F6MY7H62). Other MT7921AU adapters work the same way.
+- Internet access on the DevKit, through Ethernet, to install packages.
+- A Linux host with Docker and `git`, to build the driver, and SSH access from the host to the DevKit.
+
+Plug the adapter into a USB port on the DevKit, then check that the DevKit detects it:
+
+```console
+sima@modalix:~$ lsusb | grep 0e8d:7961
+Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
+```
+
+## 1. Build the Driver on the Host {#build}
+
+Build the `mt7921u` driver and the `mt76` modules it depends on from the SiMa.ai kernel source, with the DevKit's own kernel configuration. The build runs in a Debian container that has the same compiler as the DevKit's kernel.
+
+Run these commands **on the host**. Replace `<devkit-ip>` with the DevKit's IP address.
+
+1. Get the kernel source, and the DevKit's kernel configuration:
+
+   ```bash
+   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
+   ```
+
+2. Build the modules:
+
+   ```bash
+   docker run --rm -v "$PWD":/w -w /w/simaai-linux debian:trixie bash -c '
+     apt-get update && apt-get install -y gcc-aarch64-linux-gnu make bc flex bison libssl-dev libelf-dev python3 kmod &&
+     export ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- LOCALVERSION=-modalix &&
+     cp ../board.config .config &&
+     scripts/config --module MT7921U &&
+     make olddefconfig &&
+     make -j"$(nproc)" modules_prepare &&
+     make -j"$(nproc)" M=drivers/net/wireless/mediatek/mt76 KBUILD_MODPOST_WARN=1 modules'
+   ```
+
+   The build prints warnings about unresolved symbols. They are expected: the symbols are in the `cfg80211` and `mac80211` modules that are already on the DevKit.
+
+3. Check that the build made seven modules:
+
+   ```bash
+   find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko'
+   ```
+
+   You get `mt76.ko`, `mt76-usb.ko`, `mt76-connac-lib.ko`, `mt792x-lib.ko`, `mt792x-usb.ko`, `mt7921-common.ko` and `mt7921u.ko`.
+
+4. Copy them to the DevKit:
+
+   ```bash
+   scp $(find simaai-linux/drivers/net/wireless/mediatek/mt76 -name '*.ko') sima@<devkit-ip>:/tmp/
+   ```
+
+## 2. Install the Driver and Firmware on the DevKit {#install}
+
+Run the commands below **on the DevKit**.
+
+1. Install the modules, and update the module index:
+
+   ```console
+   sima@modalix:~$ sudo mkdir -p /lib/modules/$(uname -r)/updates/mt76
+   sima@modalix:~$ sudo mv /tmp/mt7*.ko /lib/modules/$(uname -r)/updates/mt76/
+   sima@modalix:~$ sudo depmod -a
+   ```
+
+2. Install the adapter's firmware and the wireless regulatory database:
+
+   ```console
+   sima@modalix:~$ sudo apt-get update
+   sima@modalix:~$ sudo apt-get install -y firmware-mediatek wireless-regdb
+   ```
+
+3. Load the driver:
+
+   ```console
+   sima@modalix:~$ sudo modprobe mt7921u
+   ```
+
+   From now on, the driver loads by itself whenever the adapter is plugged in, including at boot.
+
+4. Check that the adapter has a wireless interface:
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   DEVICE                  TYPE      STATE         CONNECTION
+   end0                    ethernet  connected     end0-dhcp
+   wlxe84e06afdb5e         wifi      disconnected  --
+   ```
+
+   The interface name starts with `wlx`, followed by the adapter's MAC address. If it does not appear, check the driver messages with `sudo dmesg | grep mt7921u`. They show the firmware version when the firmware loads.
+
+## 3. Connect to a WiFi Network {#connect}
+
+Use `nmcli`, the NetworkManager command-line tool, on the DevKit.
+
+1. Scan for networks:
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi rescan
+   sima@modalix:~$ nmcli device wifi list
+   ```
+
+2. Connect. Replace `<SSID>` and `<password>` with the network's name and password:
+
+   ```console
+   sima@modalix:~$ sudo nmcli device wifi connect "<SSID>" password "<password>"
+   ```
+
+   NetworkManager saves the connection, and reconnects to it at every boot.
+
+3. Check the connection:
+
+   ```console
+   sima@modalix:~$ nmcli device status
+   sima@modalix:~$ ip -4 -br addr show
+   sima@modalix:~$ ping -c 3 -I wlxe84e06afdb5e 8.8.8.8
+   ```
+
+   Replace `wlxe84e06afdb5e` with your interface name.
+
+To choose a network from a menu instead, run `sudo nmtui` and select **Activate a connection**.
+
+If the DevKit is also connected through Ethernet, the Ethernet connection stays the default route. NetworkManager gives WiFi a lower priority.
+
+## Limitations {#limitations}
+
+- **Firmware updates remove the driver.** The modules are built for the running kernel. After you update the DevKit firmware, build and install them again.
+- **Other adapters need their own driver.** This note covers the MediaTek MT7921AU. Other chips need a different kernel driver and firmware.
+- **6 GHz is not tested.** The adapter supports 6 GHz, but this note was tested on 2.4 GHz and 5 GHz only. Whether you can use 6 GHz also depends on your country's rules.
