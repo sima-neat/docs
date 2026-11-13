@@ -13,7 +13,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 :::note
 從 SDK **2.0.0** 及其後續版本開始，即可使用 eLxr 平台，該平台可在 **Modalix DevKit** 上使用。
 
-轉換為 eLxr 需要更新 tRoot 並重新刷寫 eMMC，此過程由 [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) 協助完成。
+轉換為 eLxr 需要更新 tRoot 並重新刷寫 eMMC，此過程由 [網路開機復原](/hardware/getting-started/firmware-update/net-boot) 協助完成。
+
+使用 Windows 主機時，請在 **Windows 子系統 Linux 版（Windows Subsystem for Linux，WSL）** 的 Ubuntu 環境中安裝並執行 `sima-cli`。原生 Windows 環境不支援 NetBoot。請依照 [WSL 網路設定說明](/hardware/getting-started/firmware-update/net-boot#windows-hosts)操作。
 :::
 
 **eLxr** 平台取代舊版的 Yocto 環境，成為 SiMa.ai DevKit 的預設執行階段。它提供：
@@ -63,17 +65,17 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>步驟 2：透過網路啟動 eLxr 映像檔，並將其燒錄到 eMMC </strong></summary>。
 
-剩餘的轉換步驟使用標準的 TFTP 網路啟動 + 燒錄程序，該程序已記錄在 [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) 中。請按照該程序，並使用以下針對 eLxr 進行設定的特定值：
+剩餘的轉換步驟使用標準的 TFTP 網路啟動 + 燒錄程序，該程序已記錄在 [網路開機復原](/hardware/getting-started/firmware-update/net-boot) 中。請按照該程序，並使用以下針對 eLxr 進行設定的特定值：
 
 - **步驟 2（啟動 TFTP 伺服器）：** 使用 `--boardtype modalix --fwtype elxr -v %platform_version%`。
-- **步驟 3（設定 U-Boot）：** 在執行 `boot` 之前，除了設定 `boot_targets=net` 之外，還需要設定 `cpio_name=simaai-image-palette-modalix.cpio.gz`。
-- **步驟 4（快閃）：** 在 `netboot>` 提示字元處輸入 `f`。
+- **步驟 3（設定 U-Boot）：** 如果無法遠端設定，請依照復原指南，透過序列主控台載入開機指令碼。
+- **步驟 4（燒錄）：** 手動燒錄時，請在 `netboot>` 提示輸入 `f`，並在燒錄完成後接受重新啟動提示。
 
 ![連線圖](/img/tech-notes/conversion-diagram.png)
 
 *連線圖*
 
-在完成刷機且您重新啟動 DevKit 後，它會從 eMMC 執行 **eLxr**。
+DevKit 重新啟動後，會從 eMMC 執行 **eLxr**。
 
 </details>
 
@@ -87,7 +89,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>切換回 Yocto（可選）</strong></summary>
 
-若要切換回 Yocto，請再次執行 [網路啟動恢復](/hardware/getting-started/firmware-update/net-boot)，並使用 `--fwtype yocto`。對於 Yocto 目標，不需要 `cpio_name` U-Boot 變數，只需要 `setenv boot_targets net`、`saveenv` 和 `boot`。
+若要切換回 Yocto，請指定 `--fwtype yocto` 和目標 Yocto 韌體版本，再依照[網路開機復原](/hardware/getting-started/firmware-update/net-boot)的步驟操作。
 
 :::note
 在轉換回 Yocto 時，**沒有最低 tRoot 版本要求**，因此可以跳過上述步驟 1。
@@ -100,5 +102,5 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 ## 摘要
 
 1. 更新至最新的 **tRoot** 映像檔（≥ 2.0.0）。
-2. 請按照以下步驟進行：[網路啟動恢復](/hardware/getting-started/firmware-update/net-boot)，使用 `--fwtype elxr` 和 eLxr `cpio_name`，將 eLxr 刷入 eMMC。
+2. 使用 `--fwtype elxr` 並依照[網路開機復原](/hardware/getting-started/firmware-update/net-boot)的步驟，將 eLxr 燒錄到 eMMC。
 3. 安裝 Palette SDK，並透過 [Palette SDK 文件](https://developer.sima.ai/software) 試用應用程式。
