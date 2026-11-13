@@ -13,7 +13,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 :::note
 Платформа eLxr доступна, починаючи з SDK **2.0.0** і пізніших версій, на **Modalix DevKit**.
 
-Для переходу на eLxr потрібне оновлення tRoot і повторне програмування eMMC, що здійснюється за допомогою [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+Для переходу на eLxr потрібне оновлення tRoot і повторне програмування eMMC, що здійснюється за допомогою [Відновлення через мережеве завантаження](/hardware/getting-started/firmware-update/net-boot).
+
+На хості Windows установлюйте й запускайте `sima-cli` в Ubuntu у **Windows Subsystem for Linux (WSL)**. NetBoot безпосередньо у Windows не підтримується. Виконайте [налаштування мережі WSL](/hardware/getting-started/firmware-update/net-boot#windows-hosts).
 :::
 
 Платформа **eLxr** замінює застаріле середовище **Yocto** як стандартне середовище виконання для **SiMa.ai DevKit**. Вона забезпечує:
@@ -63,17 +65,17 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>Крок 2. Завантажте eLxr через мережу (Netboot) та прошийте eMMC</strong></summary>.
 
-Решту процесу перетворення виконайте за стандартною процедурою TFTP netboot + flash, описаною в [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Дотримуйтесь цієї процедури, використовуючи наведені нижче значення, специфічні для eLxr:
+Решту процесу перетворення виконайте за стандартною процедурою TFTP netboot + flash, описаною в [Відновлення через мережеве завантаження](/hardware/getting-started/firmware-update/net-boot). Дотримуйтесь цієї процедури, використовуючи наведені нижче значення, специфічні для eLxr:
 
 - **Крок 2 (Запуск TFTP-сервера):** використовуйте `--boardtype modalix --fwtype elxr -v %platform_version%`.
-- **Крок 3 (Налаштування U-Boot):** встановіть `cpio_name=simaai-image-palette-modalix.cpio.gz`, на додаток до `boot_targets=net`, перед запуском `boot`.
-- **Крок 4 (Прошивання):** введіть `f` у командному рядку `netboot>`.
+- **Крок 3 (Налаштування U-Boot):** якщо віддалене налаштування недоступне, завантажте сценарій через послідовну консоль, як описано в посібнику з відновлення.
+- **Крок 4 (Запис образу):** для ручного запису введіть `f` у запрошенні `netboot>` і підтвердьте перезавантаження після завершення запису.
 
 ![Схема підключення](/img/tech-notes/conversion-diagram.png)
 
 *Схема підключення*
 
-Після завершення процесу прошивання та перезавантаження пристрою DevKit, він працює **eLxr**з eMMC.
+Після перезавантаження DevKit запускає **eLxr** з eMMC.
 
 </details>
 
@@ -87,7 +89,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary><strong>Повернутися до Yocto (Необов’язково)</strong></summary>
 
-Щоб повернутися до Yocto, дотримуйтесь [Відновлення за допомогою мережевої завантажувальної системи.](/hardware/getting-started/firmware-update/net-boot) знову з `--fwtype yocto`. `cpio_name` U-Boot змінна не є обов’язковою для Yocto цілі — лише `setenv boot_targets net`, `saveenv`, `boot`.
+Щоб повернутися до Yocto, повторіть процедуру з посібника [Відновлення через мережеве завантаження](/hardware/getting-started/firmware-update/net-boot), указавши `--fwtype yocto` й цільову версію прошивки Yocto.
 
 :::note
 Під час повернення до Yocto **немає жодних мінімальних вимог до версії tRoot**, тому крок 1, описаний вище, можна пропустити.
@@ -100,5 +102,5 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 ## Підсумок.
 
 1. Оновіть до останньої версії образу **tRoot** (≥ 2.0.0).
-2. Виконайте [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot), використовуючи `--fwtype elxr` та eLxr `cpio_name`, щоб прошити eLxr на eMMC.
+2. Запишіть eLxr в eMMC за інструкціями [Відновлення через мережеве завантаження](/hardware/getting-started/firmware-update/net-boot), указавши `--fwtype elxr`.
 3. Встановіть Palette SDK і спробуйте використовувати додатки за допомогою [документації Palette SDK](https://developer.sima.ai/software).

@@ -15,7 +15,7 @@ sidebar_position: 4
 이 문서에서는 다음 용어를 사용합니다.
 
 - **보드**: SoM DevKit 또는 PCIe 카드.
-- **호스트**: TFTP 서버를 통해 부트 이미지를 제공하는 Ubuntu 또는 macOS 컴퓨터입니다.
+- **호스트**: TFTP 서버를 실행하는 Ubuntu, macOS 또는 Windows 컴퓨터입니다. Windows에서는 **Windows Subsystem for Linux (WSL)**의 Ubuntu에 `sima-cli`를 설치하고 실행해야 합니다. 네이티브 Windows에서는 NetBoot를 지원하지 않습니다. 시작하기 전에 [WSL 네트워크 설정](/hardware/getting-started/firmware-update/net-boot#windows-hosts)을 따릅니다.
 - **플래시**: 시스템 이미지를 보드의 저장 장치에 기록합니다.
 
 ## 시작하기 전에
@@ -71,6 +71,7 @@ curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
 2. 호스트에서 인터넷 공유를 활성화합니다.
    - **Ubuntu**: [네트워크 설정](/hardware/getting-started/standalone-mode/network)에 설명된 공유 연결 절차를 따르세요.
    - **macOS**: 보드에 연결된 이더넷 인터페이스에 대해 인터넷 공유 기능을 활성화합니다.
+   - **WSL을 사용하는 Windows**: 아래의 동일 네트워크 연결 방법을 사용하거나 보드에 연결된 Windows 이더넷 어댑터에서 인터넷 공유를 설정합니다.
 
 또는 두 시스템을 동일한 네트워크에 연결합니다. 호스트는 보드에 연결할 수 있어야 합니다. 보드는 호스트의 TFTP 서버에 연결할 수 있어야 합니다.
 
@@ -84,6 +85,8 @@ curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
    ```bash
    sima-cli serial
    ```
+
+   Windows에서는 Windows용 시리얼 클라이언트로 콘솔을 열 수 있습니다. [시리얼 연결](/hardware/getting-started/setup-serial)을 참조하세요.
 
 3. 보드에 로그인하세요.
 4. 이 명령을 **보드에서** 실행하세요.
@@ -132,8 +135,8 @@ PCIe 카드의 시리얼 포트에 접근하기 어려울 수 있습니다. 시�
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
-:::tip Ubuntu 호스트
-Ubuntu에서는 TFTP 서버가 권한이 필요한 UDP 포트 69를 사용하므로 `sima-cli`를 `sudo`로 실행해야 합니다. `which sima-cli`로 설치된 CLI의 절대 경로를 찾아 다음 한 줄 명령으로 변환을 실행합니다:
+:::tip Ubuntu 및 WSL 호스트
+WSL의 Ubuntu를 포함하여 Ubuntu에서는 TFTP 서버가 권한이 필요한 UDP 포트 69를 사용하므로 `sudo`로 `sima-cli`를 실행합니다.
 
 ```bash
 sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
@@ -142,7 +145,7 @@ sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
 `{ip}`를 보드의 IP 주소로 바꾸십시오.
 :::
 
-이 명령어는 호스트에서 TFTP 서버를 시작합니다. 이 명령어는 보드가 해당 서버에서 부팅하도록 지시합니다. 그런 다음 `--autoflash` 옵션이 이미지를 보드에 자동으로 기록합니다.
+이 명령은 호스트에서 TFTP 서버를 시작합니다. `sima-cli`에 표시되는 보드와 TFTP 서버 주소를 확인한 후 NetBoot 시작을 승인합니다. 보드의 네트워크 부팅이 끝나고 SSH 연결이 가능해지면 `--autoflash`가 이미지를 기록하고 eMMC로 부팅하도록 재부팅을 예약합니다.
 
 프로세스가 완료될 때까지 호스트 터미널을 열어두십시오. 네트워크 연결을 유지하고 보드의 전원을 켜둔 상태로 유지하십시오.
 
@@ -169,7 +172,7 @@ cd ..
 sima-cli bootimg --netboot --images images
 ```
 
-Ubuntu에서 다음 명령을 실행합니다.
+Ubuntu 또는 WSL의 Ubuntu에서는 다음 명령을 실행합니다.
 
 ```bash
 sudo "$(which sima-cli)" bootimg --netboot --images images
@@ -177,18 +180,16 @@ sudo "$(which sima-cli)" bootimg --netboot --images images
 
 이 명령어는 로컬 파일을 사용하여 TFTP 서버를 시작합니다. [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)에 설명된 대로 보드 부팅 및 플래싱 단계를 따르십시오. 그런 다음 아래 섹션 4를 계속 진행합니다.
 
-## 4. 보드를 재부팅합니다.
+## 4. 재부팅 후 보드 확인
 
-1. `sima-cli`가 보드를 재부팅하라는 메시지를 보낼 때까지 기다리세요.
-2. 보드를 재부팅합니다.
-3. 보드가 시작될 때까지 기다리세요.
-4. 시리얼 또는 SSH를 통해 보드에 연결합니다.
-5. **보드**에서 펌웨어 버전을 확인하세요.
+1. `sima-cli`에 기록 완료 및 재부팅 예약 메시지가 표시될 때까지 기다립니다. 수동으로 기록했다면 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)의 재부팅 안내를 따릅니다.
+2. 보드가 부팅되면 시리얼 또는 SSH로 연결합니다.
+3. **보드**에서 펌웨어 버전을 확인하세요.
 
    ```bash
    cat /etc/buildinfo
    ```
 
-6. 시스템 설정을 진행하기 전에 버전이 **3.0.0**인지 확인하십시오.
+4. 시스템 설정을 진행하기 전에 버전이 **3.0.0**인지 확인하십시오.
 
 PCIe 호스트 시스템의 경우, 호스트 드라이버를 설정하려면 [PCIe 드라이버 설치](/hardware/getting-started/pcie-mode/driver-installation)을 따르십시오.

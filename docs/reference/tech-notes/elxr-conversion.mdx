@@ -14,6 +14,8 @@ Use this guide to convert an existing SiMa.ai **Yocto-based DevKit** to the **eL
 The eLxr platform is available starting from SDK **2.0.0** and later on the **Modalix DevKit**.
 
 Converting to eLxr requires a tRoot update and eMMC reflash facilitated by [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+
+On a Windows host, install and run `sima-cli` in Ubuntu under **Windows Subsystem for Linux (WSL)**. Native Windows NetBoot is unsupported. Follow the [WSL networking instructions](/hardware/getting-started/firmware-update/net-boot#windows-hosts).
 :::
 
 The **eLxr** platform replaces the legacy Yocto environment as the default runtime for SiMa.ai DevKits. It provides:
@@ -66,14 +68,14 @@ After the update completes successfully, **power cycle the DevKit** to apply the
 The remainder of the conversion uses the standard TFTP netboot + flash procedure documented in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Follow that procedure with the eLxr-specific values below:
 
 - **Step 2 (Start TFTP server):** use `--boardtype modalix --fwtype elxr -v %platform_version%`.
-- **Step 3 (Configure U-Boot):** set `cpio_name=simaai-image-palette-modalix.cpio.gz` in addition to `boot_targets=net` before running `boot`.
-- **Step 4 (Flash):** type `f` at the `netboot>` prompt.
+- **Step 3 (Configure U-Boot):** if remote setup is unavailable, use the serial console to load the boot script as shown in the recovery guide.
+- **Step 4 (Flash):** when flashing manually, type `f` at the `netboot>` prompt and accept the reboot prompt when flashing completes.
 
 ![Connection Diagram](/img/tech-notes/conversion-diagram.png)
 
 *Connection Diagram*
 
-After flashing completes and you power-cycle the DevKit, it runs **eLxr** from eMMC.
+After the DevKit reboots, it runs **eLxr** from eMMC.
 
 </details>
 
@@ -87,7 +89,7 @@ With the DevKit running eLxr, install the Palette SDK and run the example applic
 <details open>
 <summary><strong>Revert to Yocto (Optional)</strong></summary>
 
-To switch back to Yocto, follow [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) again with `--fwtype yocto`. The `cpio_name` U-Boot variable is not required for Yocto targets — only `setenv boot_targets net`, `saveenv`, `boot`.
+To switch back to Yocto, follow [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) again with `--fwtype yocto` and the target Yocto firmware version.
 
 :::note
 There is **no minimum tRoot version requirement** when converting back to Yocto, so Step 1 above can be skipped.
@@ -100,5 +102,5 @@ If NFS-related error messages appear on the serial console after converting to e
 ## Summary
 
 1. Update to the latest **tRoot** image (≥ 2.0.0).
-2. Follow [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) with `--fwtype elxr` and the eLxr `cpio_name` to flash eLxr to eMMC.
+2. Follow [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot) with `--fwtype elxr` to flash eLxr to eMMC.
 3. Install the Palette SDK and try out apps via the [Palette SDK documentation](https://developer.sima.ai/software).
