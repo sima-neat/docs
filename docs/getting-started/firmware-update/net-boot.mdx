@@ -10,23 +10,21 @@ Use Net Boot Recovery when you need to boot the DevKit over the network instead 
 
 - You need to **downgrade** the DevKit to an older SDK release.
 - You need to install a build that is **not the latest release** (for example, a pre-release `develop` build or an internal engineering image).
-- You need to recover a board with a corrupted bootloader or filesystem and there's no SD card available.
+- You need to recover a board with a corrupted filesystem and there's no SD card available. The board needs a working U-Boot to boot over the network.
 - You are bringing up a new board and want to avoid wear on internal storage devices.
 - You are converting a Modalix DevKit from Yocto Linux to eLxr, or from eLxr back to Yocto Linux. See [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) for the conversion-specific prerequisites.
 
 :::note
-This guide uses images that SiMa.ai provides, and it needs a working U-Boot prompt on the board. It does not describe how to install an image that you built yourself. For that, see [Flash an Image to eMMC](/hardware/deployment/flash-image).
+This guide uses firmware images provided by SiMa.ai. For an image you built yourself, see [Flash an Image to eMMC](/hardware/deployment/flash-image).
 :::
 
-Use the `--netboot` option with `sima-cli bootimg`. It downloads the boot image for the target board and serves it from a built-in TFTP server on the host. For a reachable DevKit or PCIe card currently running firmware 2.1.3 or later, add `--devkit <ip>` so the host can configure the U-Boot environment and initiate netboot. You can then skip Step 3. For older firmware or a device that is not reachable, configure U-Boot through the serial console in Step 3.
+Use `sima-cli bootimg --netboot` to serve the target firmware from the host's built-in TFTP server. The host can configure U-Boot over SSH on a reachable DevKit or PCIe card running firmware 2.1.3 or later. For older firmware or a device you cannot reach over SSH, use the serial console in Step 3.
 
 <details open>
 <summary><strong>Step 1. Physical Setup</strong></summary>
 
 :::note
-This procedure supports **macOS** and **Ubuntu Linux** hosts.
-
-If you have not installed `sima-cli` on your host machine, install it before continuing.
+Use **sima-cli 2.1.21 or later** on macOS or Ubuntu Linux. On Windows, install and run `sima-cli` in Ubuntu under **Windows Subsystem for Linux (WSL)**. Native Windows NetBoot is unsupported.
 
 Use a host shell session to start the TFTP server and initiate the eMMC flash. We recommend a separate serial console connection to monitor netboot progress, even when using `--devkit` and `--autoflash`. A serial console is required for the manual U-Boot configuration in Step 3.
 :::
@@ -39,9 +37,15 @@ Use a host shell session to start the TFTP server and initiate the eMMC flash. W
    sima-user@sima-user-machine:~$ sima-cli serial
    ```
 
+   On Windows, you can open the serial console with a Windows serial client. See [Serial Connection](/hardware/getting-started/setup-serial).
+
 3. On the DevKit, configure the network interface to the default static IP **192.168.1.20** by following the [Standalone Mode Network Setup](/hardware/getting-started/standalone-mode/network).
 
 </details>
+
+### Windows Hosts {#windows-hosts}
+
+The board must be able to reach the TFTP server running inside WSL. On Windows 11 22H2 or later, use [WSL 2 mirrored networking](https://learn.microsoft.com/en-us/windows/wsl/networking#mirrored-mode-networking) for direct LAN access. For a direct Ethernet connection, configure the adapter's static IP in Windows and use that board-facing address as the TFTP server address. Check that the Windows and Hyper-V firewall settings allow inbound TFTP traffic to WSL.
 
 <details open>
 <summary><strong>Step 2. Start the TFTP Netboot Server on the Host</strong></summary>
@@ -49,11 +53,11 @@ Use a host shell session to start the TFTP server and initiate the eMMC flash. W
 **Requirements**
 
 - The host and DevKit must be on the same physical network or direct Ethernet link.
-- The Ethernet connection must be a Gigabit interface or faster (link greater than 1000 Mbps).
+- Use a Gigabit Ethernet link or faster.
 - The host needs Internet access to download the firmware image.
 - UDP port **69 (TFTP)** must not be blocked by the host firewall.
 
-Replace `<version>` with the target SDK version (for example `%platform_version%`), `<boardtype>` with `modalix` or `mlsoc`, and `<fwtype>` with `yocto` or `elxr`.
+Replace `<version>` with the target firmware version (for example `%platform_version%`), `<boardtype>` with `modalix` or `mlsoc`, and `<fwtype>` with `yocto` or `elxr`.
 
 **On macOS:**
 
@@ -61,19 +65,19 @@ Replace `<version>` with the target SDK version (for example `%platform_version%
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
 ```
 
-**On Linux:**
+**On Ubuntu or Ubuntu under WSL:**
 
 :::warning
 The TFTP server binds to port 69, which is privileged, so `sudo` is required:
 :::
 
 ```console
-sima-user@sima-user-machine:~$ sudo ~/.sima-cli/.venv/bin/sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
+sima-user@sima-user-machine:~$ sudo "$(command -v sima-cli)" bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot
 ```
 
 ### Configure Netboot from the Host (Firmware 2.1.3 or Later)
 
-If the DevKit or PCIe card is currently running firmware 2.1.3 or later and is reachable from the host, append `--devkit <ip>` to the command above. Replace `<ip>` with the device's current IP address. The host configures the U-Boot environment and initiates netboot, so you can skip Step 3 and continue to Step 4.
+If the DevKit or PCIe card is currently running firmware 2.1.3 or later and is reachable over SSH, append `--devkit <ip>` to specify its current IPv4 address. If you omit the option, `sima-cli` tries to discover a device and asks you to choose if it finds more than one. Review the device and TFTP server addresses before approving the reboot. If the CLI schedules the reboot into NetBoot, skip Step 3.
 
 To flash automatically once the device has netbooted, also append `--autoflash`:
 
@@ -81,13 +85,17 @@ To flash automatically once the device has netbooted, also append `--autoflash`:
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-On Linux, use the same `sudo ~/.sima-cli/.venv/bin/sima-cli` prefix shown above. With `--autoflash`, you do not need to enter the manual `f` command in Step 4. Keep the serial console connected, if available, to monitor progress, and wait for the CLI to tell you to reboot.
+On Ubuntu or WSL, use the same `sudo` invocation shown above. After the network boot completes and SSH is ready, `--autoflash` writes the image and schedules the reboot into eMMC. If remote setup is skipped or the CLI reports that manual serial setup is required, keep the TFTP server running and follow Steps 3 and 4.
 
 This command:
 
-1. Downloads the bootable image for the requested SDK version and board type.
-2. Extracts the files to a temporary working directory.
-3. Starts a local TFTP server and serves the extracted boot files (`Image`, `boot.scr`, `.dtb` files, etc.).
+1. Downloads the boot files and flash image for the requested firmware and board type.
+2. Prepares the files in a managed cache that later NetBoot sessions can reuse.
+3. Starts the TFTP server and serves the boot files, including `netboot.scr.uimg`.
+
+### Use Previously Downloaded Firmware Images
+
+To run NetBoot without downloading firmware during the session, replace `-v <version>` with `--images <directory>` and keep the board and firmware type options. For eLxr, place the matching minimal TFTP archive and compressed eMMC image (`.img.gz`) in that directory. For Yocto, use the release archive. Add `--delete-cache` if you want the CLI to remove its prepared cache after the session.
 
 </details>
 
@@ -108,46 +116,31 @@ Hit any key to stop autoboot:  0
 sima$
 ```
 
-Then run the following commands in the U-Boot shell:
+If `sima-cli` printed manual U-Boot commands, use those commands. Otherwise, for the direct Ethernet setup in Step 1, set the board and TFTP server addresses and load the boot script from the host:
 
 ```console
-sima:~$ setenv boot_targets net; saveenv; boot
+sima$ setenv ipaddr 192.168.1.20
+sima$ setenv serverip 192.168.1.10
+sima$ tftp ${scriptaddr} ${serverip}:netboot.scr.uimg && source ${scriptaddr}
 ```
 
-For Modalix **eLxr** targets, also set the cpio image name before booting:
-
-```console
-sima:~$ setenv cpio_name simaai-image-palette-modalix.cpio.gz; setenv boot_targets net; saveenv; boot
-```
-
-This tells the DevKit to boot from the host TFTP server prepared in Step 2.
-
-:::note
-By default, the DevKit U-Boot is configured with:
-
-- `ipaddr=192.168.1.20` (DevKit's Ethernet interface, first port on multi-port boards).
-- `serverip=192.168.1.10` (host machine running the TFTP server).
-
-To use a different network, update `serverip` and `ipaddr` in U-Boot to match your environment. Make sure the DevKit can reach the host at the chosen IPs:
-
-```console
-sima:~$ setenv serverip 10.0.0.10; setenv ipaddr 10.0.0.1; saveenv; boot
-```
-:::
+For a different network, substitute the board's address and the reachable TFTP server address shown by `sima-cli`.
 
 </details>
 
 <details open>
 <summary><strong>Step 4. Flash the eMMC</strong></summary>
 
-If you enabled `--autoflash` in Step 2, flashing starts automatically once the netbooted device is ready. Monitor progress and reboot when instructed. Otherwise, use the manual commands below.
+If automatic flashing starts, keep the host terminal and network connection active until the CLI reports that flashing is complete and a reboot was scheduled. If you reach the `netboot>` prompt and still need to flash the board, use the manual commands below.
 
-The `--netboot` shell on the host supports two commands:
+The `netboot>` prompt on the host supports these commands:
 
-- `c` — Show all connected clients and the firmware version currently running on them.
-- `f` — Flash the selected client's eMMC.
+- `c` — Show TFTP clients, their connection status, and available board information.
+- `d` — Discover devices on the local network.
+- `f [ip]` — Flash a connected client's eMMC. Supply the board's current IPv4 address to target it directly.
+- `q` — End the session and stop the TFTP server.
 
-Wait for the DevKit to finish netbooting. This may take several minutes. Once the login prompt is shown on the serial console, the board is ready. We recommend keeping the serial console connected throughout to observe the full boot sequence.
+Wait for the DevKit to finish netbooting and for the CLI to report that SSH is available. This may take several minutes.
 
 Switch back to the host terminal and press **Enter** until you see the `netboot>` prompt. Optionally type `c` to confirm the DevKit is connected and show its current firmware version, then type `f` to flash:
 
@@ -165,14 +158,14 @@ netboot> f
 🔧 Initiating eMMC flash [...]
 ```
 
-The image is roughly 1.6 GB, and the transfer takes a few minutes. Example progress:
+Image size and flash time vary by firmware release. Example progress:
 
 ```text
 ↦ 520093696 bytes (520 MB, 496 MiB) copied, 1 s, 515 MB/s
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-After flashing completes, power-cycle the DevKit. It boots the target version from eMMC.
+After flashing completes, accept the CLI's prompt to reboot into eMMC, or reboot the DevKit later. Confirm the target firmware version on the DevKit with `cat /etc/buildinfo`.
 
 
 </details>
@@ -182,20 +175,20 @@ After flashing completes, power-cycle the DevKit. It boots the target version fr
 
 - If the DevKit fails to netboot, verify both host and device are on the same subnet (`192.168.1.x`).
 - On the Modalix Early Access board, only Ethernet port 0 is supported for netboot.
-- On Linux, ensure the host firewall allows **UDP port 69 (TFTP)**.
+- Check that the host firewall allows **UDP port 69 (TFTP)**. For WSL, also check the Windows and Hyper-V firewall settings.
 - Verify connectivity from the DevKit:
 
   ```console
   modalix:~$ ping 192.168.1.10
   ```
 
-- If the DevKit changes IP address during netboot (for example, because DHCP assigns a new address), `sima-cli` is not notified and may continue using the previous address. Connect to the DevKit through the serial console and run `ip addr` to find its current IP address. Then use the `f` command in the host's netboot shell with that address to flash the device:
+- If the DevKit changes IP address during NetBoot, `sima-cli` tries to find it by its Ethernet MAC address. If automatic recovery fails, use `d` at the `netboot>` prompt or run `ip -4 addr` on the board through the serial console. Confirm that the address belongs to your board, then flash it using its current address:
 
   ```console
   netboot> f <actual-ip>
   ```
 
-- If `f` fails to find the image, rerun the `sima-cli bootimg --netboot` command from Step 2 to refresh the TFTP paths.
+- If `f` reports that no eMMC image was prepared, check that the firmware archive or local image directory contains the flash image, then restart the command from Step 2.
 - If NFS-related error messages appear on the serial console after converting a Modalix DevKit to eLxr, they can be safely ignored.
 
 </details>
