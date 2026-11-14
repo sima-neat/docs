@@ -1,6 +1,3 @@
-const runtimeConfig = require('../../../static/developer-center-runtime.json');
-const stagingModels = ['stg', 'staging'].includes(runtimeConfig.environment);
-
 const SECTION_ROUTES = {
   home: '/',
   hardware: '/hardware',
@@ -8,8 +5,9 @@ const SECTION_ROUTES = {
   examples: '/examples/',
 };
 
+const MODEL_BROWSER_ROUTE = '/models/';
+
 const EXTERNAL_ROUTES = {
-  models: 'https://huggingface.co/simaai',
   community: 'https://community.sima.ai',
 };
 
@@ -233,9 +231,8 @@ const navigationItems = [
   {
     key: 'models',
     label: 'Models',
-    href: stagingModels ? '/models/' : EXTERNAL_ROUTES.models,
+    href: MODEL_BROWSER_ROUTE,
     tone: 'black',
-    external: !stagingModels,
   },
   {
     key: 'examples',

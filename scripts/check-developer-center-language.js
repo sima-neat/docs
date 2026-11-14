@@ -254,7 +254,7 @@ assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 
 assert.equal(shellConfig.withSiteRoot('/ja/hardware', '/docs/'), '/docs/ja/hardware');
 const rootedNavbarItems = shellConfig.navbarItems('/docs/');
 assert.equal(rootedNavbarItems.find((item) => item.key === 'hardware').href, '/docs/hardware');
-assert.equal(rootedNavbarItems.find((item) => item.key === 'models').href, 'https://huggingface.co/simaai');
+assert.equal(rootedNavbarItems.find((item) => item.key === 'models').href, '/docs/models/');
 assert.equal(shellConfig.deploymentSiteRoot('/zh-Hant/', 'zh-Hant'), '/');
 assert.equal(shellConfig.deploymentSiteRoot('/docs/zh-Hant/', 'zh-Hant'), '/docs/');
 assert.equal(shellConfig.deploymentSiteRoot('/docs/', 'en'), '/docs/');

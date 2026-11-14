@@ -32,8 +32,8 @@
     {
       "key": "models",
       "label": "Models",
-      "href": "https://huggingface.co/simaai",
-      "external": true
+      "href": "/models/",
+      "external": false
     },
     {
       "key": "examples",
