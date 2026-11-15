@@ -40,3 +40,79 @@ stageButtons.forEach(button => {
     selectStage(stageKeys[next], true);
   });
 });
+
+// The website-owned JSON is the only source of component versions in the map.
+const releaseMap = document.querySelector('#release-map');
+const releaseMapOpen = document.querySelector('#release-map-open');
+const releaseMapStatus = document.querySelector('#release-map-status');
+let releaseMapLoading = false;
+async function loadReleaseMap() {
+  if (releaseMapLoading) return;
+  releaseMapLoading = true;
+  releaseMapStatus.textContent = 'Loading bundled releases…';
+  try {
+    const response = await fetch('release-map.json?v=20261107', {cache: 'no-store'});
+    if (!response.ok) throw new Error('Release map unavailable');
+    const data = await response.json();
+    if (data.schema_version !== 1 || !data.components?.length || !data.releases?.length) throw new Error('Invalid release map');
+    const columns = document.createElement('tr');
+    ['Release date', ...data.components.map(component => component.label)].forEach(label => {
+      const cell = document.createElement('th');
+      cell.scope = 'col';
+      cell.textContent = label;
+      columns.append(cell);
+    });
+    const rows = document.createDocumentFragment();
+    const releases = [...data.releases].sort((a, b) => b.release_date.localeCompare(a.release_date));
+    const dateFormat = new Intl.DateTimeFormat('en-US', {month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC'});
+    releases.forEach(release => {
+      const row = document.createElement('tr');
+      const dateCell = document.createElement('td');
+      const link = document.createElement('a');
+      const announcement = new URL(release.announcement, location.href);
+      if (announcement.origin !== location.origin || !announcement.pathname.startsWith(new URL('.', location.href).pathname)) throw new Error('Invalid announcement URL');
+      link.href = announcement.href;
+      link.textContent = dateFormat.format(new Date(release.release_date + 'T00:00:00Z'));
+      const label = document.createElement('small');
+      label.textContent = 'Bundle ' + release.id;
+      dateCell.append(link, label);
+      row.append(dateCell);
+      data.components.forEach(component => {
+        const versions = release.versions[component.id];
+        if (versions === null && release.status === 'draft') {
+          const cell = document.createElement('td');
+          cell.textContent = 'To confirm';
+          row.append(cell);
+          return;
+        }
+        if (!Array.isArray(versions) || !versions.length || versions.some(version => typeof version !== 'string')) throw new Error('Invalid component versions');
+        const cell = document.createElement('td');
+        versions.forEach((version, index) => {
+          if (index) cell.append(document.createElement('br'));
+          cell.append(document.createTextNode(version));
+        });
+        row.append(cell);
+      });
+      rows.append(row);
+    });
+    document.querySelector('#release-map-columns').replaceChildren(columns);
+    document.querySelector('#release-map-rows').replaceChildren(rows);
+    document.querySelector('.release-map-table').hidden = false;
+    releaseMapStatus.textContent = releases.length + ' bundled release' + (releases.length === 1 ? '' : 's');
+  } catch {
+    releaseMapStatus.textContent = 'The release map could not be loaded. Close and reopen it to retry, or view the JSON below.';
+  } finally {
+    releaseMapLoading = false;
+  }
+}
+releaseMapOpen.addEventListener('click', () => {
+  releaseMap.showModal();
+  loadReleaseMap();
+});
+document.querySelector('#release-map-close').addEventListener('click', () => releaseMap.close());
+releaseMap.addEventListener('click', event => {
+  if (event.target !== releaseMap) return;
+  const bounds = releaseMap.getBoundingClientRect();
+  if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) releaseMap.close();
+});
+releaseMap.addEventListener('close', () => releaseMapOpen.focus());

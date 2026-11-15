@@ -12,6 +12,7 @@ release-announcement/
   brand.css
   landing.css
   landing.js
+  release-map.json
   3.0.0/
     index.html
     styles.css
@@ -38,6 +39,29 @@ Open `http://localhost:4183/` for the landing page and release timeline. The
 3.0.0 entry is dated October 31, 2026, and opens its detailed page in a new tab
 at `http://localhost:4183/3.0.0/`. Use a static HTTP server rather than opening
 HTML directly from the filesystem. No dependency installation is needed.
+
+## Maintaining the full release map
+
+The November 7, 2026 SDK 3.0.0.1 / Neat 0.6.1 announcement is at
+`3.0.0.1/index.html` and is featured as the latest release. It includes Insight,
+GPT-OSS, Neat Library, Apps and Model Compiler highlights. Visible draft labels
+and empty placeholders have been removed. The JSON status remains `draft` and
+the announcement retains `noindex` until publication is finalized. All eight
+component versions are confirmed. Publication uses the existing manual workflow.
+
+The timeline's **Full release map** dialog loads `release-map.json` on each open.
+This website-owned file is the source of component versions; do not duplicate
+version rows in HTML or JavaScript. It contains the November 7 and October 31
+bundles. October 31 uses the confirmed sima-cli 2.1.20 pin. The timeline stories
+remain editorial content in `index.html`.
+
+To add a bundle, append a release with a unique `id`, ISO `release_date`, relative
+`announcement` directory, and `versions` for every component ID. Versions are
+arrays so one component can list multiple versions. Preserve compatibility
+ranges explicitly when supplied; use exact shipped versions when confirmed.
+The dialog sorts bundles newest first. Add older entries when their data is
+ready; no historical versions are inferred. The existing announcement validation
+checks the JSON structure, dates, component coverage and local announcement links.
 
 ## Validation
 

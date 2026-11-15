@@ -1,6 +1,6 @@
 name: Vulcan SysDoc
 
-run-name: ${{ github.event.head_commit.message || github.event.pull_request.title || github.ref_name || 'Vulcan SysDoc' }} (${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || github.ref_name == 'main' && 'prod' || github.ref_name == 'develop' && 'stg' || 'dev' }})
+run-name: ${{ github.event.head_commit.message || github.event.pull_request.title || github.ref_name || 'Vulcan SysDoc' }} (${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || (github.ref_name == 'main' || github.ref_name == 'develop') && 'stg' || 'dev' }})
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       deploy_environment:
-        description: Vulcan sysdoc environment
+        description: Vulcan sysdoc environment (prod requires the main branch)
         required: true
         default: dev
         type: choice
@@ -26,7 +26,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || github.ref_name == 'main' && 'prod' || github.ref_name == 'develop' && 'stg' || 'dev' }}
+  group: ${{ github.repository }}-${{ github.workflow }}-${{ github.event_name == 'workflow_dispatch' && inputs.deploy_environment || (github.ref_name == 'main' || github.ref_name == 'develop') && 'stg' || 'dev' }}
   cancel-in-progress: false
 
 jobs:
@@ -47,9 +47,7 @@ jobs:
             if [[ -z "${deploy_environment}" ]]; then
               deploy_environment="${{ vars.VULCAN_ENV || 'dev' }}"
             fi
-          elif [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            deploy_environment="prod"
-          elif [[ "${GITHUB_REF}" == "refs/heads/develop" ]]; then
+          elif [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == "refs/heads/develop" ]]; then
             deploy_environment="stg"
           elif [[ "${GITHUB_REF}" == "refs/heads/vulcan-dev-sysdoc" ]]; then
             deploy_environment="dev"
@@ -65,8 +63,8 @@ jobs:
               ;;
             prod|production)
               deploy_environment="prod"
-              if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
-                echo "Production sysdoc deploy is only allowed from refs/heads/main. Current ref: ${GITHUB_REF}" >&2
+              if [[ "${GITHUB_EVENT_NAME}" != "workflow_dispatch" || "${GITHUB_REF}" != "refs/heads/main" ]]; then
+                echo "Production sysdoc requires a manual workflow dispatch on main. Current event: ${GITHUB_EVENT_NAME}, ref: ${GITHUB_REF}" >&2
                 exit 1
               fi
               ;;
