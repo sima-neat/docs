@@ -85,7 +85,7 @@ sima-user@sima-user-machine:~$ sudo "$(command -v sima-cli)" bootimg --boardtype
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-在 Ubuntu 或 WSL 中，請沿用上方的 `sudo` 指令寫法。裝置完成網路開機且 SSH 就緒後，`--autoflash` 會寫入映像檔，並排定重新啟動以從 eMMC 開機。如果略過遠端設定，或 CLI 顯示需要透過序列主控台手動設定，請保持 TFTP 伺服器運作並依照步驟 3 和 4 操作。
+在 Ubuntu 或 WSL 中，請沿用上方的 `sudo` 指令寫法。裝置完成網路開機且 SSH 就緒後，`--autoflash` 會寫入映像檔，並排定重新啟動以從 eMMC 開機。如果略過遠端設定、無法透過 SSH 連線至裝置，或 CLI 回報無法安全設定 U-Boot，請保持 TFTP 伺服器運作並依照步驟 3 和 4 操作。
 
 這個指令會執行下列作業。
 
@@ -165,7 +165,7 @@ netboot> f
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-燒錄完成後，接受 CLI 提示以重新啟動並從 eMMC 開機，或稍後重新啟動 DevKit。在 DevKit 上執行 `cat /etc/buildinfo`，確認已執行目標韌體版本。
+燒錄完成後，`sima-cli` 會詢問是否重新啟動以從 eMMC 開機。輸入 `y` 即可排定立即重新啟動，或輸入 `n`，等到下次重新啟動 DevKit 時再從 eMMC 開機。重新啟動後，執行 `cat /etc/buildinfo` 確認目標韌體版本。
 
 
 </details>

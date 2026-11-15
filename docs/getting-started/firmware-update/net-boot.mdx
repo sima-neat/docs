@@ -85,7 +85,7 @@ To flash automatically once the device has netbooted, also append `--autoflash`:
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-On Ubuntu or WSL, use the same `sudo` invocation shown above. After the network boot completes and SSH is ready, `--autoflash` writes the image and schedules the reboot into eMMC. If remote setup is skipped or the CLI reports that manual serial setup is required, keep the TFTP server running and follow Steps 3 and 4.
+On Ubuntu or WSL, use the same `sudo` invocation shown above. After the network boot completes and SSH is ready, `--autoflash` writes the image and schedules the reboot into eMMC. If you skip remote setup, the device is unreachable over SSH, or the CLI reports that it could not configure U-Boot safely, keep the TFTP server running and follow Steps 3 and 4.
 
 This command:
 
@@ -165,7 +165,7 @@ Image size and flash time vary by firmware release. Example progress:
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-After flashing completes, accept the CLI's prompt to reboot into eMMC, or reboot the DevKit later. Confirm the target firmware version on the DevKit with `cat /etc/buildinfo`.
+After flashing completes, `sima-cli` prompts you to reboot into eMMC. Answer `y` to schedule the reboot now or `n` to boot from eMMC the next time you reboot the DevKit. After rebooting, confirm the target firmware version with `cat /etc/buildinfo`.
 
 
 </details>

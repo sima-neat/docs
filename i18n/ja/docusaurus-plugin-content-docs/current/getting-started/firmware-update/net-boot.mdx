@@ -85,7 +85,7 @@ sima-user@sima-user-machine:~$ sudo "$(command -v sima-cli)" bootimg --boardtype
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-Ubuntu または WSL では、上記と同じように `sudo` を使用します。ネットワークブートが完了し、SSH 接続が可能になると、`--autoflash` がイメージを書き込み、eMMC から起動するよう再起動を予約します。リモート設定を省略した場合やシリアルコンソールでの手動設定が必要と表示された場合は、TFTP サーバーを起動したまま手順 3 と 4 に進みます。
+Ubuntu または WSL では、上記と同じように `sudo` を使用します。ネットワークブートが完了し、SSH 接続が可能になると、`--autoflash` がイメージを書き込み、eMMC から起動するよう再起動を予約します。リモート設定を省略した場合、デバイスに SSH で接続できない場合、または CLI が U-Boot を安全に設定できなかったと報告した場合は、TFTP サーバーを起動したまま手順 3 と 4 に進みます。
 
 このコマンドは次の処理を行います。
 
@@ -165,7 +165,7 @@ netboot> f
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-書き込みが完了したら、eMMC から起動するよう CLI の再起動プロンプトを承認するか、後で DevKit を再起動します。DevKit 上で `cat /etc/buildinfo` を実行し、対象のファームウェアバージョンを確認してください。
+書き込みが完了すると、`sima-cli` は eMMC から起動するための再起動を確認します。すぐに再起動を予約するには `y`、次回の DevKit 再起動時に eMMC から起動するには `n` を入力します。再起動後に `cat /etc/buildinfo` を実行し、対象のファームウェアバージョンを確認してください。
 
 
 </details>
