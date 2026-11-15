@@ -11,16 +11,16 @@ sidebar_position: 3
 ## 矽晶與運算
 
 **CVU**
-：**電腦視覺單元 (Computer Vision Unit)。** 這是晶片上的加速器，專門用於處理傳統的視覺工作負載（濾鏡、轉換、影像處理核心）。MLSoC Modalix 整合了一個 Synopsys EV74 CVU，運算效能為 720 16 位元 GOPS。
+：**電腦視覺單元 (Computer Vision Unit)。** 這是晶片上的加速器，專門用於處理傳統的視覺工作負載（濾鏡、轉換、影像處理核心）。Modalix MLSoC 整合了一個 Synopsys EV74 CVU，運算效能為 720 16 位元 GOPS。
 
 **ISP**
-：**影像訊號處理器 (Image Signal Processor)。** 這是晶片上的模組，用於將原始相機感測器輸出（拜耳陣列、單色等）轉換為可用的影像。MLSoC Modalix 使用一個 Arm Mali-C71AE ISP，其運作頻率為 1.2 GHz。
+：**影像訊號處理器 (Image Signal Processor)。** 這是晶片上的模組，用於將原始相機感測器輸出（拜耳陣列、單色等）轉換為可用的影像。Modalix MLSoC 使用一個 Arm Mali-C71AE ISP，其運作頻率為 1.2 GHz。
 
 **MLA**
-：**機器學習加速器 (Machine Learning Accelerator)。** 這是晶片上的模組，用於執行神經網路推論。MLA 是 MLSoC Modalix 的主要差異化因素，也是 NEAT 應用程式的目標。
+：**機器學習加速器 (Machine Learning Accelerator)。** 這是晶片上的模組，用於執行神經網路推論。MLA 是 Modalix MLSoC 的主要差異化因素，也是 NEAT 應用程式的目標。
 
 **MLSoC**
-：**機器學習系統晶片 (Machine Learning System-on-Chip)。** 這是 SiMa.ai 的邊緣 AI 處理器產品系列。本檔案涵蓋了 **MLSoC Modalix**，這是第二代產品。
+：**機器學習系統晶片 (Machine Learning System-on-Chip)。** 這是 SiMa.ai 的邊緣 AI 處理器產品系列。本檔案涵蓋了 **Modalix MLSoC**，這是第二代產品。
 
 **Modalix**
 ：這是 SiMa.ai 第二代 MLSoC 的產品名稱，也是本檔案中所有套件的核心矽晶。
@@ -51,10 +51,10 @@ sidebar_position: 3
 ## 應用程式與框架
 
 **NEAT**
-：SiMa.ai 的應用框架，適用於 MLSoC Modalix。NEAT 取代了舊版的 Palette/MPK 工具鏈。完整的說明檔案可在 [軟體檔案](https://developer.sima.ai/software) 中找到。
+：SiMa.ai 的應用框架，適用於 Modalix MLSoC。NEAT 取代了舊版的 Palette/MPK 工具鏈。完整的說明檔案可在 [軟體檔案](https://developer.sima.ai/software) 中找到。
 
 **NEAT 應用**
-：由 NEAT 工具鏈產生的封裝式裝置端推論管線（模型 + 前置/後置處理圖 + 執行階段中繼資料），並載入到 MLSoC Modalix 上以供執行。
+：由 NEAT 工具鏈產生的封裝式裝置端推論管線（模型 + 前置/後置處理圖 + 執行階段中繼資料），並載入到 Modalix MLSoC 上以供執行。
 
 ## 硬體與外觀規格
 
@@ -68,7 +68,7 @@ sidebar_position: 3
 ：**半高、半長 (Half-Height, Half-Length)。** 一種 PCIe 卡片規格，與大多數伺服器和工作站機殼相容。Modalix PCIe 卡是一種 HHHL 卡。
 
 **LPDDR5**
-：**低功耗雙倍資料速率 5 (Low-Power Double Data Rate 5) 記憶體。** Modalix 產品中使用的系統 RAM。MLSoC Modalix 支援跨 8 個通道的 32 位和 64 位 LPDDR5 設定。
+：**低功耗雙倍資料速率 5 (Low-Power Double Data Rate 5) 記憶體。** Modalix 產品中使用的系統 RAM。Modalix MLSoC 支援跨 8 個通道的 32 位和 64 位 LPDDR5 設定。
 
 **SoC**
 ：**系統晶片 (System on Chip)。** 一個單一晶片，整合了 CPU、加速器、記憶體控制器和 I/O，與多晶片模組相反。

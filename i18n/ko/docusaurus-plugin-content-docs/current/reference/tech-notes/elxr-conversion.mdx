@@ -13,7 +13,9 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 :::note
 eLxr 플랫폼은 SDK **2.0.0** 버전부터 사용 가능하며, **Modalix DevKit**에서 제공됩니다.
 
-eLxr로 변환하려면 tRoot 업데이트와 eMMC 재플래싱이 필요하며, 이는 [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)를 통해 수행됩니다.
+eLxr로 변환하려면 tRoot 업데이트와 eMMC 재플래싱이 필요하며, 이는 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)를 통해 수행됩니다.
+
+Windows 호스트에서는 **Windows Subsystem for Linux (WSL)**의 Ubuntu에 `sima-cli`를 설치하고 실행해야 합니다. 네이티브 Windows에서는 NetBoot를 지원하지 않습니다. [WSL 네트워크 설정](/hardware/getting-started/firmware-update/net-boot#windows-hosts)을 따릅니다.
 :::
 
 **eLxr** 플랫폼은 기존의 Yocto 환경을 대체하여 SiMa.ai DevKit의 기본 런타임으로 사용됩니다. 이 플랫폼은 다음과 같은 기능을 제공합니다.
@@ -63,17 +65,17 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 <details open>
 <summary> 단계 2. eLxr 이미지를 넷부팅하고 eMMC에 플래시합니다.<strong> </strong> </summary>
 
-나머지 변환 과정은 [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)에 설명된 표준 TFTP 넷부팅 + 플래시 절차를 사용합니다. 아래에 제시된 eLxr에 특정한 값을 사용하여 해당 절차를 따르십시오.
+나머지 변환 과정은 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)에 설명된 표준 TFTP 넷부팅 + 플래시 절차를 사용합니다. 아래에 제시된 eLxr에 특정한 값을 사용하여 해당 절차를 따르십시오.
 
 - **2단계(TFTP 서버 시작):** `--boardtype modalix --fwtype elxr -v %platform_version%`을 사용합니다.
-- **3단계(U-Boot 구성):** `boot`를 실행하기 전에 `boot_targets=net` 외에 `cpio_name=simaai-image-palette-modalix.cpio.gz`를 설정합니다.
-- **4단계(플래시):** `f`를 `netboot>` 프롬프트에 입력합니다.
+- **3단계(U-Boot 설정):** 원격 설정을 사용할 수 없으면 복구 가이드에 따라 시리얼 콘솔에서 부팅 스크립트를 불러옵니다.
+- **4단계(이미지 기록):** 수동으로 기록할 때는 `netboot>` 프롬프트에 `f`를 입력하고 기록이 완료되면 재부팅을 승인합니다.
 
 ![연결 다이어그램](/img/tech-notes/conversion-diagram.png)
 
 *연결 다이어그램*
 
-플래싱이 완료되고 DevKit의 전원을 껐다가 다시 켜면 eMMC에서 **eLxr**가 실행됩니다.
+DevKit이 재부팅되면 eMMC에서 **eLxr**가 실행됩니다.
 
 </details>
 
@@ -87,7 +89,7 @@ DevKit에서 eLxr를 실행하는 동안 Palette SDK를 설치하고 예제 애�
 <details open>
 <summary><strong>Yocto로 되돌리기 (선택 사항)</strong></summary>
 
-Yocto로 다시 전환하려면 `--fwtype yocto`를 사용하여 [네트워크 부트 복구](/hardware/getting-started/firmware-update/net-boot)를 다시 수행합니다. Yocto 대상에는 `cpio_name` U-Boot 변수가 필요하지 않습니다. `setenv boot_targets net`, `saveenv`, `boot`만 사용하면 됩니다.
+Yocto로 돌아가려면 `--fwtype yocto`와 대상 Yocto 펌웨어 버전을 지정하여 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot) 절차를 다시 따릅니다.
 
 :::note
 Yocto로 다시 변환할 때 **최소 tRoot 버전 요구 사항은 없습니다**. 따라서 위의 1단계는 건너뛸 수 있습니다.
@@ -100,5 +102,5 @@ eLxr로 변환한 후 시리얼 콘솔에 NFS 관련 오류 메시지가 표시�
 ## 요약
 
 1. 최신 **tRoot** 이미지(≥ 2.0.0)로 업데이트하세요.
-2. [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot)를 수행하고, `--fwtype elxr` 및 eLxr `cpio_name`을 사용하여 eLxr를 eMMC에 플래싱합니다.
+2. `--fwtype elxr`를 지정하고 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot) 절차에 따라 eMMC에 eLxr를 기록합니다.
 3. Palette SDK를 설치하고 [Palette SDK 설명서](https://developer.sima.ai/software)를 통해 앱을 사용해 보세요.

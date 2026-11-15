@@ -11,16 +11,16 @@ sidebar_position: 3
 ## 실리콘 및 컴퓨팅
 
 **CVU**
-: **컴퓨터 비전 유닛.** 클래식 비전 워크로드(필터, 변환, 이미지 처리 커널)에 전용된 칩 내 가속기입니다. MLSoC Modalix는 720 16비트 GOPS로 작동하는 Synopsys EV74 CVU를 통합합니다.
+: **컴퓨터 비전 유닛.** 클래식 비전 워크로드(필터, 변환, 이미지 처리 커널)에 전용된 칩 내 가속기입니다. Modalix MLSoC는 720 16비트 GOPS로 작동하는 Synopsys EV74 CVU를 통합합니다.
 
 **ISP**
-: **이미지 신호 프로세서.** 카메라 센서의 원시 출력을 사용 가능한 이미지(바이어 패턴, 모노 등)로 변환하는 칩 내 블록입니다. MLSoC Modalix는 1.2GHz로 작동하는 Arm Mali-C71AE ISP를 사용합니다.
+: **이미지 신호 프로세서.** 카메라 센서의 원시 출력을 사용 가능한 이미지(바이어 패턴, 모노 등)로 변환하는 칩 내 블록입니다. Modalix MLSoC는 1.2GHz로 작동하는 Arm Mali-C71AE ISP를 사용합니다.
 
 **MLA**
-: **머신 러닝 가속기.** 신경망 추론을 실행하는 칩 내 블록입니다. MLA는 MLSoC Modalix의 주요 차별점이며, NEAT 애플리케이션의 대상입니다.
+: **머신 러닝 가속기.** 신경망 추론을 실행하는 칩 내 블록입니다. MLA는 Modalix MLSoC의 주요 차별점이며, NEAT 애플리케이션의 대상입니다.
 
 **MLSoC**
-: **머신 러닝 시스템 온 칩.** SiMa.ai의 엣지 AI 프로세서 제품군입니다. 이 설명서는 2세대인 **MLSoC Modalix**를 다룹니다.
+: **머신 러닝 시스템 온 칩.** SiMa.ai의 엣지 AI 프로세서 제품군입니다. 이 설명서는 2세대인 **Modalix MLSoC**를 다룹니다.
 
 **Modalix**
 : SiMa.ai의 2세대 MLSoC 제품명이며, 여기에 설명된 모든 키트의 핵심 실리콘입니다.
@@ -51,10 +51,10 @@ sidebar_position: 3
 ## 애플리케이션 및 프레임워크
 
 **NEAT**
-: SiMa.ai의 MLSoC Modalix용 애플리케이션 프레임워크입니다. NEAT는 이전 버전의 Palette/MPK 도구 세트를 대체합니다. 전체 설명서는 [ 소프트웨어 문서](https://developer.sima.ai/software)에서 확인할 수 있습니다.
+: SiMa.ai의 Modalix MLSoC용 애플리케이션 프레임워크입니다. NEAT는 이전 버전의 Palette/MPK 도구 세트를 대체합니다. 전체 설명서는 [ 소프트웨어 문서](https://developer.sima.ai/software)에서 확인할 수 있습니다.
 
 **NEAT 애플리케이션**
-: NEAT 도구 세트를 통해 생성된 패키지 형태의 온디바이스 추론 파이프라인(모델 + 사전/사후 처리 그래프 + 런타임 메타데이터)으로, MLSoC Modalix에 로드되어 실행됩니다.
+: NEAT 도구 세트를 통해 생성된 패키지 형태의 온디바이스 추론 파이프라인(모델 + 사전/사후 처리 그래프 + 런타임 메타데이터)으로, Modalix MLSoC에 로드되어 실행됩니다.
 
 ## 하드웨어 및 폼 팩터
 
@@ -68,7 +68,7 @@ sidebar_position: 3
 : **Half-Height, Half-Length.** 대부분의 서버 및 워크스테이션 섀시와 호환되는 PCIe 카드 폼 팩터입니다. Modalix PCIe 카드는 HHHL 카드입니다.
 
 **LPDDR5**
-: **Low-Power Double Data Rate 5** 메모리입니다. Modalix 제품에 사용되는 시스템 RAM입니다. MLSoC Modalix는 8개 채널에서 32비트 및 64비트 LPDDR5 구성을 지원합니다.
+: **Low-Power Double Data Rate 5** 메모리입니다. Modalix 제품에 사용되는 시스템 RAM입니다. Modalix MLSoC는 8개 채널에서 32비트 및 64비트 LPDDR5 구성을 지원합니다.
 
 **SoC**
 : **System on Chip.** 멀티칩 모듈과 달리 CPU, 가속기, 메모리 컨트롤러 및 I/O를 통합한 단일 다이입니다.

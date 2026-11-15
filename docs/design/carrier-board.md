@@ -19,7 +19,7 @@ If you want to place the SoC directly on your own board instead, see
 These parts are on the Modalix SoM and work on any carrier board that follows the
 260-pin connector assignment:
 
-- MLSoC Modalix
+- Modalix MLSoC
 - LPDDR5 memory
 - eMMC and SPI flash storage
 - USB controller, Gigabit Ethernet PHY, and HDMI video processor
