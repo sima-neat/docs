@@ -10,6 +10,7 @@ remain unchanged.
 | Neat Library | Neat Library | Neat Library | Neat Library | Neat Library |
 | Neat Examples | Neat Examples | Neat Examples | Neat Examples | Neat Examples |
 | Modalix | Modalix | Modalix | Modalix | Modalix |
+| Modalix MLSoC | Modalix MLSoC | Modalix MLSoC | Modalix MLSoC | Modalix MLSoC |
 | DevKit | DevKit | DevKit | DevKit | DevKit |
 | PyNeat | PyNeat | PyNeat | PyNeat | PyNeat |
 | Insight | Insight | Insight | Insight | Insight |

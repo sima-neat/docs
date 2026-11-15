@@ -30,10 +30,12 @@ Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
 
 請**在主機上**執行這些指令。將 `<devkit-ip>` 替換為 DevKit 的 IP 位址。
 
-1. 取得核心原始碼，以及 DevKit 的核心設定：
+1. 切換至此流程測試使用的核心原始碼提交版本，然後儲存 DevKit 的核心設定：
 
    ```bash
-   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   git init simaai-linux &&
+   git -C simaai-linux fetch --depth 1 https://github.com/SiMa-ai/simaai-linux.git 65aba29989da02d7612da5484dbbcd50643fdd60 &&
+   git -C simaai-linux checkout --detach FETCH_HEAD &&
    ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
    ```
 

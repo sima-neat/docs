@@ -30,10 +30,12 @@ Bus 002 Device 003: ID 0e8d:7961 MediaTek Inc. Wireless_Device
 
 Виконайте ці команди **на хості**. Замініть `<devkit-ip>` на IP-адресу DevKit.
 
-1. Отримайте вихідний код ядра та конфігурацію ядра DevKit:
+1. Отримайте перевірений для цієї процедури коміт вихідного коду ядра, а потім збережіть конфігурацію ядра DevKit:
 
    ```bash
-   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   git init simaai-linux &&
+   git -C simaai-linux fetch --depth 1 https://github.com/SiMa-ai/simaai-linux.git 65aba29989da02d7612da5484dbbcd50643fdd60 &&
+   git -C simaai-linux checkout --detach FETCH_HEAD &&
    ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
    ```
 

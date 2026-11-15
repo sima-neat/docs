@@ -30,10 +30,12 @@ SiMa.ai 커널 소스에서 DevKit 자체의 커널 구성을 사용하여 `mt79
 
 다음 명령을 **호스트에서** 실행하십시오. `<devkit-ip>`를 DevKit의 IP 주소로 바꾸십시오.
 
-1. 커널 소스와 DevKit의 커널 구성을 가져옵니다:
+1. 이 절차에서 검증한 커널 소스 커밋을 체크아웃한 후 DevKit의 커널 구성을 저장합니다:
 
    ```bash
-   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   git init simaai-linux &&
+   git -C simaai-linux fetch --depth 1 https://github.com/SiMa-ai/simaai-linux.git 65aba29989da02d7612da5484dbbcd50643fdd60 &&
+   git -C simaai-linux checkout --detach FETCH_HEAD &&
    ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
    ```
 

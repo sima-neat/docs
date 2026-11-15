@@ -30,10 +30,12 @@ Build the `mt7921u` driver and the `mt76` modules it depends on from the SiMa.ai
 
 Run these commands **on the host**. Replace `<devkit-ip>` with the DevKit's IP address.
 
-1. Get the kernel source, and the DevKit's kernel configuration:
+1. Check out the kernel source commit tested for this procedure, then save the DevKit's kernel configuration:
 
    ```bash
-   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   git init simaai-linux &&
+   git -C simaai-linux fetch --depth 1 https://github.com/SiMa-ai/simaai-linux.git 65aba29989da02d7612da5484dbbcd50643fdd60 &&
+   git -C simaai-linux checkout --detach FETCH_HEAD &&
    ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
    ```
 

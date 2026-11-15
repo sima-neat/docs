@@ -30,10 +30,12 @@ SiMa.ai のカーネルソースから、DevKit 自身のカーネル設定を�
 
 以下のコマンドを**ホスト上で**実行します。`<devkit-ip>` は DevKit の IP アドレスに置き換えてください。
 
-1. カーネルソースと DevKit のカーネル設定を取得します。
+1. この手順で動作確認したカーネルソースのコミットをチェックアウトし、DevKit のカーネル設定を保存します。
 
    ```bash
-   git clone --depth 1 https://github.com/SiMa-ai/simaai-linux.git
+   git init simaai-linux &&
+   git -C simaai-linux fetch --depth 1 https://github.com/SiMa-ai/simaai-linux.git 65aba29989da02d7612da5484dbbcd50643fdd60 &&
+   git -C simaai-linux checkout --detach FETCH_HEAD &&
    ssh sima@<devkit-ip> 'zcat /proc/config.gz' > board.config
    ```
 
