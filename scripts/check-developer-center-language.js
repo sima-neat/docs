@@ -154,10 +154,10 @@ const earlyAccessConstraints = {
   uk: ['застарілий', 'наявних клієнтів програми раннього доступу'],
 };
 const currentDevKitPositioning = {
-  ko: ['MLSoC Modalix를 평가', '엣지 AI 애플리케이션을 구축'],
-  ja: ['MLSoC Modalix の評価', 'エッジ AI アプリケーションの構築'],
-  'zh-Hant': ['評估 MLSoC Modalix', '建置邊緣 AI 應用程式'],
-  uk: ['оцінювання MLSoC Modalix', 'створення периферійних застосунків ШІ'],
+  ko: ['Modalix MLSoC를 평가', '엣지 AI 애플리케이션을 구축'],
+  ja: ['Modalix MLSoC の評価', 'エッジ AI アプリケーションの構築'],
+  'zh-Hant': ['評估 Modalix MLSoC', '建置邊緣 AI 應用程式'],
+  uk: ['оцінювання Modalix MLSoC', 'створення периферійних застосунків ШІ'],
 };
 const pcieTabLabels = {
   ko: ['인터페이스', '주요 기능'],

@@ -11,16 +11,16 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Silicon & Compute
 
 **CVU**
-: **Computer Vision Unit.** The on-chip accelerator dedicated to classical vision workloads (filters, transforms, image-processing kernels). The MLSoC Modalix integrates a Synopsys EV74 CVU running at 720 16-bit GOPS.
+: **Computer Vision Unit.** The on-chip accelerator dedicated to classical vision workloads (filters, transforms, image-processing kernels). The Modalix MLSoC integrates a Synopsys EV74 CVU running at 720 16-bit GOPS.
 
 **ISP**
-: **Image Signal Processor.** The on-chip block that converts raw camera sensor output (Bayer pattern, mono, etc.) into a usable image. The MLSoC Modalix uses an Arm Mali-C71AE ISP running at 1.2 GHz.
+: **Image Signal Processor.** The on-chip block that converts raw camera sensor output (Bayer pattern, mono, etc.) into a usable image. The Modalix MLSoC uses an Arm Mali-C71AE ISP running at 1.2 GHz.
 
 **MLA**
-: **Machine Learning Accelerator.** The on-chip block that runs neural-network inference. The MLA is the primary differentiator of the MLSoC Modalix and is what NEAT applications target.
+: **Machine Learning Accelerator.** The on-chip block that runs neural-network inference. The MLA is the primary differentiator of the Modalix MLSoC and is what NEAT applications target.
 
 **MLSoC**
-: **Machine Learning System-on-Chip.** SiMa.ai's product family of edge AI processors. This documentation covers the **MLSoC Modalix**, the second generation.
+: **Machine Learning System-on-Chip.** SiMa.ai's product family of edge AI processors. This documentation covers the **Modalix MLSoC**, the second generation.
 
 **Modalix**
 : The product name of SiMa.ai's second-generation MLSoC and the silicon at the core of every kit documented here.
@@ -51,10 +51,10 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 ## Applications & Frameworks
 
 **NEAT**
-: SiMa.ai's application framework for the MLSoC Modalix. NEAT replaces the older Palette/MPK toolchain. Full documentation is available in the [software docs](https://developer.sima.ai/software).
+: SiMa.ai's application framework for the Modalix MLSoC. NEAT replaces the older Palette/MPK toolchain. Full documentation is available in the [software docs](https://developer.sima.ai/software).
 
 **NEAT application**
-: A packaged on-device inference pipeline (model + pre/post-processing graph + runtime metadata) produced by the NEAT toolchain and loaded onto the MLSoC Modalix for execution.
+: A packaged on-device inference pipeline (model + pre/post-processing graph + runtime metadata) produced by the NEAT toolchain and loaded onto the Modalix MLSoC for execution.
 
 ## Hardware & Form Factors
 
@@ -68,7 +68,7 @@ Common acronyms and terms used throughout this documentation. Entries are groupe
 : **Half-Height, Half-Length.** A PCIe card form factor compatible with most server and workstation chassis. The Modalix PCIe Card is an HHHL card.
 
 **LPDDR5**
-: **Low-Power Double Data Rate 5** memory. The system RAM used on Modalix products. The MLSoC Modalix supports 32- and 64-bit LPDDR5 configurations across 8 channels.
+: **Low-Power Double Data Rate 5** memory. The system RAM used on Modalix products. The Modalix MLSoC supports 32- and 64-bit LPDDR5 configurations across 8 channels.
 
 **SoC**
 : **System on Chip.** A single die that integrates CPUs, accelerators, memory controllers, and I/O — as opposed to a multi-chip module.
