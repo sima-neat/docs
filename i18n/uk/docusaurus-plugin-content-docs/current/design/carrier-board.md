@@ -18,7 +18,7 @@ sidebar_position: 3
 Ці компоненти розміщені на Modalix SoM і працюють на будь-якій платі-носії, яка дотримується
 призначення контактів 260-контактного роз’єму:
 
-- MLSoC Modalix
+- Modalix MLSoC
 - Пам’ять LPDDR5
 - Накопичувачі eMMC і SPI flash
 - Контролер USB, Gigabit Ethernet PHY і відеопроцесор HDMI
