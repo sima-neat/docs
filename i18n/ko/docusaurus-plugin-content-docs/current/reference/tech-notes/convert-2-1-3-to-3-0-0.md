@@ -182,7 +182,7 @@ sudo "$(which sima-cli)" bootimg --netboot --images images
 
 ## 4. 재부팅 후 보드 확인
 
-1. `sima-cli`에 기록 완료 및 재부팅 예약 메시지가 표시될 때까지 기다립니다. 수동으로 기록했다면 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)의 재부팅 안내를 따릅니다.
+1. `sima-cli`에 기록 완료 및 재부팅 예약 메시지가 표시될 때까지 기다립니다. 수동으로 기록했다면 [네트워크 부팅 복구](/hardware/getting-started/firmware-update/net-boot)에 설명된 재부팅 프롬프트에서 `y`를 입력합니다.
 2. 보드가 부팅되면 시리얼 또는 SSH로 연결합니다.
 3. **보드**에서 펌웨어 버전을 확인하세요.
 
