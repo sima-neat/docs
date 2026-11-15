@@ -620,7 +620,7 @@ for (const locale of ['ko', 'ja', 'zh-Hant', 'uk']) {
     path.join(docsRoot, `i18n/${locale}/docusaurus-plugin-content-docs/current/reference/tech-notes/ros2.mdx`),
     'utf8',
   );
-  assert.match(ros2Source, /sima-cli neat install ros@v3\.0\.0/);
+  assert.match(ros2Source, /sima-cli neat install ros2@v3\.0\.0/);
   assert.match(ros2Source, /sima-cli install tools\/ros2/);
   assert.match(ros2Source, /eLxr/);
   assert.match(ros2Source, /Yocto/);
