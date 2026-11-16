@@ -182,7 +182,7 @@ sudo "$(which sima-cli)" bootimg --netboot --images images
 
 ## 4. 再起動後にボードを確認する
 
-1. 書き込みが完了し、再起動が予約されたと `sima-cli` に表示されるまで待ちます。手動で書き込んだ場合は、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)の再起動プロンプトに従います。
+1. 書き込みが完了し、再起動が予約されたと `sima-cli` に表示されるまで待ちます。手動で書き込んだ場合は、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)で説明されている再起動プロンプトで `y` を入力します。
 2. ボードが起動したら、シリアル接続または SSH で接続します。
 3. **ボード上の**ファームウェアバージョンを確認してください。
 

@@ -182,7 +182,7 @@ The command uses the local files to start the TFTP server. Follow the board boot
 
 ## 4. Verify the Board After Reboot
 
-1. Wait for `sima-cli` to report that flashing is complete and the reboot has been scheduled. If you flashed manually, follow the reboot prompt in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+1. Wait for `sima-cli` to report that flashing is complete and the reboot has been scheduled. If you flashed manually, answer `y` at the reboot prompt described in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
 2. After the board starts, connect through serial or SSH.
 3. Check the firmware version **on the board**:
 

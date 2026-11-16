@@ -24,7 +24,7 @@ DevKit を初めてご利用ですか？こちらから始めてください。�
 
 | ドキュメント | 説明 | 入手方法 | ダウンロード |
 | --- | --- | --- | --- |
-| **Modalix SoC 製品概要** | MLSoC Modalixシリコン（機械学習アクセラレータ（MLA）、画像信号プロセッサ（ISP）、コンピュータビジョンユニット（CVU）、ビデオコーデック、および入出力）の概要です。主な性能と消費電力の数値を記載しています。まず、このModalixが、お客様のワークロードに適しているかどうかを確認してください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-MLSoC-Product-Brief_v1.5.pdf) |
+| **Modalix SoC 製品概要** | Modalix MLSoCシリコン（機械学習アクセラレータ（MLA）、画像信号プロセッサ（ISP）、コンピュータビジョンユニット（CVU）、ビデオコーデック、および入出力）の概要です。主な性能と消費電力の数値を記載しています。まず、このModalixが、お客様のワークロードに適しているかどうかを確認してください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-MLSoC-Product-Brief_v1.5.pdf) |
 | **Modalix SoM製品概要** | Modalix システムオンモジュール（SoM）の概要 — LPDDR5、電源、および製品統合用のボード間コネクターを搭載したSoCパッケージです。完全なDevKitではなく、SoMをベースとしたカスタム設計を検討する場合は、ここから始めてください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-SoM-Product-Brief_v2.4-1.pdf) |
 | **Modalix SoM DevKit 3.0 製品概要** | DevKitの機能、インターフェース、および外観の概要です。注文前に、このキットがお客様の評価およびプロトタイピングのニーズに合致するかどうかを確認するためにご利用ください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-DevKit-Product-Brief_v1.2.pdf) |
 | **Modalix HHHL PCIe カード 製品概要** | PCIe カードの機能、メモリオプション、インターフェース、およびフォームファクターの概要です。注文前に、このカードがお客様のホストシステムに適合するかどうかを確認するためにご利用ください。 | 公開 | [PDFをダウンロード](https://sima.ai/wp-content/uploads/2026/07/Modalix-PCIe-HHHL-Product-Brief_v1.6-1.pdf) |
@@ -38,7 +38,7 @@ DevKit を初めてご利用ですか？こちらから始めてください。�
 | --- | --- | --- | --- |
 | **Modalix SoM キャリアボードのハードウェアに関する技術資料** | Modalix SoM を使用してキャリアボードを設計する際の主なガイド：コネクターのピン配置、インターフェースのマッピング、電力供給、および参照接続について説明します。カスタムボードの設計を開始する前に、まずこちらをお読みください。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/SiMa_SOM_Carrier_Board_Data_Sheet_Rev1.2_1-24-2026.pdf) |
 | **Modalix SoM データシート** | SoM（システムオンモジュール）の詳細な電気的、機械的、および熱的仕様：コネクターのピン配置、電源シーケンス、消費電流、および動作範囲。これは、基板レベルの設計に関する意思決定を行う際の信頼できる情報源です。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf) |
-| **Modalix SoC データシート** | MLSoC Modalixダイの、詳細な電気的、機械的、および熱的仕様 — ピン機能、電源ライン、信号タイミング、および動作範囲。あらかじめ統合されたSoMを基に設計するのではなく、シリコンレベルで設計する場合に必要となります。 | 依頼により提供 | *SiMa.ai の担当者にお問い合わせください。* |
+| **Modalix SoC データシート** | Modalix MLSoCダイの、詳細な電気的、機械的、および熱的仕様 — ピン機能、電源ライン、信号タイミング、および動作範囲。あらかじめ統合されたSoMを基に設計するのではなく、シリコンレベルで設計する場合に必要となります。 | 依頼により提供 | *SiMa.ai の担当者にお問い合わせください。* |
 | **キャリアボード用SoMの立ち上げガイド** | 新しく組み立てたキャリアボードに電源を供給し、正常に動作するかどうかを確認するための、段階的な手順を説明します。電源投入からSoM（システムオンモジュール）の起動まで、各段階で確認すべきポイントや、よくある問題点についても解説します。 | SiMa.ai アカウントが必要 | [PDFをダウンロード](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Carrier_Board_Bring-Up_Guide_Rev1.3.2_6-15-2026.pdf) |
 
 ## チップダウン設計

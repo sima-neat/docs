@@ -14,7 +14,7 @@ Modalix SoM 將 Modalix SoC、LPDDR5 記憶體與電源整合在一個具備板�
 
 下列元件位於 Modalix SoM 上，只要載板遵循 260 針連接器的腳位配置，即可運作：
 
-- MLSoC Modalix
+- Modalix MLSoC
 - LPDDR5 記憶體
 - eMMC 與 SPI 快閃儲存裝置
 - USB 控制器、Gigabit 乙太網路 PHY 與 HDMI 視訊處理器

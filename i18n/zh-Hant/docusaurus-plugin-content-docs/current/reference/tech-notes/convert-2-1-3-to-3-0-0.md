@@ -182,7 +182,7 @@ sudo "$(which sima-cli)" bootimg --netboot --images images
 
 ## 4. 重新啟動後確認板卡狀態
 
-1. 等待 `sima-cli` 回報燒錄完成並已排定重新啟動。如果您手動燒錄，請依照[網路開機復原](/hardware/getting-started/firmware-update/net-boot)的重新啟動提示操作。
+1. 等待 `sima-cli` 回報燒錄完成並已排定重新啟動。如果您手動燒錄，請在[網路開機復原](/hardware/getting-started/firmware-update/net-boot)所述的重新啟動提示中輸入 `y`。
 2. 板卡啟動後，透過序列埠或 SSH 連線。
 3. 請檢查**板卡上**的韌體版本：
 

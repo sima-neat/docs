@@ -85,7 +85,7 @@ DevKit 또는 PCIe 카드가 펌웨어 2.1.3 이상을 실행 중이고 SSH로 �
 sima-user@sima-user-machine:~$ sima-cli bootimg --boardtype <boardtype> --fwtype <fwtype> -v <version> --netboot --devkit <ip> --autoflash
 ```
 
-Ubuntu 또는 WSL에서는 위와 같은 방식으로 `sudo`를 사용합니다. 네트워크 부팅이 완료되고 SSH 연결이 가능해지면 `--autoflash`가 이미지를 기록하고 eMMC로 부팅하도록 재부팅을 예약합니다. 원격 구성을 건너뛰었거나 CLI에 시리얼 콘솔을 사용한 수동 구성이 필요하다고 표시되면 TFTP 서버를 계속 실행하고 3단계와 4단계를 따릅니다.
+Ubuntu 또는 WSL에서는 위와 같은 방식으로 `sudo`를 사용합니다. 네트워크 부팅이 완료되고 SSH 연결이 가능해지면 `--autoflash`가 이미지를 기록하고 eMMC로 부팅하도록 재부팅을 예약합니다. 원격 구성을 건너뛰었거나, SSH로 장치에 연결할 수 없거나, CLI에서 U-Boot를 안전하게 구성할 수 없다고 표시되면 TFTP 서버를 계속 실행하고 3단계와 4단계를 따릅니다.
 
 이 명령은 다음 작업을 수행합니다.
 
@@ -165,7 +165,7 @@ netboot> f
 ↦ 5368709120 bytes (5.4 GB, 5.0 GiB) copied, 163.331 s, 32.9 MB/s
 ```
 
-기록이 끝나면 eMMC로 부팅하라는 CLI의 재부팅 요청을 승인하거나 나중에 DevKit을 재부팅합니다. DevKit에서 `cat /etc/buildinfo`를 실행하여 대상 펌웨어 버전을 확인합니다.
+기록이 끝나면 `sima-cli`에서 eMMC로 부팅하기 위해 재부팅할지 묻습니다. 지금 재부팅을 예약하려면 `y`를 입력하고, 다음에 DevKit을 재부팅할 때 eMMC로 부팅하려면 `n`을 입력합니다. 재부팅한 후 `cat /etc/buildinfo`를 실행하여 대상 펌웨어 버전을 확인합니다.
 
 
 </details>
