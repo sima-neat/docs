@@ -1,0 +1,11 @@
+# GPT-OSS design illustration
+
+Generated using the built-in image generation tool. Reference: user-supplied Modalix SoM photo. Website JPEGs: `gpt-oss-design-836.jpg` and `gpt-oss-design-1440.jpg`. This illustrates logical data flow, not physical wiring.
+
+## Exact prompt
+
+Use case: compositing.
+Asset type: wide 16:9 release website technical illustration, high-resolution, legible at 700px wide.
+Primary request: Explain the ingenuity of running GPT-OSS 20B on a 16 GB Modalix DevKit by offloading embedding data to local NVMe. Build an elegant editorial hardware cutaway / conceptual systems illustration, not just a product photograph.
+Input image 1: actual Modalix SoM identity reference. Preserve its green rectangular PCB, central silver SiMa package, black side memory packages, gold contacts and mounting holes; render faithfully in a slightly elevated perspective on the left. Do not invent ports, heatsinks, cables or direct physical SoM-to-drive sockets.
+Composition: pale ice-blue/off-white background, restrained navy typography, blue and teal schematic accents. Top title in large crisp type exactly "GPT-OSS 20B". Under it smaller text exactly "On 16 GB Modalix DevKits". Left lower half actual SoM on a subtly floating platform, label "Modalix SoM". Above SoM show a refined translucent layered model-compute illustration with small connected blocks, visually aligned to its central processor, with label "Model execution". Right half show realistic unbranded M.2 NVMe storage, on a separate platform, with a translucent stack of embedding-data tiles directly above it labelled "Embedding data". A broad elegant blue data path with small flowing tile motifs connects NVMe side to the model execution area, clearly a conceptual logical data flow, with callout exactly "NVMe embedding offload". Under NVMe label exactly "Local NVMe". Include generous negative space, strong clear hierarchy, large labels, subtle shadows, precise premium 3D + infographic treatment. Make the split between model execution and embedding storage obvious, without implying all model weights are on NVMe or all of a 20B model fits in RAM. No performance numbers, no speed claims, no OpenAI logo, no huge futuristic neon holograms, no decorative chat bubbles, no extra text, no watermark.

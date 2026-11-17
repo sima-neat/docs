@@ -15,14 +15,15 @@ sidebar_position: 4
 本文使用以下術語：
 
 - **板卡**：SoM DevKit 或 PCIe 卡。
-- **主機**：透過 TFTP 伺服器提供啟動映像檔的 Ubuntu 或 macOS 電腦。
+- **主機**：執行 TFTP 伺服器的 Ubuntu、macOS 或 Windows 電腦。在 Windows 上，請在 **Windows 子系統 Linux 版（Windows Subsystem for Linux，WSL）** 的 Ubuntu 環境中安裝並執行 `sima-cli`。原生 Windows 環境不支援 NetBoot。開始前請依照 [WSL 網路設定說明](/hardware/getting-started/firmware-update/net-boot#windows-hosts)操作。
 - **燒錄**：將系統映像寫入板卡的儲存空間。
 
 ## 在您開始之前
 
 - 備份您從板卡上需要的檔案和設定。
 - 請確認板卡已連線至網際網路，以便進行 2.1.3 版的更新。
-- 請確認主機已連上網際網路，以便進行 CLI 更新和下載映像檔。
+- 對於線上轉換，請確保主機具有網路連線，以便進行 CLI 更新和映像檔下載。
+- 如果主機在轉換過程中無法連線到網際網路，請使用第 3 節中的離線程序。
 - 請在主機上使用 **sima-cli 2.1.19 或更高版本**。如果主機可以存取網際網路，`sima-cli` 會自動更新到最新版本。
 - 準備好板卡與主機之間的乙太網路連線。
 - 如果可以，請準備好序列連接，以便監控板卡。
@@ -70,6 +71,7 @@ curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
 2. 在主機上啟用網際網路共用：
    - **Ubuntu**：請依照 [網路設定](/hardware/getting-started/standalone-mode/network) 中的「共享連線」程序操作。
    - **macOS**：啟用乙太網路介面的網際網路共用功能，該介面連接到板卡上。
+   - **使用 WSL 的 Windows**：使用下方的同一網路連線方式，或在 Windows 中設定連接板卡的乙太網路介面卡以共用網際網路。
 
 或者，將兩個系統連接到同一個網路。主機必須能夠連線到板卡。板卡必須能夠連線到主機的 TFTP 伺服器。
 
@@ -83,6 +85,8 @@ curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
    ```bash
    sima-cli serial
    ```
+
+   在 Windows 上也可以用 Windows 序列埠用戶端開啟主控台。請參閱[序列連線](/hardware/getting-started/setup-serial)。
 
 3. 登入板卡。
 4. 請在**板卡上**執行這個指令：
@@ -131,22 +135,61 @@ PCIe 卡上的序列埠可能不易觸及。如果您無法連接序列線，請
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
-這個指令會在主機上啟動一個 TFTP 伺服器。它會指示板卡從該伺服器啟動。然後，`--autoflash` 選項會自動將映像檔寫入板卡。
+:::tip Ubuntu 與 WSL 主機
+在 Ubuntu（包括 WSL 的 Ubuntu 環境）上，TFTP 伺服器使用需要特權的 UDP 連接埠 69，因此請使用 `sudo` 執行 `sima-cli`。
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+將 `{ip}` 替換為板卡的 IP 位址。
+:::
+
+此指令會在主機上啟動 TFTP 伺服器。請確認 `sima-cli` 顯示的板卡及 TFTP 伺服器位址，再同意啟動 NetBoot。板卡完成網路開機且 SSH 就緒後，`--autoflash` 會寫入映像檔，並排定重新啟動以從 eMMC 開機。
 
 在程序完成之前，請保持主機終端視窗開啟。請保持網路連線，並確保板卡已開啟電源。
 
-## 4. 重新啟動板卡。
+### 離線轉換
 
-1. 請等待 `sima-cli` 指示您重新啟動板卡。
-2. 重新啟動板卡。
-3. 請等待板卡啟動。
-4. 透過序列埠或 SSH 連接到板卡上。
-5. 請檢查**板卡上**的韌體版本：
+當 netboot 主機無法連線到網際網路時，請使用此程序。板卡必須已執行最新的 2.1.3 韌體。
+
+在您斷開主機的連線之前，請安裝最新的 `sima-cli`，並下載這兩個檔案：
+
+```bash
+mkdir images && cd images
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/elxr-palette-modalix-3.0.0-arm64.img.gz
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/modalix-tftp-boot-minimal.tar.gz
+cd ..
+```
+
+您也可以在另一部電腦上下載這些檔案。將 `images` 目錄複製到網路啟動主機。網路啟動主機必須已安裝最新的 `sima-cli`。
+
+請保持這兩個檔案的壓縮狀態。依照第 2 節的說明，將板卡連接到主機。離線轉換不需要網際網路共用。
+
+從包含 `images` 的目錄中，在主機上執行以下指令：
+
+```bash
+sima-cli bootimg --netboot --images images
+```
+
+在 Ubuntu 或 WSL 的 Ubuntu 環境中，執行以下指令。
+
+```bash
+sudo "$(which sima-cli)" bootimg --netboot --images images
+```
+
+這個指令會使用本機檔案來啟動 TFTP 伺服器。請依照 [網路開機恢復](/hardware/getting-started/firmware-update/net-boot) 中的板卡啟動和燒錄步驟進行操作。然後繼續執行下方第 4 節的說明。
+
+## 4. 重新啟動後確認板卡狀態
+
+1. 等待 `sima-cli` 回報燒錄完成並已排定重新啟動。如果您手動燒錄，請在[網路開機復原](/hardware/getting-started/firmware-update/net-boot)所述的重新啟動提示中輸入 `y`。
+2. 板卡啟動後，透過序列埠或 SSH 連線。
+3. 請檢查**板卡上**的韌體版本：
 
    ```bash
    cat /etc/buildinfo
    ```
 
-6. 請確認版本為 **3.0.0** 後，再繼續進行系統設定。
+4. 請確認版本為 **3.0.0** 後，再繼續進行系統設定。
 
 對於 PCIe 主機系統，請依照 [PCIe 驅動程式安裝](/hardware/getting-started/pcie-mode/driver-installation) 的步驟來設定主機驅動程式。

@@ -1,0 +1,92 @@
+name: Release Announcement Pages
+
+run-name: Release announcements — ${{ github.ref_name }} (${{ github.event_name }})
+
+on:
+  pull_request:
+    branches: [develop, main]
+    paths:
+      - 'release-announcement/**'
+      - 'scripts/check-release-announcements.py'
+      - '.github/workflows/release-announcement-pages.yml'
+  push:
+    branches: [develop, main]
+    paths:
+      - 'release-announcement/**'
+      - 'scripts/check-release-announcements.py'
+      - '.github/workflows/release-announcement-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate release announcements
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Restrict publication to develop or main
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          set -euo pipefail
+          case "${GITHUB_REF}" in
+            refs/heads/develop|refs/heads/main) ;;
+            *) echo 'Publication requires the develop or main branch.' >&2; exit 1 ;;
+          esac
+
+      - name: Check out selected revision
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+
+      - name: Validate local links and benchmark exports
+        run: python3 scripts/check-release-announcements.py
+
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' script; do
+            node --check "${script}"
+          done < <(find release-announcement -type f -name '*.js' -print0)
+
+      - name: Upload versioned site
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: release-announcement
+
+  deploy:
+    name: Publish release announcements
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main')
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: release-announcement-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Deploy selected revision
+        id: deployment
+        uses: actions/deploy-pages@v4

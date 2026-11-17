@@ -58,6 +58,6 @@ npm run clean
 
 `.github/workflows/vulcan-docs.yml` builds the site on Vulcan and publishes the generated static output to the sysdoc S3 bucket for the selected environment.
 
-- Pushes to `develop` and `main` deploy to staging.
-- Manual workflow dispatch supports `dev`, `stg`, and `prod`.
-- Production deployment is restricted to `main`.
+- Successful builds from pushes to `develop` and `main` publish to staging automatically. Pushes to `vulcan-dev-sysdoc` publish to development.
+- To release to production, open **Actions → Vulcan SysDoc → Run workflow**, select the `main` branch, and choose `prod`. This builds the selected revision with production configuration and publishes it after the build succeeds.
+- Manual runs also support `dev` and `stg` for previewing a branch.

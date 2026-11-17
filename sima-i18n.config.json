@@ -4,8 +4,8 @@
   "manifest": "i18n/translation-sources.json",
   "excludedPrefixes": [],
   "canonicalTerms": [
-    "Palette Neat Library", "Palette Neat", "Neat SDK", "Neat Library",
-    "Neat Examples", "Model Compiler", "Model Zoo", "Modalix", "DevKit Sync",
+    "Palette SDK", "Neat Library",
+    "Neat Examples", "Model Compiler", "Model Zoo", "Modalix MLSoC", "Modalix", "DevKit Sync",
     "DevKit", "PyNeat", "Insight", "Sentinel", "LLiMa", "Hugging Face",
     "SiMa.ai", "GStreamer", "MLSoC", "eLxr", "Yocto", "sima-cli", "U-Boot",
     "BlueZ", "Bluetooth", "ROS 2", "NVMe", "PCIe", "MIPI", "Web Serial",

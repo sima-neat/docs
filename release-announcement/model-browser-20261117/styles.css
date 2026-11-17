@@ -1,0 +1,148 @@
+/* Model Browser announcement. Shared tokens and the header, buttons and footer come from ../brand.css and ../landing.css. */
+
+/* Hero: copy and the illustration, then the four catalog counts. */
+.mb-hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px 56px;align-items:center;padding:44px 6% 56px}
+.mb-back{display:inline-block;font-size:12px;color:var(--accent);margin-bottom:32px}
+.mb-back:hover{text-decoration:underline}
+.mb-hero .eyebrow{color:var(--muted)}
+.mb-hero h1{font-size:clamp(40px,5.2vw,76px);letter-spacing:-2.8px;line-height:1.08;margin:22px 0 18px}
+.mb-hero-line{font:500 clamp(20px,2.4vw,30px)/1.35 'Roboto',sans-serif;letter-spacing:-.6px;color:var(--accent);margin-bottom:20px}
+.mb-hero-description{max-width:540px;color:var(--muted);font-size:16px;line-height:1.75}
+.mb-hero-actions{display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-top:30px}
+.mb-hero-art{margin:0;min-width:0;width:100%;max-width:600px;justify-self:end}
+.mb-hero-art img{display:block;width:100%;height:auto;border-radius:8px}
+.mb-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:8px 0 0;padding-top:26px;border-top:1px solid var(--line)}
+.mb-stats dt{font-size:10px;letter-spacing:1.3px;color:var(--muted)}
+.mb-stats dd{font:500 clamp(40px,5vw,68px)/1.1 'Roboto',sans-serif;letter-spacing:-2.4px;margin:8px 0 0;font-variant-numeric:tabular-nums}
+.mb-stats>p{grid-column:1/-1;font-size:12px;color:var(--muted)}
+
+/* Every section: the same padding, the same heading block, then one row of content. */
+.mb-section{padding:72px 6%;border-top:1px solid var(--line)}
+.mb-tinted{background:var(--sage)}
+.mb-section .section-heading{margin-bottom:40px}
+.mb-section h2{font-size:clamp(32px,4.2vw,56px);line-height:1.13;letter-spacing:-1.8px;margin-top:16px}
+.mb-section .section-heading>p{max-width:340px}
+.mb-section .eyebrow{color:var(--accent)}
+.mb-section h3{font-size:22px;line-height:1.35;letter-spacing:-.5px}
+.mb-section code{font:500 .92em ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+
+/* One card style for every boxed block. */
+.mb-chart,.mb-highlights>div,.mb-start article{background:var(--cream);border:1px solid var(--line);border-radius:6px;padding:28px}
+
+/* Catalog: three points beside the screenshot. */
+.mb-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:56px;align-items:center}
+.mb-points{display:grid;gap:26px}
+.mb-points article{border-top:1px solid var(--line);padding-top:20px}
+.mb-points p{color:var(--muted);font-size:14px;line-height:1.8;margin-top:8px}
+.mb-shot{margin:0;min-width:0}
+.mb-shot a{display:block;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--sage);box-shadow:0 18px 50px #0b122014}
+.mb-shot img{display:block;width:100%;height:auto}
+
+/* Results: four tiles, then two charts of equal height. */
+.mb-highlights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:0 0 24px}
+.mb-highlights dt{font-size:14px;font-weight:550}
+.mb-highlights dt span{display:block;font-weight:400;font-size:10px;letter-spacing:.8px;color:var(--muted);margin-top:4px}
+.mb-highlights dd{font:500 clamp(34px,3.6vw,50px)/1.15 'Roboto',sans-serif;letter-spacing:-1.6px;margin:18px 0 10px;font-variant-numeric:tabular-nums}
+.mb-highlights small{font:400 13px 'Roboto',sans-serif;letter-spacing:0;color:var(--muted);margin-left:8px}
+.mb-highlights p{font-size:12px;line-height:1.7;color:var(--muted)}
+.mb-charts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:stretch}
+.mb-chart{margin:0;min-width:0}
+.mb-chart figcaption p,.mb-chart-foot{font-size:12px;color:var(--muted);margin-top:6px}
+.mb-chart-foot{margin-top:22px}
+.mb-bars{list-style:none;padding:0;margin:26px 0 0;display:grid;gap:16px}
+.mb-bars li{display:grid;grid-template-columns:minmax(0,170px) minmax(0,1fr) 46px;gap:14px;align-items:center;font-size:13px}
+.mb-bar-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mb-bar-track{display:block;height:16px}
+.mb-bar-fill{display:block;height:100%;min-width:3px;background:var(--sima-blue-text);border-radius:0 4px 4px 0}
+.mb-bar-value{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.mb-bars li:hover .mb-bar-fill{background:var(--sima-ink)}
+.mb-legend{list-style:none;display:flex;gap:8px 22px;flex-wrap:wrap;padding:0;margin:18px 0 6px;font-size:12px}
+.mb-legend li{display:flex;align-items:center;gap:8px}
+.mb-key{width:11px;height:11px;flex:none}
+.mb-key-yolo{border-radius:50%;background:var(--sima-blue-text)}
+.mb-key-detr{background:var(--sima-green);transform:rotate(45deg) scale(.82)}
+.mb-scatter{display:block;width:100%;height:auto;font-family:'Roboto',sans-serif}
+.mb-grid{stroke:var(--line);stroke-width:1}
+.mb-tick,.mb-axis{font-size:11px;fill:var(--muted)}
+.mb-dot{stroke:var(--cream);stroke-width:2}
+.mb-yolo{fill:var(--sima-blue-text)}
+.mb-detr{fill:var(--sima-green)}
+.mb-dot:hover{stroke:var(--ink)}
+.mb-point-label{font-size:11px;fill:var(--ink);paint-order:stroke;stroke:var(--cream);stroke-width:3px;stroke-linejoin:round}
+.mb-data{margin-top:14px;font-size:12px}
+.mb-data summary{cursor:pointer;color:var(--accent);min-height:32px;display:flex;align-items:center}
+.mb-table{overflow-x:auto;margin-top:8px}
+.mb-table table{width:100%;border-collapse:collapse;font-size:12px}
+.mb-table th,.mb-table td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+.mb-table thead th{font-weight:550;color:var(--muted);background:var(--sage)}
+.mb-table tbody th{font-weight:500}
+
+/* How: the five steps joined by arrows, then the repository beside one model folder. */
+.mb-path{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px}
+.mb-path li{position:relative;border-top:3px solid var(--sima-blue);padding-top:20px}
+.mb-path li:not(:last-child)::after{content:"→";position:absolute;top:-17px;right:-20px;font-size:20px;color:var(--sima-blue-text);background:var(--cream);padding:0 2px}
+.mb-step{font-size:11px;font-weight:600;color:var(--accent)}
+.mb-path h3{margin:6px 0 10px}
+.mb-path p{font-size:13px;line-height:1.75;color:var(--muted)}
+.mb-open{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;margin-top:56px;padding-top:48px;border-top:1px solid var(--line)}
+.mb-open h3{font-size:28px;letter-spacing:-.8px;margin-bottom:18px}
+.mb-lead{font-size:15px;line-height:1.8;color:var(--muted);max-width:520px}
+.mb-lead+.mb-lead{margin-top:14px}
+.mb-lead a,.mb-start a:not(.text-link){color:var(--accent);text-decoration:underline;text-underline-offset:4px}
+.mb-links{display:flex;gap:14px 32px;flex-wrap:wrap;margin-top:26px}
+.mb-tree{margin:0;min-width:0;background:var(--sima-ink);color:#e4ecf6;border-radius:6px;overflow:hidden}
+.mb-tree figcaption{padding:14px 22px;font:500 13px ui-monospace,SFMono-Regular,Menlo,monospace;border-bottom:1px solid #35465f;color:#bbc9dd}
+.mb-tree pre,.mb-code{margin:0;padding:20px 22px;overflow-x:auto;font:400 13px/1.9 ui-monospace,SFMono-Regular,Menlo,monospace}
+.mb-tree code,.mb-code code{font:inherit;color:inherit}
+.mb-tree b{font-weight:600;color:#fff}
+.mb-tree i{font-style:normal;color:#8fa3bf}
+
+/* Get started: two equal cards. */
+.mb-start{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+.mb-start article{min-width:0}
+.mb-start h3{margin:12px 0 16px}
+.mb-start ol{margin:0 0 16px;padding-left:20px;font-size:14px;line-height:1.9}
+.mb-start article>p:not(.eyebrow){font-size:14px;color:var(--muted);line-height:1.8}
+.mb-code{background:var(--sima-ink);color:#e4ecf6;border-radius:5px;margin-bottom:16px}
+.mb-start .text-link{margin-top:18px}
+
+.mb-notice{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;padding:48px 6%;background:#eceaf5;border-top:1px solid var(--line)}
+.mb-notice .eyebrow{color:var(--sima-purple)}
+.mb-notice h2{font-size:clamp(26px,3vw,38px);letter-spacing:-1px;line-height:1.2;margin-top:14px}
+.mb-notice p:not(.eyebrow){font-size:15px;line-height:1.8;margin-bottom:16px;max-width:620px}
+
+.mb-next{padding:52px 6%;display:flex;align-items:center;justify-content:space-between;gap:28px;border-top:1px solid var(--line)}
+.mb-next h2{font-size:30px;letter-spacing:-1px;margin-top:14px}
+.mb-next p:last-child{color:var(--muted);font-size:13px;margin-top:10px}
+
+/* On wide screens the content stops at 1400px, as on the landing page, so images do not outgrow the text. */
+@media(min-width:1550px){
+  .mb-hero,.mb-section,.mb-notice,.mb-next,.site-footer{padding-left:calc((100vw - 1400px)/2);padding-right:calc((100vw - 1400px)/2)}
+}
+@media(max-width:1100px){
+  .mb-path{grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 24px}
+  .mb-path li:nth-child(3)::after{display:none}
+  .mb-highlights{grid-template-columns:1fr 1fr}
+  .mb-charts{grid-template-columns:1fr}
+}
+@media(max-width:900px){
+  .mb-hero{grid-template-columns:1fr;padding-top:30px}
+  .mb-hero-art{justify-self:start}
+  .mb-split,.mb-open,.mb-notice{grid-template-columns:1fr;gap:32px}
+}
+@media(max-width:700px){
+  .mb-hero h1{letter-spacing:-1.6px}
+  .mb-hero-description{font-size:15px}
+  .mb-stats{grid-template-columns:1fr 1fr}
+  .mb-section{padding:48px 6%}
+  .mb-section .section-heading{margin-bottom:28px}
+  .mb-section .section-heading>p{margin-top:18px}
+  .mb-chart,.mb-highlights>div,.mb-start article{padding:20px}
+  .mb-bars li{grid-template-columns:minmax(0,132px) minmax(0,1fr) 40px;gap:10px;font-size:12px}
+  .mb-path{grid-template-columns:1fr;gap:24px}
+  .mb-path li::after{display:none}
+  .mb-highlights,.mb-start{grid-template-columns:1fr}
+  .mb-open{margin-top:40px;padding-top:36px}
+  .mb-next{flex-direction:column;align-items:start}
+  .mb-tree pre,.mb-code{font-size:12px;padding:16px}
+}

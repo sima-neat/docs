@@ -1,6 +1,6 @@
 ---
 name: sima-environment-setup
-description: Use when setting up a SiMa.ai development environment from scratch — installing sima-cli, authenticating to the SiMa Developer Portal, installing the Palette Neat SDK and Model Compiler, pairing a Modalix DevKit, compiling a model to an MPK package, and building or running NEAT C++/Python and GenAI/LLiMa applications. Do not use for Neat Library application design or API selection (use neat-application-builder), for hardware bring-up such as serial, network, or firmware procedures (follow the hardware docs), or for repository maintenance.
+description: Use when setting up a SiMa.ai development environment from scratch — installing sima-cli, authenticating to the SiMa Developer Portal, installing the Palette SDK and Model Compiler, pairing a Modalix DevKit, compiling a model to an MPK package, and building or running NEAT C++/Python and GenAI/LLiMa applications. Do not use for Neat Library application design or API selection (use neat-application-builder), for hardware bring-up such as serial, network, or firmware procedures (follow the hardware docs), or for repository maintenance.
 ---
 
 # SiMa Environment Setup

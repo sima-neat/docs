@@ -15,14 +15,15 @@ sidebar_position: 4
 このドキュメントでは、以下の用語を使用します。
 
 - **ボード**: SoM DevKit または PCIe カード。
-- **ホスト**: TFTPサーバーを通じてブートイメージを提供する、UbuntuまたはmacOSコンピューター。
+- **ホスト**: TFTP サーバーを実行する Ubuntu、macOS、または Windows コンピューター。Windows では、**Windows Subsystem for Linux (WSL)** 上の Ubuntu に `sima-cli` をインストールして実行します。ネイティブ Windows での NetBoot には対応していません。開始前に [WSL のネットワーク設定](/hardware/getting-started/firmware-update/net-boot#windows-hosts)を参照してください。
 - **フラッシュ**: システムイメージをボードのストレージに書き込みます。
 
 ## 始める前に
 
 - ボードから必要なファイルと設定をバックアップしてください。
 - 2.1.3のアップデートを行う前に、ボードがインターネットに接続されていることを確認してください。
-- CLIのアップデートやイメージのダウンロードのために、ホストがインターネットに接続されていることを確認してください。
+- オンライン変換を行う場合は、ホストがCLIの更新とイメージのダウンロードのためにインターネットにアクセスできることを確認してください。
+- 変換中にホストがインターネットにアクセスできない場合は、第3項のオフライン手順を使用してください。
 - ホスト上で、**sima-cli 2.1.19 以降のバージョン**を使用してください。インターネットに接続されている環境であれば、`sima-cli` は自動的に最新バージョンに更新されます。
 - ボードとホストの間にイーサネット接続を確立してください。
 - 可能であれば、ボードを監視するためのシリアル接続を準備してください。
@@ -70,6 +71,7 @@ curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
 2. ホストでインターネット共有を有効にします。
    - **Ubuntu**: [ネットワーク設定](/hardware/getting-started/standalone-mode/network) に記載されている、共有接続の手順に従ってください。
    - **macOS**: ボードに接続されているイーサネットインターフェースに対して、インターネット共有機能を有効にします。
+   - **WSL を使用する Windows**: 下記の同一ネットワークを使用する方法を選ぶか、ボードを接続した Windows のイーサネットアダプターでインターネット共有を設定します。
 
 あるいは、両方のシステムを同じネットワークに接続します。ホストはボードにアクセスできる必要があります。また、ボードはホストのTFTPサーバーにアクセスできる必要があります。
 
@@ -83,6 +85,8 @@ curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash
    ```bash
    sima-cli serial
    ```
+
+   Windows では、Windows 用のシリアルクライアントでコンソールを開けます。[シリアル接続](/hardware/getting-started/setup-serial)を参照してください。
 
 3. ボードにログインしてください。
 4. このコマンドを**ボード上で実行**してください。
@@ -131,22 +135,61 @@ PCIe カードのシリアルポートは、アクセスしにくい場合があ
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
-このコマンドは、ホスト上でTFTPサーバーを起動します。これにより、ボードがそのサーバーからブートするように指示されます。その後、`--autoflash`オプションが、イメージをボードに自動的に書き込みます。
+:::tip Ubuntu および WSL ホスト
+WSL 上の Ubuntu を含め、Ubuntu では TFTP サーバーが特権 UDP ポート 69 を使用するため、`sudo` で `sima-cli` を実行します。
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+`{ip}` をボードの IP アドレスに置き換えてください。
+:::
+
+このコマンドはホストで TFTP サーバーを起動します。`sima-cli` に表示されるボードと TFTP サーバーのアドレスを確認し、NetBoot の開始を承認してください。ボードがネットワークから起動して SSH 接続が可能になると、`--autoflash` がイメージを書き込み、eMMC から起動するよう再起動を予約します。
 
 手順が完了するまで、ホストのターミナルを開いたままにしてください。ネットワークに接続した状態を維持し、ボードの電源を入れ続けます。
 
-## 4. ボードを再起動します。
+### オフライン変換
 
-1. `sima-cli` から再起動の指示があるまで待ってください。
-2. ボードを再起動してください。
-3. ボードが開始されるまでお待ちください。
-4. シリアルまたはSSH経由でボードに接続します。
-5. **ボード上の**ファームウェアバージョンを確認してください。
+ネットブートホストがインターネットに接続できない場合に、この手順を使用します。ボードには、最新の2.1.3ファームウェアがすでにインストールされている必要があります。
+
+ホストを切断する前に、最新の`sima-cli`をインストールし、両方のファイルをダウンロードしてください。
+
+```bash
+mkdir images && cd images
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/elxr-palette-modalix-3.0.0-arm64.img.gz
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/modalix-tftp-boot-minimal.tar.gz
+cd ..
+```
+
+別のコンピューターにファイルをダウンロードすることもできます。`images` ディレクトリを netboot ホストにコピーします。netboot ホストには、最新の `sima-cli` がすでにインストールされている必要があります。
+
+両方のファイルを圧縮したままにしておきます。セクション 2 に記載されているように、ボードをホストに接続します。オフライン変換にはインターネット共有は必要ありません。
+
+`images` が含まれるディレクトリから、ホストで次のコマンドを実行します。
+
+```bash
+sima-cli bootimg --netboot --images images
+```
+
+Ubuntu または WSL 上の Ubuntu では、次を実行します。
+
+```bash
+sudo "$(which sima-cli)" bootimg --netboot --images images
+```
+
+このコマンドは、ローカルファイルを使用してTFTPサーバーを起動します。[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot) に記載されているボードの起動とフラッシュの手順に従ってください。その後、以下のセクション4に進みます。
+
+## 4. 再起動後にボードを確認する
+
+1. 書き込みが完了し、再起動が予約されたと `sima-cli` に表示されるまで待ちます。手動で書き込んだ場合は、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)で説明されている再起動プロンプトで `y` を入力します。
+2. ボードが起動したら、シリアル接続または SSH で接続します。
+3. **ボード上の**ファームウェアバージョンを確認してください。
 
    ```bash
    cat /etc/buildinfo
    ```
 
-6. システム設定を進める前に、バージョンが**3.0.0**であることを確認してください。
+4. システム設定を進める前に、バージョンが**3.0.0**であることを確認してください。
 
 PCIe ホストシステムの場合、ホストドライバーを設定するには、[PCIe ドライバーのインストール](/hardware/getting-started/pcie-mode/driver-installation) の手順に従ってください。

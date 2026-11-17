@@ -25,7 +25,7 @@ The core (Neat framework) documentation.
 
 | Section | Topic | URL path |
 | --- | --- | --- |
-| Getting Started | Neat SDK (dev environment) | `/software/getting-started/dev-environment/` |
+| Getting Started | Palette SDK (dev environment) | `/software/getting-started/dev-environment/` |
 | Getting Started | Neat Library / PyNeat | `/software/getting-started/neat-library/` |
 | Getting Started | Version compatibility | `/software/getting-started/compatibility` |
 | Model Preparation | Compile a Model | `/software/compile-a-model/` |
@@ -40,7 +40,7 @@ The core (Neat framework) documentation.
 | Tools & Reference | Troubleshooting | `/software/reference/troubleshooting/` |
 | Release Notes | Per-release changes | `/software/release-notes/` |
 
-Inside the Neat SDK container, `/neat-resources/core-src` and the installed
+Inside the Palette SDK container, `/neat-resources/core-src` and the installed
 public headers are the authoritative API ground truth (see the
 `neat-application-builder` skill).
 

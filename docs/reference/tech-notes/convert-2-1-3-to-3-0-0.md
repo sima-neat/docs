@@ -15,14 +15,15 @@ These changes make the 3.0.0 system image incompatible with the 2.1 system image
 This note uses these terms:
 
 - **Board**: the SoM DevKit or PCIe card.
-- **Host**: the Ubuntu or macOS computer that supplies the boot image through a TFTP server.
+- **Host**: the Ubuntu, macOS, or Windows computer running the TFTP server. On Windows, install and run `sima-cli` in Ubuntu under **Windows Subsystem for Linux (WSL)**. Native Windows NetBoot is unsupported. Follow the [WSL networking instructions](/hardware/getting-started/firmware-update/net-boot#windows-hosts) before starting.
 - **Flash**: write a system image to the board's storage.
 
 ## Before You Start
 
 - Make a backup of the files and configuration that you need from the board.
 - Make sure the board has Internet access for the 2.1.3 update.
-- Make sure the host has Internet access for CLI updates and image downloads.
+- For online conversion, make sure the host has Internet access for CLI updates and image downloads.
+- If the host has no Internet access during conversion, use the offline procedure in Section 3.
 - Use **sima-cli 2.1.19 or later** on the host. With Internet access, `sima-cli` updates itself to the latest version.
 - Prepare an Ethernet connection between the board and the host.
 - If possible, prepare a serial connection to monitor the board.
@@ -70,6 +71,7 @@ A direct Ethernet connection with Internet sharing is recommended.
 2. Enable Internet sharing on the host:
    - **Ubuntu**: follow the shared-connection procedure in [Network Setup](/hardware/getting-started/standalone-mode/network).
    - **macOS**: enable Internet Sharing for the Ethernet interface connected to the board.
+   - **Windows with WSL**: use the same-network option below or configure sharing on the Windows Ethernet adapter connected to the board.
 
 Alternatively, connect both systems to the same network. The host must be able to reach the board. The board must be able to reach the host's TFTP server.
 
@@ -83,6 +85,8 @@ With Internet sharing enabled, the host assigns an IP address to the board. Use 
    ```bash
    sima-cli serial
    ```
+
+   On Windows, you can open the serial console with a Windows serial client as described in [Serial Connection](/hardware/getting-started/setup-serial).
 
 3. Log in to the board.
 4. Run this command **on the board**:
@@ -131,22 +135,61 @@ Run the commands in this section **on the host**.
    sima-cli bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
    ```
 
-The command starts a TFTP server on the host. It instructs the board to boot from that server. The `--autoflash` option then writes the image to the board automatically.
+:::tip Ubuntu and WSL hosts
+In Ubuntu, including Ubuntu under WSL, run `sima-cli` with `sudo` because the TFTP server uses privileged UDP port 69:
+
+```bash
+sudo "$(which sima-cli)" bootimg -v 3.0.0 --netboot --devkit {ip} --autoflash
+```
+
+Replace `{ip}` with the board's IP address.
+:::
+
+The command starts a TFTP server on the host. Confirm the board and TFTP server addresses shown by `sima-cli`, then approve the prompt to start NetBoot. Once the board has booted over the network and SSH is ready, `--autoflash` writes the image and schedules a reboot into eMMC.
 
 Keep the host terminal open until the procedure is complete. Keep the network connected and the board powered on.
 
-## 4. Reboot the Board
+### Offline Conversion
 
-1. Wait for `sima-cli` to tell you to reboot the board.
-2. Reboot the board.
-3. Wait for the board to start.
-4. Connect to the board through serial or SSH.
-5. Check the firmware version **on the board**:
+Use this procedure when the netboot host has no Internet access. The board must already run the latest 2.1.3 firmware.
+
+Before you disconnect the host, install the latest `sima-cli` and download both files:
+
+```bash
+mkdir images && cd images
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/elxr-palette-modalix-3.0.0-arm64.img.gz
+sima-cli download https://docs.sima.ai/pkg_downloads/SDK3.0.0/devkit/modalix/elxr/modalix-tftp-boot-minimal.tar.gz
+cd ..
+```
+
+You can also download the files on another computer. Copy the `images` directory to the netboot host. The netboot host must already have the latest `sima-cli` installed.
+
+Keep both files compressed. Connect the board to the host as described in Section 2. Internet sharing is not required for offline conversion.
+
+From the directory that contains `images`, run this command on the host:
+
+```bash
+sima-cli bootimg --netboot --images images
+```
+
+On Ubuntu or Ubuntu under WSL, run:
+
+```bash
+sudo "$(which sima-cli)" bootimg --netboot --images images
+```
+
+The command uses the local files to start the TFTP server. Follow the board boot and flashing steps in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot). Then continue with Section 4 below.
+
+## 4. Verify the Board After Reboot
+
+1. Wait for `sima-cli` to report that flashing is complete and the reboot has been scheduled. If you flashed manually, answer `y` at the reboot prompt described in [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+2. After the board starts, connect through serial or SSH.
+3. Check the firmware version **on the board**:
 
    ```bash
    cat /etc/buildinfo
    ```
 
-6. Make sure the version is **3.0.0** before you continue with system setup.
+4. Make sure the version is **3.0.0** before you continue with system setup.
 
 For PCIe host systems, follow [PCIe Driver Installation](/hardware/getting-started/pcie-mode/driver-installation) to set up the host driver.
