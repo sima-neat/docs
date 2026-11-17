@@ -3,8 +3,14 @@
   DevKit Quick Start Guide.
 
   Flow: product choice -> package -> interfaces -> inside -> local/remote setup
-  -> prepare for development (portal, sima-cli, install Neat) -> run Palette
-  Neat -> troubleshooting.
+  -> set up the DevKit (Internet, sima-cli on the DevKit, network, NVMe,
+  firmware version and update) -> prepare for development (portal, sima-cli,
+  install Neat) -> run Palette SDK -> troubleshooting.
+
+  The "Set Up the DevKit" step LINKS to the hardware pages under
+  developer.sima.ai/hardware/... (Network Setup, NVMe Storage, Firmware Update)
+  for the full procedures. Keep its commands in step with those pages. Each
+  command block carries an "On the host" or "On the DevKit" label.
 
   This guide LINKS to the Neat install and model pages in the core software docs
   (developer.sima.ai/software/...) rather than restating their steps, so the two
@@ -72,6 +78,8 @@
             data-section="local">Local Setup</button>
           <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
             data-section="remote">Remote Setup</button>
+          <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
+            data-section="devkit-setup">Set Up the DevKit</button>
           <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
             data-section="develop">Prepare for Development</button>
           <button class="nav-btn w-full text-left px-4 py-2 rounded-md hover:bg-blue-100 transition"
@@ -390,10 +398,203 @@ Microphone, Camera, etc.)"></div>
             <div class="mt-8 flex justify-end">
               <button
                 class="next-btn bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-2 rounded-lg transition"
-                data-next="develop">
-                Next: Prepare for Development →
+                data-next="devkit-setup">
+                Next: Set Up the DevKit →
               </button>
             </div>
+          </div>
+        </section>
+
+        <!-- Set Up the DevKit -->
+        <section id="section-devkit-setup" class="content-section hidden text-center" data-flow="devkit">
+          <h1 class="text-3xl font-semibold mb-4 text-blue-800">Set Up the DevKit</h1>
+          <p class="text-gray-700 mb-6">
+            Get the DevKit online, install <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli</code>
+            on it, check its storage, and make sure it runs the latest firmware. Each command is labelled with where it
+            runs: <span class="env-label env-host">On the host</span> is your laptop or PC, and
+            <span class="env-label env-devkit">On the DevKit</span> is an SSH session or the serial console on the DevKit.
+          </p>
+
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 text-left space-y-6">
+            <!-- Step 1 -->
+            <div>
+              <h3 class="text-blue-700 font-semibold mb-1">1️⃣ Connect the DevKit to the Internet</h3>
+              <p class="text-gray-700 mb-2">
+                The DevKit needs Internet access to install <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli</code>
+                and firmware updates. Choose one connection:
+              </p>
+              <ul class="list-disc pl-6 space-y-2 text-gray-700">
+                <li>
+                  <strong>Network with DHCP:</strong> connect the DevKit’s Ethernet port to a router or switch that has
+                  Internet access. The DevKit gets an IP address automatically.
+                </li>
+                <li>
+                  <strong>Direct Ethernet to your host:</strong> connect the DevKit’s Ethernet port straight to the host
+                  (use a USB-to-Ethernet adapter if needed). On firmware 3.0, the DevKit falls back to a link-local
+                  <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">169.254.x.x</code> address. This
+                  gives local access only, with no Internet, unless you also share the host’s connection.
+                </li>
+                <li>
+                  <strong>Share the host’s Internet connection:</strong> connect the DevKit directly to the host, then
+                  share the host’s connection over that Ethernet port.
+                  <ul class="list-disc pl-6 mt-1 space-y-1">
+                    <li>
+                      <strong>Ubuntu:</strong> open <strong>Settings → Network → Wired</strong>, edit the connection for
+                      that port, set <strong>IPv4</strong> to <strong>Shared to other computers</strong>, then turn the
+                      connection off and on. Ubuntu normally uses
+                      <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">10.42.0.0/24</code> for the
+                      shared network.
+                    </li>
+                    <li>
+                      <strong>macOS:</strong> enable Internet Sharing for the Ethernet interface connected to the DevKit.
+                    </li>
+                  </ul>
+                  The DevKit must use DHCP to get an address from the shared connection.
+                </li>
+              </ul>
+              <p class="text-gray-700 mt-2">
+                For every option, how to find the DevKit’s IP address, and how to test the connection, see
+                <a href="https://developer.sima.ai/hardware/getting-started/standalone-mode/network#share-the-hosts-internet-connection"
+                  target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Network
+                  Setup: Share the Host’s Internet Connection</a>.
+              </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div>
+              <h3 class="text-blue-700 font-semibold mb-1">2️⃣ Install sima-cli on the DevKit</h3>
+              <p class="text-gray-700 mb-2">
+                Install or upgrade <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli</code>
+                on the DevKit itself. The commands in the next steps need the latest version.
+              </p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>curl -fsSL https://artifacts.neat.sima.ai/sima-cli/linux-mac.sh | bash</code></pre>
+              <p class="text-gray-700 mt-2 mb-1">Open a new shell or log in again, then verify the install:</p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>sima-cli --version</code></pre>
+              <p class="text-gray-700 mt-2">
+                See the <a href="https://developer.sima.ai/software/tools/sima-cli/" target="_blank"
+                  rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">sima-cli Installation
+                  Guide</a> for other options.
+              </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div>
+              <h3 class="text-blue-700 font-semibold mb-1">3️⃣ Change Network Settings with sima-cli</h3>
+              <p class="text-gray-700 mb-2">
+                To switch the DevKit between DHCP and a static IP address without rebooting, open the network
+                configuration menu:
+              </p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>sima-cli network</code></pre>
+              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-900 mt-2">
+                <strong>Note:</strong> Changing the IP address can disconnect your SSH session. Use the serial console,
+                or reconnect with the new address.
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div>
+              <h3 class="text-blue-700 font-semibold mb-1">4️⃣ Check the NVMe Drive</h3>
+              <p class="text-gray-700 mb-2">
+                The Modalix DevKit includes a 500 GB NVMe drive. Once formatted, it is mounted at
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">/media/nvme</code>. To verify the
+                mount and see storage usage, run:
+              </p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>df -h</code></pre>
+              <p class="text-gray-700 mt-2 mb-1">
+                If <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">/media/nvme</code> is not listed,
+                remount the drive. If the drive has not been formatted yet, format it instead. Formatting erases the
+                drive.
+              </p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>sima-cli nvme remount
+sima-cli nvme format</code></pre>
+              <p class="text-gray-700 mt-2">
+                Both commands add an <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">/etc/fstab</code>
+                entry so the drive mounts automatically at boot. See
+                <a href="https://developer.sima.ai/hardware/getting-started/standalone-mode/nvme-storage" target="_blank"
+                  rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">NVMe Storage</a>.
+              </p>
+            </div>
+
+            <!-- Step 5 -->
+            <div>
+              <h3 class="text-blue-700 font-semibold mb-1">5️⃣ Check the Firmware Version</h3>
+              <p class="text-gray-700 mb-2">See which firmware release the DevKit runs:</p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>cat /etc/buildinfo</code></pre>
+              <p class="text-gray-700 mt-2">
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">SIMA_BUILD_VERSION</code> is the
+                release. <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">DISTRO</code> is the
+                operating system: <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">eLxr</code>, or
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">poky</code> for the older Yocto
+                firmware.
+              </p>
+            </div>
+
+            <!-- Step 6 -->
+            <div>
+              <h3 class="text-blue-700 font-semibold mb-1">6️⃣ Update to the Latest Release</h3>
+              <p class="text-gray-700 mb-2">
+                With no version given, <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli update</code>
+                downloads and installs the latest general availability (GA) release. It needs a SiMa Developer Portal
+                account: run <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">sima-cli login</code>
+                first (see <em>Prepare for Development</em>, step 1).
+              </p>
+              <div><span class="env-label env-devkit">On the DevKit</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>sima-cli update</code></pre>
+              <p class="text-gray-700 mt-2 mb-1">
+                On eLxr 3.0 or later, you can also start the update from the host:
+              </p>
+              <div><span class="env-label env-host">On the host</span></div>
+              <pre
+                class="bg-white border border-gray-200 rounded-md p-3 text-sm overflow-x-auto mt-1"><code>sima-cli update --ip &lt;devkit-ip&gt;</code></pre>
+              <p class="text-gray-700 mt-2">
+                Follow the prompts, reboot when instructed, then run
+                <code class="bg-gray-100 px-1 py-0.5 rounded text-sm text-blue-700">cat /etc/buildinfo</code> again to
+                confirm the new version. See
+                <a href="https://developer.sima.ai/hardware/getting-started/firmware-update/sima-cli" target="_blank"
+                  rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Update with sima-cli</a>.
+              </p>
+              <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-sm text-yellow-900 mt-2">
+                <strong>Older firmware needs a one-time conversion first:</strong>
+                <ul class="list-disc pl-6 mt-1 space-y-1">
+                  <li>
+                    <strong>1.7 (Yocto, <code>DISTRO = poky</code>):</strong> follow
+                    <a href="https://developer.sima.ai/hardware/reference/tech-notes/elxr-conversion" target="_blank"
+                      rel="noopener noreferrer" class="underline font-medium">Convert to eLxr</a>.
+                  </li>
+                  <li>
+                    <strong>2.x:</strong> <code>sima-cli update</code> cannot move directly to 3.0. Follow
+                    <a href="https://developer.sima.ai/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0"
+                      target="_blank" rel="noopener noreferrer" class="underline font-medium">Convert from 2.1.3 to
+                      3.0.0</a> once, then use <code>sima-cli update</code> for later releases.
+                  </li>
+                </ul>
+                If the DevKit does not boot, or you need a release other than the latest, see
+                <a href="https://developer.sima.ai/hardware/getting-started/firmware-update" target="_blank"
+                  rel="noopener noreferrer" class="underline font-medium">Firmware Update</a>.
+              </div>
+            </div>
+          </div>
+
+          <!-- Next Step Button -->
+          <div class="mt-8 flex justify-end">
+            <button
+              class="next-btn bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+              data-next="develop">
+              Next: Prepare for Development →
+            </button>
           </div>
         </section>
 
@@ -626,6 +827,13 @@ Microphone, Camera, etc.)"></div>
                     class="inline-block text-blue-600 hover:underline font-medium">
                     DevKit 1.7 → 2.0 eLxr Conversion Guide
                   </a>
+                  <p>
+                    A DevKit running 2.x firmware cannot update directly to 3.0. Follow
+                    <a href="https://developer.sima.ai/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0"
+                      target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline font-medium">Convert
+                      from 2.1.3 to 3.0.0</a> once. To check the version and update a DevKit that is already on 3.0,
+                    see steps 5️⃣ and 6️⃣ of <strong>Set Up the DevKit</strong> in this guide.
+                  </p>
                 </div>
 
               </div>
