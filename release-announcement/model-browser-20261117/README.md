@@ -1,9 +1,9 @@
-# Model Browser 2026.11 announcement, November 17, 2026
+# Model Browser announcement, November 17, 2026
 
-Draft announcement of the Palette Model Browser. Model Browser releases are named
-by date, `<year>.<month>`, because nothing is packaged or installed. The same
-name is a git tag on `sima-neat/models` that marks the scripts and declarations
-behind the numbers of the announcement. The page keeps `noindex` until
+Draft announcement of the Palette Model Browser. The Model Browser has no
+version numbers or tags, because its catalog is updated continuously. An
+announcement is named by its date and can group models added at different times.
+The page keeps `noindex` until
 it is published, and the release timeline does not link to it yet.
 
 ## Where the numbers come from
@@ -33,9 +33,6 @@ Object Detection.
 
 ## Before publishing
 
-- Create the tag `2026.11` on `sima-neat/models`, on the commit the live site was
-  built from when the numbers were read. On November 17 that was `d0b3f921` on
-  `main`. The page links to the tag, and the link is broken until it exists.
 - Confirm the Model Zoo wording with the owner of the Model Zoo page.
 - Add the entry to the release timeline in `../index.html`.
 - Remove `<meta name="robots" content="noindex">`.
