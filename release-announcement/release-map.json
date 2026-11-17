@@ -18,7 +18,7 @@
       "announcement": "3.0.0.2/",
       "versions": {
         "firmware": ["3.0.1"],
-        "sima_cli": ["2.1.22"],
+        "sima_cli": ["2.1.23"],
         "sdk": ["3.0.0.2"],
         "model_compiler": ["3.0.0.2"],
         "core": ["0.6.2"],

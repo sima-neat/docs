@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="../landing.css">
   <link rel="stylesheet" href="../3.0.0.1/styles.css?v=12">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="../layout.css?v=2">
 </head>
 <body>
 <a class="skip-link" href="#release-overview">Skip to release notes</a>
@@ -35,18 +36,18 @@
     <a class="draft-back" href="../index.html#releases">All releases</a>
     <div class="release-hero-layout">
       <div>
-        <p class="eyebrow">RELEASE NOTES / PREVIEW</p>
+        <p class="eyebrow">RELEASE NOTES / NOVEMBER 17, 2026</p>
         <h1 id="release-title">Palette SDK 3.0.0.2</h1>
         <p class="draft-component-line">Neat 0.6.2 <span aria-hidden="true">·</span> Model Compiler 3.0.0.2</p>
         <p class="draft-description">Run Modalix examples with fewer setup steps, build vision pipelines that can label individual pixels, and retry mixed-precision compilations affected by the W8A16 fix.</p>
       </div>
       <img class="release-hero-image" src="assets/modalix-vision-hero.webp" width="1536" height="1024" fetchpriority="high" alt="Illustration of a Modalix module processing a factory image into a colored segmentation mask.">
     </div>
-    <div class="draft-versions" aria-label="Planned bundle versions">
+    <div class="draft-versions" aria-label="Release bundle versions">
       <div><span>PALETTE SDK</span><strong>3.0.0.2</strong></div>
       <div><span>MODEL COMPILER</span><strong>3.0.0.2</strong></div>
       <div><span>NEAT LIBRARY &amp; APPS</span><strong>0.6.2</strong></div>
-      <div><span>SIMA-CLI</span><strong>2.1.22</strong></div>
+      <div><span>SIMA-CLI</span><strong>2.1.23</strong></div>
       <div><span>ELXR PLATFORM SYSROOT</span><strong>3.0.1</strong></div>
     </div>
   </section>
@@ -95,7 +96,7 @@
 
   <section class="release-highlights apps-highlights" id="sima-cli" aria-labelledby="cli-title">
     <div class="section-heading">
-      <div><p class="eyebrow">SIMA-CLI 2.1.22</p><h2 id="cli-title">Find and download models from the terminal.</h2></div>
+      <div><p class="eyebrow">SIMA-CLI 2.1.23</p><h2 id="cli-title">Find and download models from the terminal.</h2></div>
       <p>Search the Model Browser catalog and download a compiled variant from the same terminal where you run your Modalix example. Both commands use the <code>main</code> catalog by default.</p>
     </div>
     <div class="release-benefit-list">
@@ -112,8 +113,8 @@
         <pre class="release-command"><code>sima-cli models download <span>--id yolo26m</span> <span>--variant w8a8</span></code></pre>
       </article>
     </div>
-    <p class="cli-recovery">sima-cli 2.1.22 also improves DevKit recovery. NetBoot keeps waiting while firmware downloads, and device sign-in shows its link and code in scripts and containers.</p>
-    <a class="compiler-changelog" href="https://github.com/sima-neat/sima-cli/releases/tag/v2.1.22">Read the sima-cli release notes</a>
+    <p class="cli-recovery">Update sima-cli on your host to 2.1.23 before SDK setup. SDK 3.0.0.2 now selects Model Compiler 3.0.0.2 on AMD64 and ARM64. On the public eLxr 3.0+ update path, omitting a version selects the published GA firmware release.</p>
+    <a class="compiler-changelog" href="https://github.com/sima-neat/sima-cli/releases/tag/v2.1.23">Read the sima-cli release notes</a>
   </section>
 
   <section class="release-highlights library-highlights" id="upgrade" aria-labelledby="upgrade-title">
