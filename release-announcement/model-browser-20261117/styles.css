@@ -9,9 +9,10 @@
 .mb-hero-line{font:500 clamp(20px,2.4vw,30px)/1.35 'Manrope',sans-serif;letter-spacing:-.6px;color:var(--accent);margin-bottom:20px}
 .mb-hero-description{max-width:540px;color:var(--muted);font-size:16px;line-height:1.75}
 .mb-hero-actions{display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-top:30px}
-.mb-hero-shot{margin:0;min-width:0}
-.mb-hero-shot a,.mb-shot a{display:block;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--sage);box-shadow:0 18px 50px #0b122014}
-.mb-hero-shot img,.mb-shot img{display:block;width:100%;height:auto}
+.mb-hero-art{margin:0;min-width:0}
+.mb-hero-art img{display:block;width:100%;height:auto;border-radius:8px}
+.mb-shot a{display:block;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--sage);box-shadow:0 18px 50px #0b122014}
+.mb-shot img{display:block;width:100%;height:auto}
 .mb-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px 40px;margin:8px 0 0;padding-top:26px;border-top:1px solid var(--line)}
 .mb-stats dt{font-size:10px;letter-spacing:1.3px;color:var(--muted)}
 .mb-stats dd{font:500 clamp(40px,5vw,68px)/1.1 'Manrope',sans-serif;letter-spacing:-2.4px;margin:8px 0 0;font-variant-numeric:tabular-nums}
@@ -56,6 +57,7 @@
 .mb-path{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px}
 .mb-path li{position:relative;border-top:3px solid var(--sima-blue);padding-top:20px}
 .mb-path li:not(:last-child)::after{content:"→";position:absolute;top:-17px;right:-22px;font-size:20px;color:var(--sima-blue-text);background:var(--cream);padding:0 2px}
+.mb-tinted .mb-path li:not(:last-child)::after{background:var(--sage)}
 .mb-step{font-size:11px;font-weight:600;color:var(--accent)}
 .mb-path h3{margin:6px 0 10px}
 .mb-path p{font-size:13px;line-height:1.75;color:var(--muted)}
@@ -65,7 +67,7 @@
 .mb-highlights{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin:0 0 32px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
 .mb-highlights>div{background:var(--cream);padding:24px 24px 26px}
 .mb-highlights dt{font-size:13px;font-weight:550}
-.mb-highlights dt span{font-weight:400;font-size:10px;letter-spacing:.8px;color:var(--muted);margin-left:6px}
+.mb-highlights dt span{display:block;font-weight:400;font-size:10px;letter-spacing:.8px;color:var(--muted);margin-top:4px}
 .mb-highlights dd{font:500 clamp(34px,3.6vw,50px)/1.15 'Manrope',sans-serif;letter-spacing:-1.6px;margin:14px 0 8px;font-variant-numeric:tabular-nums}
 .mb-highlights small{font:400 13px 'DM Sans',sans-serif;letter-spacing:0;color:var(--muted);margin-left:8px}
 .mb-highlights p{font-size:12px;color:var(--muted)}

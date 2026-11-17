@@ -20,7 +20,7 @@ them again before publishing, because the catalog changes with every merge to
 | 269 variants | the precisions listed for each model in the Table view, summed |
 | models by type | `model_type` of each catalog model |
 | result tiles, detection chart, language model chart | the Table view, which shows the first variant listed for each model |
-| YOLO26n-det power figures | the Performance section of its model page |
+| YOLO26n-det power figure | the Performance section of its model page |
 
 The detection chart leaves out YOLO-World, because its page reports the detector
 and the text encoder separately.
@@ -28,11 +28,15 @@ and the text encoder separately.
 ## Screenshots
 
 `assets/` holds three screenshots of the live site at 1440 and 2400 pixels wide:
-the catalog, the results on the YOLO26n-det page, and the Compare view for
-Object Detection.
+the catalog, the Accuracy section of the YOLO26x-pose page for W16A16, and the
+Compare view for Object Detection.
+
+`assets/hero-illustration.png` is a crop of a screenshot, 866 pixels wide. Replace
+it with the original illustration file before publishing.
 
 ## Before publishing
 
+- Replace `assets/hero-illustration.png` with the original illustration.
 - Confirm the Model Zoo wording with the owner of the Model Zoo page.
 - Add the entry to the release timeline in `../index.html`.
 - Remove `<meta name="robots" content="noindex">`.
