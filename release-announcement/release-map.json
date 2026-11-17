@@ -14,7 +14,7 @@
     {
       "id": "3.0.0.2",
       "status": "draft",
-      "release_date": null,
+      "release_date": "2026-11-17",
       "announcement": "3.0.0.2/",
       "versions": {
         "firmware": ["3.0.1"],
