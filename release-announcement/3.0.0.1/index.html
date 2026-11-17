@@ -10,10 +10,10 @@
   <link rel="icon" type="image/svg+xml" href="../3.0.0/assets/sima-logo.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;550;600;650&family=Manrope:wght@400;500;600;650&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../brand.css">
   <link rel="stylesheet" href="../landing.css">
-  <link rel="stylesheet" href="styles.css?v=11">
+  <link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
 <a class="skip-link" href="#release-overview">Skip to release notes</a>
@@ -21,11 +21,11 @@
   <a href="../index.html" aria-label="SiMa.ai Palette releases home"><img src="../3.0.0/assets/sima-logo.svg" alt="SiMa.ai" width="131" height="32"></a>
   <span class="header-divider" aria-hidden="true"></span><a class="journal-name" href="../index.html">Palette <span>Release journal</span></a>
   <nav aria-label="Release navigation"><a href="#insight">Insight</a><a href="#llima">GPT-OSS</a><a href="#neat-library">Neat Library</a><a href="#apps">Apps</a><a href="#model-compiler">Model Compiler</a></nav>
-  <a class="header-link" href="../index.html#releases">All releases <span aria-hidden="true">←</span></a>
+  <a class="header-link" href="../index.html#releases">All releases</a>
 </header>
 <main>
   <section class="draft-hero" id="release-overview" aria-labelledby="draft-title">
-    <a class="draft-back" href="../index.html#releases">← All releases</a>
+    <a class="draft-back" href="../index.html#releases">All releases</a>
     <p class="eyebrow">NOVEMBER 7, 2026 / RELEASE NOTES</p>
     <h1 id="draft-title">Palette SDK 3.0.0.1</h1>
     <p class="draft-component-line">Neat 0.6.1 <span aria-hidden="true">·</span> Insight 0.0.11</p>
@@ -70,7 +70,7 @@
         </figure>
       </div>
       <p class="sr-only" id="insight-zoom-help">Hover for two seconds to magnify. With the image link focused, use arrow keys to move the lens and Escape to dismiss it. Select the image to open the full-size screenshot.</p>
-      <div class="insight-carousel-controls" hidden><span id="insight-slide-status" role="status" aria-live="polite" aria-atomic="true">1 / 6 · SDK Launchpad</span><span class="insight-enlarge-note"><span class="insight-zoom-hint">Hover 2 seconds to magnify · </span><span class="insight-touch-hint">Select an image for a </span><span>Full-size view ↗</span></span><div><button type="button" id="insight-prev" aria-label="Previous Insight feature">← Previous</button><button type="button" id="insight-next" aria-label="Next Insight feature">Next →</button></div></div>
+      <div class="insight-carousel-controls" hidden><span id="insight-slide-status" role="status" aria-live="polite" aria-atomic="true">1 / 6 · SDK Launchpad</span><span class="insight-enlarge-note"><span class="insight-zoom-hint">Hover 2 seconds to magnify · </span><span class="insight-touch-hint">Select an image for a </span><span>Full-size view</span></span><div><button type="button" id="insight-prev" aria-label="Previous Insight feature">← Previous</button><button type="button" id="insight-next" aria-label="Next Insight feature">Next →</button></div></div>
     </div>
   </section>
   <section class="gptoss-feature" id="llima" aria-labelledby="llima-title">
@@ -87,7 +87,7 @@
     <div class="gptoss-details"><article><p class="eyebrow">LOCAL STORAGE</p><h3>Offload embedding data.</h3><p>Use NVMe embedding offload with the compatible GPT-OSS 20B model. The validated setup uses local PCIe NVMe storage.</p></article><article><p class="eyebrow">RUNTIME FIX</p><h3>Get past startup failures.</h3><p>LLiMa 0.6.1 fixes a memory-allocation issue that could stop large models from loading when the model weights filled the device memory pool.</p></article><article><p class="eyebrow">TESTED CONFIGURATION</p><h3>Start with the validated setup.</h3><p>Model loading, server warm-up and a response-generation smoke test passed with A16W4 quantization and a 4,096-token context.</p></article></div>
   </section>
   <section class="release-highlights library-highlights" id="neat-library" aria-labelledby="library-title">
-    <div class="library-intro"><p class="eyebrow">03 / NEAT LIBRARY 0.6.1</p><h2 id="library-title">Keep your pipeline<br>moving.</h2><p>Resume after input pauses, move tensors efficiently, and read model results correctly.</p><a class="library-jump" href="#library-improvements">Explore runtime improvements <span aria-hidden="true">↓</span></a></div>
+    <div class="library-intro"><p class="eyebrow">03 / NEAT LIBRARY 0.6.1</p><h2 id="library-title">Keep your pipeline<br>moving.</h2><p>Resume after input pauses, move tensors efficiently, and read model results correctly.</p><a class="library-jump" href="#library-improvements">Explore runtime improvements</a></div>
     <aside class="library-actions" aria-labelledby="library-upgrade-title">
       <p class="eyebrow">WHEN UPDATING TO 0.6.1</p><h3 id="library-upgrade-title">Check your application.</h3>
       <ol>
@@ -119,11 +119,11 @@
       <article><p class="eyebrow">WHISPER</p><h3>Update activation and cache handling.</h3><p>The LLiMa 0.6.1 compiler changes how Whisper GELU activations are compiled. Reference tests showed lower numerical error. It also fixes the decoder-cache input order, which could corrupt transcription after the first word.</p><p class="compiler-action"><strong>What to do:</strong> Recompile Whisper models to get the activation change. For packages affected by the cache-order issue, regenerate and replace the decoder-cache ELF. The encoder, initialization and decoder pre/post ELFs can be kept.</p></article>
     </div>
     <div class="compiler-validation"><strong>Validation scope</strong><p>Compiler graph checks passed. Full transcription correctness on hardware has not been established for every affected model. Existing working Whisper packages already use the expected cache input order.</p></div>
-    <a class="compiler-changelog" href="https://github.com/sima-neat/model-compiler/compare/v3.0.0...v3.0.0.1" target="_blank" rel="noopener">View compiler changes <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a>
+    <a class="compiler-changelog" href="https://github.com/sima-neat/model-compiler/compare/v3.0.0...v3.0.0.1" target="_blank" rel="noopener">View compiler changes<span class="sr-only"> (opens in a new tab)</span></a>
   </section>
   <section class="draft-previous"><div><p class="eyebrow">PREVIOUS RELEASE</p><h2>Explore Palette 3.0.0.</h2><p>Read the existing feature story, demos and benchmarks.</p></div><a class="button primary" href="../3.0.0/">View 3.0.0 announcement <span aria-hidden="true">→</span></a></section>
 </main>
-<footer class="site-footer"><a href="../index.html" aria-label="SiMa.ai Palette releases home"><img src="../3.0.0/assets/sima-logo.svg" alt="SiMa.ai" width="131" height="32"></a><p>Physical AI. Moving forward.</p><div><a href="../index.html#releases">All releases ↑</a><a href="https://developer.sima.ai" target="_blank" rel="noopener">Developer Center ↗</a></div><small>© 2026 SiMa Technologies, Inc. All rights reserved.</small></footer>
+<footer class="site-footer"><p>Scaling Physical AI</p><small>© 2026 SiMa Technologies, Inc. All rights reserved.</small></footer>
 <script src="insight-carousel.js?v=5"></script>
 </body>
 </html>

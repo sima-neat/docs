@@ -94,7 +94,7 @@ Sources reviewed November 7, 2026:
 
 The GPT-OSS feature follows Insight, then Neat Library, Apps and Model Compiler.
 The artwork uses the supplied Modalix SoM photo and a conceptual NVMe/data-flow
-illustration. It is not a wiring guide. Labels are live HTML in Manrope, matching
+illustration. It is not a wiring guide. Labels are live HTML in Roboto, matching
 the page headings. Current background plates are
 `assets/gpt-oss-unlabelled-{836,1440}.jpg`; built-in generation and edit prompts
 are recorded in `assets/gpt-oss-design-prompt.md` and
