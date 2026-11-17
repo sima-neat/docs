@@ -9,7 +9,7 @@
 .mb-hero-line{font:500 clamp(20px,2.4vw,30px)/1.35 'Manrope',sans-serif;letter-spacing:-.6px;color:var(--accent);margin-bottom:20px}
 .mb-hero-description{max-width:540px;color:var(--muted);font-size:16px;line-height:1.75}
 .mb-hero-actions{display:flex;gap:28px;align-items:center;flex-wrap:wrap;margin-top:30px}
-.mb-hero-art{margin:0;min-width:0}
+.mb-hero-art{margin:0;min-width:0;width:100%;max-width:600px;justify-self:end}
 .mb-hero-art img{display:block;width:100%;height:auto;border-radius:8px}
 .mb-stats{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:8px 0 0;padding-top:26px;border-top:1px solid var(--line)}
 .mb-stats dt{font-size:10px;letter-spacing:1.3px;color:var(--muted)}
@@ -115,6 +115,10 @@
 .mb-next h2{font-size:30px;letter-spacing:-1px;margin-top:14px}
 .mb-next p:last-child{color:var(--muted);font-size:13px;margin-top:10px}
 
+/* On wide screens the content stops at 1400px, as on the landing page, so images do not outgrow the text. */
+@media(min-width:1550px){
+  .mb-hero,.mb-section,.mb-notice,.mb-next,.site-footer{padding-left:calc((100vw - 1400px)/2);padding-right:calc((100vw - 1400px)/2)}
+}
 @media(max-width:1100px){
   .mb-path{grid-template-columns:repeat(3,minmax(0,1fr));gap:32px 24px}
   .mb-path li:nth-child(3)::after{display:none}
@@ -123,6 +127,7 @@
 }
 @media(max-width:900px){
   .mb-hero{grid-template-columns:1fr;padding-top:30px}
+  .mb-hero-art{justify-self:start}
   .mb-split,.mb-open,.mb-notice{grid-template-columns:1fr;gap:32px}
 }
 @media(max-width:700px){
