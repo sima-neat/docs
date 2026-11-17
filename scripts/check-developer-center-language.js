@@ -154,10 +154,10 @@ const earlyAccessConstraints = {
   uk: ['застарілий', 'наявних клієнтів програми раннього доступу'],
 };
 const currentDevKitPositioning = {
-  ko: ['MLSoC Modalix를 평가', '엣지 AI 애플리케이션을 구축'],
-  ja: ['MLSoC Modalix の評価', 'エッジ AI アプリケーションの構築'],
-  'zh-Hant': ['評估 MLSoC Modalix', '建置邊緣 AI 應用程式'],
-  uk: ['оцінювання MLSoC Modalix', 'створення периферійних застосунків ШІ'],
+  ko: ['Modalix MLSoC를 평가', '엣지 AI 애플리케이션을 구축'],
+  ja: ['Modalix MLSoC の評価', 'エッジ AI アプリケーションの構築'],
+  'zh-Hant': ['評估 Modalix MLSoC', '建置邊緣 AI 應用程式'],
+  uk: ['оцінювання Modalix MLSoC', 'створення периферійних застосунків ШІ'],
 };
 const pcieTabLabels = {
   ko: ['인터페이스', '주요 기능'],
@@ -254,7 +254,7 @@ assert.equal(shellConfig.activeSectionForPath('/software/ja/getting-started/'), 
 assert.equal(shellConfig.withSiteRoot('/ja/hardware', '/docs/'), '/docs/ja/hardware');
 const rootedNavbarItems = shellConfig.navbarItems('/docs/');
 assert.equal(rootedNavbarItems.find((item) => item.key === 'hardware').href, '/docs/hardware');
-assert.equal(rootedNavbarItems.find((item) => item.key === 'models').href, 'https://huggingface.co/simaai');
+assert.equal(rootedNavbarItems.find((item) => item.key === 'models').href, '/docs/models/');
 assert.equal(shellConfig.deploymentSiteRoot('/zh-Hant/', 'zh-Hant'), '/');
 assert.equal(shellConfig.deploymentSiteRoot('/docs/zh-Hant/', 'zh-Hant'), '/docs/');
 assert.equal(shellConfig.deploymentSiteRoot('/docs/', 'en'), '/docs/');
@@ -620,7 +620,7 @@ for (const locale of ['ko', 'ja', 'zh-Hant', 'uk']) {
     path.join(docsRoot, `i18n/${locale}/docusaurus-plugin-content-docs/current/reference/tech-notes/ros2.mdx`),
     'utf8',
   );
-  assert.match(ros2Source, /sima-cli neat install ros@v3\.0\.0/);
+  assert.match(ros2Source, /sima-cli neat install ros2@v3\.0\.0/);
   assert.match(ros2Source, /sima-cli install tools\/ros2/);
   assert.match(ros2Source, /eLxr/);
   assert.match(ros2Source, /Yocto/);

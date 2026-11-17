@@ -1,7 +1,7 @@
 ---
 title: SiMa.ai 하드웨어 설명서
 sidebar_label: "플랫폼 개요"
-description: SiMa.ai MLSoC Modalix 제품에 대한 하드웨어 설정, 펌웨어 및 저수준 인터페이스입니다.
+description: SiMa.ai Modalix MLSoC 제품에 대한 하드웨어 설정, 펌웨어 및 저수준 인터페이스입니다.
 sidebar_position: 1
 slug: /
 ---
@@ -12,15 +12,15 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # SiMa.ai 하드웨어 설명서
 
-이 사이트는 SiMa.ai MLSoC Modalix 제품의 하드웨어 설정, 펌웨어 워크플로우 및 저수준 인터페이스에 대한 정보를 제공합니다. 소프트웨어, 머신 러닝 및 파이프라인 도구에 대한 설명서는 별도로 제공됩니다.
+이 사이트는 SiMa.ai Modalix MLSoC 제품의 하드웨어 설정, 펌웨어 워크플로우 및 저수준 인터페이스에 대한 정보를 제공합니다. 소프트웨어, 머신 러닝 및 파이프라인 도구에 대한 설명서는 별도로 제공됩니다.
 
 ## SiMa.ai 하드웨어 한눈에 보기 {#hardware-at-a-glance}
 
-SiMa.ai는 MLSoC Modalix를 칩, 모듈, 완제품 형태로 제공합니다. 보유하고 있거나 사용할 예정인 폼 팩터에서 시작하십시오.
+SiMa.ai는 Modalix MLSoC를 칩, 모듈, 완제품 형태로 제공합니다. 보유하고 있거나 사용할 예정인 폼 팩터에서 시작하십시오.
 
 | 제품 | 설명 | 시작 위치 |
 | --- | --- | --- |
-| MLSoC Modalix | 시스템 온 칩입니다. 직접 설계한 보드에 실장합니다. | [SoC로 구축하기](/hardware/design/chip-down) |
+| Modalix MLSoC | 시스템 온 칩입니다. 직접 설계한 보드에 실장합니다. | [SoC로 구축하기](/hardware/design/chip-down) |
 | Modalix SoM | SoC, LPDDR5 메모리, 전원부를 탑재한 모듈입니다. 캐리어 보드에 장착합니다. | [SoM으로 구축하기](/hardware/design/carrier-board) |
 | Modalix DevKit | Modalix SoM을 캐리어 보드에 장착하고 인클로저에 담은 평가 및 개발용 키트입니다. | [DevKit 평가](/hardware/getting-started) |
 | Modalix PCIe 카드 | 호스트 머신에 Modalix 추론 기능을 추가하는 하프 높이, 하프 길이 카드입니다. | [PCIe 모드](/hardware/getting-started/pcie-mode) |
@@ -40,23 +40,23 @@ SiMa.ai는 MLSoC Modalix를 칩, 모듈, 완제품 형태로 제공합니다. �
 
 보드가 부팅된 이후에는 두 방식 모두 동일한 시스템 소프트웨어를 사용합니다. [시스템 소프트웨어 빌드](/hardware/software)를 참조하십시오.
 
-## MLSoC Modalix에 대하여
+## Modalix MLSoC에 대하여
 
-**MLSoC Modalix**는 SiMa.ai의 2세대 머신 러닝 시스템 온 칩입니다. Arm Cortex-A65 애플리케이션 복합체, 고성능 **머신 러닝 가속기(MLA)**, 카메라 입력용 **이미지 신호 프로세서(ISP)**, 그리고 기존 비전 워크로드를 위한 **컴퓨터 비전 유닛(CVU)**를 단일 칩에 통합했습니다.
+**Modalix MLSoC**는 SiMa.ai의 2세대 머신 러닝 시스템 온 칩입니다. Arm Cortex-A65 애플리케이션 복합체, 고성능 **머신 러닝 가속기(MLA)**, 카메라 입력용 **이미지 신호 프로세서(ISP)**, 그리고 기존 비전 워크로드를 위한 **컴퓨터 비전 유닛(CVU)**를 단일 칩에 통합했습니다.
 
-이 통합을 통해 별도의 가속기, 호스트 CPU 및 카메라 브리지를 결합하지 않고도 엣지에서 멀티모달, 생성형 및 비전 AI 파이프라인을 실행할 수 있습니다. Modalix SoM은 캐리어 보드 및 제품 통합을 위해 MLSoC Modalix를 패키징하며, 여기에 설명된 모든 DevKit은 동일한 실리콘을 사용합니다.
+이 통합을 통해 별도의 가속기, 호스트 CPU 및 카메라 브리지를 결합하지 않고도 엣지에서 멀티모달, 생성형 및 비전 AI 파이프라인을 실행할 수 있습니다. Modalix SoM은 캐리어 보드 및 제품 통합을 위해 Modalix MLSoC를 패키징하며, 여기에 설명된 모든 DevKit은 동일한 실리콘을 사용합니다.
 
 <img src={useBaseUrl('/img/media/modalix-arch.png')} alt="PCIe Gen5, 10G 이더넷, MIPI CSI2, Arm A65, ISP, CVU, 비디오 코덱, MLA, LPDDR5, NoC 및 시스템 블록을 보여주는 Modalix 블록 다이어그램" style={{width: '100%', maxWidth: '760px', display: 'block', margin: '1.5rem auto'}} />
 
 ## DevKit 포트폴리오
 
-SiMa.ai는 엣지 AI 애플리케이션을 위한 MLSoC Modalix 기반 개발 키트와 PCIe 제품을 제공합니다. 아래에서 제품을 선택하거나 표에서 기능을 비교해 보세요.
+SiMa.ai는 엣지 AI 애플리케이션을 위한 Modalix MLSoC 기반 개발 키트와 PCIe 제품을 제공합니다. 아래에서 제품을 선택하거나 표에서 기능을 비교해 보세요.
 
 <div className="card-grid">
   <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
     <img src={useBaseUrl('/img/media/modalix-devkit-no-label.png')} alt="Modalix DevKit" />
     <h4>Modalix DevKit</h4>
-    <p>MLSoC Modalix를 평가하고 Modalix SoM에서 애플리케이션을 구축하기 위한 현재 개발 키트입니다.</p>
+    <p>Modalix MLSoC를 평가하고 Modalix SoM에서 애플리케이션을 구축하기 위한 현재 개발 키트입니다.</p>
   </a>
   <a className="card devkit-card" href="/hardware/devkit/modalix-pcie-card">
     <img src={useBaseUrl('/img/media/modalix-ea-pcie.jpg')} alt="Modalix PCIe Card" />
@@ -107,7 +107,7 @@ SiMa.ai는 엣지 AI 애플리케이션을 위한 MLSoC Modalix 기반 개발 �
 
 ## 배포 아키텍처
 
-MLSoC Modalix는 두 가지 일반적인 개발 아키텍처를 지원합니다. 바로 독립 실행형 모드와 PCIe 모드입니다. 하드웨어가 연결된 방식과 애플리케이션이 실행되는 위치에 따라 적합한 아키텍처를 선택하십시오.
+Modalix MLSoC는 두 가지 일반적인 개발 아키텍처를 지원합니다. 바로 독립 실행형 모드와 PCIe 모드입니다. 하드웨어가 연결된 방식과 애플리케이션이 실행되는 위치에 따라 적합한 아키텍처를 선택하십시오.
 
 <Tabs>
 <TabItem value="standalone" label="독립 실행형 모드" default>
@@ -130,7 +130,7 @@ MLSoC Modalix는 두 가지 일반적인 개발 아키텍처를 지원합니다.
 
 1. DevKit은 네트워크 인터페이스 또는 센서로부터 직접 데이터를 수신합니다.
 2. DevKit은 장치 내 추론 파이프라인을 정의하는 [NEAT 애플리케이션](https://developer.sima.ai/software)을 로드합니다.
-3. MLSoC Modalix는 추론을 수행하고 데이터를 로컬에서 처리합니다.
+3. Modalix MLSoC는 추론을 수행하고 데이터를 로컬에서 처리합니다.
 4. 결과는 네트워크 연결을 통해 다른 장치 또는 시스템으로 전송되어 추가적인 작업이나 시각화에 사용됩니다.
 
 <a className="docs-button" href="/hardware/getting-started/standalone-mode">독립 실행형 모드로 설정</a>

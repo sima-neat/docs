@@ -844,11 +844,29 @@ html[data-theme='dark'] .cookie-consent__toggle {
 
 .doc-figure {
   margin: 1.4rem 0;
-  border: 1px solid rgba(28, 47, 58, 0.12);
+  border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: var(--ifm-background-surface-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.doc-figure--diagram img {
+  padding-bottom: 4px;
+}
+
+/* Line diagrams are drawn dark-on-transparent; flip them for dark mode
+   while keeping the wire colours' hues. */
+[data-theme='dark'] .doc-figure--diagram img {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+.doc-figure--inline-svg svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 12px 12px 0;
+  color: var(--ifm-font-color-base);
 }
 
 .figure-grid .doc-figure {
@@ -860,13 +878,13 @@ html[data-theme='dark'] .cookie-consent__toggle {
   width: 100%;
   height: auto;
   padding: 12px 12px 0;
-  background: #fff;
+  background: transparent;
 }
 
 .doc-figure figcaption {
   padding: 10px 14px 12px;
-  background: #fff;
-  color: #4a5b66;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
   font-size: 0.85rem;
   line-height: 1.4;
   text-align: center;

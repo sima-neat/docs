@@ -1,7 +1,7 @@
 ---
 title: SiMa.ai Hardware Documentation
 sidebar_label: "Platform Overview"
-description: Hardware setup, firmware, and low-level interfaces for SiMa.ai MLSoC Modalix products.
+description: Hardware setup, firmware, and low-level interfaces for SiMa.ai Modalix MLSoC products.
 sidebar_position: 1
 slug: /
 ---
@@ -12,15 +12,15 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # SiMa.ai Hardware Documentation
 
-Use this site for hardware setup, firmware workflows, and low-level interfaces for SiMa.ai MLSoC Modalix products. Software, ML, and pipeline tooling are documented separately.
+Use this site for hardware setup, firmware workflows, and low-level interfaces for SiMa.ai Modalix MLSoC products. Software, ML, and pipeline tooling are documented separately.
 
 ## SiMa.ai Hardware at a Glance {#hardware-at-a-glance}
 
-SiMa.ai offers MLSoC Modalix as a chip, on a module, and in complete products. Start from the form factor that you have or plan to use.
+SiMa.ai offers Modalix MLSoC as a chip, on a module, and in complete products. Start from the form factor that you have or plan to use.
 
 | Product | What it is | Start here |
 | --- | --- | --- |
-| MLSoC Modalix | The system-on-chip. You place it on a board that you design. | [Build with the SoC](/hardware/design/chip-down) |
+| Modalix MLSoC | The system-on-chip. You place it on a board that you design. | [Build with the SoC](/hardware/design/chip-down) |
 | Modalix SoM | A module with the SoC, LPDDR5 memory, and power. It plugs into a carrier board. | [Build with the SoM](/hardware/design/carrier-board) |
 | Modalix DevKit | A Modalix SoM on a carrier board, in an enclosure, for evaluation and development. | [Evaluate a DevKit](/hardware/getting-started) |
 | Modalix PCIe Card | A half-height, half-length card that adds Modalix inference to a host machine. | [PCIe Mode](/hardware/getting-started/pcie-mode) |
@@ -40,11 +40,11 @@ To build your own hardware, choose between a carrier board for the Modalix SoM a
 
 After the board boots, both paths use the same system software. See [Build System Software](/hardware/software).
 
-## About the MLSoC Modalix
+## About the Modalix MLSoC
 
-The **MLSoC Modalix** is SiMa.ai's second-generation machine-learning system-on-chip. It combines an Arm Cortex-A65 application complex, a high-throughput **Machine Learning Accelerator (MLA)**, an **Image Signal Processor (ISP)** for camera ingest, and a **Computer Vision Unit (CVU)** for classical vision workloads — all on a single die.
+The **Modalix MLSoC** is SiMa.ai's second-generation machine-learning system-on-chip. It combines an Arm Cortex-A65 application complex, a high-throughput **Machine Learning Accelerator (MLA)**, an **Image Signal Processor (ISP)** for camera ingest, and a **Computer Vision Unit (CVU)** for classical vision workloads — all on a single die.
 
-This integration lets you run multimodal, generative, and vision AI pipelines at the edge without combining separate accelerators, host CPUs, and camera bridges. The Modalix SoM packages MLSoC Modalix for carrier-board and product integration, and every DevKit documented here uses the same silicon.
+This integration lets you run multimodal, generative, and vision AI pipelines at the edge without combining separate accelerators, host CPUs, and camera bridges. The Modalix SoM packages Modalix MLSoC for carrier-board and product integration, and every DevKit documented here uses the same silicon.
 
 <img
   src={useBaseUrl('/img/media/modalix-arch.png')}
@@ -54,13 +54,13 @@ This integration lets you run multimodal, generative, and vision AI pipelines at
 
 ## DevKit Portfolio
 
-SiMa.ai offers MLSoC Modalix-based development kits and PCIe products for edge AI applications. Select a product below, or compare features in the table.
+SiMa.ai offers Modalix MLSoC-based development kits and PCIe products for edge AI applications. Select a product below, or compare features in the table.
 
 <div className="card-grid">
   <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
     <img src={useBaseUrl('/img/media/modalix-devkit-no-label.png')} alt="Modalix DevKit" />
     <h4>Modalix DevKit</h4>
-    <p>The current development kit for evaluating MLSoC Modalix and building applications on the Modalix SoM.</p>
+    <p>The current development kit for evaluating Modalix MLSoC and building applications on the Modalix SoM.</p>
   </a>
   <a className="card devkit-card" href="/hardware/devkit/modalix-pcie-card">
     <img src={useBaseUrl('/img/media/modalix-ea-pcie.jpg')} alt="Modalix PCIe Card" />
@@ -111,7 +111,7 @@ SiMa.ai offers MLSoC Modalix-based development kits and PCIe products for edge A
 
 ## Deployment Architectures
 
-MLSoC Modalix supports two common development architectures: standalone mode and PCIe mode. Choose the architecture that matches how your hardware is connected and where your application runs.
+Modalix MLSoC supports two common development architectures: standalone mode and PCIe mode. Choose the architecture that matches how your hardware is connected and where your application runs.
 
 <Tabs>
 <TabItem value="standalone" label="Standalone Mode" default>
@@ -134,7 +134,7 @@ In standalone mode, a Modalix DevKit or a custom Modalix SoM-based system runs a
 
 1. The DevKit receives data directly from network interfaces or sensors.
 2. The DevKit loads a [NEAT application](https://developer.sima.ai/software) that defines the on-device inference pipeline.
-3. MLSoC Modalix performs inferencing and processes the data locally.
+3. Modalix MLSoC performs inferencing and processes the data locally.
 4. Results are sent to other devices or systems via network connections for further action or visualization.
 
 <a className="docs-button" href="/hardware/getting-started/standalone-mode">Set up standalone mode</a>
