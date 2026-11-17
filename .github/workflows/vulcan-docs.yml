@@ -242,6 +242,7 @@ jobs:
 
       - name: Build site
         env:
+          DEPLOY_ENV: ${{ needs.resolve-target.outputs.deploy_environment }}
           SYSDOC_URL: ${{ needs.resolve-vulcan-config.outputs.sysdoc_base_url }}
           SYSDOC_BASE_URL: /
           SYSDOC_STRICT_LINKS: "1"
@@ -253,6 +254,19 @@ jobs:
           npm --ignore-scripts run build
           npm run build:agent-raw
           test -f build/index.html
+
+          # Only prod may be indexed (#184): non-prod pages must carry the
+          # robots noindex meta, and prod pages must not.
+          robots_meta='<meta [^>]*name="robots" content="noindex, nofollow"'
+          if [[ "${DEPLOY_ENV}" == "prod" ]]; then
+            if grep -qE "${robots_meta}" build/index.html; then
+              echo "Prod build carries a robots noindex meta tag." >&2
+              exit 1
+            fi
+          elif ! grep -qE "${robots_meta}" build/index.html; then
+            echo "Non-prod (${DEPLOY_ENV}) build is missing the robots noindex meta tag." >&2
+            exit 1
+          fi
 
       - name: Generate Algolia hardware records
         env:
