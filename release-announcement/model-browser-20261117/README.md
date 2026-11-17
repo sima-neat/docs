@@ -16,20 +16,17 @@ them again before publishing, because the catalog changes with every merge to
 | On the page | Source |
 | --- | --- |
 | 141 models, 48 model families | the counts above the catalog in the Cards and Table views |
-| 17 tasks, models by task | the task groups of the Table view; a model with two tasks counts in both |
+| 17 tasks | the task groups of the Table view |
 | 269 variants | the precisions listed for each model in the Table view, summed |
-| models by type | `model_type` of each catalog model |
-| result tiles, detection chart, language model chart | the Table view, which shows the first variant listed for each model |
-| YOLO26n-det power figure | the Performance section of its model page |
+| headline results | the Performance and Accuracy sections of each model page, for the variant named on the tile |
+| detection chart, language model chart | the Table view, which shows the first variant listed for each model |
 
 The detection chart leaves out YOLO-World, because its page reports the detector
 and the text encoder separately.
 
 ## Screenshots
 
-`assets/` holds three screenshots of the live site at 1440 and 2400 pixels wide:
-the catalog, the Accuracy section of the YOLO26x-pose page for W16A16, and the
-Compare view for Object Detection.
+`assets/` holds one screenshot of the live catalog at 1440 and 2400 pixels wide.
 
 `assets/hero-illustration.png` is a crop of a screenshot, 866 pixels wide. Replace
 it with the original illustration file before publishing.
