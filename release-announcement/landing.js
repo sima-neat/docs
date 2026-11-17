@@ -1,5 +1,5 @@
 const stages = {
-  develop: {kicker: 'BUILD WITH PALETTE NEAT', title: 'Move from intent to implementation.', description: 'Use Palette Neat’s agentic environment and developer tools to write, debug and orchestrate your application.', from: 'Your idea', to: 'Your application', tags: ['Agentic development', 'C++ & Python', 'Developer tools'], url: 'https://developer.sima.ai/software/getting-started/dev-environment/install-the-environment', link: 'Explore development tools'},
+  develop: {kicker: 'BUILD WITH PALETTE', title: 'Move from intent to implementation.', description: 'Use Palette’s agentic environment and developer tools to write, debug and orchestrate your application.', from: 'Your idea', to: 'Your application', tags: ['Agentic development', 'C++ & Python', 'Developer tools'], url: 'https://developer.sima.ai/software/getting-started/dev-environment/install-the-environment', link: 'Explore development tools'},
   compile: {kicker: 'PREPARE YOUR MODEL', title: 'Turn your model into a deployable building block.', description: 'Compile, optimize and package models for Modalix with the model compiler and toolchain in your development environment.', from: 'Your model', to: 'Modalix-ready model', tags: ['Model compilation', 'Optimization', 'Packaging'], url: 'https://developer.sima.ai/software', link: 'Explore the software documentation'},
   run: {kicker: 'BRING YOUR APPLICATION TO LIFE', title: 'Connect intelligence to the real world.', description: 'Use the execution libraries to orchestrate inference and bring your application to Modalix, with familiar Model, Graph and Run APIs.', from: 'Your application', to: 'Modalix', tags: ['Execution libraries', 'Runtime APIs', 'Device deployment'], url: 'https://developer.sima.ai/examples', link: 'Explore application examples'},
   understand: {kicker: 'MEASURE. OBSERVE. REFINE.', title: 'See what your application is doing.', description: 'Explore Insight, benchmarking and system telemetry to understand your real workload and guide your next improvement.', from: 'Your workload', to: 'System insight', tags: ['Insight', 'Benchmarking', 'Telemetry'], url: '3.0.0/#performance', link: 'Explore the performance story'}
@@ -25,7 +25,7 @@ function selectStage(key, focus = false) {
   document.querySelector('#workflow-tags').innerHTML = data.tags.map(tag => `<span>${tag}</span>`).join('');
   const link = document.querySelector('#workflow-link');
   link.href = data.url;
-  link.innerHTML = data.link + ' <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span>';
+  link.innerHTML = data.link + '<span class="sr-only"> (opens in a new tab)</span>';
 }
 stageButtons.forEach(button => {
   button.addEventListener('click', () => selectStage(button.dataset.stage));
@@ -51,7 +51,7 @@ async function loadReleaseMap() {
   releaseMapLoading = true;
   releaseMapStatus.textContent = 'Loading bundled releases…';
   try {
-    const response = await fetch('release-map.json?v=20261107', {cache: 'no-store'});
+    const response = await fetch('release-map.json', {cache: 'no-store'});
     if (!response.ok) throw new Error('Release map unavailable');
     const data = await response.json();
     if (data.schema_version !== 1 || !data.components?.length || !data.releases?.length) throw new Error('Invalid release map');
@@ -63,7 +63,13 @@ async function loadReleaseMap() {
       columns.append(cell);
     });
     const rows = document.createDocumentFragment();
-    const releases = [...data.releases].sort((a, b) => b.release_date.localeCompare(a.release_date));
+    const releases = [...data.releases].sort((a, b) => {
+      // Undated announcements appear above the dated release history.
+      if (a.release_date === null || b.release_date === null) {
+        return Number(b.release_date === null) - Number(a.release_date === null);
+      }
+      return b.release_date.localeCompare(a.release_date);
+    });
     const dateFormat = new Intl.DateTimeFormat('en-US', {month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC'});
     releases.forEach(release => {
       const row = document.createElement('tr');
@@ -72,7 +78,9 @@ async function loadReleaseMap() {
       const announcement = new URL(release.announcement, location.href);
       if (announcement.origin !== location.origin || !announcement.pathname.startsWith(new URL('.', location.href).pathname)) throw new Error('Invalid announcement URL');
       link.href = announcement.href;
-      link.textContent = dateFormat.format(new Date(release.release_date + 'T00:00:00Z'));
+      link.textContent = release.release_date === null && release.status === 'draft'
+        ? 'Date pending'
+        : dateFormat.format(new Date(release.release_date + 'T00:00:00Z'));
       const label = document.createElement('small');
       label.textContent = 'Bundle ' + release.id;
       dateCell.append(link, label);

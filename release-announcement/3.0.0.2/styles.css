@@ -1,0 +1,64 @@
+.release-hero-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.release-hero-layout .eyebrow {
+  color: var(--muted);
+}
+
+.release-hero-layout h1 {
+  font-size: clamp(36px, 4.7vw, 76px);
+}
+
+.release-hero-image {
+  display: block;
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  justify-self: end;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.library-actions li p + p {
+  margin-top: 14px;
+}
+
+.upgrade-command,
+.release-command {
+  margin: 8px 0 16px;
+  padding: 10px 12px;
+  border-inline-start: 3px solid var(--sima-blue);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.release-command {
+  white-space: pre-wrap;
+}
+
+.release-command code span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.cli-recovery {
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .release-hero-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .release-hero-image {
+    justify-self: start;
+  }
+}
