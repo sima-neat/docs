@@ -16,6 +16,8 @@ sidebar_position: 2
 
 :::note
 このガイドでは SiMa.ai が提供するファームウェアイメージを使用します。自分でビルドしたイメージを使用する場合は、[イメージを eMMC に書き込む](/hardware/deployment/flash-image)を参照してください。
+
+電源投入時にシリアルコンソールに何も表示されない場合は、tRoot ファームウェアが破損していて、ボードが U-Boot に到達できない可能性があります。まず SPI フラッシュプログラマーで tRoot に書き込んでください。[Aardvark を Modalix DevKit に接続する](/hardware/deployment/factory-build-and-test#connect-the-aardvark-to-the-modalix-devkit)を参照してください。
 :::
 
 `sima-cli bootimg --netboot` を使うと、ホストに内蔵された TFTP サーバーから対象のファームウェアを配信できます。ファームウェア 2.1.3 以降を実行している DevKit または PCIe カードに SSH で接続できる場合は、ホストから U-Boot を設定できます。古いファームウェアを使用している場合や SSH で接続できない場合は、手順 3 でシリアルコンソールを使用してください。
