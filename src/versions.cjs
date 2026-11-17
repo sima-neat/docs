@@ -8,6 +8,10 @@
 //
 // Bump versions.json (or set the matching SCREAMING_SNAKE env var, e.g. PLATFORM_VERSION,
 // in the build env) to update everything at once.
+//
+// `platform_version` is the current DevKit platform release (Hardware pages).
+// `sdk_platform_version` is the DevKit release that the SDK pins (`sdk_version`) are
+// compatible with; src/pages/agents.md uses it. Bump it together with the SDK pins.
 const defaults = require('./versions.json');
 
 const versions = {};

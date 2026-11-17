@@ -10,6 +10,8 @@ Device tree 描述電路板上的硬體，讓核心能將驅動程式繫結到�
 
 :::caution[尚未在硬體上驗證]
 本頁依據平台版本 2.1.3 的核心與 U-Boot 原始碼，以及本網站的其他指南撰寫。這些步驟尚未依本頁所述在電路板上實際執行。
+
+公開原始碼僅提供到版本 2.1.3，版本 3.0.0 的原始碼尚未公開。在版本 3.0.0 中，overlay 位於 `/boot`，U-Boot 環境則位於唯讀的掛載點上。請參閱[MIPI 相機介面](../getting-started/standalone-mode/mipi-camera-interfaces.mdx)。
 :::
 
 ## 電路板如何載入 Device Tree {#how-it-loads}

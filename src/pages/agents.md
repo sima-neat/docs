@@ -27,7 +27,7 @@ Execute the phases in order (or the subset from the decision matrix in Phase 0).
 | Input | Needed for | Notes |
 | --- | --- | --- |
 | SiMa Developer Portal account | Phase 2 (`sima-cli login`) | Free account at [community.sima.ai](https://community.sima.ai) |
-| Modalix DevKit IP address | Phases 3, 5, 7, 8 | DevKit must be powered, on the network, and on platform software %platform_version% (see Phase 0 preconditions) |
+| Modalix DevKit IP address | Phases 3, 5, 7, 8 | DevKit must be powered, on the network, and on platform software %sdk_platform_version% (see Phase 0 preconditions) |
 | Hugging Face token | Phase 8 only | Only for downloading open-source GenAI models from [huggingface.co/simaai](https://huggingface.co/simaai) |
 | Target silicon | Phases 4, 6 | `modalix` (gen2, default) or legacy `mlsoc`/`davinci` (gen1) |
 
@@ -64,7 +64,7 @@ The DevKit itself must already be set up — this page does not duplicate hardwa
 - Serial console access: [Configure Serial Connection](/hardware/getting-started/setup-serial) (`sima-cli serial`, login `sima` / `edgeai`)
 - DevKit on the network with a known IP: [Network Setup](/hardware/getting-started/standalone-mode/network) (`sima-cli network`)
 - PCIe card instead of standalone DevKit: [Driver Installation](/hardware/getting-started/pcie-mode/driver-installation)
-- DevKit platform software at %platform_version%: [Update with sima-cli](/hardware/getting-started/firmware-update/sima-cli) (`sima-cli update`)
+- DevKit platform software at %sdk_platform_version%: [Update with sima-cli](/hardware/getting-started/firmware-update/sima-cli) (`sima-cli update`)
 
 **Verify:**
 
@@ -128,7 +128,7 @@ The Palette SDK is a containerized development environment (compilers, cross-too
 sima-cli neat install sdk@%sdk_channel%
 ```
 
-This installs Palette SDK %sdk_version% (compatible with DevKit platform software %platform_version%). Answer the interactive prompts: DevKit IP for pairing (recommended — it also provisions the Neat Library and PyNeat on the DevKit) and Model Compiler installation (say yes if you plan to compile models; otherwise Phase 4 adds it later).
+This installs Palette SDK %sdk_version% (compatible with DevKit platform software %sdk_platform_version%). Answer the interactive prompts: DevKit IP for pairing (recommended — it also provisions the Neat Library and PyNeat on the DevKit) and Model Compiler installation (say yes if you plan to compile models; otherwise Phase 4 adds it later).
 
 Enter the SDK shell, then start the `neat` helper to get your Insight URL:
 
@@ -152,7 +152,7 @@ Skip this phase if you accepted the Model Compiler prompt in Phase 3, or if you 
 On the host (Ubuntu; pick `arm64` on aarch64 hosts — on macOS install inside the Palette SDK shell instead):
 
 ```bash
-sima-cli install -v %platform_version% tools/model-compiler/amd64
+sima-cli install -v %sdk_platform_version% tools/model-compiler/amd64
 activate-model-compiler      # activates the compiler environment (deactivate-model-compiler to exit)
 ```
 
@@ -207,7 +207,7 @@ ssh sima@<DEVKIT_IP> 'source ~/pyneat/bin/activate && python3 -c "import pyneat;
 **Fast path — skip compilation.** The Model Zoo has pre-compiled MPK packages for common models:
 
 ```bash
-sima-cli modelzoo -v %platform_version% get <model-name>
+sima-cli modelzoo -v %sdk_platform_version% get <model-name>
 # e.g. the default detection model used by the examples:
 # yolo26m-det-bf16-mla_tess-b1.tar.gz
 ```
@@ -248,7 +248,7 @@ Fetch the model the example expects (from its README `Metadata` table) into `ass
 
 ```bash
 mkdir -p assets/models
-sima-cli modelzoo -v %platform_version% get yolo26m-det-bf16-mla_tess-b1
+sima-cli modelzoo -v %sdk_platform_version% get yolo26m-det-bf16-mla_tess-b1
 ```
 
 Edit the example's `src/common/config.yaml`: set `model.path` to the `.tar.gz` (yours from Phase 6 or the Model Zoo one), and the input source (e.g. an RTSP URL). Then run **on the DevKit** (binaries and sources synced via the SDK's `dk` helper, or copy them over):
@@ -314,11 +314,11 @@ Go deeper: [GenAI with LLiMa](https://developer.sima.ai/software/genai-llima/).
 | `sima-cli login` fails | wrong/expired portal credentials | `sima-cli logout && sima-cli login`; account at community.sima.ai |
 | Docker `permission denied` | user not in `docker` group | `sudo usermod -aG docker $USER`, then log out/in |
 | SDK install prompts hang in automation | installer is interactive | run pairing/compiler steps manually; keep a human in the loop for Phase 3 |
-| DevKit unreachable | network / firmware mismatch | [Network Setup](/hardware/getting-started/standalone-mode/network); update firmware to %platform_version% via [sima-cli update](/hardware/getting-started/firmware-update/sima-cli) |
+| DevKit unreachable | network / firmware mismatch | [Network Setup](/hardware/getting-started/standalone-mode/network); update firmware to %sdk_platform_version% via [sima-cli update](/hardware/getting-started/firmware-update/sima-cli) |
 | Compile killed / OOM | insufficient RAM (esp. GenAI) | see Phase 0 host specs; 128 GB for GenAI compiles |
 | Model loads but wrong outputs | compiled for wrong silicon | recompile with `--device modalix` (`gen2_target`); `mlsoc` is gen1 |
 | Insight URL not loading | `neat` helper not running | re-enter `sima-cli sdk neat`, run `neat` again |
-| Model download 403/404 | not logged in, wrong `-v` | `sima-cli login`; use `-v %platform_version%` |
+| Model download 403/404 | not logged in, wrong `-v` | `sima-cli login`; use `-v %sdk_platform_version%` |
 
 Deeper software troubleshooting: [developer.sima.ai/software/reference/troubleshooting](https://developer.sima.ai/software/reference/troubleshooting/). Diagnose environments with `sima-cli sdk doctor`.
 
@@ -387,7 +387,7 @@ neat                                             # (inside SDK) Insight URL
 sima-cli sdk ls|start|stop|remove|doctor
 
 # ---- Phase 4: Model Compiler ----
-sima-cli install -v %platform_version% tools/model-compiler/amd64
+sima-cli install -v %sdk_platform_version% tools/model-compiler/amd64
 activate-model-compiler
 sima-cli sdk model                               # model container shell
 sima-cli install sdk-extensions/model            # ModelSDK (afe)
@@ -399,7 +399,7 @@ sima-cli neat install core@%neat_core_version%   # Neat Library on the DevKit
 source ~/pyneat/bin/activate                     # PyNeat venv (on DevKit)
 
 # ---- Phase 6: models ----
-sima-cli modelzoo -v %platform_version% get <model>
+sima-cli modelzoo -v %sdk_platform_version% get <model>
 python3 examples/compile_first_model.py --model m.onnx --calib_images ./imgs --device modalix --output ./out
 
 # ---- Phase 7: apps ----
