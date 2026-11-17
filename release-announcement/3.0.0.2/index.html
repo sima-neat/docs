@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Palette SDK 3.0.0.2 brings together Neat 0.6.2, Model Compiler 3.0.0.2 and eLxr Platform 3.0.1 for Modalix developers.">
+  <title>Palette SDK 3.0.0.2</title>
+  <link rel="icon" type="image/svg+xml" href="../3.0.0/assets/sima-logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../brand.css">
+  <link rel="stylesheet" href="../landing.css">
+  <link rel="stylesheet" href="../3.0.0.1/styles.css?v=12">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<a class="skip-link" href="#release-overview">Skip to release notes</a>
+<header class="site-header">
+  <a href="../index.html" aria-label="SiMa.ai Palette releases home"><img src="../3.0.0/assets/sima-logo.svg" alt="SiMa.ai" width="131" height="32"></a>
+  <span class="header-divider" aria-hidden="true"></span><a class="journal-name" href="../index.html">Palette <span>Release journal</span></a>
+  <nav aria-label="Release navigation">
+    <a href="#apps">Apps</a>
+    <a href="#neat-library">Neat Library</a>
+    <a href="#model-compiler">Model Compiler</a>
+    <a href="#sima-cli">sima-cli</a>
+    <a href="#upgrade">Upgrade</a>
+  </nav>
+  <a class="header-link" href="../index.html#releases">All releases</a>
+</header>
+<main>
+  <section class="draft-hero" id="release-overview" aria-labelledby="release-title">
+    <a class="draft-back" href="../index.html#releases">All releases</a>
+    <div class="release-hero-layout">
+      <div>
+        <p class="eyebrow">RELEASE NOTES / PREVIEW</p>
+        <h1 id="release-title">Palette SDK 3.0.0.2</h1>
+        <p class="draft-component-line">Neat 0.6.2 <span aria-hidden="true">·</span> Model Compiler 3.0.0.2</p>
+        <p class="draft-description">Run Modalix examples with fewer setup steps, build vision pipelines that can label individual pixels, and retry mixed-precision compilations affected by the W8A16 fix.</p>
+      </div>
+      <img class="release-hero-image" src="assets/modalix-vision-hero.webp" width="1536" height="1024" fetchpriority="high" alt="Illustration of a Modalix module processing a factory image into a colored segmentation mask.">
+    </div>
+    <div class="draft-versions" aria-label="Planned bundle versions">
+      <div><span>PALETTE SDK</span><strong>3.0.0.2</strong></div>
+      <div><span>MODEL COMPILER</span><strong>3.0.0.2</strong></div>
+      <div><span>NEAT LIBRARY &amp; APPS</span><strong>0.6.2</strong></div>
+      <div><span>SIMA-CLI</span><strong>2.1.22</strong></div>
+      <div><span>ELXR PLATFORM SYSROOT</span><strong>3.0.1</strong></div>
+    </div>
+  </section>
+
+  <section class="release-highlights apps-highlights" id="apps" aria-labelledby="apps-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">NEAT APPS</p><h2 id="apps-title">Get an example running sooner.</h2></div>
+      <p>Most examples now point to models compiled for Modalix in the Model Browser.</p>
+    </div>
+    <div class="release-benefit-list">
+      <article>
+        <h3>Choose a model and download it.</h3>
+        <p>Compare available model variants and benchmarks, then download supported models with one CLI command. <a class="compiler-changelog" href="https://developer.sima.ai/models/">Open the Model Browser</a></p>
+      </article>
+      <article>
+        <h3>Try more vision workflows.</h3>
+        <p>Explore RF-DETR detection and segmentation, YOLO26 oriented-box detection, and a new face recognition example. <a class="compiler-changelog" href="https://github.com/sima-neat/apps/compare/v0.6.1...v0.6.2">See the Apps changes</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="release-highlights" id="neat-library" aria-labelledby="library-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">NEAT LIBRARY</p><h2 id="library-title">Do more vision processing on the device.</h2></div>
+      <p>Neat 0.6.2 expands segmentation and gives developers more control over how inputs are prepared for a model.</p>
+    </div>
+    <div class="release-benefit-list">
+      <article>
+        <h3>Get pixel labels and full-size masks.</h3>
+        <p>Generate a class label for each pixel with supported semantic segmentation models, or return masks at the original image size with supported Segment Anything models. Semantic segmentation requires firmware with the EV74 ResizeArgMax operation.</p>
+      </article>
+      <article>
+        <h3>Match the model’s input pipeline.</h3>
+        <p>Use center cropping, top-left letterboxing or antialiased resizing where supported. Compatible detection decoders can map boxes back to the original image. <a class="compiler-changelog" href="https://github.com/sima-neat/core/blob/v0.6.2/docs/release-notes/neat.md#v062">Read the Neat Library release notes</a></p>
+      </article>
+    </div>
+  </section>
+
+  <section class="compiler-feature" id="model-compiler" aria-labelledby="compiler-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">MODEL COMPILER 3.0.0.2</p><h2 id="compiler-title">Retry affected mixed-precision builds.</h2></div>
+      <p>Model Compiler 3.0.0.2 fixes an issue that caused some compilations with INT8 weights and BF16 activations (W8A16) to fail.</p>
+    </div>
+    <a class="compiler-changelog" href="https://github.com/sima-neat/model-compiler/compare/v3.0.0.1...v3.0.0.2">View compiler changes</a>
+  </section>
+
+  <section class="release-highlights apps-highlights" id="sima-cli" aria-labelledby="cli-title">
+    <div class="section-heading">
+      <div><p class="eyebrow">SIMA-CLI 2.1.22</p><h2 id="cli-title">Find and download models from the terminal.</h2></div>
+      <p>Search the Model Browser catalog and download a compiled variant from the same terminal where you run your Modalix example. Both commands use the <code>main</code> catalog by default.</p>
+    </div>
+    <div class="release-benefit-list">
+      <article>
+        <h3>Browse or search the catalog.</h3>
+        <p>List available models.</p>
+        <pre class="release-command"><code>sima-cli models list</code></pre>
+        <p>Or narrow the list to YOLO26m.</p>
+        <pre class="release-command"><code>sima-cli models list <span>--query yolo26m</span></code></pre>
+      </article>
+      <article>
+        <h3>Download a compiled variant.</h3>
+        <p>Download the YOLO26m W8A8 package into the default <code>models/</code> directory.</p>
+        <pre class="release-command"><code>sima-cli models download <span>--id yolo26m</span> <span>--variant w8a8</span></code></pre>
+      </article>
+    </div>
+    <p class="cli-recovery">sima-cli 2.1.22 also improves DevKit recovery. NetBoot keeps waiting while firmware downloads, and device sign-in shows its link and code in scripts and containers.</p>
+    <a class="compiler-changelog" href="https://github.com/sima-neat/sima-cli/releases/tag/v2.1.22">Read the sima-cli release notes</a>
+  </section>
+
+  <section class="release-highlights library-highlights" id="upgrade" aria-labelledby="upgrade-title">
+    <div class="library-intro">
+      <p class="eyebrow">UPGRADE GUIDE</p>
+      <h2 id="upgrade-title">Move to Platform 3.0.1 and Neat ABI 7.</h2>
+      <p>Palette SDK 3.0.0.2 targets the eLxr Platform 3.0.1 sysroot. Plan a rebuild when moving applications from Neat 0.6.0 or 0.6.1.</p>
+      <a class="library-jump" href="https://github.com/sima-neat/core/blob/v0.6.2/docs/release-notes/neat.md#v062-breaking">Read the migration details</a>
+    </div>
+    <div class="library-actions">
+      <p class="eyebrow">BEFORE UPGRADING</p>
+      <h3>Update your device and rebuild</h3>
+      <ol>
+        <li>
+          <div>
+            <h4>Update your DevKit from 3.0.0 to 3.0.1.</h4>
+            <p>These commands install the latest official firmware. Choose either method and confirm that the updater offers Platform 3.0.1 before proceeding.</p>
+            <p><strong>On the DevKit</strong><br>Connect the DevKit to the internet before running the command.</p>
+            <blockquote class="upgrade-command"><code>sima-cli update</code></blockquote>
+            <p><strong>From your host</strong><br>Make sure your host can reach the DevKit. Replace <code>&lt;devkit-ip&gt;</code> with the DevKit’s IP address.</p>
+            <blockquote class="upgrade-command"><code>sima-cli update --ip &lt;devkit-ip&gt;</code></blockquote>
+            <p>Follow the prompts to finish the update. <a class="library-jump" href="https://developer.sima.ai/hardware/getting-started/firmware-update/sima-cli">Read the firmware update guide</a></p>
+          </div>
+        </li>
+        <li><div><h4>Rebuild against Neat 0.6.2.</h4><p>Rebuild C++ applications, plugins, and Python bindings built against ABI 6 with the 0.6.2 headers and matching runtime packages.</p></div></li>
+      </ol>
+    </div>
+  </section>
+  <section class="draft-previous" aria-labelledby="previous-title">
+    <div><p class="eyebrow">PREVIOUS RELEASE</p><h2 id="previous-title">Explore Palette SDK 3.0.0.1.</h2></div>
+    <a class="button primary" href="../3.0.0.1/">View the previous announcement</a>
+  </section>
+</main>
+<footer class="site-footer"><p>Scaling Physical AI</p><small>© 2026 SiMa Technologies, Inc. All rights reserved.</small></footer>
+</body>
+</html>

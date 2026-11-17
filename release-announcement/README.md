@@ -56,7 +56,8 @@ bundles. October 31 uses the confirmed sima-cli 2.1.20 pin. The timeline stories
 remain editorial content in `index.html`.
 
 To add a bundle, append a release with a unique `id`, ISO `release_date`, relative
-`announcement` directory, and `versions` for every component ID. Versions are
+`announcement` directory, and `versions` for every component ID. Draft bundles
+may use a null release date until it is confirmed. Versions are
 arrays so one component can list multiple versions. Preserve compatibility
 ranges explicitly when supplied; use exact shipped versions when confirmed.
 The dialog sorts bundles newest first. Add older entries when their data is
