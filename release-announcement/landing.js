@@ -51,7 +51,7 @@ async function loadReleaseMap() {
   releaseMapLoading = true;
   releaseMapStatus.textContent = 'Loading bundled releases…';
   try {
-    const response = await fetch('release-map.json?v=20261107', {cache: 'no-store'});
+    const response = await fetch('release-map.json', {cache: 'no-store'});
     if (!response.ok) throw new Error('Release map unavailable');
     const data = await response.json();
     if (data.schema_version !== 1 || !data.components?.length || !data.releases?.length) throw new Error('Invalid release map');
@@ -63,7 +63,13 @@ async function loadReleaseMap() {
       columns.append(cell);
     });
     const rows = document.createDocumentFragment();
-    const releases = [...data.releases].sort((a, b) => b.release_date.localeCompare(a.release_date));
+    const releases = [...data.releases].sort((a, b) => {
+      // Undated announcements appear above the dated release history.
+      if (a.release_date === null || b.release_date === null) {
+        return Number(b.release_date === null) - Number(a.release_date === null);
+      }
+      return b.release_date.localeCompare(a.release_date);
+    });
     const dateFormat = new Intl.DateTimeFormat('en-US', {month: 'short', day: '2-digit', year: 'numeric', timeZone: 'UTC'});
     releases.forEach(release => {
       const row = document.createElement('tr');
@@ -72,7 +78,9 @@ async function loadReleaseMap() {
       const announcement = new URL(release.announcement, location.href);
       if (announcement.origin !== location.origin || !announcement.pathname.startsWith(new URL('.', location.href).pathname)) throw new Error('Invalid announcement URL');
       link.href = announcement.href;
-      link.textContent = dateFormat.format(new Date(release.release_date + 'T00:00:00Z'));
+      link.textContent = release.release_date === null && release.status === 'draft'
+        ? 'Date pending'
+        : dateFormat.format(new Date(release.release_date + 'T00:00:00Z'));
       const label = document.createElement('small');
       label.textContent = 'Bundle ' + release.id;
       dateCell.append(link, label);

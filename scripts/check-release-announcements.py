@@ -83,7 +83,11 @@ def validate_release_map():
         assert release['id'] not in ids, 'Duplicate bundle ID'
         ids.add(release['id'])
         assert release.get('status', 'released') in ('draft', 'released'), 'Unknown bundle status'
-        assert date.fromisoformat(release['release_date']).isoformat() == release['release_date']
+        release_date = release['release_date']
+        if release_date is None:
+            assert release.get('status') == 'draft', 'Only draft bundles may have an unconfirmed date'
+        else:
+            assert date.fromisoformat(release_date).isoformat() == release_date
         assert set(release['versions']) == set(components), 'Missing or unknown component'
         for versions in release['versions'].values():
             if versions is None:
