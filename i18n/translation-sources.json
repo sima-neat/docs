@@ -1,6 +1,6 @@
 {
   "ja": {
-    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/factory-build-and-test.mdx": "04513fb823daabcd36e5cd73eafff34209ce4ab5724affcd0f73d23eadd167f5",
     "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "aeffa9d3c3fc8f79d2ef4ad9460ec38639c3f89ac490490d07a3488ba0a6c899",
@@ -12,7 +12,7 @@
     "docs/devkit/modalix-pcie-card.mdx": "f8951d8afd6e1834bdc5befe0d8faeb4a3212fd5bb7ad62010ade6076b6dda42",
     "docs/getting-started/firmware-update/boot-image.mdx": "e4118102273dc951ded4d89bd7692940a0f1a3be760efc290cb93f518d682277",
     "docs/getting-started/firmware-update/index.mdx": "2ad6c9f57a382b20de60086fb6dcf27bef351991adc878804082eb5c09b793d5",
-    "docs/getting-started/firmware-update/net-boot.mdx": "8088ba976f2d022fa33471faac512ebadd87174970bda83e4d7fee4bc0d869c1",
+    "docs/getting-started/firmware-update/net-boot.mdx": "0859c1ff7c7e82d0d00f243ad3b6a3080f00d7aa19133c6bd85d8f26689f2448",
     "docs/getting-started/firmware-update/sima-cli.mdx": "28a519855c9a827cc9b4138da33d238bf07128979dd8236bc1447e2d5e4e5f6c",
     "docs/getting-started/index.md": "7b67d2771aba9a1aa1becaa4e249f51d98db82c55f20a77628b2e2c1bdbf8888",
     "docs/getting-started/pcie-mode/driver-installation.mdx": "896c6b7dca22c8bae3c0399d94d808e5e6802dd6fbfbaf640e9ffab1df83ad33",
@@ -47,7 +47,7 @@
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "ko": {
-    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/factory-build-and-test.mdx": "04513fb823daabcd36e5cd73eafff34209ce4ab5724affcd0f73d23eadd167f5",
     "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "aeffa9d3c3fc8f79d2ef4ad9460ec38639c3f89ac490490d07a3488ba0a6c899",
@@ -59,7 +59,7 @@
     "docs/devkit/modalix-pcie-card.mdx": "f8951d8afd6e1834bdc5befe0d8faeb4a3212fd5bb7ad62010ade6076b6dda42",
     "docs/getting-started/firmware-update/boot-image.mdx": "e4118102273dc951ded4d89bd7692940a0f1a3be760efc290cb93f518d682277",
     "docs/getting-started/firmware-update/index.mdx": "2ad6c9f57a382b20de60086fb6dcf27bef351991adc878804082eb5c09b793d5",
-    "docs/getting-started/firmware-update/net-boot.mdx": "8088ba976f2d022fa33471faac512ebadd87174970bda83e4d7fee4bc0d869c1",
+    "docs/getting-started/firmware-update/net-boot.mdx": "0859c1ff7c7e82d0d00f243ad3b6a3080f00d7aa19133c6bd85d8f26689f2448",
     "docs/getting-started/firmware-update/sima-cli.mdx": "28a519855c9a827cc9b4138da33d238bf07128979dd8236bc1447e2d5e4e5f6c",
     "docs/getting-started/index.md": "7b67d2771aba9a1aa1becaa4e249f51d98db82c55f20a77628b2e2c1bdbf8888",
     "docs/getting-started/pcie-mode/driver-installation.mdx": "896c6b7dca22c8bae3c0399d94d808e5e6802dd6fbfbaf640e9ffab1df83ad33",
@@ -94,7 +94,7 @@
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "uk": {
-    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/factory-build-and-test.mdx": "04513fb823daabcd36e5cd73eafff34209ce4ab5724affcd0f73d23eadd167f5",
     "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "aeffa9d3c3fc8f79d2ef4ad9460ec38639c3f89ac490490d07a3488ba0a6c899",
@@ -106,7 +106,7 @@
     "docs/devkit/modalix-pcie-card.mdx": "f8951d8afd6e1834bdc5befe0d8faeb4a3212fd5bb7ad62010ade6076b6dda42",
     "docs/getting-started/firmware-update/boot-image.mdx": "e4118102273dc951ded4d89bd7692940a0f1a3be760efc290cb93f518d682277",
     "docs/getting-started/firmware-update/index.mdx": "2ad6c9f57a382b20de60086fb6dcf27bef351991adc878804082eb5c09b793d5",
-    "docs/getting-started/firmware-update/net-boot.mdx": "8088ba976f2d022fa33471faac512ebadd87174970bda83e4d7fee4bc0d869c1",
+    "docs/getting-started/firmware-update/net-boot.mdx": "0859c1ff7c7e82d0d00f243ad3b6a3080f00d7aa19133c6bd85d8f26689f2448",
     "docs/getting-started/firmware-update/sima-cli.mdx": "28a519855c9a827cc9b4138da33d238bf07128979dd8236bc1447e2d5e4e5f6c",
     "docs/getting-started/index.md": "7b67d2771aba9a1aa1becaa4e249f51d98db82c55f20a77628b2e2c1bdbf8888",
     "docs/getting-started/pcie-mode/driver-installation.mdx": "896c6b7dca22c8bae3c0399d94d808e5e6802dd6fbfbaf640e9ffab1df83ad33",
@@ -141,7 +141,7 @@
     "docs/tools/web-serial-console.mdx": "05830a59ca6e0b9310e39f38e02fabbba35b889315173523f2a8584b34e6cbe9"
   },
   "zh-Hant": {
-    "docs/deployment/factory-build-and-test.mdx": "bf776078da7368062a1a08110783928e44637f5b73baf7427ecb5751f55a9b19",
+    "docs/deployment/factory-build-and-test.mdx": "04513fb823daabcd36e5cd73eafff34209ce4ab5724affcd0f73d23eadd167f5",
     "docs/deployment/flash-image.mdx": "a1618fe2e57320709519fe97eb597e250c1e3cb10eeb027e21bc89c547fbeeaa",
     "docs/deployment/update-package.mdx": "3b903abcf00819042ac2f0bc5fce128cd4ba9644700447ea68a1ab209c52e712",
     "docs/design/carrier-board.md": "aeffa9d3c3fc8f79d2ef4ad9460ec38639c3f89ac490490d07a3488ba0a6c899",
@@ -153,7 +153,7 @@
     "docs/devkit/modalix-pcie-card.mdx": "f8951d8afd6e1834bdc5befe0d8faeb4a3212fd5bb7ad62010ade6076b6dda42",
     "docs/getting-started/firmware-update/boot-image.mdx": "e4118102273dc951ded4d89bd7692940a0f1a3be760efc290cb93f518d682277",
     "docs/getting-started/firmware-update/index.mdx": "2ad6c9f57a382b20de60086fb6dcf27bef351991adc878804082eb5c09b793d5",
-    "docs/getting-started/firmware-update/net-boot.mdx": "8088ba976f2d022fa33471faac512ebadd87174970bda83e4d7fee4bc0d869c1",
+    "docs/getting-started/firmware-update/net-boot.mdx": "0859c1ff7c7e82d0d00f243ad3b6a3080f00d7aa19133c6bd85d8f26689f2448",
     "docs/getting-started/firmware-update/sima-cli.mdx": "28a519855c9a827cc9b4138da33d238bf07128979dd8236bc1447e2d5e4e5f6c",
     "docs/getting-started/index.md": "7b67d2771aba9a1aa1becaa4e249f51d98db82c55f20a77628b2e2c1bdbf8888",
     "docs/getting-started/pcie-mode/driver-installation.mdx": "896c6b7dca22c8bae3c0399d94d808e5e6802dd6fbfbaf640e9ffab1df83ad33",

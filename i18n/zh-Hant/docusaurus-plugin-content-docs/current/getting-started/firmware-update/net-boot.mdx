@@ -16,6 +16,8 @@ sidebar_position: 2
 
 :::note
 本指南使用 SiMa.ai 提供的韌體映像檔。若要使用自行建置的映像檔，請參閱[將映像檔燒錄至 eMMC](/hardware/deployment/flash-image)。
+
+如果通電時序列主控台沒有任何輸出，可能是 tRoot 韌體已損毀，導致電路板無法進入 U-Boot。請先使用 SPI 快閃記憶體燒錄器重新燒錄 tRoot。請參閱[將 Aardvark 連接到 Modalix DevKit](/hardware/deployment/factory-build-and-test#connect-the-aardvark-to-the-modalix-devkit)。
 :::
 
 使用 `sima-cli bootimg --netboot`，透過主機內建的 TFTP 伺服器提供目標韌體。如果 DevKit 或 PCIe 卡正在執行 2.1.3 或更新版本的韌體，且可以透過 SSH 連線，主機就能設定 U-Boot。如果韌體較舊或無法透過 SSH 連線，請依步驟 3 使用序列主控台。

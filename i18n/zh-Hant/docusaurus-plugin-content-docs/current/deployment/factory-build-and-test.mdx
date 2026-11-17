@@ -4,6 +4,9 @@ description: 在工廠中組裝、燒錄與測試 Modalix 系列電路板的建�
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
+
 # 工廠組裝與測試
 
 本頁提供在工廠中組裝與測試 Modalix 系列電路板的建議流程。請依據您的電路板、測試治具與組裝產線加以調整。
@@ -74,15 +77,100 @@ OTP 記憶體只能寫入一次。確認每個值之前，請先仔細檢查。
 
 ### 燒錄 tRoot SPI 快閃記憶體 {#program-the-troot-spi-flash}
 
-tRoot 韌體是單一二進位檔 `troot_blob.be`。您要寫入的是以下兩種版本之一：上述的 OTP 燒錄韌體，或您的量產韌體。SiMa.ai 建議使用 Total Phase Aardvark I2C/SPI 主機轉接器，搭配 Total Phase Flash Center 軟體。
+tRoot 韌體是單一二進位檔 `troot_blob.be`。您可以寫入上面使用的 OTP 燒錄韌體，或您的量產韌體。
+SiMa.ai 建議使用 Total Phase 的 USB 轉接器 [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/)（用於將主機連接到電路板的 SPI 快閃記憶體），
+以及透過它燒錄快閃記憶體的 Python 指令碼。指令碼會在寫入前將 SPI 多工器切換到快閃記憶體，並在完成後切換回來。
 
-1. 在主機上安裝 Flash Center。
-2. 將燒錄器連接到電路板的 SPI 快閃記憶體排針。此連接器取決於電路板，通常為雙排排針。
-3. 啟動 Flash Center。如果您想將此步驟自動化，它也提供命令列工具。
-4. 新增轉接器。
-5. 選擇目標裝置：選擇 **SPI Flash**，然後選擇電路板上安裝的元件，例如 Winbond W25Q16（2 MB）。
-6. 載入 `troot_blob.be`。
-7. 燒錄快閃記憶體。
+1. 在 Windows、Linux 或 macOS 主機上安裝 Python 3。
+2. 安裝 Aardvark 的 Total Phase USB 驅動程式。驅動程式位於
+   [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) 頁面的 **Downloads** 中。
+3. 從同一頁面安裝 Aardvark Software API。下載適用於您主機的套件並解壓縮。其 `python` 資料夾包含指令碼所需的
+   `aardvark_py.py` 和原生程式庫（Windows 為 `aardvark.dll`，Linux 和 macOS 為 `aardvark.so`）。
+4. 將 [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) 下載到 Software API 的 `python` 資料夾，並將 `troot_blob.be` 也複製到該處。
+5. 將燒錄器連接到電路板的 SPI 快閃記憶體訊號。若為 Modalix DevKit，請參閱
+   [將 Aardvark 連接到 Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit)。
+   其他電路板的連接器因板而異，通常是雙排排針。
+6. 在 `python` 資料夾中執行指令碼：
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   參數依序為 Aardvark 連接埠（第一個轉接器為 `0`）、SPI 模式（`0`）、是否在寫入後讀回並驗證快閃記憶體
+   （`0` 為略過，`1` 為驗證），以及映像檔。若 SPI 傳輸失敗，指令碼最多重試 10 次（可用 `--retry` 變更），
+   之後會從晶片抹除重新開始。
+7. 等待出現 `Flash programming completed successfully.` 和 `DONE!`。
+
+#### 將 Aardvark 連接到 Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
+
+使用以下接線在 Modalix DevKit 上燒錄 tRoot。tRoot 韌體損毀的 DevKit（例如通電時 tRoot 主控台沒有任何輸出）也可以用相同接線復原。
+
+<figure className="doc-figure doc-figure--diagram">
+  <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="從 Aardvark 10 針排針到 Modalix DevKit 的接線：GND 與 SDA 接到 12 針排針，SCLK、SS、MISO 與 MOSI 接到 40 針排針" />
+  <figcaption>
+    <strong>圖 1.</strong> Aardvark 與 Modalix DevKit 的接線（Modalix SoM Rev 2）
+  </figcaption>
+</figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="接在 Modalix DevKit 40 針排針（J12）上的 Aardvark 跳線" />
+    <figcaption>
+      <strong>圖 2.</strong> 接在 40 針排針（J12）上的 Aardvark 接線。這塊電路板使用 SoM Rev 1，因此 MISO 與 MOSI 接線位於與 SoM Rev 2 相反的針腳。請依照表格接線。
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="插在 Aardvark 10 針排線上的跳線" />
+    <figcaption>
+      <strong>圖 3.</strong> 插在 Aardvark 10 針排線上的跳線。
+    </figcaption>
+  </figure>
+</div>
+
+| Aardvark 針腳 | Aardvark 訊號 | DevKit 排針 | DevKit 針腳 | DevKit 訊號 |
+| --- | --- | --- | --- | --- |
+| 2 | GND | 12 針排針 | 9 | GND |
+| 3 | SDA | 12 針排針 | 10 | `FORCE_RECOVERY` |
+| 7 | SCLK | 40 針排針（J12） | 13 | `SPI1_SCK` |
+| 9 | SS | 40 針排針（J12） | 18 | `SPI1_CS0` |
+| 5 | MISO | 40 針排針（J12） | 22 | `SPI1_MISO` |
+| 8 | MOSI | 40 針排針（J12） | 37 | `SPI1_MOSI` |
+
+12 針排針的針腳編號從 Waveshare 載板上標示的第 1 針開始計算。接線前，請先在板上找到第 1 針。
+
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="最左端為第 1 針的 12 針排針，PWR 按鈕位於第 12 針之後，第 3、4、7、9、10 針已接線" />
+  <figcaption>
+    <strong>圖 4.</strong> 12 針排針，PWR 按鈕在右側。第 1 針位於最左端。
+  </figcaption>
+</figure>
+
+這些接線適用於 Modalix SoM Rev 2。在 Modalix SoM Rev 1 上，請將 MISO 與 MOSI 對調：Aardvark 針腳 5（MISO）接到針腳 37，Aardvark 針腳 8（MOSI）接到針腳 22。若要確認您 DevKit 的 SoM 版本，請參閱 [Modalix DevKit](/hardware/devkit/modalix-devkit)。
+
+`FORCE_RECOVERY` 控制 SPI 多工器，將模組上的 QSPI 快閃記憶體連接到 `SPI1`。指令碼在燒錄快閃記憶體時會將其保持為低電位，完成後設為高電位。請參閱[載板啟動調試](/hardware/design/som-carrier)。指令碼也會將 Aardvark 的 SCL 針腳（針腳 1）當作核心重設來驅動。在 Modalix DevKit 上，請勿連接 SCL。
+
+若要在操作時查看 tRoot 主控台，請將 USB 轉 UART 線連接到同一個 12 針排針：
+
+| USB 轉 UART 線 | DevKit 針腳 | DevKit 訊號 |
+| --- | --- | --- |
+| GND | 7 | GND |
+| TX | 3 | `UART2_RXD` |
+| RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="接在 Modalix DevKit 12 針排針上的 USB 轉 UART 線與 Aardvark 接線" />
+    <figcaption>
+      <strong>圖 5.</strong> 12 針排針上的接線：USB 轉 UART 線（橘色 TX、黃色 RX、黑色 GND），旁邊是 Aardvark 的接線。
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="接到 USB 轉 UART 線的跳線" />
+    <figcaption>
+      <strong>圖 6.</strong> 接到 USB 轉 UART 線的跳線。
+    </figcaption>
+  </figure>
+</div>
 
 ## 設定測試站 {#set-up-the-test-station}
 
