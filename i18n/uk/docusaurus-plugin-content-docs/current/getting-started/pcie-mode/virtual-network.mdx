@@ -53,7 +53,7 @@ ifconfig <eth interface> 20.1.2.1
 2. Результат виконання команди `ifconfig` на SiMa.ai DevKit:
 
    ```console
-   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+   veth-simaai: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
        inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
        inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
        ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
@@ -62,6 +62,10 @@ ifconfig <eth interface> 20.1.2.1
        TX packets 14109  bytes 4461636 (4.2 MiB)
        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
    ```
+
+   :::note
+   У старіших збірках до eLxr цей інтерфейс має назву `eth2`. Якщо `veth-simaai` немає, виконайте `ip addr` на DevKit і знайдіть інтерфейс за адресою `10.0.0.2/24` та MAC-адресою, що закінчується на `:41:31`. Тут використовуйте `ip addr`, а не `ip -br addr`: коротка форма показує лише інтерфейс, стан та IP-адреси, без MAC-адреси.
+   :::
 
 3. Встановіть SSH-з’єднання з хоста до пристрою. Використовуйте стандартне ім’я користувача `sima` і пароль `edgeai`.
 

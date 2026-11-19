@@ -53,7 +53,7 @@ ifconfig <eth interface> 20.1.2.1
 2. `ifconfig` 在 SiMa.ai DevKit 上的輸出：
 
    ```console
-   eth2: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
+   veth-simaai: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 65536
        inet 10.0.0.2  netmask 255.255.255.0  broadcast 10.0.0.255
        inet6 fe80::253:49ff:fe4d:4131  prefixlen 64  scopeid 0x20<link>
        ether 00:53:49:4d:41:31  txqueuelen 1000  (Ethernet)
@@ -62,6 +62,10 @@ ifconfig <eth interface> 20.1.2.1
        TX packets 14109  bytes 4461636 (4.2 MiB)
        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
    ```
+
+   :::note
+   較舊的 eLxr 之前版本將此介面命名為 `eth2`。如果沒有 `veth-simaai`，請在 DevKit 上執行 `ip addr`，並依 `10.0.0.2/24` 和結尾為 `:41:31` 的 MAC 位址找出它。這裡請使用 `ip addr`，而不是 `ip -br addr`：簡要格式只顯示介面、狀態和 IP 位址，不顯示 MAC 位址。
+   :::
 
 3. 從主機透過 SSH 連接到裝置。請使用預設的使用者名稱 `sima` 和密碼 `edgeai`。
 
