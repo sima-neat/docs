@@ -13,3 +13,4 @@ sidebar_position: 1
 - [Оновіть з версії 2.1.3 до 3.0.0.](./convert-2-1-3-to-3-0-0.md)
 - [Налаштуйте Bluetooth на Modalix SoM DevKit.](./bluetooth.mdx)
 - [Встановіть ROS 2 на Modalix SoM DevKit.](./ros2.mdx)
+- [Використовуйте USB-адаптер WiFi на Modalix SoM DevKit](./wifi.mdx)
