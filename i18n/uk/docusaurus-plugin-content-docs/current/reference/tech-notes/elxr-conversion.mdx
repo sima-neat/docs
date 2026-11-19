@@ -15,6 +15,8 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 Для переходу на eLxr потрібне оновлення tRoot і повторне програмування eMMC, що здійснюється за допомогою [Відновлення через мережеве завантаження](/hardware/getting-started/firmware-update/net-boot).
 
+Під час цього переходу встановлюється випуск 2.1.3. Щоб після цього перейти на 3.0.0, виконайте [Оновіть з версії 2.1.3 до 3.0.0.](./convert-2-1-3-to-3-0-0.md).
+
 На хості Windows установлюйте й запускайте `sima-cli` в Ubuntu у **Windows Subsystem for Linux (WSL)**. NetBoot безпосередньо у Windows не підтримується. Виконайте [налаштування мережі WSL](/hardware/getting-started/firmware-update/net-boot#windows-hosts).
 :::
 
@@ -55,7 +57,7 @@ DISTRO = eLxr
 <img src={useBaseUrl('/img/media/host-cli.png')} alt="Виконати на хост-машині" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
-sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 2.1.3 --troot_only
 ```
 
 Після успішного завершення оновлення **вимкніть і знову ввімкніть DevKit**, щоб застосувати зміни.
@@ -67,7 +69,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 
 Решту процесу перетворення виконайте за стандартною процедурою TFTP netboot + flash, описаною в [Відновлення через мережеве завантаження](/hardware/getting-started/firmware-update/net-boot). Дотримуйтесь цієї процедури, використовуючи наведені нижче значення, специфічні для eLxr:
 
-- **Крок 2 (Запуск TFTP-сервера):** використовуйте `--boardtype modalix --fwtype elxr -v %platform_version%`.
+- **Крок 2 (Запуск TFTP-сервера):** використовуйте `--boardtype modalix --fwtype elxr -v 2.1.3`.
 - **Крок 3 (Налаштування U-Boot):** якщо віддалене налаштування недоступне, завантажте сценарій через послідовну консоль, як описано в посібнику з відновлення.
 - **Крок 4 (Запис образу):** для ручного запису введіть `f` у запрошенні `netboot>` і підтвердьте перезавантаження після завершення запису.
 

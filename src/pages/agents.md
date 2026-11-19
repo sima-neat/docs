@@ -152,7 +152,7 @@ Skip this phase if you accepted the Model Compiler prompt in Phase 3, or if you 
 On the host (Ubuntu; pick `arm64` on aarch64 hosts — on macOS install inside the Palette SDK shell instead):
 
 ```bash
-sima-cli install -v %platform_version% tools/model-compiler/amd64
+sima-cli neat install model-compiler/amd64@v%model_compiler_version%
 activate-model-compiler      # activates the compiler environment (deactivate-model-compiler to exit)
 ```
 
@@ -207,7 +207,7 @@ ssh sima@<DEVKIT_IP> 'source ~/pyneat/bin/activate && python3 -c "import pyneat;
 **Fast path — skip compilation.** The Model Zoo has pre-compiled MPK packages for common models:
 
 ```bash
-sima-cli modelzoo -v %platform_version% get <model-name>
+sima-cli modelzoo get <model-name>
 # e.g. the default detection model used by the examples:
 # yolo26m-det-bf16-mla_tess-b1.tar.gz
 ```
@@ -248,7 +248,7 @@ Fetch the model the example expects (from its README `Metadata` table) into `ass
 
 ```bash
 mkdir -p assets/models
-sima-cli modelzoo -v %platform_version% get yolo26m-det-bf16-mla_tess-b1
+sima-cli modelzoo get yolo26m-det-bf16-mla_tess-b1
 ```
 
 Edit the example's `src/common/config.yaml`: set `model.path` to the `.tar.gz` (yours from Phase 6 or the Model Zoo one), and the input source (e.g. an RTSP URL). Then run **on the DevKit** (binaries and sources synced via the SDK's `dk` helper, or copy them over):
@@ -318,7 +318,7 @@ Go deeper: [GenAI with LLiMa](https://developer.sima.ai/software/genai-llima/).
 | Compile killed / OOM | insufficient RAM (esp. GenAI) | see Phase 0 host specs; 128 GB for GenAI compiles |
 | Model loads but wrong outputs | compiled for wrong silicon | recompile with `--device modalix` (`gen2_target`); `mlsoc` is gen1 |
 | Insight URL not loading | `neat` helper not running | re-enter `sima-cli sdk neat`, run `neat` again |
-| Model download 403/404 | not logged in, wrong `-v` | `sima-cli login`; use `-v %platform_version%` |
+| Model download 403/404 | not logged in, wrong `-v` | `sima-cli login`; leave out `-v` to use the current release |
 
 Deeper software troubleshooting: [developer.sima.ai/software/reference/troubleshooting](https://developer.sima.ai/software/reference/troubleshooting/). Diagnose environments with `sima-cli sdk doctor`.
 
@@ -387,7 +387,7 @@ neat                                             # (inside SDK) Insight URL
 sima-cli sdk ls|start|stop|remove|doctor
 
 # ---- Phase 4: Model Compiler ----
-sima-cli install -v %platform_version% tools/model-compiler/amd64
+sima-cli neat install model-compiler/amd64@v%model_compiler_version%
 activate-model-compiler
 sima-cli sdk model                               # model container shell
 sima-cli install sdk-extensions/model            # ModelSDK (afe)
@@ -399,7 +399,7 @@ sima-cli neat install core@%neat_core_version%   # Neat Library on the DevKit
 source ~/pyneat/bin/activate                     # PyNeat venv (on DevKit)
 
 # ---- Phase 6: models ----
-sima-cli modelzoo -v %platform_version% get <model>
+sima-cli modelzoo get <model>
 python3 examples/compile_first_model.py --model m.onnx --calib_images ./imgs --device modalix --output ./out
 
 # ---- Phase 7: apps ----

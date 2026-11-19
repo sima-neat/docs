@@ -15,6 +15,8 @@ eLxrプラットフォームは、SDK **2.0.0** 以降のバージョンから�
 
 eLxr への変換には、tRoot の更新と eMMC の再フラッシュが必要であり、これらは [ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot) によって行われます。
 
+この変換では、リリース 2.1.3 をインストールします。変換後に 3.0.0 へ移行するには、[2.1.3 から 3.0.0 にバージョンアップします。](./convert-2-1-3-to-3-0-0.md)の手順に従ってください。
+
 Windows ホストでは、**Windows Subsystem for Linux (WSL)** 上の Ubuntu に `sima-cli` をインストールして実行します。ネイティブ Windows での NetBoot には対応していません。[WSL のネットワーク設定](/hardware/getting-started/firmware-update/net-boot#windows-hosts)を参照してください。
 :::
 
@@ -55,7 +57,7 @@ eLxr に変換する前に、DevKit を最新の **tRoot** イメージに更新
 <img src={useBaseUrl('/img/media/host-cli.png')} alt="ホストマシンで実行" width="55" style={{float: 'left', marginRight: '8px'}} />
 
 ```bash
-sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_version% --troot_only
+sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 2.1.3 --troot_only
 ```
 
 アップデートが正常に完了したら、変更を適用するために **DevKit の電源を入れ直します**。
@@ -67,7 +69,7 @@ sima-user@sima-user-machine:~$ sima-cli update --ip 192.168.1.20 %platform_versi
 
 変換の残りの手順では、[ネットワークブートによる復旧](/hardware/getting-started/firmware-update/net-boot)に記載されている標準の TFTP ネットブートおよびフラッシュ手順を使用します。以下に示す eLxr 固有の値を使用して、その手順に従ってください。
 
-- **手順2（TFTPサーバーの起動）：** `--boardtype modalix --fwtype elxr -v %platform_version%` を使用します。
+- **手順2（TFTPサーバーの起動）：** `--boardtype modalix --fwtype elxr -v 2.1.3` を使用します。
 - **手順 3（U-Boot の設定）:** リモートで設定できない場合は、復旧ガイドに従ってシリアルコンソールからブートスクリプトを読み込みます。
 - **手順 4（書き込み）:** 手動で書き込む場合は、`netboot>` プロンプトで `f` と入力し、書き込みが完了したら再起動を承認します。
 

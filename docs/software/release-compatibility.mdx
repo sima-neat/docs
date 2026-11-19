@@ -11,6 +11,9 @@ U-Boot repositories. To rebuild a component that matches the image on your board
 check out the commit for that release before you build. See
 [Build the BSP from Source](./build-from-source.mdx).
 
+The public repositories stop at release 2.1.3. The sources for release 3.0.0 are
+not published yet, so the table has no row for it.
+
 ## Kernel and U-Boot by Release
 
 | Platform release | Kernel version | Kernel commit | U-Boot commit |
@@ -27,7 +30,7 @@ The 2.1.0 kernel row points to the build fix that followed the release commit
 
 - The repositories have no release tags. Each release is a single commit on
   `master`, titled `SiMa.AI Release <version>`.
-- `master` always holds the latest release. Building it for a board that runs an
+- `master` holds the latest published release, 2.1.3. Building it for a board that runs an
   older release gives you a kernel or bootloader that does not match that board's
   root filesystem and modules.
 - Find the release on a running board with `cat /etc/buildinfo`.

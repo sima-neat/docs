@@ -8,6 +8,10 @@
 //
 // Bump versions.json (or set the matching SCREAMING_SNAKE env var, e.g. PLATFORM_VERSION,
 // in the build env) to update everything at once.
+//
+// `platform_version` is the current DevKit platform release. Keep it, `sdk_version`,
+// `model_compiler_version`, and `neat_core_version` in step with the Compatibility
+// Guide in the Software docs (sima-neat/core website/release-data/current.json).
 const defaults = require('./versions.json');
 
 const versions = {};

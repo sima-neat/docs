@@ -20,7 +20,7 @@ A SiMa.ai BSP contains:
 
 The Modalix BSP targets the Modalix DevKit, Modalix Early Access kits, and the Modalix PCIe card. It is built on [eLxr](https://elxr.org/), a Debian-derived distribution. Userspace is managed with `apt`, so customizing Modalix images is closer to packaging Debian software than to writing Yocto recipes. To convert an existing Yocto DevKit to eLxr, see [Convert to eLxr](../reference/tech-notes/elxr-conversion.mdx).
 
-Sources: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (kernel and device trees), [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot), and [meta-simaai](https://github.com/SiMa-ai/meta-simaai) (Yocto layer).
+Sources: [simaai-linux](https://github.com/SiMa-ai/simaai-linux) (kernel and device trees), [sima-ai-uboot](https://github.com/SiMa-ai/sima-ai-uboot) (U-Boot), and [meta-simaai](https://github.com/SiMa-ai/meta-simaai) (Yocto layer). These repositories stop at release 2.1.3. The sources for release 3.0.0 are not published yet.
 
 ## eLxr or Yocto {#elxr-or-yocto}
 
