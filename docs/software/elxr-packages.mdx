@@ -137,7 +137,7 @@ treated differently.
 | Platform release | What the update does | Your packages and services |
 | --- | --- | --- |
 | 2.1 | Upgrades the SiMa.ai packages in place. It does not write a new image. | Not confirmed. Check them after an update. |
-| 3.0 and later | Writes a complete root filesystem to the inactive slot, and boots from it. | Kept in an overlay on `/data`, unless the update clears the overlay. If it does, install them again. |
+| 3.0 and later | Downloads a SiMa.ai firmware image and installs it. Release 3.0.0 uses A/B images, OverlayFS, and SWUpdate. | Not confirmed. Check them after an update. |
 
 - In release 2.1, the update resets the U-Boot environment. Set `dtbos` and any
   other variable that you changed again after the update.
@@ -145,12 +145,9 @@ treated differently.
   in every release.
 - Keep your `.deb` files and a list of what you installed, so that you can
   install them again.
-- In release 3.0 and later, `sima-cli update --inspect` shows what the overlay
-  holds.
-
-Platform release 3.0 is not released yet. Its behavior is described here from
-the [system update guide](https://github.com/sima-neat/sima-cli/blob/main/docs/sima-cli/guides/system-updates.md)
-of `sima-cli`, and can change.
+- Moving a board from 2.x to 3.0 is not done with `sima-cli update`. It writes a
+  complete 3.0.0 image over the network, so it removes your packages. See
+  [Convert from 2.1.3 to 3.0.0](../reference/tech-notes/convert-2-1-3-to-3-0-0.md).
 
 ## Not Covered {#not-covered}
 
