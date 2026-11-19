@@ -1,12 +1,12 @@
 ---
 title: "在 Modalix 系統模組 (SoM) 的 DevKit 上設定 Bluetooth"
-description: "將 Bluetooth USB 轉接器連接到 Modalix SoM DevKit，然後啟動 bluez 堆疊。"
+description: "將 Bluetooth USB 轉接器連接到 Modalix SoM DevKit、啟動 bluez 堆疊，並透過 Bluetooth 耳機播放與錄製音訊。"
 sidebar_position: 4
 ---
 
 # 在 Modalix 系統模組 (SoM) 的 DevKit 上設定 Bluetooth
 
-請參考本指南，將 Bluetooth USB 轉接器連接到 Modalix SoM DevKit，並使用 `bluez` 啟動 Bluetooth 堆疊。
+請參考本指南，將 Bluetooth USB 轉接器連接到 Modalix SoM DevKit、使用 `bluez` 啟動 Bluetooth 堆疊、將音訊播放到 Bluetooth 喇叭或耳機，以及從耳機麥克風錄音。
 
 :::info
 Bluetooth 的支援功能需要 SDK 版本 2.1.0 或更高版本，且必須在 eLxr 執行階段上執行。若要檢查執行階段，請參閱 [轉換為 eLxr](./elxr-conversion)。
@@ -67,7 +67,7 @@ parm:           enable_ecred:Enable enhanced credit flow control mode (bool)
 </details>
 
 <details open>
-<summary><strong>步驟 4：啟動 bluetoothctl。</strong></summary>
+<summary><strong>步驟 4：啟動 bluetoothctl</strong></summary>
 
 啟動互動模式 Bluetooth 控制器：
 
@@ -87,7 +87,7 @@ Agent registered
 | `devices` | 列出控制器已偵測到的裝置。 |
 | `pair <MAC>` | 透過 MAC 位址與裝置配對。系統可能會提示您在兩端都確認密碼。 |
 | `trust <MAC>` | 將該裝置標記為「受信任」，以便在下次啟動時自動重新連線，而無需重新配對。 |
-| `connect <MAC>` | 建立一個有效的連線。對於音訊裝置而言，這會顯示在步驟 6 中使用的 A2DP 接收端。 |
+| `connect <MAC>` | 建立一個有效的連線。對於音訊裝置而言，這會提供步驟 7 中使用的 A2DP 音訊輸出裝置。 |
 | `info <MAC>` | 顯示裝置詳細資訊（已配對、已信任、已連線、支援的設定檔）。 |
 | `disconnect <MAC>` / `remove <MAC>` | 中斷目前的連線，或完全移除配對記錄。 |
 | `help` | 列出所有可用的指令及其參數。 |
@@ -112,45 +112,103 @@ Agent registered
 </details>
 
 :::note
-步驟 5 到步驟 7 僅適用於 Bluetooth **音訊**裝置，例如喇叭和耳機。對於非音訊周邊設備（例如鍵盤、滑鼠、遊戲手把、感測器和檔案傳輸裝置），在步驟 4 中進行配對即可。
+步驟 5 及之後的步驟僅適用於 Bluetooth **音訊**裝置，例如喇叭和耳機。對於非音訊周邊設備（例如鍵盤、滑鼠、遊戲手把、感測器和檔案傳輸裝置），在步驟 4 中進行配對即可。
 :::
 
 <details open>
-<summary>步驟 5：安裝音訊函式庫和播放器<strong></strong></summary>
+<summary><strong>步驟 5：安裝音訊函式庫和播放器</strong></summary>
 
-若要將音訊從 DevKit 串流至已配對的 Bluetooth 喇叭或耳機，請安裝 PipeWire、BlueZ SPA 外掛程式，以及一個主控台音訊播放器：
+若要將音訊從 DevKit 串流至已配對的 Bluetooth 喇叭或耳機，請安裝 PipeWire、WirePlumber、BlueZ SPA 外掛程式，以及一個主控台音訊播放器：
 
 ```console
-sima@modalix:~$ sudo apt install pipewire-audio libspa-0.2-bluetooth cmus
+sima@modalix:~$ sudo apt install pipewire-audio wireplumber libspa-0.2-bluetooth cmus
+```
+
+確認每個 PipeWire 和 WirePlumber 套件都已完成安裝。每一行都必須以 `ii` 開頭：
+
+```console
+sima@modalix:~$ dpkg -l | grep -E 'pipewire|wireplumber' | cut -c1-60
+ii  libpipewire-0.3-0t64:arm64        1.4.2-1
+ii  pipewire:arm64                    1.4.2-1
+ii  pipewire-pulse                    1.4.2-1
+ii  wireplumber                       0.5.8-2
+...
+```
+
+如果某一行以 `iU` 或 `iF` 開頭，表示安裝已中斷，音訊服務將無法啟動。請完成安裝：
+
+```console
+sima@modalix:~$ sudo dpkg --configure -a
+```
+
+PipeWire、WirePlumber 和 `pipewire-pulse` 是以 `sima` 使用者的**使用者**服務執行，而非系統服務。請在不使用 `sudo` 的情況下啟動它們：
+
+```console
+sima@modalix:~$ systemctl --user enable --now pipewire pipewire-pulse wireplumber
+sima@modalix:~$ pactl info | grep 'Server Name'
+Server Name: PulseAudio (on PipeWire 1.4.2)
+```
+
+平台 3.0.0 隨附 PipeWire 1.4 和 WirePlumber 0.5。平台 2.1.x 隨附 PipeWire 0.3 和 WirePlumber 0.4。
+
+</details>
+
+<details open>
+<summary><strong>步驟 6：允許在未登入桌面的情況下使用 Bluetooth 音訊</strong></summary>
+
+如果您會登入 DevKit 的桌面，請略過此步驟。如果您僅透過 SSH 或序列埠使用 DevKit，請依照此步驟操作。
+
+讓 `sima` 使用者服務在無人登入時持續執行。若未進行此設定，每次最後一個 SSH 工作階段關閉時，PipeWire 都會停止：
+
+```console
+sima@modalix:~$ sudo loginctl enable-linger sima
+```
+
+在平台 3.0.0 及後續版本上，WirePlumber 0.5 僅會為在 DevKit 顯示器前登入的使用者啟用 Bluetooth 音訊。透過 SSH 時，`bluetoothctl connect` 會因 `br-connection-profile-unavailable` 而失敗。請允許在未從顯示器登入的情況下使用 Bluetooth 音訊：
+
+```console
+sima@modalix:~$ mkdir -p ~/.config/wireplumber/wireplumber.conf.d
+sima@modalix:~$ cat > ~/.config/wireplumber/wireplumber.conf.d/80-bluez-no-seat.conf <<'EOF'
+wireplumber.profiles = {
+  main = {
+    monitor.bluez.seat-monitoring = disabled
+  }
+}
+EOF
+sima@modalix:~$ systemctl --user restart wireplumber pipewire pipewire-pulse
+```
+
+透過 SSH 時，如果 `systemctl --user` 或 `pactl` 無法連線，請先設定執行階段目錄：
+
+```console
+sima@modalix:~$ export XDG_RUNTIME_DIR=/run/user/$(id -u)
 ```
 
 </details>
 
 <details open>
-<summary><strong>步驟 6：將音訊路由至 Bluetooth 音訊輸出裝置</strong></summary>
+<summary><strong>步驟 7：將音訊路由至 Bluetooth 音訊輸出裝置</strong></summary>
 
-依照步驟 4 配對並連接 Bluetooth 音訊裝置後，列出可用的 PipeWire/PulseAudio 音訊輸出裝置：
+依照步驟 4 配對並連接 Bluetooth 音訊裝置後，列出可用的音訊輸出裝置：
 
 ```console
 sima@modalix:~$ pactl list short sinks
+35      auto_null                         PipeWire  float32le 2ch 48000Hz  SUSPENDED
+90      bluez_output.00_A4_1C_4D_DA_D3.1  PipeWire  s16le 2ch 48000Hz      SUSPENDED
 ```
 
-找到與您已配對的裝置相對應的 `bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink` 項目，然後將其設定為預設的音訊輸出裝置（將佔位符 MAC 位址替換為來自先前指令的值）：
+PipeWire 會將 Bluetooth 音訊輸出裝置命名為 `bluez_output.<MAC>.1`，其中 MAC 位址的 `:` 會以 `_` 取代。請使用先前指令輸出的名稱，將您裝置的音訊輸出裝置設為預設值：
 
 ```console
-sima@modalix:~$ pactl set-default-sink bluez_sink.XX_XX_XX_XX_XX_XX.a2dp_sink
+sima@modalix:~$ pactl set-default-sink bluez_output.00_A4_1C_4D_DA_D3.1
 ```
 
-重新啟動 Bluetooth 和音訊服務，以便新的路由設定生效：
-
-```console
-sima@modalix:~$ sudo systemctl restart bluetooth wireplumber pipewire pipewire-pulse
-```
+變更會立即生效，不需要重新啟動。
 
 </details>
 
 <details open>
-<summary><strong>步驟 7：使用 cmus 播放音訊。</strong></summary>
+<summary><strong>步驟 8：使用 cmus 播放音訊</strong></summary>
 
 啟動 `cmus` 並將音訊檔案或目錄加入佇列，以驗證其透過 Bluetooth 音訊輸出裝置播放：
 
@@ -160,4 +218,262 @@ sima@modalix:~$ cmus
 
 在 `cmus` 介面中，按下 `5` 以切換到檔案瀏覽器，導航至媒體檔案，然後按下 `Enter` 以播放。音訊現在應該會串流到已配對的 Bluetooth 裝置。
 
+若要在不使用 `cmus` 的情況下測試，請播放範例音效：
+
+```console
+sima@modalix:~$ pw-play --target bluez_output.00_A4_1C_4D_DA_D3.1 /usr/share/sounds/alsa/Front_Center.wav
+```
+
 </details>
+
+若要從耳機麥克風錄音，請繼續參閱[耳機麥克風](#headset-microphone)。沒有麥克風的喇叭和耳機只需要步驟 1 到步驟 8。
+
+## 耳機麥克風 {#headset-microphone}
+
+使用原廠 Modalix 核心即可將音樂播放到 Bluetooth 耳機，但耳機的**麥克風**無法使用。麥克風使用免持設定檔 (HFP)，需要核心的 RFCOMM 通訊協定，而 Modalix 核心在建置時並未包含此功能 (`# CONFIG_BT_RFCOMM is not set`)。
+
+若沒有 RFCOMM，PipeWire 會記錄 `socket(STREAM, RFCOMM): Protocol not supported`，且耳機僅提供播放 (A2DP) 設定檔。步驟 9 到步驟 15 會在 DevKit 上建置 RFCOMM 模組 `rfcomm.ko`，並將其載入執行中的核心。開發板上的核心映像檔不會變更。
+
+開始之前，您需要：
+
+- Bluetooth 音訊播放功能正常運作（步驟 1 到步驟 8）。
+- 一副附麥克風的耳機，且已完成配對和連線。
+- NVMe 磁碟機上約 5 GB 的可用空間，用於存放核心原始碼和建置。請在 `/media/nvme` 上建置，而非可用空間很少的根檔案系統。
+- DevKit 可存取網際網路。
+
+<details open>
+<summary><strong>步驟 9：檢查 RFCOMM</strong></summary>
+
+確認執行中的核心不支援 RFCOMM：
+
+```console
+sima@modalix:~$ uname -r
+6.18.3-modalix
+sima@modalix:~$ zcat /proc/config.gz | grep BT_RFCOMM
+# CONFIG_BT_RFCOMM is not set
+```
+
+如果 `lsmod | grep rfcomm` 已列出該模組，請直接跳到步驟 14。
+
+</details>
+
+<details open>
+<summary><strong>步驟 10：取得核心原始碼</strong></summary>
+
+安裝建置工具：
+
+```console
+sima@modalix:~$ sudo apt install build-essential git bc bison flex libssl-dev libelf-dev
+```
+
+下載與您 DevKit 上版本相符的核心原始碼。[版本相容性](../../software/release-compatibility.mdx)列出了每個版本的核心 commit。原始碼的核心版本必須與 `uname -r` (`6.18.3`) 相符。此範例使用 2.1.3 的 commit：
+
+```console
+sima@modalix:~$ cd /media/nvme
+sima@modalix:/media/nvme$ git init simaai-linux && cd simaai-linux
+sima@modalix:/media/nvme/simaai-linux$ git remote add origin https://github.com/SiMa-ai/simaai-linux.git
+sima@modalix:/media/nvme/simaai-linux$ git fetch --depth 1 origin 65aba29989da02d7612da5484dbbcd50643fdd60
+sima@modalix:/media/nvme/simaai-linux$ git checkout FETCH_HEAD
+```
+
+</details>
+
+<details open>
+<summary><strong>步驟 11：設定核心</strong></summary>
+
+以**執行中**核心的設定為基礎，然後將 RFCOMM 啟用為模組：
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ zcat /proc/config.gz > .config
+sima@modalix:/media/nvme/simaai-linux$ ./scripts/config -m BT_RFCOMM -e BT_RFCOMM_TTY
+sima@modalix:/media/nvme/simaai-linux$ make olddefconfig
+sima@modalix:/media/nvme/simaai-linux$ grep BT_RFCOMM .config
+CONFIG_BT_RFCOMM=m
+CONFIG_BT_RFCOMM_TTY=y
+```
+
+:::warning
+請勿以 `simaai_modalix_defconfig` 為基礎。發行的映像檔會啟用 defconfig 未啟用的選項，例如 device-mapper、cgroup 和 netfilter 選項。在平台 3.0.0 上，約有 400 個選項不同。以不同設定建置的模組，其核心資料結構的配置可能與執行中的核心不同，進而導致核心當機。
+:::
+
+</details>
+
+<details open>
+<summary><strong>步驟 12：建置模組</strong></summary>
+
+先建置核心樹，再建置 RFCOMM 模組。第一個指令會產生模組建置所需的 `Module.symvers` 和產生的標頭檔，不會安裝任何項目：
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ make -j$(nproc) LOCALVERSION="-modalix"
+sima@modalix:/media/nvme/simaai-linux$ make -j$(nproc) LOCALVERSION="-modalix" M=net/bluetooth/rfcomm modules
+```
+
+在 DevKit 上建置核心樹約需 35 分鐘。必須設定 `LOCALVERSION="-modalix"`，模組的版本才會與 `uname -r` 相符。請勿設定 `ARCH` 或 `CROSS_COMPILE`；DevKit 是為自身進行建置。
+
+確認模組的版本字串與執行中的核心相符：
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ /usr/sbin/modinfo net/bluetooth/rfcomm/rfcomm.ko | grep vermagic
+vermagic:       6.18.3-modalix SMP preempt mod_unload aarch64
+```
+
+</details>
+
+<details open>
+<summary><strong>步驟 13：安裝並載入模組</strong></summary>
+
+將模組安裝在原廠模組旁，然後載入：
+
+```console
+sima@modalix:/media/nvme/simaai-linux$ sudo install -D -m644 net/bluetooth/rfcomm/rfcomm.ko /lib/modules/$(uname -r)/updates/rfcomm.ko
+sima@modalix:/media/nvme/simaai-linux$ sudo depmod -a
+sima@modalix:/media/nvme/simaai-linux$ sudo modprobe rfcomm
+sima@modalix:/media/nvme/simaai-linux$ sudo dmesg | grep RFCOMM
+[ 2396.491116] Bluetooth: RFCOMM TTY layer initialized
+[ 2396.496637] Bluetooth: RFCOMM socket layer initialized
+[ 2396.502451] Bluetooth: RFCOMM ver 1.11
+```
+
+執行 `depmod` 後，PipeWire 第一次使用 `rfcomm` 時，核心會自動載入該模組，重新開機後也是如此。
+
+:::note
+每次平台更新變更核心後，都必須重新建置並重新安裝模組。為不同核心建置的模組會因 `Invalid module format` 而無法載入。
+:::
+
+</details>
+
+<details open>
+<summary><strong>步驟 14：重新連接耳機</strong></summary>
+
+重新啟動音訊服務並重新連接耳機，讓 PipeWire 加入免持設定檔。請將 MAC 位址替換為您耳機的位址：
+
+```console
+sima@modalix:~$ systemctl --user restart wireplumber pipewire pipewire-pulse
+sima@modalix:~$ bluetoothctl disconnect 00:A4:1C:4D:DA:D3
+sima@modalix:~$ bluetoothctl connect 00:A4:1C:4D:DA:D3
+sima@modalix:~$ pactl list cards | grep -E '^\s+(a2dp-sink|headset-head-unit)[^:]*:' | cut -c1-80
+        a2dp-sink: High Fidelity Playback (A2DP Sink, codec SBC) (sinks: 1, sour
+        a2dp-sink-sbc_xq: High Fidelity Playback (A2DP Sink, codec SBC-XQ) (sink
+        headset-head-unit-cvsd: Headset Head Unit (HSP/HFP, codec CVSD) (sinks:
+        headset-head-unit: Headset Head Unit (HSP/HFP, codec mSBC) (sinks: 1, so
+```
+
+`headset-head-unit` 設定檔負責傳輸麥克風音訊。`a2dp-sink` 是高品質播放設定檔，不包含麥克風。
+
+</details>
+
+<details open>
+<summary><strong>步驟 15：錄音與播放</strong></summary>
+
+將耳機切換為免持設定檔。啟用此設定檔時，播放品質會降低：
+
+```console
+sima@modalix:~$ pactl set-card-profile bluez_card.00_A4_1C_4D_DA_D3 headset-head-unit
+sima@modalix:~$ pactl list short sources | grep bluez
+91      bluez_input.00:A4:1C:4D:DA:D3     PipeWire  float32le 1ch 48000Hz  SUSPENDED
+sima@modalix:~$ pactl list short sinks | grep bluez
+104     bluez_output.00_A4_1C_4D_DA_D3.1  PipeWire  s16le 1ch 16000Hz      SUSPENDED
+```
+
+在平台 3.0.0 上，麥克風音訊來源的名稱會保留 `:` 字元。請使用您的 DevKit 輸出的名稱。請勿從 `.monitor` 項目錄音；該項目傳輸的是播放音訊，而非麥克風音訊。
+
+一邊說話一邊錄音 10 秒，然後透過耳機播放錄音：
+
+```console
+sima@modalix:~$ pw-record --target "bluez_input.00:A4:1C:4D:DA:D3" /tmp/mic.wav & sleep 10; kill $!
+sima@modalix:~$ pw-play --target bluez_output.00_A4_1C_4D_DA_D3.1 /tmp/mic.wav
+```
+
+完成後，切換回播放設定檔：
+
+```console
+sima@modalix:~$ pactl set-card-profile bluez_card.00_A4_1C_4D_DA_D3 a2dp-sink
+```
+
+如果錄音沒有聲音，請改用 `headset-head-unit-cvsd` 設定檔重複此步驟。
+
+</details>
+
+<details>
+<summary><strong>選用：使用指令碼錄音</strong></summary>
+
+此指令碼會為已連線的耳機執行步驟 15。它會找出耳機的麥克風和喇叭、以倒數計時方式錄音、輸出錄音的峰值音量、播放錄音，並且一律會將耳機切換回播放設定檔，即使您按下 `Ctrl+C` 也一樣。
+
+```bash title="record-mic.sh"
+#!/usr/bin/env bash
+# Record from a Bluetooth headset microphone, play it back, then return to A2DP.
+#   ./record-mic.sh [seconds] [cvsd]
+set -euo pipefail
+
+SECS="${1:-10}"
+PROFILE="headset-head-unit"; [[ "${2:-}" == "cvsd" ]] && PROFILE="headset-head-unit-cvsd"
+OUT_FILE="${OUT_FILE:-$PWD/mic-$(date +%Y%m%d-%H%M%S).wav}"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+MAC="${HEADSET_MAC:-$(bluetoothctl devices Connected | awk 'NR == 1 {print $2}')}"
+[[ -n "$MAC" ]] || { echo "No Bluetooth device is connected. Set HEADSET_MAC or connect the headset."; exit 1; }
+M_="${MAC//:/_}"
+CARD="bluez_card.$M_"
+
+trap 'pactl set-card-profile "$CARD" a2dp-sink 2>/dev/null && echo "Back to A2DP playback."' EXIT
+
+pactl set-card-profile "$CARD" "$PROFILE"
+sleep 2
+
+# Source and sink names differ between PipeWire versions, so look them up.
+SRC=$(pactl list short sources | awk -v m="$MAC" -v u="$M_" '$2 ~ /^bluez_input\./ && ($2 ~ m || $2 ~ u) {print $2; exit}')
+SINK=$(pactl list short sinks | awk -v u="$M_" '$2 ~ /^bluez_output\./ && $2 ~ u && $2 !~ /monitor/ {print $2; exit}')
+[[ -n "$SRC" && -n "$SINK" ]] || { echo "Headset microphone not found. Is the rfcomm module loaded?"; exit 1; }
+
+echo "Recording $SECS seconds ($PROFILE). Speak now."
+pw-record --target "$SRC" "$OUT_FILE" & PID=$!
+for ((i = SECS; i > 0; i--)); do printf "\r  %2d s left " "$i"; sleep 1; done
+kill "$PID"; wait "$PID" 2>/dev/null || true
+printf "\rDone.          \n"
+
+python3 - "$OUT_FILE" <<'PY'
+import array, sys, wave
+w = wave.open(sys.argv[1]); a = array.array("h", w.readframes(w.getnframes()))
+peak = max((abs(x) for x in a), default=0) / 32768
+print(f"Saved {sys.argv[1]} (peak level {peak:.3f}{', silent: try the cvsd option' if peak < 0.01 else ''})")
+PY
+
+echo "Playing it back."
+pw-play --target "$SINK" "$OUT_FILE"
+```
+
+將其儲存為 `record-mic.sh`，設為可執行，然後執行：
+
+```console
+sima@modalix:~$ chmod +x record-mic.sh
+sima@modalix:~$ ./record-mic.sh           # record 10 seconds
+sima@modalix:~$ ./record-mic.sh 20 cvsd   # record 20 seconds with the CVSD codec
+```
+
+</details>
+
+## 疑難排解 {#troubleshooting}
+
+| 症狀 | 原因與修正方式 |
+| --- | --- |
+| `sudo systemctl restart wireplumber` 輸出 `Unit wireplumber.service not found.` | PipeWire、WirePlumber 和 `pipewire-pulse` 是使用者服務。請在不使用 `sudo` 的情況下重新啟動它們：`systemctl --user restart wireplumber pipewire pipewire-pulse`。只有 `bluetooth` 是系統服務：`sudo systemctl restart bluetooth`。 |
+| `pactl` 輸出 `Connection failure: Connection refused` | 音訊服務未在執行。請檢查套件是否已完成安裝，以及服務是否已啟動（步驟 5）。透過 SSH 時，請設定 `XDG_RUNTIME_DIR`（步驟 6）。 |
+| `bluetoothctl connect` 輸出 `org.bluez.Error.Failed br-connection-profile-unavailable` | WirePlumber 尚未註冊 Bluetooth 音訊設定檔。在平台 3.0.0 及後續版本上透過 SSH 操作時，請依照步驟 6 操作。 |
+| WirePlumber 記錄顯示 `RegisterProfile() failed: org.bluez.Error.NotPermitted`，且 `pactl list short sinks` 僅列出 `auto_null` | 登入畫面 (`lightdm`) 執行了自己的 PipeWire，並搶先註冊了 Bluetooth 設定檔。請將其停止，然後重新啟動 `sima` 服務，如下所示。 |
+| `modprobe` 或 `insmod` 輸出 `Invalid module format` | 模組是為不同的核心所建置。請檢查 `modinfo` 回報的 `vermagic` 是否與執行中的核心相同，並使用 `LOCALVERSION="-modalix"` 重新建置（步驟 12）。 |
+| `insmod` 輸出 `Unknown symbol in module` | 未載入 `bluetooth` 模組。請使用 `modprobe rfcomm`，它會先載入該模組。 |
+| 音效卡未列出任何 `headset-head-unit` 設定檔 | 未載入 RFCOMM，或耳機在 RFCOMM 載入之前就已連線。請檢查 `lsmod \| grep rfcomm`，然後重複步驟 14。 |
+| WirePlumber 記錄顯示 `RFCOMM receive command but modem not available` | 無害。耳機傳送了電話通話指令，而 DevKit 沒有電話數據機。 |
+| 錄音沒有聲音 | 請在倒數計時期間說話，檢查麥克風是否未靜音 (`pactl get-source-mute`)，然後改用 `headset-head-unit-cvsd` 設定檔。 |
+
+若要停止登入畫面的音訊服務，並防止其再次啟動：
+
+```console
+sima@modalix:~$ sudo -u lightdm XDG_RUNTIME_DIR=/run/user/$(id -u lightdm) \
+  systemctl --user stop pipewire.socket pipewire-pulse.socket wireplumber pipewire pipewire-pulse
+sima@modalix:~$ sudo -u lightdm XDG_RUNTIME_DIR=/run/user/$(id -u lightdm) \
+  systemctl --user mask pipewire.service pipewire.socket pipewire-pulse.service pipewire-pulse.socket wireplumber.service
+sima@modalix:~$ systemctl --user restart wireplumber pipewire pipewire-pulse
+```
+
+執行此操作後，登入畫面將沒有聲音。若要復原，請以 `unmask` 執行相同的 `mask` 指令。
