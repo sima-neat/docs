@@ -34,7 +34,7 @@ Modalix BSP 適用於 Modalix DevKit、Modalix 搶先體驗版套件以及 Modal
 | 建置更新套件 | 尚未提供文件 | [建置與套用更新套件](../deployment/update-package.mdx) |
 | 安全開機與佈建 | 尚未提供文件 | 尚未提供文件 |
 
-如果您現在就需要從原始碼建置完整映像檔，請選擇 Yocto；否則請使用 eLxr。
+SiMa.ai 目前並未積極測試 Yocto 版本，因此較新的建置沒有已發布的 Yocto 支援。請使用 eLxr。只有在您現在就需要從原始碼建置完整映像檔時才選擇 Yocto，並請自行在電路板上測試該映像檔。
 
 ## BSP 原始碼的用途
 
