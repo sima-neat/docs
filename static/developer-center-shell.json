@@ -30,16 +30,16 @@
       "external": false
     },
     {
+      "key": "models",
+      "label": "Models",
+      "href": "/models/",
+      "external": false
+    },
+    {
       "key": "examples",
       "label": "Examples",
       "href": "/examples/",
       "external": false
-    },
-    {
-      "key": "models",
-      "label": "Models",
-      "href": "https://huggingface.co/simaai",
-      "external": true
     },
     {
       "key": "community",

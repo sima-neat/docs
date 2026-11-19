@@ -30,7 +30,7 @@ SDK 2.1 或更新版本，並已安裝 Palette 套件以提供圖形支援。您
 
 ## 載板元件
 
-參考硬體啟動使用的是 Waveshare 載板。任何符合 260 針 SODIMM 腳位定義的電路板皆可使用。下表中的編號對應這些視圖中的標示。
+參考硬體啟動使用的是 Waveshare 載板。電路板必須符合 260 針 SODIMM 腳位定義，但光是符合並不代表能搭配 Modalix SoM 運作。[第三方載板](./third-party-carriers.mdx)目錄列出了 SiMa.ai 已完成硬體啟動的電路板：Waveshare JETSON-ORIN-IO-BASE-H 參考載板，以及在平台版本 2.1.0 起的 Connect Tech Boson-22 與 Seeed Studio reComputer J401。若使用其他電路板，請確認電氣腳位相容性，並預期需要調整 device tree。下表中的編號對應這些視圖中的標示。
 
 <div className="figure-grid">
   <figure className="doc-figure">
@@ -60,7 +60,7 @@ SDK 2.1 或更新版本，並已安裝 Palette 套件以提供圖形支援。您
 
 ## Modalix SoM
 
-硬體啟動使用的是 Modalix SoM Rev 2。它搭載 MLSoC Modalix 晶粒、兩顆 LPDDR5 封裝、16 GB eMMC 與 SPI 快閃記憶體，並透過金手指 SO-DIMM 邊緣連接器連接。
+硬體啟動使用的是 Modalix SoM Rev 2。它搭載 Modalix MLSoC 晶粒、兩顆 LPDDR5 封裝、16 GB eMMC 與 SPI 快閃記憶體，並透過金手指 SO-DIMM 邊緣連接器連接。
 
 <div className="figure-grid">
   <figure className="doc-figure">

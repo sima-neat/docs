@@ -15,6 +15,10 @@ DevKit が実行中で、ネットワーク経由でアクセスできる場合�
 `sima-cli update` がインストールするのは SiMa.ai の公式ビルドのみです。独自にビルドしたイメージを使用する場合は、代わりに [イメージを eMMC に書き込む](/hardware/deployment/flash-image) を参照してください。
 :::
 
+:::note
+DevKitで2.xファームウェアを実行している場合、この更新メカニズムを使用して直接3.0に移行することはできません。まず、[2.1.3 から 3.0.0 にバージョンアップします。](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0)の手順に従ってください。変換後、`sima-cli update`を使用して、eLxr 3.0から新しいリリースに更新します。
+:::
+
 続行する前に、ホストがネットワーク経由で DevKit にアクセスできることを確認してください。以下を参照してください。
 
 - [スタンドアロンモードのネットワーク設定](/hardware/getting-started/standalone-mode/network)
@@ -29,7 +33,7 @@ DevKit が実行中で、ネットワーク経由でアクセスできる場合�
 modalix:~$ sima-cli update
 ```
 
-Yocto Linux を実行している MLSoC では、以前にダウンロードして自分でホストした場合、バージョン文字列の代わりに完全な URL を指定することもできます。
+MLSoC上でYoctoLinuxを実行している場合、またはModalix上でeLxr 3.0以降を実行している場合、ご自身でイメージをダウンロードしてホストしている場合は、バージョン文字列の代わりに完全なURLを指定することもできます。これには、eLxr 3.0から新しいリリースへの更新も含まれます。
 
 ```console
 modalix:~$ sima-cli update http://your-server/image.tar.gz
@@ -39,7 +43,7 @@ modalix:~$ sima-cli update http://your-server/image.tar.gz
 <TabItem value="from-host" label="ホストマシンから">
 
 :::note
-この方法は、Yocto を実行している MLSoC プラットフォームでのみサポートされています。eLxr Linux を実行している Modalix デバイスの場合は、DevKit 上で直接アップデートを実行してください。
+ホストから開始されるアップデートは、MLSoC上でYocto Linuxを実行している場合、およびModalix上でeLxr 3.0以降を実行している場合にサポートされます。これには、3.0から新しいリリースへのアップデートも含まれます。Modalix上でeLxr 2.xを実行している場合は、DevKit上で直接アップデートを実行してください。3.0への移行には、上記にリンクされている変換ガイドが必要です。
 :::
 
 ホストマシンから次のコマンドを使用します。

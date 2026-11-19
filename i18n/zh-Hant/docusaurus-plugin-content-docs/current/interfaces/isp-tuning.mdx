@@ -1,12 +1,12 @@
 ---
 title: ISP 調校
-description: 什麼是 ISP 調校、哪些相機已針對 Modalix ISP 完成調校、何時需要調校，以及如何取得調校指南。
+description: 什麼是 ISP 調校、Modalix ISP 驅動程式為哪些相機提供感測器項目、何時需要調校，以及如何取得調校指南。
 sidebar_position: 4
 ---
 
 # ISP 調校
 
-MLSoC Modalix 的影像訊號處理器（ISP）會將相機感測器的原始資料轉換為應用程式所接收的影像。從相機取得影格，與取得良好的影像，是兩個不同的步驟。本頁說明什麼是調校、哪些相機已完成調校，以及如何取得調校指南。
+Modalix MLSoC 的影像訊號處理器（ISP）會將相機感測器的原始資料轉換為應用程式所接收的影像。從相機取得影格，與取得良好的影像，是兩個不同的步驟。本頁說明什麼是調校、ISP 驅動程式支援哪些相機，以及如何取得調校指南。
 
 :::caution[尚未在硬體上驗證]
 本頁摘要整理本網站其他相機頁面的內容，以及平台版本 2.1.3 的核心原始碼。相機與 ISP 的負責人員尚未審閱本頁。
@@ -22,9 +22,11 @@ MLSoC Modalix 的影像訊號處理器（ISP）會將相機感測器的原始資
 
 ISP 為 Arm Mali-C71。
 
-## 已完成調校的相機 {#tuned-cameras}
+## 具有 ISP 驅動程式項目的相機 {#tuned-cameras}
 
-此平台版本已針對[支援的 MIPI 相機](./supported-cameras.mdx)中的相機完成調校：Arducam IMX477、e-con Systems IMX568 與 IMX678，以及 Leopard Imaging AR0234 與 OG05C10。使用上述任一相機時，不需先調校 ISP 即可開始使用。
+在平台版本 2.1.3 中，核心的 ISP 驅動程式為[支援的 MIPI 相機](./supported-cameras.mdx)中的四款相機提供感測器項目：Arducam IMX477、e-con Systems IMX568 與 IMX678，以及 Leopard Imaging OG05C10。清單位於 [ISP 驅動程式原始碼](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/drivers/media/isp/sensor/driver/common/sensor_driver_common.c)。使用上述任一相機時，不需先調校 ISP 即可開始使用。
+
+Leopard Imaging AR0234 在同一版本中有感測器驅動程式與裝置樹 overlay，但 ISP 驅動程式沒有它的感測器項目。
 
 ## 何時需要調校 {#when}
 
@@ -40,6 +42,6 @@ ISP 為 Arm Mali-C71。
 
 ## 後續步驟
 
-- [支援的 MIPI 相機](./supported-cameras.mdx)：已完成調校的相機及其感測器模式。
+- [支援的 MIPI 相機](./supported-cameras.mdx)：BSP 提供 overlay 的相機及其感測器模式。
 - [整合您自己的相機](./custom-camera.mdx)：在調校之前，先讓新相機能夠擷取影像。
 - [參考檔案](../reference/extra-docs.md)：如何取得調校指南。

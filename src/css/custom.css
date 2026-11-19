@@ -6,14 +6,10 @@
   --ifm-color-primary-light: #6aa5e2;
   --ifm-color-primary-lighter: #7cb1e7;
   --ifm-color-primary-lightest: #9cc6ef;
-  --ifm-font-family-base: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --ifm-font-family-base: "Roboto", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --ifm-font-family-monospace: "IBM Plex Mono", SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --ifm-heading-font-family: var(--ifm-font-family-base);
   --docs-subnav-height: 3.25rem;
-}
-
-html[data-theme='dark'] {
-  --ifm-color-primary: #8fc0f0;
 }
 
 .navbar {
@@ -35,7 +31,7 @@ html[data-theme='dark'] {
   }
 
   html.developer-center-shell-active #__docusaurus {
-    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height));
+    padding-top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 0.75rem);
   }
 
   html.developer-center-shell-active .theme-doc-sidebar-container {
@@ -49,8 +45,8 @@ html[data-theme='dark'] {
 
   html.developer-center-shell-active .theme-doc-sidebar-container [class^="sidebarViewport"],
   html.developer-center-shell-active .theme-doc-sidebar-container [class*=" sidebarViewport"] {
-    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height)) !important;
-    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height)) !important;
+    top: calc(var(--ifm-navbar-height) + var(--docs-subnav-height) + 0.75rem) !important;
+    max-height: calc(100vh - var(--ifm-navbar-height) - var(--docs-subnav-height) - 0.75rem) !important;
   }
 
   /* Offset the right-side "On this page" table of contents below the bar. */
@@ -848,11 +844,29 @@ html[data-theme='dark'] .cookie-consent__toggle {
 
 .doc-figure {
   margin: 1.4rem 0;
-  border: 1px solid rgba(28, 47, 58, 0.12);
+  border: 1px solid var(--ifm-color-emphasis-300);
   border-radius: 8px;
   overflow: hidden;
-  background: #fff;
+  background: var(--ifm-background-surface-color);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.doc-figure--diagram img {
+  padding-bottom: 4px;
+}
+
+/* Line diagrams are drawn dark-on-transparent; flip them for dark mode
+   while keeping the wire colours' hues. */
+[data-theme='dark'] .doc-figure--diagram img {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+
+.doc-figure--inline-svg svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 12px 12px 0;
+  color: var(--ifm-font-color-base);
 }
 
 .figure-grid .doc-figure {
@@ -864,13 +878,13 @@ html[data-theme='dark'] .cookie-consent__toggle {
   width: 100%;
   height: auto;
   padding: 12px 12px 0;
-  background: #fff;
+  background: transparent;
 }
 
 .doc-figure figcaption {
   padding: 10px 14px 12px;
-  background: #fff;
-  color: #4a5b66;
+  background: transparent;
+  color: var(--ifm-color-emphasis-700);
   font-size: 0.85rem;
   line-height: 1.4;
   text-align: center;

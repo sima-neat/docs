@@ -4,8 +4,8 @@
       {key: 'quickstart', label: 'Quick Start Guide', href: '/tools/qsg/index.html', external: true},
       {key: 'hardware', label: 'Hardware', href: '/hardware', external: false},
       {key: 'software', label: 'Software', href: '/software', external: false},
+      {key: 'models', label: 'Models', href: '/models/', external: false},
       {key: 'examples', label: 'Examples', href: '/examples/', external: false},
-      {key: 'models', label: 'Models', href: 'https://huggingface.co/simaai', external: true},
       {key: 'community', label: 'Community', href: 'https://community.sima.ai', external: true},
     ],
     theme: {

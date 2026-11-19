@@ -8,6 +8,12 @@ const substituteVersions = require('./src/remark/substituteVersions.cjs');
 
 const url = process.env.SYSDOC_URL || 'https://sysdoc.neat.sima.ai';
 const baseUrl = process.env.SYSDOC_BASE_URL || '/';
+// Only production may be indexed. Every other build (stg, dev, and local
+// builds with no DEPLOY_ENV) emits <meta name="robots" content="noindex,
+// nofollow"> and skips sitemap.xml, so staging never competes with prod in
+// search results (#184). vulcan-docs.yml passes DEPLOY_ENV to the build.
+const deployEnv = process.env.DEPLOY_ENV || '';
+const noIndex = deployEnv !== 'prod';
 const analyticsConfig = {
   measurementId: process.env.SYSDOC_GA_MEASUREMENT_ID || '',
 };
@@ -70,9 +76,13 @@ const config = {
   favicon: 'img/sima-logo.png',
   url,
   baseUrl,
+  noIndex,
   organizationName: 'sima-neat',
   projectName: 'docs',
   trailingSlash: false,
+  stylesheets: [
+    'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&display=swap',
+  ],
   headTags: [
     {
       tagName: 'script',

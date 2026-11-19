@@ -4,164 +4,156 @@ description: スタンドアロンモードでModalix DevKitのネットワー�
 sidebar_position: 1
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 # ネットワーク設定
 
-スタンドアロンモードでは、シリアルアクセスとネットワークアクセスの両方を設定します。シリアルアクセスは、ネットワーク接続が利用できない場合や、正しく設定されていない場合に、DevKitにアクセスできるようにします。
+Modalix DevKit をネットワークに接続するか、ホストコンピューターに直接接続します。デフォルトでは、DevKit は DHCP を使用して IP アドレスを取得します。
 
-デフォルトでは、DevKitのネットワークインターフェースはDHCPを使用します。
-
-- DevKitをコンピューターに直接接続したい場合は、コンピューターのネットワークインターフェースに固定IPを設定し、DevKitに直接接続してください。
-- DevKitにネットワークからIPアドレスを自動的に取得させたい場合は、インターフェースをDHCPを使用するように設定してください。
-
-## 現在のIPアドレスを確認
-
-シリアルコンソールから、次のコマンドを実行します。
-
-```console
-sima@modalix:~$ ip a | grep inet
-   inet 127.0.0.1/8 scope host lo
-   inet6 ::1/128 scope host noprefixroute
-   inet 192.168.91.181/22 brd 192.168.91.255 scope global dynamic noprefixroute end0
-   inet6 fe80::ab34:b995:9f6e:160e/64 scope link noprefixroute
-```
-
-<Tabs groupId="network-method">
-<TabItem value="linux-shell" label="Linux シェルでのネットワーク設定" default>
-
-:::note
-デバイスを再起動せずに、静的IPアドレスとDHCPを切り替えたい場合は、以下の手順に従ってください。
+:::tip シリアルアクセスを維持してください。
+[シリアル接続](/hardware/getting-started/setup-serial) を使用すると、ネットワーク経由で接続できない場合に、IPアドレスを確認したり、ネットワーク設定を修正したりできます。
 :::
 
-DevKitに`sima-cli`がインストールされている場合は、このコマンドを実行して、再起動せずにDHCPと静的構成を切り替えてください。
+## 1. DevKit を接続します。
+
+お客様の環境に最適な接続方法をお選びください。
+
+- **DHCP を使用したネットワーク接続:** DevKit をルーターまたはネットワークスイッチに接続します。IP アドレスは自動的に割り当てられます。
+- **ホストへの直接接続:** DevKitのイーサネットポートをホストに接続します。必要に応じて、USB-to-イーサネットアダプターを使用してください。ファームウェア3.0では、通常、固定IPアドレスを設定しなくても接続できます。詳細については、以下のヒントを参照してください。
+- **ホスト経由でのインターネットアクセス:** DevKit をホストに接続し、インターネット共有を有効にします。[ホストのインターネット接続を共有する](#share-the-hosts-internet-connection) を参照してください。
+
+:::tip ファームウェア3.0における直接接続
+起動時にDHCPサーバーが利用できない場合、ファームウェア3.0はDevKitに、`169.254.x.x`範囲（`169.254.0.0/16`）のリンクローカルアドレスを割り当てます。
+
+DHCPを使用する直接接続されたホストは、IPv4リンクローカルフォールバックが有効になっている場合、通常、同じ範囲のアドレスを自身に割り当てます。これにより、ホストとDevKitは、静的IP構成なしで通信できるようになります。
+
+この接続はローカルアクセスのみを提供します。インターネットアクセスが必要な場合は、インターネットに接続されたネットワークを使用するか、ホストのインターネット共有機能を有効にします。
+:::
+
+:::tip ファームウェア 2.1.3 での直接接続
+DHCPが利用できない場合、DevKitはデフォルトで`192.168.1.20`を使用します。ホストの接続されているイーサネットインターフェースを、同じサブネット内の別の静的アドレス（例：`192.168.1.10/24`）に設定し、ローカルネットワーク経由でDevKitに接続します。
+:::
+
+## 2. DevKitのIPアドレスを調べます。 {#check-the-current-ip-address}
+
+もし、お使いの DevKit がファームウェア 3.0 を実行していることがわかっている場合は、同じローカルネットワーク上で、**ホスト**上で次のコマンドを実行してください。
+
+```console
+sima-user@sima-user-machine:~$ sima-cli device discover
+```
+
+このコマンドは、検出された Modalix DevKit の IP アドレスを出力します。
+
+他のファームウェアバージョンを使用する場合、または検出機能で DevKit が見つからない場合は、シリアルコンソールを開き、次のコマンドを DevKit 上で実行してください。
+
+```console
+modalix:~$ ip -4 addr
+```
+
+接続されているイーサネットインターフェース（例：`end0`）で、`inet` の後のアドレスを見つけます。たとえば、`192.168.91.181/22` は、IPアドレスが `192.168.91.181` であることを意味します。ループバックアドレス `127.0.0.1` は使用しないでください。
+
+## 3. 接続をテストします。
+
+これらのコマンドを**ホスト**上で実行し、`<devkit-ip>` を、先ほど確認したアドレスに置き換えてください。
+
+```console
+sima-user@sima-user-machine:~$ ping <devkit-ip>
+sima-user@sima-user-machine:~$ ssh sima@<devkit-ip>
+```
+
+:::tip 接続に失敗した場合
+イーサネットケーブルと、両方のデバイスのIPアドレスを確認してください。直接接続の場合、両方のIPアドレスは同じサブネット内にある必要があります。ホストがリンクローカルフォールバックをサポートしていない場合は、それを有効にするか、両方のデバイスで静的IPアドレスを設定してください。
+
+シリアルコンソールを使用して、DevKitのネットワーク設定を確認または変更します。
+:::
+
+## DHCPまたは固定IPの設定を変更する
+
+次のコマンドを**DevKit**で実行して、ネットワーク設定メニューを開きます。
 
 ```console
 modalix:~$ sima-cli network
 ```
 
-このコマンドは、静的および DHCP ネットワーク構成のためのインタラクティブなメニューを開きます。
+メニューを使用して、再起動せずに DHCP と固定 IP アドレスを切り替えてください。
 
-`sima-cli` が利用できない場合は、あらかじめ設定された接続プロファイル（`end0-static` と `end0-dhcp`）を切り替えるために、`nmcli` を使用してください。
+### NetworkManager で設定する
 
-:::note
-以下の手順では、`NetworkManager`プロファイルを使用し、eLxr 2.1以降を実行しているDevKitシステムに適用されます。システムがそれ以前のバージョンを実行している場合は、[v2.0.0のドキュメントを参照してください](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell)。
-:::
+`sima-cli` が利用できない場合は、eLxr 2.1 以降で、以下のコマンドを使用してください。これらのコマンドは、事前に設定された `end0-dhcp` および `end0-static` プロファイルを使用します。
 
-**固定IPアドレスへの切り替え**
-
-ネットワークインターフェースを DHCP から固定 IP アドレスに変更するには、次を実行します。
-
-```console
-modalix:~$ sudo nmcli connection up end0-static
-modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
-modalix:~$ networkctl status
-```
-
-**DHCPへの切り替え**
-
-ネットワークインターフェースを静的IPアドレスからDHCPに変更するには、次のコマンドを実行します。
+DHCPを有効にするには：
 
 ```console
 modalix:~$ sudo nmcli connection up end0-dhcp
-modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
-modalix:~$ networkctl status
 ```
 
-**静的IPアドレスの変更**
-
-`end0-static`プロファイルで使用するIPアドレスを変更するには、プロファイルを更新し、再度アクティブにしてください。
+固定IPアドレスを設定して有効にするには：
 
 ```console
 modalix:~$ sudo nmcli connection modify end0-static ipv4.addresses 192.168.1.20/24
 modalix:~$ sudo nmcli connection up end0-static
 ```
 
-`192.168.1.20/24` を、希望するアドレスとプレフィックスに置き換えてください。NetworkManager は、プロファイルを `/etc/NetworkManager/system-connections/` に保存します。バージョン 2.0 以前のレガシーファイルである `/etc/systemd/network/20-end0-static.network` は、現在は存在しません。
+`192.168.1.20/24` を、ご自身の環境に合わせてアドレスとネットワークプレフィックスに置き換えてください。同じサブネット内の別のアドレスでホストを構成します。
 
-</TabItem>
-<TabItem value="auto-config" label="ホストのネットワーク接続を共有">
+アクティブな接続とIPアドレスを確認するには：
 
-:::note
-- DevKitが開発者ネットワークに直接接続できない場合に、このオプションを使用します。
-- DevKitをホストのイーサネットポートに接続します。ホストにイーサネットポートがない場合は、USB-to-イーサネットアダプターを使用してください。
-- ホストは、`pip`を使用したPythonパッケージのインストールなど、インターネット接続をDevKitと共有できます。
-- このオプションには、ホストコンピューターでのインターネット接続の共有が必要です。
+```console
+modalix:~$ nmcli -f NAME,DEVICE,STATE connection show --active
+modalix:~$ ip -4 addr
+```
+
+:::caution ネットワーク設定の変更
+IPアドレスを変更すると、SSHセッションが切断される可能性があります。シリアルコンソールを使用するか、新しいアドレスで再接続してください。
 :::
 
-1. Ubuntuホストでインターネット接続の共有を有効にするには、次の手順を実行します。
+## ホストのインターネット接続を共有する {#share-the-hosts-internet-connection}
 
-   - 画面の右上にある `Settings` を開き、`Network` セクションに移動します。
-   - `Wired` の下にあるプラス記号をクリックして、ボードに既存のプロファイルがない場合は新しい設定プロファイルを作成するか、既存のプロファイルがある場合はそれを変更します。
-   - 新しいプロファイルを作成する場合は、「共有」または任意の名前を付けます。
-   - `IPv4` タブで、`Shared to other computers` を選択します。 「適用」をクリックします。
-   - 既存の接続がある場合は、一度オフにしてから再度オンにすると、変更が反映されます。
-   - これで、ホストは DevKit とネットワーク接続されるはずです。 `10.42.0.0/24` は、この設定で Ubuntu が使用するデフォルトのサブネットですが、ホストは異なるサブネットを使用する場合があります。
-   - 次のステップで結果が返されない場合は、`ifconfig` を実行して、イーサネットインターフェイスの IP アドレスを確認します。
+DevKit が Ubuntu ホストを介してインターネットにアクセスする必要がある場合に、このオプションを使用します。
 
-2. Ubuntuホストでターミナルを開き、そのIP範囲内のデバイスをスキャンします。
+1. DevKitのイーサネットポートをホストに接続します。ホストがインターネットにアクセスできることを確認してください。
+2. ホストで、**[設定] → [ネットワーク] → [有線]** を開き、そのイーサネットポートの接続を作成または編集します。
+3. **IPv4**タブで、**他のコンピューターと共有**を選択し、変更を適用します。
+4. 接続を一度オフにしてから再度オンにすることで、設定を適用します。
+5. DevKit が DHCP を使用するように設定し、次に [そのIPアドレスを調べます。](#check-the-current-ip-address) を実行して、接続をテストします。
 
-   ```console
-   sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24 | grep report
-      Nmap scan report for sima-user-machine (10.42.0.1)
-      Nmap scan report for 10.42.0.241
-   ```
+Ubuntu は通常、共有ネットワークに `10.42.0.0/24` を使用します。ホストが異なるサブネットを使用している場合があります。必要に応じて、`ip -4 addr` を使用してホストのイーサネットアドレスを確認し、そのサブネットをスキャンしてください。
 
-   この結果には、このサブネット内のIPアドレスがリストされます。末尾が`.1`のアドレスは通常、ホストです。もう一方のアドレスはDevKitです。この例では、DevKitは`10.42.0.241`、ホストは`10.42.0.1`です。
+```console
+sima-user@sima-user-machine:~$ nmap -sn 10.42.0.0/24
+```
 
-3. 接続をテストするには、次のコマンドを実行してください。
+ディスカバリー機能またはシリアルコンソールを使用して、どのアドレスがDevKitに割り当てられているかを確認してください。
 
-   ```console
-   sima-user@sima-user-machine:~$ ssh sima@10.42.0.241
-   ...
-   Last login: Mon Nov 27 19:58:33 2023
-   modalix:~$
-   ```
+## 古いファームウェア：U-Boot ネットワーク設定
 
-4. DevKitから、次のホストにpingを実行してください。 `10.42.0.1`ホストでSSHサーバーが実行されている場合、SSHを使用して接続することもできます。
+<details>
+<summary>ファームウェア 2.0 以前</summary>
 
-   ```console
-   modalix:~$ ping 10.42.0.1
-   ```
+これらの手順は、バージョン2.0以下のファームウェアにのみ適用されます。バージョン2.1以降のファームウェアの場合は、上記に示すLinuxコマンドを使用してください。旧バージョンの詳細については、[v2.0.0 ドキュメント](https://docs.sima.ai/v2.0.0/pages/overview/setup_standalone_mode/setup_network.html#network-setup-in-the-linux-shell)を参照してください。
 
-5. DevKitにpingやSSHで接続できない場合は、静的IP設定方法を使用してください。
-
-</TabItem>
-<TabItem value="uboot" label="U-Boot シェルでのネットワーク設定">
-
-:::note
-この手順は、DevKit ファームウェアのバージョン 2.0 以前にのみ適用されます。バージョン 2.1 以降では、Linux 側の設定を使用してください。U-Boot でネットワークを設定すると、ファームウェアをアップグレードしてもネットワーク設定が保持されます。
-:::
-
-1. DevKitをUART経由で接続し、[シリアルターミナル](/hardware/getting-started/setup-serial)を使用します。
-2. DevKitを再起動します。
-3. メッセージ「`Hit any key to stop autoboot`」が表示されたら、任意のキーを押してU-Bootに入ります。
-4. 固定IPアドレスに切り替えるには、次のコマンドを入力します。
+1. [シリアルターミナル](/hardware/getting-started/setup-serial)を使って DevKit に接続します。
+2. DevKit を再起動します。`Hit any key to stop autoboot` と表示されたら、キーを押して U-Boot に入ります。
+3. 静的IP設定を有効にするには、次のコマンドを実行してください。
 
    ```console
    sima:~$ env set forcenetcfg static; saveenv
    sima:~$ boot
    ```
 
-5. ボードが再起動し、最初のイーサネットポートと2番目のイーサネットポートにそれぞれ`192.168.1.20`と`192.168.2.20`を使用します。
-6. ボードの静的IPアドレスを変更するには、デバイスの起動後に`vi`を使用してネットワークファイルを編集します。
+   最初のイーサネットポートと2番目のイーサネットポートは、それぞれ`192.168.1.20`と`192.168.2.20`を使用します。
+
+4. Linux の起動後に静的アドレスを変更するには、このファイルの「**ネットワーク**」セクションを編集してください。
 
    ```console
    modalix:~$ sudo vi /etc/systemd/network/20-end0-static.network
    ```
 
-   :::warning
-   このファイルは、ファームウェアバージョン2.0以前にのみ存在します。バージョン2.1以降では、NetworkManagerプロファイルに置き換えられています。静的IPアドレスは、**Linuxシェルでのネットワーク設定**タブに記載されている手順に従って、`nmcli`を使用して変更してください。
-   :::
+   このファイルは、バージョン2.0以下のファームウェアでのみ使用されます。バージョン2.1以降のファームウェアでは、NetworkManagerプロファイルが使用されます。
 
-7. **ネットワーク**セクションで、必要に応じてIPアドレスを更新してください。
-8. DHCPモードを設定するには、以下のコマンドを入力し、ボードを起動してください。
+5. 代わりに DHCP を有効にするには、U-Boot で次のコマンドを実行します。
 
    ```console
    sima:~$ env set forcenetcfg dhcp; saveenv
    sima:~$ boot
    ```
 
-</TabItem>
-</Tabs>
+</details>

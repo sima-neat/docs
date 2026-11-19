@@ -1,0 +1,136 @@
+.release-hero-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 56px);
+}
+
+.release-hero-layout .eyebrow {
+  color: var(--muted);
+}
+
+.release-hero-layout h1 {
+  font-size: clamp(36px, 4.7vw, 76px);
+}
+
+.release-hero-image {
+  display: block;
+  width: 100%;
+  max-width: 680px;
+  height: auto;
+  justify-self: end;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.library-actions li p + p {
+  margin-top: 14px;
+}
+
+.upgrade-command,
+.release-command {
+  margin: 8px 0 16px;
+  padding: 10px 12px;
+  border-inline-start: 3px solid var(--sima-blue);
+  background: var(--cream);
+  color: var(--ink);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.release-command {
+  white-space: pre-wrap;
+}
+
+.release-command code span {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.cli-recovery {
+  margin-top: 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .release-hero-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .release-hero-image {
+    justify-self: start;
+  }
+}
+
+/* Keep the introduction and each benefit together at the narrower reading width. */
+.release-highlights .section-heading,
+.compiler-feature .section-heading {
+  display: block;
+  margin-bottom: 32px;
+}
+
+.release-highlights h2,
+.compiler-feature h2,
+.library-intro h2 {
+  max-width: 760px;
+  font-size: clamp(30px, 3.2vw, 42px);
+  line-height: 1.18;
+  letter-spacing: -1.2px;
+}
+
+.release-highlights .section-heading > p,
+.compiler-feature .section-heading > p {
+  max-width: 680px;
+  margin-top: 16px;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.release-benefit-list,
+.apps-highlights .release-benefit-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+
+.release-benefit-list article,
+.apps-highlights .release-benefit-list article {
+  display: block;
+  padding: 24px 0 0;
+}
+
+.release-benefit-list h3,
+.apps-highlights .release-benefit-list h3 {
+  max-width: none;
+  margin: 0 0 12px;
+  font-size: 22px;
+  line-height: 1.35;
+}
+
+.release-benefit-list p {
+  max-width: none;
+  margin: 0;
+}
+
+.release-benefit-list .compiler-changelog {
+  display: block;
+  margin-top: 16px;
+}
+
+.release-hero-layout h1 {
+  font-size: clamp(36px, 4vw, 56px);
+  letter-spacing: -1.8px;
+}
+
+@media (max-width: 700px) {
+  .release-benefit-list,
+  .apps-highlights .release-benefit-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+}
+
+.compiler-feature > .compiler-changelog {
+  margin-top: 0;
+}

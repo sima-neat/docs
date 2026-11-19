@@ -6,12 +6,11 @@ remain unchanged.
 
 | English | Korean (`ko`) | Japanese (`ja`) | Traditional Chinese (`zh-Hant-TW`) | Ukrainian (`uk-UA`) |
 | --- | --- | --- | --- | --- |
-| Palette Neat | Palette Neat | Palette Neat | Palette Neat | Palette Neat |
-| Palette Neat Library | Palette Neat Library | Palette Neat Library | Palette Neat Library | Palette Neat Library |
-| Neat SDK | Neat SDK | Neat SDK | Neat SDK | Neat SDK |
+| Palette SDK | Palette SDK | Palette SDK | Palette SDK | Palette SDK |
 | Neat Library | Neat Library | Neat Library | Neat Library | Neat Library |
 | Neat Examples | Neat Examples | Neat Examples | Neat Examples | Neat Examples |
 | Modalix | Modalix | Modalix | Modalix | Modalix |
+| Modalix MLSoC | Modalix MLSoC | Modalix MLSoC | Modalix MLSoC | Modalix MLSoC |
 | DevKit | DevKit | DevKit | DevKit | DevKit |
 | PyNeat | PyNeat | PyNeat | PyNeat | PyNeat |
 | Insight | Insight | Insight | Insight | Insight |

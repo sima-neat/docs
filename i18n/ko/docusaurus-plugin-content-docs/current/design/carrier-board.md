@@ -17,7 +17,7 @@ SoC를 자체 보드에 직접 실장하려면 [칩다운 설계](./chip-down.md
 다음 부품은 Modalix SoM에 탑재되어 있으며, 260핀 커넥터 할당을 따르는 캐리어 보드라면
 어디서나 동작합니다.
 
-- MLSoC Modalix
+- Modalix MLSoC
 - LPDDR5 메모리
 - eMMC 및 SPI 플래시 스토리지
 - USB 컨트롤러, 기가비트 이더넷 PHY, HDMI 비디오 프로세서

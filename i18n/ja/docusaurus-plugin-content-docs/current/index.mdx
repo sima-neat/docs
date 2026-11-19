@@ -1,7 +1,7 @@
 ---
 title: SiMa.ai ハードウェアに関するドキュメント
 sidebar_label: "プラットフォームの概要"
-description: SiMa.ai MLSoC Modalix製品のハードウェア設定、ファームウェア、および低レベルインターフェースについて。
+description: SiMa.ai Modalix MLSoC製品のハードウェア設定、ファームウェア、および低レベルインターフェースについて。
 sidebar_position: 1
 slug: /
 ---
@@ -12,15 +12,15 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # SiMa.ai ハードウェアに関するドキュメント
 
-このサイトでは、SiMa.ai MLSoC Modalix製品のハードウェア設定、ファームウェアのワークフロー、および低レベルインターフェースについて説明します。ソフトウェア、機械学習、およびパイプラインツールについては、別のドキュメントで解説します。
+このサイトでは、SiMa.ai Modalix MLSoC製品のハードウェア設定、ファームウェアのワークフロー、および低レベルインターフェースについて説明します。ソフトウェア、機械学習、およびパイプラインツールについては、別のドキュメントで解説します。
 
 ## SiMa.ai ハードウェアの概要 {#hardware-at-a-glance}
 
-SiMa.ai は MLSoC Modalix を、チップ単体、モジュール、完成品として提供しています。お持ちの、または使用を予定しているフォームファクターから始めてください。
+SiMa.ai は Modalix MLSoC を、チップ単体、モジュール、完成品として提供しています。お持ちの、または使用を予定しているフォームファクターから始めてください。
 
 | 製品 | 概要 | ここから始める |
 | --- | --- | --- |
-| MLSoC Modalix | システムオンチップです。独自に設計したボードに実装します。 | [SoC で構築する](/hardware/design/chip-down) |
+| Modalix MLSoC | システムオンチップです。独自に設計したボードに実装します。 | [SoC で構築する](/hardware/design/chip-down) |
 | Modalix SoM | SoC、LPDDR5 メモリ、電源を搭載したモジュールです。キャリアボードに差し込んで使用します。 | [SoM で構築する](/hardware/design/carrier-board) |
 | Modalix DevKit | Modalix SoM をキャリアボードに載せ、筐体に収めた評価・開発用キットです。 | [DevKit の評価](/hardware/getting-started) |
 | Modalix PCIe Card | ホストマシンに Modalix の推論機能を追加する、ハーフハイト・ハーフレングスのカードです。 | [PCIe モード](/hardware/getting-started/pcie-mode) |
@@ -40,23 +40,23 @@ SiMa.ai は MLSoC Modalix を、チップ単体、モジュール、完成品と
 
 ボードが起動した後は、どちらの方法でも同じシステムソフトウェアを使用します。[システムソフトウェアのビルド](/hardware/software)を参照してください。
 
-## MLSoC Modalixについて
+## Modalix MLSoCについて
 
-**MLSoC Modalix** は、SiMa.ai の第 2 世代の機械学習システムオンチップです。Arm Cortex-A65 アプリケーション・コンプレックス、高スループットの **機械学習アクセラレータ (MLA)**、カメラからの画像入力用の **画像信号プロセッサ (ISP)**、および従来の画像処理ワークロード用の **コンピュータビジョンユニット (CVU)** を 1 つのチップに集約しています。
+**Modalix MLSoC** は、SiMa.ai の第 2 世代の機械学習システムオンチップです。Arm Cortex-A65 アプリケーション・コンプレックス、高スループットの **機械学習アクセラレータ (MLA)**、カメラからの画像入力用の **画像信号プロセッサ (ISP)**、および従来の画像処理ワークロード用の **コンピュータビジョンユニット (CVU)** を 1 つのチップに集約しています。
 
-この統合により、個別のアクセラレータ、ホスト CPU、およびカメラブリッジを組み合わせることなく、エッジでマルチモーダル、生成、およびビジョン AI パイプラインを実行できます。Modalix SoM は、キャリアボードおよび製品への統合のために MLSoC Modalix をパッケージ化しており、ここに記載されているすべての DevKit は同じシリコンを使用しています。
+この統合により、個別のアクセラレータ、ホスト CPU、およびカメラブリッジを組み合わせることなく、エッジでマルチモーダル、生成、およびビジョン AI パイプラインを実行できます。Modalix SoM は、キャリアボードおよび製品への統合のために Modalix MLSoC をパッケージ化しており、ここに記載されているすべての DevKit は同じシリコンを使用しています。
 
 <img src={useBaseUrl('/img/media/modalix-arch.png')} alt="Modalixのブロック図。PCIe Gen5、10Gイーサネット、MIPI CSI2、Arm A65、ISP、CVU、ビデオコーデック、MLA、LPDDR5、NoC、およびシステムブロックが示されている" style={{width: '100%', maxWidth: '760px', display: 'block', margin: '1.5rem auto'}} />
 
 ## DevKitポートフォリオ
 
-SiMa.aiは、エッジAIアプリケーション向けのMLSoC Modalixベースの開発キットとPCIe製品を提供しています。以下の製品から選択するか、表で機能を比較してください。
+SiMa.aiは、エッジAIアプリケーション向けのModalix MLSoCベースの開発キットとPCIe製品を提供しています。以下の製品から選択するか、表で機能を比較してください。
 
 <div className="card-grid">
   <a className="card devkit-card" href="/hardware/devkit/modalix-devkit">
     <img src={useBaseUrl('/img/media/modalix-devkit-no-label.png')} alt="Modalix DevKit" />
     <h4>Modalix DevKit</h4>
-    <p>MLSoC Modalixの評価や、Modalix SoM上でアプリケーションを構築するための現在の開発キット。</p>
+    <p>Modalix MLSoCの評価や、Modalix SoM上でアプリケーションを構築するための現在の開発キット。</p>
   </a>
   <a className="card devkit-card" href="/hardware/devkit/modalix-pcie-card">
     <img src={useBaseUrl('/img/media/modalix-ea-pcie.jpg')} alt="Modalix PCIe Card" />
@@ -107,7 +107,7 @@ SiMa.aiは、エッジAIアプリケーション向けのMLSoC Modalixベース�
 
 ## デプロイアーキテクチャ
 
-MLSoC Modalix は、スタンドアロンモードと PCIe モードという、一般的な 2 種類の開発アーキテクチャをサポートしています。ハードウェアの接続方法とアプリケーションの実行場所に応じて、適切なアーキテクチャを選択してください。
+Modalix MLSoC は、スタンドアロンモードと PCIe モードという、一般的な 2 種類の開発アーキテクチャをサポートしています。ハードウェアの接続方法とアプリケーションの実行場所に応じて、適切なアーキテクチャを選択してください。
 
 <Tabs>
 <TabItem value="standalone" label="スタンドアロンモード" default>
@@ -130,7 +130,7 @@ MLSoC Modalix は、スタンドアロンモードと PCIe モードという、
 
 1. DevKitは、ネットワークインターフェースまたはセンサーから直接データを受信します。
 2. DevKitは、デバイス上での推論パイプラインを定義する[NEATアプリケーション](https://developer.sima.ai/software)を読み込みます。
-3. MLSoC Modalix は、推論を実行し、データをローカルで処理します。
+3. Modalix MLSoC は、推論を実行し、データをローカルで処理します。
 4. 結果は、ネットワーク接続を介して他のデバイスまたはシステムに送信され、さらなる処理や視覚化が行われます。
 
 <a className="docs-button" href="/hardware/getting-started/standalone-mode">スタンドアロンモードを設定する</a>

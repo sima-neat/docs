@@ -5,8 +5,9 @@ const SECTION_ROUTES = {
   examples: '/examples/',
 };
 
+const MODEL_BROWSER_ROUTE = '/models/';
+
 const EXTERNAL_ROUTES = {
-  models: 'https://huggingface.co/simaai',
   community: 'https://community.sima.ai',
 };
 
@@ -214,7 +215,7 @@ const LANGUAGE_PICKER_TRANSLATIONS = {
   uk: {heading: 'Мова документації', menuLabel: 'Виберіть мову документації', currentLabel: 'Мова документації'},
 };
 
-const routeItems = [
+const navigationItems = [
   {
     key: 'hardware',
     label: 'Hardware',
@@ -228,20 +229,16 @@ const routeItems = [
     tone: 'blue',
   },
   {
+    key: 'models',
+    label: 'Models',
+    href: MODEL_BROWSER_ROUTE,
+    tone: 'black',
+  },
+  {
     key: 'examples',
     label: 'Examples',
     href: SECTION_ROUTES.examples,
     tone: 'green',
-  },
-];
-
-const externalItems = [
-  {
-    key: 'models',
-    label: 'Models',
-    href: EXTERNAL_ROUTES.models,
-    tone: 'black',
-    external: true,
   },
   {
     key: 'community',
@@ -251,6 +248,9 @@ const externalItems = [
     external: true,
   },
 ];
+
+const routeItems = navigationItems.filter((item) => !item.external);
+const externalItems = navigationItems.filter((item) => item.external);
 
 function normalizePath(pathname) {
   if (!pathname || pathname === '/') {
@@ -333,7 +333,7 @@ function deploymentSiteRoot(baseUrl = '/', locale = DEFAULT_LOCALE) {
 }
 
 function navbarItems(siteRoot = '') {
-  return [...routeItems, ...externalItems].map((item) => ({
+  return navigationItems.map((item) => ({
     ...item,
     href: isAbsoluteUrl(item.href) ? item.href : withSiteRoot(item.href, siteRoot),
   }));

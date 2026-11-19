@@ -120,14 +120,12 @@ sima@modalix:~$ dpkg -l | grep simaai
 | 平台版本 | 更新的動作 | 您的套件與服務 |
 | --- | --- | --- |
 | 2.1 | 就地升級 SiMa.ai 套件，不會寫入新的映像檔。 | 尚未確認。請在更新後檢查。 |
-| 3.0 及更新版本 | 將完整的根檔案系統寫入非使用中的 slot，並由該 slot 開機。 | 保留在 `/data` 上的 overlay 檔案系統中，除非更新清除了該 overlay。若已清除，請重新安裝。 |
+| 3.0 及更新版本 | 下載 SiMa.ai 韌體映像檔並加以安裝。版本 3.0.0 使用 A/B 映像檔、OverlayFS 與 SWUpdate。 | 尚未確認。請在更新後檢查。 |
 
 - 在版本 2.1 中，更新會重設 U-Boot 環境。更新後，請重新設定 `dtbos` 以及您變更過的其他變數。
 - 無論哪個版本，恢復電路板或將完整映像檔寫入電路板都會移除您的套件。
 - 請保留您的 `.deb` 檔以及已安裝項目的清單，以便重新安裝。
-- 在版本 3.0 及更新版本中，`sima-cli update --inspect` 會顯示 overlay 檔案系統的內容。
-
-平台版本 3.0 尚未發布。此處依據 `sima-cli` 的[系統更新指南](https://github.com/sima-neat/sima-cli/blob/main/docs/sima-cli/guides/system-updates.md)說明其行為，日後可能變更。
+- 從 2.x 移轉到 3.0 不是透過 `sima-cli update` 進行。此程序會透過網路寫入完整的 3.0.0 映像檔，因此會移除您的套件。請參閱[從 2.1.3 轉換到 3.0.0](../reference/tech-notes/convert-2-1-3-to-3-0-0.md)。
 
 ## 未涵蓋的內容 {#not-covered}
 

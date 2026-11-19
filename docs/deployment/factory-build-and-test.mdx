@@ -4,6 +4,9 @@ description: A recommended process for assembling, programming, and testing Moda
 sidebar_position: 2
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+import PinOneHeader from '@site/static/img/bsp/troot-12pin-header-pin1.svg';
+
 # Factory Build and Test
 
 This is a recommended process for building and testing Modalix-based boards in a
@@ -90,19 +93,118 @@ OTP memory can be written only once. Check each value before you confirm it.
 
 The tRoot firmware is a single binary, `troot_blob.be`. You write one of two
 versions: the OTP programming firmware used above, or your production firmware.
-SiMa.ai recommends a Total Phase Aardvark I2C/SPI host adapter with the Total
-Phase Flash Center software.
+SiMa.ai recommends the [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) from Total Phase, a USB adapter that connects the
+host to the board's SPI flash, and a Python script that programs the flash
+through it. The script also switches the SPI mux to the flash before it writes,
+and back when it finishes.
 
-1. Install Flash Center on the host.
-2. Connect the programmer to the board's SPI flash header. This connector depends
-   on the board, and is typically a dual-row header.
-3. Start Flash Center. It also has command-line tools if you want to automate
-   this step.
-4. Add the adapter.
-5. Select the target device: choose **SPI Flash**, then the part fitted to your
-   board, for example a Winbond W25Q16 (2 MB).
-6. Load `troot_blob.be`.
-7. Program the flash.
+1. Install Python 3 on a Windows, Linux, or macOS host.
+2. Install the Total Phase USB drivers for the Aardvark. They are under
+   **Downloads** on the [Aardvark I2C/SPI Host Adapter](https://www.totalphase.com/products/aardvark-i2cspi/) page.
+3. Install the Aardvark Software API from the same page. Download the package
+   for your host, and unzip it. Its `python` folder holds `aardvark_py.py` and
+   the native library (`aardvark.dll` on Windows, `aardvark.so` on Linux and
+   macOS) that the script needs.
+4. Download [`aaspi_program_comboboard.py`](https://docs.sima.ai/_static/tools/troot/aaspi_program_comboboard.py) into the `python` folder of the
+   Software API, and copy `troot_blob.be` there.
+5. Connect the programmer to the board's SPI flash signals. On the Modalix
+   DevKit, see
+   [Connect the Aardvark to the Modalix DevKit](#connect-the-aardvark-to-the-modalix-devkit).
+   On another board, the connector depends on the board, and is typically a
+   dual-row header.
+6. In the `python` folder, run the script:
+
+   ```bash
+   python aaspi_program_comboboard.py 0 0 0 troot_blob.be
+   ```
+
+   The arguments are the Aardvark port (`0` for the first adapter), the SPI
+   mode (`0`), whether to read the flash back and verify it (`0` skips, `1`
+   verifies), and the image. If an SPI transfer fails, the script retries it
+   up to 10 times (`--retry` changes this), and then starts again from the
+   chip erase.
+7. Wait for `Flash programming completed successfully.` and `DONE!`.
+
+#### Connect the Aardvark to the Modalix DevKit {#connect-the-aardvark-to-the-modalix-devkit}
+
+Use these connections to program tRoot on a Modalix DevKit. They also recover a
+DevKit whose tRoot firmware is corrupted, for example when the tRoot console
+shows no output at power-on.
+
+<figure className="doc-figure doc-figure--diagram">
+  <img src={useBaseUrl('/img/bsp/troot-spi-flasher-wiring.svg')} alt="Wiring from the Aardvark 10-pin header to the Modalix DevKit: GND and SDA to the 12-pin header, and SCLK, SS, MISO and MOSI to the 40-pin header" />
+  <figcaption>
+    <strong>Figure 1.</strong> Aardvark to Modalix DevKit, Modalix SoM Rev 2
+  </figcaption>
+</figure>
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-devkit-photo.jpg')} alt="Jumper wires from the Aardvark on the 40-pin header (J12) of a Modalix DevKit" />
+    <figcaption>
+      <strong>Figure 2.</strong> The Aardvark wires on the 40-pin header (J12). This board has SoM Rev 1, so the MISO and MOSI wires are on the opposite pins from SoM Rev 2. Use the table for the pins.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-spi-flasher-aardvark-photo.jpg')} alt="Jumper wires plugged into the Aardvark 10-pin ribbon cable" />
+    <figcaption>
+      <strong>Figure 3.</strong> The jumper wires on the Aardvark's 10-pin cable.
+    </figcaption>
+  </figure>
+</div>
+
+| Aardvark pin | Aardvark signal | DevKit header | DevKit pin | DevKit signal |
+| --- | --- | --- | --- | --- |
+| 2 | GND | 12-pin header | 9 | GND |
+| 3 | SDA | 12-pin header | 10 | `FORCE_RECOVERY` |
+| 7 | SCLK | 40-pin header (J12) | 13 | `SPI1_SCK` |
+| 9 | SS | 40-pin header (J12) | 18 | `SPI1_CS0` |
+| 5 | MISO | 40-pin header (J12) | 22 | `SPI1_MISO` |
+| 8 | MOSI | 40-pin header (J12) | 37 | `SPI1_MOSI` |
+
+The 12-pin header pin numbers count from pin 1 as marked on the Waveshare carrier board: pin 1 is at the end away from the PWR button (Figure 4). Find pin 1 on the board before you connect any wire.
+
+<figure className="doc-figure doc-figure--inline-svg">
+  <PinOneHeader role="img" aria-label="12-pin header with pin 1 at the left end, the PWR button past pin 12, and wires on pins 3, 4, 7, 9 and 10" />
+  <figcaption>
+    <strong>Figure 4.</strong> The 12-pin header with the PWR button to the right. Pin 1 is at the left end.
+  </figcaption>
+</figure>
+
+These connections are for Modalix SoM Rev 2. On Modalix SoM Rev 1, swap MISO
+and MOSI: Aardvark pin 5 (MISO) goes to pin 37, and Aardvark pin 8 (MOSI) goes
+to pin 22. To find the SoM revision of your DevKit, see
+[Modalix DevKit](/hardware/devkit/modalix-devkit).
+
+`FORCE_RECOVERY` drives the SPI mux that connects the on-module QSPI flash to
+`SPI1`. The script holds it low while it programs the flash, and sets it high
+when it finishes. See [Carrier Board Bring-up](/hardware/design/som-carrier).
+The script also drives the Aardvark's SCL pin (pin 1) as a core reset. Leave
+SCL unconnected on the Modalix DevKit.
+
+To watch the tRoot console while you work, connect a USB-to-UART cable to the
+same 12-pin header:
+
+| USB-to-UART cable | DevKit pin | DevKit signal |
+| --- | --- | --- |
+| GND | 7 | GND |
+| TX | 3 | `UART2_RXD` |
+| RX | 4 | `UART2_TXD` |
+
+<div className="figure-grid">
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-devkit-photo.jpg')} alt="USB-to-UART cable and Aardvark wires on the 12-pin header of a Modalix DevKit" />
+    <figcaption>
+      <strong>Figure 5.</strong> Wires on the 12-pin header: the USB-to-UART cable (orange TX, yellow RX, black GND), with the Aardvark wires alongside.
+    </figcaption>
+  </figure>
+  <figure className="doc-figure">
+    <img src={useBaseUrl('/img/bsp/troot-uart-cable-photo.jpg')} alt="Jumper wires joined to the USB-to-UART cable" />
+    <figcaption>
+      <strong>Figure 6.</strong> The jumper wires joined to the USB-to-UART cable.
+    </figcaption>
+  </figure>
+</div>
 
 ## Set Up the Test Station {#set-up-the-test-station}
 
