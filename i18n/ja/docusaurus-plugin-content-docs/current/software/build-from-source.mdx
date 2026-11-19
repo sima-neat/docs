@@ -33,15 +33,18 @@ Modalix の Linux カーネル、U-Boot、デバイスツリーを自分でビ�
 
 SDK コンテナーには、ターゲット用のツールチェーン、ヘッダー、ライブラリが含まれています。
 以下の Dockerfile を `Dockerfile.modalix` として保存し、それを含むディレクトリでイメージをビルドします。
-この Dockerfile は、リリース 2.1.0 用の SDK をセットアップします。
+この Dockerfile は、最新リリースである 2.1.3 用の SDK をセットアップします。別のリリース用にビルドするには、`docker build` に `--build-arg SIMA_RELEASE=<release>` を追加し、ボードで動作しているリリースを指定してください。[リリースの互換性](./release-compatibility.mdx)を参照してください。
 
 <details>
 <summary><strong>Dockerfile.modalix</strong></summary>
 
 ```dockerfile title="Dockerfile.modalix"
-# Generated Dockerfile for modalix Build:release[2.1.0]
+# Dockerfile for the Modalix BSP build container
 
 FROM debian:bookworm
+
+# Platform release to build for, for example 2.1.3
+ARG SIMA_RELEASE=2.1.3
 
 # List of additional packages that are to be deployed in SDK sysroot
 ARG SDK_PKG_LIST
@@ -90,7 +93,7 @@ RUN apt-get update --allow-releaseinfo-change && \
 	libssl-dev \
 	libgnutls28-dev \
 	openssh-client \
-	simaai-sdk-tools
+	simaai-sdk-tools=${SIMA_RELEASE}
 
 RUN echo "Package: *" > /etc/apt/preferences.d/stable.pref
 RUN echo "Pin: origin \"repo.sima.ai/elxr\"" >> /etc/apt/preferences.d/stable.pref
@@ -111,9 +114,7 @@ RUN if uname -a | grep -q '#[0-9]*-Ubuntu'; then \
 RUN if [ "x86_64" = "x86_64" ]; then apt update --allow-releaseinfo-change && apt install \
     arch-test -y; fi
 
-RUN python3 /opt/bin/simaai_setup_sdk.py modalix 2.1.0 \
-	 \
-	"${SDK_PKG_LIST}"
+RUN python3 /opt/bin/simaai_setup_sdk.py modalix "${SIMA_RELEASE}" "*" "${SDK_PKG_LIST}"
 
 RUN echo "source /opt/bin/simaai-init-build-env modalix" >> /root/.bashrc
 ```
@@ -128,7 +129,7 @@ sima-user@sima-user-machine:~$ docker build -t modalix-sdk --file Dockerfile.mod
 追加のパッケージを sysroot にあらかじめ組み込むには、カンマ区切りのリストを渡します。
 
 ```console
-sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libzix-dev,vxi-dev -t modalix-sdk --file Dockerfile.modalix .
+sima-user@sima-user-machine:~$ docker build --build-arg SDK_PKG_LIST=libjsoncpp-dev,libyaml-cpp-dev -t modalix-sdk --file Dockerfile.modalix .
 ```
 
 書き込み権限のあるディレクトリからコンテナーを起動します。
