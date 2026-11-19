@@ -1,14 +1,14 @@
 ---
 title: ISP 튜닝
-description: ISP 튜닝이 무엇인지, Modalix ISP용으로 이미 튜닝된 카메라, 튜닝이 필요한 경우, 튜닝 가이드를 받는 방법.
+description: ISP 튜닝이 무엇인지, Modalix ISP 드라이버에 센서 항목이 있는 카메라, 튜닝이 필요한 경우, 튜닝 가이드를 받는 방법.
 sidebar_position: 4
 ---
 
 # ISP 튜닝
 
-MLSoC Modalix의 이미지 신호 프로세서(ISP)는 카메라 센서의 원시 데이터를 애플리케이션이
+Modalix MLSoC의 이미지 신호 프로세서(ISP)는 카메라 센서의 원시 데이터를 애플리케이션이
 받는 이미지로 변환합니다. 카메라에서 프레임을 받는 것과 좋은 이미지를 얻는 것은 별개의
-단계입니다. 이 페이지에서는 튜닝이 무엇인지, 어떤 카메라가 이미 튜닝되어 있는지, 튜닝
+단계입니다. 이 페이지에서는 튜닝이 무엇인지, ISP 드라이버가 어떤 카메라를 지원하는지, 튜닝
 가이드를 받는 방법을 설명합니다.
 
 :::caution[하드웨어에서 아직 검증되지 않음]
@@ -26,12 +26,15 @@ MLSoC Modalix의 이미지 신호 프로세서(ISP)는 카메라 센서의 원�
 
 ISP는 Arm Mali-C71입니다.
 
-## 이미 튜닝된 카메라 {#tuned-cameras}
+## ISP 드라이버 항목이 있는 카메라 {#tuned-cameras}
 
-플랫폼 릴리스는 [지원되는 MIPI 카메라](./supported-cameras.mdx)에 있는 카메라, 즉
-Arducam IMX477, e-con Systems IMX568 및 IMX678, Leopard Imaging AR0234 및 OG05C10에
-맞게 튜닝되어 있습니다. 이 카메라 중 하나를 사용한다면 시작하기 위해 ISP를 튜닝할 필요가
-없습니다.
+플랫폼 릴리스 2.1.3에서 커널의 ISP 드라이버에는 [지원되는 MIPI 카메라](./supported-cameras.mdx)에
+있는 카메라 중 네 가지, 즉 Arducam IMX477, e-con Systems IMX568 및 IMX678, Leopard Imaging
+OG05C10의 센서 항목이 있습니다. 목록은 [ISP 드라이버 소스](https://github.com/SiMa-ai/simaai-linux/blob/65aba29989da02d7612da5484dbbcd50643fdd60/drivers/media/isp/sensor/driver/common/sensor_driver_common.c)에 있습니다.
+이 카메라 중 하나를 사용한다면 시작하기 위해 ISP를 튜닝할 필요가 없습니다.
+
+Leopard Imaging AR0234는 같은 릴리스에 센서 드라이버와 디바이스 트리 오버레이가 있지만,
+ISP 드라이버에는 이 카메라의 센서 항목이 없습니다.
 
 ## 튜닝이 필요한 경우 {#when}
 
@@ -51,7 +54,7 @@ Arducam IMX477, e-con Systems IMX568 및 IMX678, Leopard Imaging AR0234 및 OG05
 
 ## 다음 단계
 
-- [지원되는 MIPI 카메라](./supported-cameras.mdx): 이미 튜닝된 카메라와
+- [지원되는 MIPI 카메라](./supported-cameras.mdx): BSP에 오버레이가 있는 카메라와
   센서 모드.
 - [자체 카메라 통합](./custom-camera.mdx): 튜닝하기 전에 새 카메라가 캡처되도록
   합니다.

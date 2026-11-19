@@ -34,3 +34,4 @@ sima-cli bootimg -v 3.0.0 --boardtype modalix
 
 - このコマンドは、Linux または macOS ホストで実行する必要があります。
 - イメージをダウンロードするには、インターネット接続が必要です。
+- DevKit が SD カードから起動できる必要があります。U-Boot が動作し、eMMC（`mmc0`）より先に SD カード（`mmc1`）を試す必要があります。これはデフォルトの順序です。[eMMC へのイメージの書き込み](/hardware/deployment/flash-image)を参照してください。

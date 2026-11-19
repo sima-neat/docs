@@ -25,6 +25,13 @@ Upgrading a Modalix DevKit across these firmware versions requires a special con
 - **2.x (including 2.0) to 3.0:** Follow the [Convert from 2.1.3 to 3.0.0](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) tech note. First update to 2.1.3, then use netboot to install 3.0.0. A direct firmware update from 2.x to 3.0 is not supported.
 :::
 
+:::note Recovery limits
+- **Update with sima-cli** needs a board that boots and that the host can reach over the network.
+- **Net Boot Recovery** needs a working U-Boot on the board. If the serial console shows nothing at power-on, reprogram tRoot first. See [Net Boot Recovery](/hardware/getting-started/firmware-update/net-boot).
+- **Create Boot Image** needs a board that can boot from an SD card. U-Boot must run and try the SD card before the eMMC.
+- Netboot setup from the host with `--devkit` needs a board that runs firmware 2.1.3 or later and that the host can reach over SSH. For other boards, configure U-Boot from the serial console.
+:::
+
 ## Operating Systems {#os}
 
 SiMa.ai Modalix DevKits run **eLxr Linux**, a Debian-derived distribution. Units shipped **after mid-December 2025** come with eLxr preloaded. Earlier Modalix units (shipped before mid-December 2025) are preloaded with Yocto and can be converted to eLxr following the [Convert to eLxr](/hardware/reference/tech-notes/elxr-conversion) article.

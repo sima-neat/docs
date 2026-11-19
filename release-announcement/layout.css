@@ -1,0 +1,10 @@
+/* Shared reading width; section backgrounds continue to span the viewport. */
+:root {
+  --release-content-width: 960px;
+}
+
+body > header[class],
+body > main > section[class],
+body > footer {
+  padding-inline: max(6%, calc((100% - var(--release-content-width)) / 2));
+}
