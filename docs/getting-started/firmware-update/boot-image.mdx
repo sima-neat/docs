@@ -34,3 +34,4 @@ After the process completes, eject the SD card and insert it into the DevKit. On
 
 - This command must be run on a Linux or macOS host.
 - An internet connection is required to download the image.
+- The DevKit must be able to boot from the SD card. U-Boot must run and try the SD card (`mmc1`) before the eMMC (`mmc0`), which is the default order. See [Flash an Image to eMMC](/hardware/deployment/flash-image).

@@ -25,6 +25,13 @@ sidebar_position: 5
 - **2.x（包括 2.0）升級至 3.0：** 請遵循 [從 2.1.3 升級到 3.0.0](/hardware/reference/tech-notes/convert-2-1-3-to-3-0-0) 技術備註。首先升級至 2.1.3，然後使用網路啟動 (netboot) 安裝 3.0.0。不支援從 2.x 直接升級到 3.0。
 :::
 
+:::note 恢復的限制
+- **使用 sima-cli 更新**需要一塊能夠開機、且主機能透過網路連線的電路板。
+- **網路啟動恢復**需要電路板上有可正常運作的 U-Boot。若開機時序列主控台沒有任何輸出，請先重新燒錄 tRoot。請參閱[網路啟動恢復](/hardware/getting-started/firmware-update/net-boot)。
+- **建立啟動映像**需要一塊能從 SD 卡開機的電路板。U-Boot 必須能執行，並在 eMMC 之前先嘗試 SD 卡。
+- 從主機以 `--devkit` 設定網路啟動，需要電路板執行韌體 2.1.3 或更新版本，且主機能透過 SSH 連線。其他電路板請從序列主控台設定 U-Boot。
+:::
+
 ## 作業系統 {#os}
 
 SiMa.ai Modalix DevKit 執行 eLxr Linux，這是一個基於 Debian 的作業系統。於 **2025 年 12 月中旬之後** 出貨的設備預先安裝了 eLxr。較早的 Modalix 設備（於 2025 年 12 月中旬之前出貨）預先安裝了 Yocto，並且可以按照 [轉換為 eLxr](/hardware/reference/tech-notes/elxr-conversion) 文章中的說明轉換為 eLxr。

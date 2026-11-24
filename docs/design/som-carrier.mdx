@@ -36,9 +36,14 @@ Comparison Guide to hand.
 
 ## Carrier Board Components
 
-The reference bring-up used a Waveshare carrier board. Any board conforming to
-the 260-pin SODIMM pinout will work. The numbers in the table below correspond
-to the callouts in these views.
+The reference bring-up used a Waveshare carrier board. A board must fit the
+260-pin SODIMM pinout, but that alone does not mean it works with the Modalix
+SoM. The [Third-Party Carrier Boards](./third-party-carriers.mdx) catalog lists
+the boards that SiMa.ai has brought up: the Waveshare JETSON-ORIN-IO-BASE-H
+reference board, and the Connect Tech Boson-22 and Seeed Studio reComputer J401
+on platform release 2.1.0 or later. For any other board, check electrical pin
+compatibility and expect to adapt the device tree. The numbers in the table
+below correspond to the callouts in these views.
 
 <div className="figure-grid">
   <figure className="doc-figure">
