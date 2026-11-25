@@ -1,0 +1,40 @@
+name: Docs CI Failure Notification
+
+# GitHub registers workflow_run listeners from the default branch (main).
+on:
+  workflow_run:
+    workflows: ["Vulcan SysDoc", "Release Announcement Pages"]
+    types: [completed]
+    branches: [main, develop, vulcan-dev-sysdoc]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  notify-failure:
+    # Follow protected-branch builds/deployments, excluding PR validation runs.
+    if: >-
+      ${{
+        github.event.workflow_run.repository.full_name == github.repository &&
+        (github.event.workflow_run.event == 'push' ||
+         github.event.workflow_run.event == 'workflow_dispatch') &&
+        contains(fromJSON('["failure", "timed_out", "action_required", "startup_failure", "stale"]'),
+                 github.event.workflow_run.conclusion)
+      }}
+    uses: sima-neat/.github/.github/workflows/vulcan-notify-slack.yml@main
+    with:
+      channel_id: C0BPFND35TN
+      analyze_failure: true
+      run_id: ${{ github.event.workflow_run.id }}
+      repository: ${{ github.event.workflow_run.repository.full_name }}
+      workflow_name: ${{ github.event.workflow_run.name }}
+      branch: ${{ github.event.workflow_run.head_branch }}
+      head_sha: ${{ github.event.workflow_run.head_sha }}
+      conclusion: ${{ github.event.workflow_run.conclusion }}
+      run_attempt: ${{ github.event.workflow_run.run_attempt }}
+      run_url: ${{ github.event.workflow_run.html_url }}
+      actor: ${{ github.event.workflow_run.actor.login }}
+      commit_message: ${{ github.event.workflow_run.head_commit.message || '' }}
+    secrets:
+      slack_bot_token: ${{ secrets.SLACK_BOT_TOKEN }}
