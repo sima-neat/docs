@@ -21,6 +21,17 @@ sites mounted under `build.{env}.neat.sima.ai`. Those sites should mount the
 runtime shell and use local fallback values only for development or standalone
 origin debugging.
 
+A page that embeds the site, such as the Palette Code VS Code extension, can
+ask for a theme with `?theme=dark` or `?theme=light`. The runtime shell uses it
+over the theme cookie, `localStorage` and the system preference, and never
+stores it, so the theme the user picked stays as it was. Its
+`developer-center-theme-change` event carries `{theme, persist}`: a page that
+follows the event stores the theme only when `persist` is true. The theme toggle
+stores the user's choice as usual. On the Docusaurus pages the theme sync in
+`theme.js` follows the same rule: it shows `?theme` at once, skips the cookie
+sync on focus, and does not store the shell's non-persistent change.
+`npm run check:theme` covers this.
+
 The language control lives in this shell rather than in an individual docs
 site. It writes `sima-neat-locale` as a parent-domain cookie so Hardware and
 Software share one preference. Local standalone Software builds can use
