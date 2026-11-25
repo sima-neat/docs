@@ -60,6 +60,93 @@ function browser({search = '', cookie = '', stored = {}, systemDark = false} = {
   return {shell: window.DeveloperCenterShell, storage, cookieWrites, events, attributes, target};
 }
 
+
+/**
+ * Docusaurus pages (Hardware, Software) also run src/developerCenter/shell/theme.js, whose
+ * observer stores every data-theme change. Sets up globals for it and returns the probes.
+ */
+function docusaurusPage({search = '', cookie = '', stored = {}} = {}) {
+  const storage = new Map(Object.entries(stored));
+  const cookieWrites = [];
+  const attributes = {};
+  const listeners = {};
+  const observers = [];
+  globalThis.window = {
+    location: {hostname: 'localhost', protocol: 'https:', search},
+    localStorage: {getItem: (key) => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value)},
+    addEventListener: (type, fn) => { (listeners[type] ||= []).push(fn); },
+  };
+  globalThis.document = {
+    get cookie() { return cookie; },
+    set cookie(value) { cookieWrites.push(value); },
+    hidden: false,
+    documentElement: {
+      setAttribute: (name, value) => { attributes[name] = value; },
+      getAttribute: (name) => attributes[name] ?? null,
+    },
+    addEventListener() {},
+  };
+  globalThis.MutationObserver = class { constructor(fn) { observers.push(fn); } observe() {} };
+  const fire = (type, detail) => (listeners[type] || []).forEach((fn) => fn({detail}));
+  return {
+    storage, cookieWrites, attributes, fire,
+    /** data-theme changes; the observer runs after any event dispatched before it, as in a browser. */
+    change(theme, event) {
+      attributes['data-theme'] = theme;
+      if (event) fire('developer-center-theme-change', event);
+      observers.forEach((fn) => fn([]));
+    },
+  };
+}
+
+async function checkDocusaurusThemeSync() {
+  const {initializeDeveloperCenterThemeSync} = await import('../src/developerCenter/shell/theme.js');
+
+  // ?theme shows that theme at once and the shell's non-persistent apply isn't stored (Codex on #206).
+  {
+    const page = docusaurusPage({...STORED_LIGHT, search: '?theme=dark'});
+    page.attributes['data-theme'] = 'light'; // Docusaurus' own script set the stored theme first.
+    initializeDeveloperCenterThemeSync();
+    assert.equal(page.attributes['data-theme'], 'dark', 'Docusaurus page shows ?theme at once');
+    page.change('dark', {theme: 'dark', persist: false});
+    page.fire('focus');
+    assert.equal(page.attributes['data-theme'], 'dark', 'focus does not bring the stored theme back');
+    assert.deepEqual(page.cookieWrites, [], 'no cookie written for ?theme');
+    assert.equal(page.storage.get('theme'), 'light', 'localStorage left as it was');
+  }
+  // The same when the shell applies ?theme over a different theme.
+  {
+    const page = docusaurusPage({...STORED_LIGHT, search: '?theme=dark'});
+    initializeDeveloperCenterThemeSync();
+    page.change('light');
+    page.cookieWrites.length = 0;
+    page.storage.set('theme', 'light');
+    page.change('dark', {theme: 'dark', persist: false});
+    assert.deepEqual(page.cookieWrites, [], 'shell non-persistent apply is not stored by the observer');
+    assert.equal(page.storage.get('theme'), 'light');
+  }
+  // The user's toggles on a ?theme page are stored, both ways.
+  {
+    const page = docusaurusPage({...STORED_LIGHT, search: '?theme=dark'});
+    initializeDeveloperCenterThemeSync();
+    page.change('dark', {theme: 'dark', persist: false});
+    page.change('light');
+    assert.equal(page.cookieWrites.length, 1, 'toggle to light is stored');
+    page.change('dark');
+    assert.equal(page.cookieWrites.length, 2, 'toggle back to the URL theme is stored too');
+    assert.equal(page.storage.get('theme'), 'dark');
+  }
+  // Without ?theme nothing changes: the cookie applies and every change is stored.
+  {
+    const page = docusaurusPage({cookie: 'sima-neat-theme=dark', stored: {theme: 'light'}});
+    initializeDeveloperCenterThemeSync();
+    assert.equal(page.attributes['data-theme'], 'dark');
+    assert.equal(page.storage.get('theme'), 'dark');
+    page.change('light', {theme: 'light', persist: true});
+    assert.equal(page.cookieWrites.length, 1);
+  }
+}
+
 const themeEvents = (b) => b.events.filter((event) => event.type === 'developer-center-theme-change').map(({detail}) => ({theme: detail.theme, persist: detail.persist}));
 const STORED_LIGHT = {cookie: 'sima-neat-theme=light', stored: {theme: 'light', 'portal-theme': 'light'}};
 
@@ -128,6 +215,8 @@ const STORED_LIGHT = {cookie: 'sima-neat-theme=light', stored: {theme: 'light', 
     assert.equal(b.storage.get('theme'), 'dark');
     assert.equal(b.cookieWrites.length, 1);
   }
+
+  await checkDocusaurusThemeSync();
 
   console.log('Developer Center theme checks passed.');
 })().catch((error) => {

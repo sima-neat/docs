@@ -15,6 +15,15 @@ function decodeCookieEntry(entry) {
   }
 }
 
+// ?theme=dark|light (sima-neat/docs#199) shows that theme on this page only and is never stored.
+export function urlTheme() {
+  try {
+    return normalizeTheme(new URLSearchParams(window.location.search).get('theme'));
+  } catch (_) {
+    return null;
+  }
+}
+
 export function readCookieTheme() {
   const entry = document.cookie
     .split('; ')
@@ -71,9 +80,23 @@ export function initializeDeveloperCenterThemeSync() {
     return;
   }
 
-  applyTheme(readCookieTheme());
+  const fromUrl = urlTheme();
+  if (fromUrl) {
+    document.documentElement.setAttribute('data-theme', fromUrl);
+    document.documentElement.setAttribute('data-theme-choice', fromUrl);
+  } else {
+    applyTheme(readCookieTheme());
+  }
+
+  // The shell's non-persistent change (from ?theme) must not be stored by the observer below.
+  let unstoredTheme = null;
+  window.addEventListener('developer-center-theme-change', (event) => {
+    unstoredTheme = event.detail && event.detail.persist === false ? event.detail.theme : null;
+  });
 
   function syncFromCookie() {
+    // The theme from the URL holds for this page; the stored one must not replace it.
+    if (fromUrl) return;
     const cookieTheme = readCookieTheme();
     if (cookieTheme && cookieTheme !== document.documentElement.getAttribute('data-theme')) {
       applyTheme(cookieTheme);
@@ -85,7 +108,9 @@ export function initializeDeveloperCenterThemeSync() {
     const nextTheme = normalizeTheme(document.documentElement.getAttribute('data-theme'));
     if (nextTheme && nextTheme !== lastTheme) {
       lastTheme = nextTheme;
-      persistTheme(nextTheme);
+      const unstored = nextTheme === unstoredTheme;
+      unstoredTheme = null;
+      if (!unstored) persistTheme(nextTheme);
     }
   });
 
