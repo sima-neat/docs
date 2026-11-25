@@ -139,19 +139,35 @@
     });
   }
 
-  function applyTheme(theme, manifest) {
+  // A page that embeds the site, such as the Palette Code VS Code extension,
+  // asks for a theme with ?theme=dark|light. It wins over the stored theme and
+  // is never stored, so the theme the user picked on the site stays as it was.
+  function urlTheme() {
+    try {
+      return normalizeTheme(new URLSearchParams(window.location.search).get('theme'));
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // persist: false shows the theme without storing it (a theme from the URL).
+  // The event says so, so pages that follow it don't store it either.
+  function applyTheme(theme, manifest, {persist = true} = {}) {
     if (!theme) return;
     const themeConfig = manifest.theme || DEFAULT_MANIFEST.theme;
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.setAttribute('data-theme-choice', theme);
-    writeStoredTheme(theme, themeConfig.keys || DEFAULT_MANIFEST.theme.keys);
-    writeCookieTheme(theme, themeConfig.cookie || DEFAULT_MANIFEST.theme.cookie);
-    window.dispatchEvent(new CustomEvent('developer-center-theme-change', {detail: {theme}}));
+    if (persist) {
+      writeStoredTheme(theme, themeConfig.keys || DEFAULT_MANIFEST.theme.keys);
+      writeCookieTheme(theme, themeConfig.cookie || DEFAULT_MANIFEST.theme.cookie);
+    }
+    window.dispatchEvent(new CustomEvent('developer-center-theme-change', {detail: {theme, persist}}));
   }
 
   function initialTheme(manifest) {
     const themeConfig = manifest.theme || DEFAULT_MANIFEST.theme;
     return (
+      urlTheme() ||
       readCookieTheme(themeConfig.cookie || DEFAULT_MANIFEST.theme.cookie) ||
       readStoredTheme(themeConfig.keys || DEFAULT_MANIFEST.theme.keys) ||
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
@@ -993,7 +1009,7 @@
 
     const manifest = await loadManifest(options.siteRoot);
     activeManifest = manifest;
-    applyTheme(initialTheme(manifest), manifest);
+    applyTheme(initialTheme(manifest), manifest, {persist: !urlTheme()});
     render(target, manifest, options);
 
     target.__developerCenterShellLanguageCleanup?.();
