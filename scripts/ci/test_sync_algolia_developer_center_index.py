@@ -322,6 +322,7 @@ BOARDS = {
         "model": "AX-9",
         "reference": False,
         "temperatureGrade": "-40 °C to +85 °C",
+        "power": {"input": "9 to 20 V DC", "som": "passthrough"},
         "interfaces": {
             "ethernet": {"en": "2 with PoE", "ja": "2（PoE 対応）"},
             "m2KeyE": {"en": "1 with an expansion card"},
@@ -335,6 +336,7 @@ BOARDS = {
         "reference": True,
         "ordering": {"partNumber": "ZB1-REF", "url": "https://example.com/zb1"},
         "cooling": {"en": "Fan", "ja": "ファン"},
+        "power": {"input": "12 V DC", "som": "5 V DC", "notRecommended": True},
         "interfaces": {"hdmi": 1, "can": 2},
     },
     "c-bolt.json": {"id": "bolt", "vendor": "Bolt", "model": "B7", "reference": False},
@@ -459,8 +461,9 @@ class DataComponentRecordTests(unittest.TestCase):
         self.assert_in_order(
             carriers,
             "Modalix SoM: HDMI Supported; MIPI CSI 4-lane Not supported, Two paths cannot be combined; CAN Not supported",
-            "Zeta Boards ZB-1: Fan, HDMI 1, CAN 2",
-            "acme AX-9: -40 °C to +85 °C, Ethernet 2 with PoE, M.2 Key E 1 with an expansion card",
+            "Zeta Boards ZB-1: Fan, 12 V DC, VDD_IN 5 V DC, Not recommended: 5 V DC to the SoM, HDMI 1, CAN 2",
+            "acme AX-9: -40 °C to +85 °C, 9 to 20 V DC, VDD_IN Same as the input, Ethernet 2 with PoE, "
+            "M.2 Key E 1 with an expansion card",
         )
 
         cameras = derived["interfaces/cameras.mdx"]
@@ -502,6 +505,8 @@ class DataComponentRecordTests(unittest.TestCase):
             "ファン",
             "CAN 非対応",
             "まとめることはできません",
+            "VDD_IN 入力と同じ",
+            "VDD_IN 5 V DC, 非推奨：SoM への供給は 5 V DC",
             # No Japanese value in the data: the English one is used.
             "M.2 Key E 1 with an expansion card",
         ):
@@ -647,7 +652,8 @@ class DataComponentRecordTests(unittest.TestCase):
 
         self.assertEqual(
             records[("en", "design/carriers.mdx")]["content"],
-            PROSE["design/carriers.mdx"] + " Zeta Boards ZB-1, ZB1-REF, Reference board. Zeta Boards ZB-1: Fan, HDMI 1, CAN 2",
+            PROSE["design/carriers.mdx"] + " Zeta Boards ZB-1, ZB1-REF, Reference board. "
+            "Zeta Boards ZB-1: Fan, 12 V DC, VDD_IN 5 V DC, Not recommended: 5 V DC to the SoM, HDMI 1, CAN 2",
         )
         self.assertEqual(records[("en", "interfaces/cameras.mdx")]["content"], PROSE["interfaces/cameras.mdx"])
 

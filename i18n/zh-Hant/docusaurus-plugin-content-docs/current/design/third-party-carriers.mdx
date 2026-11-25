@@ -10,6 +10,10 @@ import {CarrierBoardList, CarrierBoardSpecs} from '@site/src/components/CarrierB
 
 Modalix SoM 採用與 NVIDIA Jetson Orin NX 及 Orin Nano 相同的 260 針 SODIMM 外形規格，因此為這些模組設計的載板可以作為您產品的起點，或作為自行設計時的參考。本頁比較其中八款載板的介面。
 
+:::warning 輸入電壓會影響推論效能
+Modalix SoM 的 VDD_IN 接受 5.0 至 20 V DC。請供給 5.4 V DC 以上，以避免 MLA 頻率降低：低於 5.4 V DC 時，MLA 會鎖定在 600 MHz，推論效能因此降低。不建議使用僅供給 SoM 5 V DC 的載板。請確認載板供給 VDD_IN 的電壓，而不只是載板接受的輸入電壓。請參閱 [Modalix SoM 資料手冊](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf#page=40)第 4 章。
+:::
+
 :::warning 外形規格相同不代表已通過驗證
 SiMa.ai 已在 Waveshare 載板、Connect Tech Boson-22 與 Seeed Studio reComputer J401 上完成 Modalix SoM 的硬體啟動。其他載板是依外形規格列出，尚未搭配 Modalix SoM 進行測試。連接之前，請先確認 SoM 與載板之間的電氣腳位相容性，並預期需要調整 device tree。請參閱[載板硬體啟動](./som-carrier.mdx)。
 :::
@@ -17,6 +21,7 @@ SiMa.ai 已在 Waveshare 載板、Connect Tech Boson-22 與 Seeed Studio reCompu
 ## 如何閱讀規格
 
 - 表中的數值為各廠商針對其載板所列的規格。載板版本會變更，購買前請先確認廠商的最新文件。
+- **輸入電壓**是載板接受的 DC 電源。**供給 SoM VDD_IN 的電壓**是載板供給 SoM 的電壓：載板直接傳遞輸入時與輸入相同，載板降壓時則較低。僅供給 SoM 5 V DC 的載板會標示為*不建議*。
 - 比較表中的破折號（—），或載板規格中未列出的項目，表示本頁沒有該項目的數值，並不代表該載板沒有此介面。
 - 載板上有連接器，不代表該介面可搭配 Modalix SoM 運作。哪些介面可以運作，取決於 SoM 連接到連接器的訊號以及 device tree。請參閱[載板硬體啟動](./som-carrier.mdx)與[低速 I/O](../interfaces/low-speed-io.mdx)。
 - **Modalix SoM** 欄顯示 SoM 對各介面的支援情形。*支援*表示 SoM 已將該介面引出至連接器。*視載板而定*表示該介面可能需要依您的載板進行設定或軟體調整。*不支援*表示無論載板提供什麼，該介面都無法搭配 Modalix SoM 運作。*尚未確認*表示本頁沒有相關資訊。

@@ -12,6 +12,11 @@ Modalix SoM은 Modalix SoC, LPDDR5 메모리 및 전원부를 보드 간 커넥�
 
 SoC를 자체 보드에 직접 실장하려면 [칩다운 설계](./chip-down.md)를 참조하십시오.
 
+
+:::warning 입력 전압은 추론 성능에 영향을 줍니다
+Modalix SoM의 VDD_IN은 5.0~20 V DC를 받습니다. MLA 주파수 저하를 피하려면 5.4 V DC 이상을 공급하십시오. 5.4 V DC 미만에서는 MLA가 600 MHz로 고정되어 추론 성능이 떨어집니다. SoM에 5 V DC만 공급하는 캐리어 보드는 권장하지 않습니다. 캐리어 보드에서 입력을 VDD_IN 앞에서 강압한다면 레귤레이터 출력을 5.4 V DC 이상으로 설계하십시오.[Modalix SoM 데이터시트](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf#page=40) 4장을 참조하십시오.
+:::
+
 ## SoM이 제공하는 것 {#som-provides}
 
 다음 부품은 Modalix SoM에 탑재되어 있으며, 260핀 커넥터 할당을 따르는 캐리어 보드라면
@@ -26,7 +31,7 @@ SoC를 자체 보드에 직접 실장하려면 [칩다운 설계](./chip-down.md
 ## 캐리어 보드가 제공하는 것 {#carrier-provides}
 
 - SoM과 인터페이스 간의 커넥터 매핑
-- SoM에 대한 전원 공급
+- SoM에 대한 전원 공급: VDD_IN에 5.4 V DC 이상
 - 이더넷, PCIe, USB, MIPI 카메라, 저속 I/O 등의 인터페이스
 - 디버깅 및 복구를 위한 시리얼 접근
 - 냉각
@@ -54,12 +59,13 @@ SoC를 자체 보드에 직접 실장하려면 [칩다운 설계](./chip-down.md
 
 1. **Modalix SoM(시스템 온 모듈) 캐리어 보드 하드웨어 레퍼런스**와 **Modalix
    SoM 데이터시트**를 읽으십시오.
-2. [캐리어 보드 브링업](./som-carrier.mdx)을 참고하여 커넥터 매핑, 전원 및
+2. VDD_IN에 5.4 V DC 이상이 공급되도록 전원을 계획하십시오.
+3. [캐리어 보드 브링업](./som-carrier.mdx)을 참고하여 커넥터 매핑 및
    인터페이스를 계획하십시오. 이 문서는 커넥터 인터페이스, 레퍼런스 캐리어 보드와 달라지는 점, 카메라 오버레이를 다룹니다.
-3. [저속 I/O](../interfaces/low-speed-io.mdx)에서 저속 핀 할당을 확인하십시오.
-4. 보드 제작이 끝나면 **캐리어 보드 시스템 온 모듈(SoM) 브링업 가이드**에 따라
+4. [저속 I/O](../interfaces/low-speed-io.mdx)에서 저속 핀 할당을 확인하십시오.
+5. 보드 제작이 끝나면 **캐리어 보드 시스템 온 모듈(SoM) 브링업 가이드**에 따라
    최초 전원 투입을 진행하십시오.
-5. [소스에서 BSP 빌드](../software/build-from-source.mdx)를 참고하여 캐리어 보드에 맞게
+6. [소스에서 BSP 빌드](../software/build-from-source.mdx)를 참고하여 캐리어 보드에 맞게
    디바이스 트리를 적응시키십시오.
 
 ## 다음 단계

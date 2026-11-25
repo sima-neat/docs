@@ -88,3 +88,14 @@
   font-size: 0.8rem;
   color: var(--ifm-color-emphasis-700);
 }
+
+/* A power warning under a voltage value. */
+.notRecommended {
+  display: table;
+  margin-top: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  background: var(--ifm-color-danger-contrast-background);
+  color: var(--ifm-color-danger-contrast-foreground);
+}

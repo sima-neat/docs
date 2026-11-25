@@ -12,6 +12,10 @@ Modalix SoM은 NVIDIA Jetson Orin NX 및 Orin Nano와 동일한 260핀 SODIMM �
 사용합니다. 따라서 이들 모듈용으로 제작된 캐리어 보드는 제품의 출발점이나 자체 설계의
 참고 자료로 활용할 수 있습니다. 이 페이지에서는 그중 8개 보드의 인터페이스를 비교합니다.
 
+:::warning 입력 전압은 추론 성능에 영향을 줍니다
+Modalix SoM의 VDD_IN은 5.0~20 V DC를 받습니다. MLA 주파수 저하를 피하려면 5.4 V DC 이상을 공급하십시오. 5.4 V DC 미만에서는 MLA가 600 MHz로 고정되어 추론 성능이 떨어집니다. SoM에 5 V DC만 공급하는 캐리어 보드는 권장하지 않습니다. 캐리어 보드가 받는 입력 전압뿐 아니라 VDD_IN에 공급하는 전압도 확인하십시오.[Modalix SoM 데이터시트](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf#page=40) 4장을 참조하십시오.
+:::
+
 :::warning 폼 팩터가 같다고 검증된 것은 아닙니다
 SiMa.ai가 Modalix SoM 브링업을 수행한 보드는 Waveshare 보드, Connect Tech Boson-22,
 Seeed Studio reComputer J401입니다. 나머지 보드는 폼 팩터를 기준으로 수록했으며
@@ -24,6 +28,7 @@ SoM과 캐리어 보드 간의 전기적 핀 호환성을 확인하고, 디바�
 
 - 값은 각 벤더가 자사 보드에 대해 공개한 내용입니다. 보드 리비전은 변경되므로
   구매하기 전에 벤더의 최신 문서를 확인하십시오.
+- **입력 전압**은 캐리어 보드가 받는 DC 전원입니다. **SoM VDD_IN 공급 전압**은 보드가 SoM에 공급하는 전압으로, 보드가 입력을 그대로 전달하면 입력과 같고, 강압하면 그보다 낮습니다. SoM에 5 V DC만 공급하는 보드는 *권장하지 않음*으로 표시합니다.
 - 비교표의 대시(—) 또는 보드 사양에 항목이 없는 경우는 이 페이지에 해당 항목의
   값이 없음을 의미합니다. 보드에 해당 인터페이스가 없다는 뜻은 아닙니다.
 - 캐리어 보드에 커넥터가 있다고 해서 해당 인터페이스가 Modalix SoM에서 동작하는 것은

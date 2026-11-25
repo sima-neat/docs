@@ -82,6 +82,8 @@ STATUS_LABELS = {
         "reference": "Reference board",
         "broughtUp": "Brought up",
         "untested": "Not tested",
+        "passthrough": "Same as the input",
+        "notRecommended": "Not recommended: 5 V DC to the SoM",
     },
     "ja": {
         "supported": "対応",
@@ -92,6 +94,8 @@ STATUS_LABELS = {
         "reference": "リファレンスボード",
         "broughtUp": "立ち上げ済み",
         "untested": "未確認",
+        "passthrough": "入力と同じ",
+        "notRecommended": "非推奨：SoM への供給は 5 V DC",
     },
     "ko": {
         "supported": "지원",
@@ -102,6 +106,8 @@ STATUS_LABELS = {
         "reference": "레퍼런스 보드",
         "broughtUp": "브링업 완료",
         "untested": "테스트되지 않음",
+        "passthrough": "입력과 동일",
+        "notRecommended": "권장하지 않음: SoM에 5 V DC 공급",
     },
     "zh-Hant": {
         "supported": "支援",
@@ -112,6 +118,8 @@ STATUS_LABELS = {
         "reference": "參考載板",
         "broughtUp": "已完成硬體啟動",
         "untested": "尚未測試",
+        "passthrough": "與輸入相同",
+        "notRecommended": "不建議：僅供給 SoM 5 V DC",
     },
     "uk": {
         "supported": "Підтримується",
@@ -122,6 +130,8 @@ STATUS_LABELS = {
         "reference": "Еталонна плата",
         "broughtUp": "Запущена",
         "untested": "Не тестувалася",
+        "passthrough": "Така сама, як на вході",
+        "notRecommended": "Не рекомендується: 5 V DC на SoM",
     },
 }
 # Shutter type of a camera, as a phrase a reader would search for.
@@ -138,6 +148,8 @@ CARRIER_SPEC_LABELS = {
     "applications": None,
     "cooling": None,
     "temperatureGrade": None,
+    "powerInput": None,
+    "powerSom": "VDD_IN",
     "hdmi": "HDMI",
     "ethernet": "Ethernet",
     "usb3": "USB 3.1",
@@ -388,6 +400,17 @@ def join_text(parts: list[str], separator: str) -> str:
     return separator.join(part.rstrip(".。 ") for part in parts if part and part.strip(".。 "))
 
 
+def carrier_spec_value(board: dict, key: str) -> object:
+    """A specification is a top-level field or an entry under "interfaces"; the power rows
+    read "power" (as the CarrierBoards component's specValue() does)."""
+    power = board.get("power") or {}
+    if key == "powerInput":
+        return power.get("input")
+    if key == "powerSom":
+        return power.get("som")
+    return board[key] if key in board else (board.get("interfaces") or {}).get(key)
+
+
 def describe_carrier_boards(data: dict, language: str) -> list[str]:
     """CarrierBoardList and CarrierBoardSpecs: the reference board, the boards brought up, then by vendor."""
     boards = sorted(
@@ -435,9 +458,12 @@ def describe_carrier_boards(data: dict, language: str) -> list[str]:
     for board in boards:
         rows = []
         for key, label in CARRIER_SPEC_LABELS.items():
-            # A specification is a top-level field or an entry under "interfaces".
-            value = board[key] if key in board else (board.get("interfaces") or {}).get(key)
-            value = localized_text(value, language)
+            value = localized_text(carrier_spec_value(board, key), language)
+            if key == "powerSom" and value:
+                power = board.get("power") or {}
+                value = status_label("passthrough", language) if power.get("som") == "passthrough" else value
+                if power.get("notRecommended"):
+                    value = join_text([value, status_label("notRecommended", language)], ", ")
             if value:
                 rows.append(f"{label} {value}" if label else value)
         if rows:

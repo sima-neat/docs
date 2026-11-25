@@ -21,6 +21,12 @@
     "uk": "Вентилятор (опція)"
   },
   "temperatureGrade": "0 °C to +70 °C",
+  "power": {
+    "input": "9–24 V DC",
+    "som": "5 V DC",
+    "notRecommended": true,
+    "source": "https://s3.us-west-2.amazonaws.com/storage.avermedia.com/web_release_www/D131L/AVerMedia_UM_D131L+V1.5+20250915.pdf"
+  },
   "interfaces": {
     "hdmi": 1,
     "ethernet": 1,

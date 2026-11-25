@@ -13,6 +13,16 @@ Orin NX and Orin Nano, so a carrier board built for those modules can be a
 starting point for your product or a reference for your own design. This page
 compares the interfaces on eight of them.
 
+:::warning Input voltage affects inference performance
+The Modalix SoM accepts 5.0 to 20 V DC at VDD_IN. Provide 5.4 V DC or higher to
+avoid the reduced MLA frequency: below 5.4 V DC, the MLA is locked to 600 MHz,
+which reduces inference performance. Carrier boards that provide only 5 V DC to
+the SoM are not recommended. Check the voltage that a carrier board delivers to
+VDD_IN, not only the input it accepts. See the
+[Modalix SoM Datasheet](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf#page=40),
+chapter 4.
+:::
+
 :::warning Form factor is not validation
 SiMa.ai has brought up the Modalix SoM on the Waveshare board, the Connect Tech
 Boson-22, and the Seeed Studio reComputer J401. The other boards are listed for
@@ -25,6 +35,10 @@ board before connecting them, and expect to adapt the device tree. See
 
 - The values are what each vendor lists for its board. Check the vendor's
   current documentation before you buy, because board revisions change.
+- **Input voltage** is the DC supply that the carrier board accepts. **Voltage
+  to SoM VDD_IN** is what the board delivers to the SoM: the same as the input
+  when the board passes it through, or a lower voltage when the board regulates
+  it. Boards that deliver only 5 V DC to the SoM are marked *Not recommended*.
 - A dash (—) in the comparison, or an item missing from a board's
   specifications, means that this page has no value for that item. It does not
   mean that the board lacks the interface.

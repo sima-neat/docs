@@ -21,6 +21,10 @@
     "zh-Hant": "風扇",
     "uk": "Вентилятор"
   },
+  "power": {
+    "input": "9–19 V DC",
+    "source": "https://www.waveshare.com/jetson-orin-io-base-h.htm"
+  },
   "interfaces": {
     "hdmi": 1,
     "ethernet": 1,
