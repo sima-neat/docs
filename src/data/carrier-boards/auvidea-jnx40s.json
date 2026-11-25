@@ -8,6 +8,17 @@
     "url": "https://auvidea.eu/product/jnx40s-jnx41s-carrier-board-for-nvidia-jetson-orin-nano-orin-nx/"
   },
   "temperatureGrade": "0 °C to +70 °C",
+  "power": {
+    "input": "12–19 V DC",
+    "som": {
+      "en": "5 V or 9 V DC, depending on the module",
+      "ja": "5 V または 9 V DC（モジュールによる）",
+      "ko": "5 V 또는 9 V DC(모듈에 따라 다름)",
+      "zh-Hant": "5 V 或 9 V DC（視模組而定）",
+      "uk": "5 V або 9 V DC, залежно від модуля"
+    },
+    "source": "https://auvidea.eu/download/JNX40S_Manual_V1.20.pdf"
+  },
   "interfaces": {
     "hdmi": 1,
     "ethernet": {

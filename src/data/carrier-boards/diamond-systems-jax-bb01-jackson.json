@@ -7,6 +7,17 @@
     "url": "https://www.diamondsystems.com/products/jackson"
   },
   "temperatureGrade": "-25 °C to +80 °C",
+  "power": {
+    "input": "7–20 V DC",
+    "som": {
+      "en": "The input or 5 V DC, chosen by the module's MODULE_ID pin",
+      "ja": "入力または 5 V DC（モジュールの MODULE_ID ピンで選択）",
+      "ko": "입력 또는 5 V DC(모듈의 MODULE_ID 핀으로 선택)",
+      "zh-Hant": "輸入或 5 V DC（由模組的 MODULE_ID 腳位選擇）",
+      "uk": "Вхідна напруга або 5 V DC, залежно від контакту MODULE_ID модуля"
+    },
+    "source": "https://www.diamondsystems.com/files/binaries/Jackson%20User%20Manual%20V2.2%202024-06.pdf"
+  },
   "interfaces": {
     "hdmi": 1,
     "ethernet": 2,

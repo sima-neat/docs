@@ -17,6 +17,12 @@
     "zh-Hant": "邊緣運算",
     "uk": "Периферійні обчислення"
   },
+  "power": {
+    "input": "9–19 V DC",
+    "som": "5 V DC",
+    "notRecommended": true,
+    "source": "https://raw.githubusercontent.com/Seeed-Studio/OSHW-Jetson-Series/main/reComputer%20Jetson%20carrier%20board/reComputer%20J401/Schematic/reComputer_J401_SCH_V1.0.pdf"
+  },
   "interfaces": {
     "hdmi": 1,
     "ethernet": 1,

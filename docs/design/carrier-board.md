@@ -14,6 +14,16 @@ carrier board or design your own.
 If you want to place the SoC directly on your own board instead, see
 [Chip-Down Design](./chip-down.md).
 
+:::warning Input voltage affects inference performance
+The Modalix SoM accepts 5.0 to 20 V DC at VDD_IN. Provide 5.4 V DC or higher to
+avoid the reduced MLA frequency: below 5.4 V DC, the MLA is locked to 600 MHz,
+which reduces inference performance. Carrier boards that provide only 5 V DC to
+the SoM are not recommended. If your carrier board regulates its input before
+VDD_IN, design the regulator for 5.4 V DC or higher. See the
+[Modalix SoM Datasheet](https://docs.sima.ai/pkg_downloads/datasheets_product_briefs/Modalix_SOM_Board_v2_Data_Sheet_Rev2.3_10-12-2026.pdf#page=40),
+chapter 4.
+:::
+
 ## What the SoM Provides {#som-provides}
 
 These parts are on the Modalix SoM and work on any carrier board that follows the
@@ -28,7 +38,7 @@ These parts are on the Modalix SoM and work on any carrier board that follows th
 ## What the Carrier Board Provides {#carrier-provides}
 
 - Connector mapping between the SoM and your interfaces
-- Power delivery to the SoM
+- Power delivery to the SoM: 5.4 V DC or higher at VDD_IN
 - Interfaces such as Ethernet, PCIe, USB, MIPI cameras, and low-speed I/O
 - Serial access for debugging and recovery
 - Cooling
@@ -57,13 +67,14 @@ These documents are in [Reference Documents](../reference/extra-docs.md).
 
 1. Read the **Modalix SoM Carrier Board Hardware Reference** and the **Modalix
    SoM Datasheet**.
-2. Plan connector mapping, power, and interfaces using
+2. Plan the power supply so that VDD_IN gets 5.4 V DC or higher.
+3. Plan connector mapping and interfaces using
    [Carrier Board Bring-up](./som-carrier.mdx), which covers the connector
    interfaces, what changes from the reference carrier board, and camera overlays.
-3. Check low-speed pin assignments in [Low-Speed I/O](../interfaces/low-speed-io.mdx).
-4. After the board is built, follow the **Carrier Board SoM Bring-Up Guide** for
+4. Check low-speed pin assignments in [Low-Speed I/O](../interfaces/low-speed-io.mdx).
+5. After the board is built, follow the **Carrier Board SoM Bring-Up Guide** for
    first power-on.
-5. Adapt the device tree for your carrier with
+6. Adapt the device tree for your carrier with
    [Build the BSP from Source](../software/build-from-source.mdx).
 
 ## Next Steps

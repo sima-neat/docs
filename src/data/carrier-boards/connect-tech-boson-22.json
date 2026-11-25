@@ -25,6 +25,10 @@
     "uk": "Вентилятор або без вентилятора"
   },
   "temperatureGrade": "-40 °C to +85 °C",
+  "power": {
+    "input": "9–36 V DC",
+    "source": "https://connecttech.com/ftp/pdf/CTIM-00095_Boson_Boson22_Manual.pdf"
+  },
   "interfaces": {
     "hdmi": 1,
     "ethernet": 2,

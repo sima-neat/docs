@@ -40,6 +40,7 @@ const showBoard = (id) => {
 
 const SPEC_GROUPS = [
   {id: "general", keys: ["applications", "cooling", "temperatureGrade"]},
+  {id: "power", keys: ["powerInput", "powerSom"]},
   {id: "connectivity", keys: ["hdmi", "ethernet", "usb3", "usb2"]},
   {id: "m2", keys: ["m2KeyMx4", "m2KeyMx2", "m2KeyE", "m2KeyB"]},
   {id: "cameras", keys: ["csi4Lane", "csi2Lane", "gmsl"]},
@@ -64,6 +65,13 @@ const NEUTRAL_LABELS = {
 const LOCALIZED_UI = {
   en: {
     general: "General",
+    power: "Power",
+    powerInput: "Input voltage",
+    powerSom: "Voltage to SoM VDD_IN",
+    passthrough: "Same as the input",
+    notRecommended: "Not recommended: 5 V DC to the SoM",
+    somRequirement: "5.0 to 20 V DC. 5.4 V DC or higher recommended; below 5.4 V DC the MLA is locked to 600 MHz",
+    toSom: "To the SoM:",
     connectivity: "Display, Ethernet, and USB",
     m2: "M.2 slots",
     cameras: "Cameras",
@@ -100,6 +108,13 @@ const LOCALIZED_UI = {
   },
   ja: {
     general: "概要",
+    power: "電源",
+    powerInput: "入力電圧",
+    powerSom: "SoM の VDD_IN への電圧",
+    passthrough: "入力と同じ",
+    notRecommended: "非推奨：SoM への供給は 5 V DC",
+    somRequirement: "5.0～20 V DC。5.4 V DC 以上を推奨。5.4 V DC 未満では MLA が 600 MHz に固定されます",
+    toSom: "SoM へ：",
     connectivity: "ディスプレイ、Ethernet、USB",
     m2: "M.2 スロット",
     cameras: "カメラ",
@@ -136,6 +151,13 @@ const LOCALIZED_UI = {
   },
   ko: {
     general: "개요",
+    power: "전원",
+    powerInput: "입력 전압",
+    powerSom: "SoM VDD_IN 공급 전압",
+    passthrough: "입력과 동일",
+    notRecommended: "권장하지 않음: SoM에 5 V DC 공급",
+    somRequirement: "5.0~20 V DC. 5.4 V DC 이상 권장. 5.4 V DC 미만에서는 MLA가 600 MHz로 고정됩니다",
+    toSom: "SoM 공급:",
     connectivity: "디스플레이, Ethernet 및 USB",
     m2: "M.2 슬롯",
     cameras: "카메라",
@@ -172,6 +194,13 @@ const LOCALIZED_UI = {
   },
   "zh-Hant": {
     general: "概觀",
+    power: "電源",
+    powerInput: "輸入電壓",
+    powerSom: "供給 SoM VDD_IN 的電壓",
+    passthrough: "與輸入相同",
+    notRecommended: "不建議：僅供給 SoM 5 V DC",
+    somRequirement: "5.0 至 20 V DC。建議 5.4 V DC 以上；低於 5.4 V DC 時 MLA 會鎖定在 600 MHz",
+    toSom: "供給 SoM：",
     connectivity: "顯示、Ethernet 與 USB",
     m2: "M.2 插槽",
     cameras: "相機",
@@ -208,6 +237,13 @@ const LOCALIZED_UI = {
   },
   uk: {
     general: "Загальне",
+    power: "Живлення",
+    powerInput: "Вхідна напруга",
+    powerSom: "Напруга на VDD_IN SoM",
+    passthrough: "Така сама, як на вході",
+    notRecommended: "Не рекомендується: 5 V DC на SoM",
+    somRequirement: "5,0–20 V DC. Рекомендовано 5,4 V DC або вище; нижче 5,4 V DC частота MLA обмежена 600 MHz",
+    toSom: "На SoM:",
     connectivity: "Дисплей, Ethernet і USB",
     m2: "Слоти M.2",
     cameras: "Камери",
@@ -258,8 +294,36 @@ function useCopy() {
   return {copy, label, text};
 }
 
-function specValue(board, key) {
+// The power rows read board.power: "input" is the DC supply the board accepts, and
+// "som" is what it delivers to the SoM VDD_IN rail, either "passthrough" (the same as the
+// input) or a voltage. A board without "som" shows "Not confirmed".
+function specValue(board, key, copy) {
+  if (key === "powerInput") return board.power?.input;
+  if (key === "powerSom") {
+    if (!board.power) return undefined;
+    if (board.power.som === "passthrough") return copy.passthrough;
+    return board.power.som ?? copy.unconfirmed;
+  }
   return board[key] !== undefined ? board[key] : board.interfaces?.[key];
+}
+
+// The SoM requirement for the power rows, shown in the Modalix SoM column.
+const SOM_POWER = {powerSom: "somRequirement"};
+
+function SomVoltage({board, copy, text}) {
+  if (!board.power) return "—";
+  const som = board.power.som;
+  return (
+    <>
+      {text(board.power.input) ?? "—"}
+      {som !== "passthrough" && (
+        <span className={styles.note}>
+          {copy.toSom} {som ? text(som) : copy.unconfirmed}
+        </span>
+      )}
+      {board.power.notRecommended && <span className={styles.notRecommended}>{copy.notRecommended}</span>}
+    </>
+  );
 }
 
 function boardName(board) {
@@ -291,7 +355,7 @@ function SomSupport({support, copy, text}) {
 }
 
 export function CarrierBoardList() {
-  const {copy} = useCopy();
+  const {copy, text} = useCopy();
   return (
     <table>
       <thead>
@@ -299,6 +363,7 @@ export function CarrierBoardList() {
           <th>{copy.vendor}</th>
           <th>{copy.board}</th>
           <th>{copy.status}</th>
+          <th>{copy.powerInput}</th>
           <th>{copy.ordering}</th>
         </tr>
       </thead>
@@ -313,6 +378,9 @@ export function CarrierBoardList() {
             </td>
             <td>
               {board.reference ? copy.referenceShort : board.broughtUp ? copy.broughtUpShort : copy.untestedShort}
+            </td>
+            <td>
+              <SomVoltage board={board} copy={copy} text={text} />
             </td>
             <td>
               <Ordering board={board} copy={copy} />
@@ -334,7 +402,7 @@ export function CarrierBoardSpecs() {
   const groups = SPEC_GROUPS.map((group) => ({
     ...group,
     keys: group.keys.filter(
-      (key) => SOM_SUPPORT[key] || boards.some((board) => specValue(board, key) !== undefined),
+      (key) => SOM_SUPPORT[key] || SOM_POWER[key] || boards.some((board) => specValue(board, key, copy) !== undefined),
     ),
   })).filter((group) => group.keys.length);
 
@@ -405,10 +473,15 @@ export function CarrierBoardSpecs() {
                   <tr key={key}>
                     <th scope="row">{label(key)}</th>
                     <td>
-                      <SomSupport support={SOM_SUPPORT[key]} copy={copy} text={text} />
+                      {SOM_POWER[key] ? copy[SOM_POWER[key]] : <SomSupport support={SOM_SUPPORT[key]} copy={copy} text={text} />}
                     </td>
                     {boards.map((board) => (
-                      <td key={board.id}>{text(specValue(board, key)) ?? "—"}</td>
+                      <td key={board.id}>
+                        {text(specValue(board, key, copy)) ?? "—"}
+                        {key === "powerSom" && board.power?.notRecommended && (
+                          <span className={styles.notRecommended}>{copy.notRecommended}</span>
+                        )}
+                      </td>
                     ))}
                   </tr>
                 ))}
